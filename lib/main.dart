@@ -1,4 +1,5 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,12 +53,8 @@ class MyApp extends StatelessWidget {
             AuthBloc(authRepository: context.read<AuthRepository>()),
         child: Builder(
           builder: (context) => MaterialApp.router(
-            title: 'My App',
-            theme: ThemeData(
-              scaffoldBackgroundColor: Colors.white,
-              primaryIconTheme: const IconThemeData(color: Colors.black),
-              iconTheme: const IconThemeData(color: Colors.black),
-            ),
+            title: 'VOOTDAY',
+            theme: theme(),
             routerConfig: createRouter(context),
           ),
         ),

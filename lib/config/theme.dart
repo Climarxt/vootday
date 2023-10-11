@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/colors.dart';
 import 'package:flutter/material.dart';
 
 ThemeData theme() {
@@ -6,50 +7,46 @@ ThemeData theme() {
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.android: CupertinoPageTransitionsBuilder(),
     }),
-    primaryColor: const Color(0xFF2B2E4A),
+    primaryColor: couleurBleuClair2,
     scaffoldBackgroundColor: Colors.white,
-    fontFamily: 'Optima',
-    textTheme:  const TextTheme(
+    primaryIconTheme: const IconThemeData(color: Colors.black),
+    iconTheme: const IconThemeData(color: Colors.black),
+    textTheme: const TextTheme(
       displayLarge: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.bold,
         fontSize: 36,
       ),
       displayMedium: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.bold,
         fontSize: 24,
       ),
       displaySmall: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
       headlineMedium: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.bold,
         fontSize: 16,
       ),
       headlineSmall: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.bold,
         fontSize: 14,
       ),
       titleLarge: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.normal,
         fontSize: 14,
       ),
       bodyLarge: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.normal,
         fontSize: 12,
       ),
       bodyMedium: TextStyle(
-        color: Color(0xFF2B2E4A),
         fontWeight: FontWeight.normal,
         fontSize: 10,
       ),
-    ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: const Color(0xFFE84545)).copyWith(background: const Color(0xFFF4F4F4)),
+    ),
+    colorScheme: ColorScheme.fromSwatch()
+        .copyWith(secondary: const Color(0xFFE84545))
+        .copyWith(background: const Color(0xFFF4F4F4)),
   );
 }

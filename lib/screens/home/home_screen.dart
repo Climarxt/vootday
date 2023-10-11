@@ -1,6 +1,8 @@
+import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 import '../../import/dummy.dart';
 
@@ -32,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: Tabbar3items(tabController: _tabController, context: context),
       body: _buildBody(),
     );
   }
@@ -52,33 +54,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             profileTag: profileTag,
           ),
         ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      toolbarHeight: 62,
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      iconTheme: const IconThemeData(
-        color: Colors.black,
-      ),
-      elevation: 0,
-      title: Column(
-        children: [
-          TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.blue,
-            ),
-            controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black, // Changer la couleur ici
-            tabs: tabs,
-          ),
-        ],
       ),
     );
   }
@@ -196,22 +171,4 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
   }
-
-  List<Tab> tabs = [
-    const Tab(
-      child: Text(
-        "MONTH",
-      ),
-    ),
-    const Tab(
-      child: Text(
-        "DAY",
-      ),
-    ),
-    const Tab(
-      child: Text(
-        "EVENT",
-      ),
-    ),
-  ];
 }

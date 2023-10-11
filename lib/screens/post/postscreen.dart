@@ -1,44 +1,20 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 
 class PostScreen extends StatefulWidget {
   final String title, imageUrl, profileUrl;
-  final Object heroTag;
-  final Object profileTag;
 
   const PostScreen({
     Key? key,
     required this.title,
     required this.imageUrl,
     required this.profileUrl,
-    required this.heroTag,
-    required this.profileTag,
   }) : super(key: key);
 
   @override
   State<PostScreen> createState() => _PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool _isVisible = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class _PostScreenState extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -59,20 +35,17 @@ class _PostScreenState extends State<PostScreen>
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Hero(
-                  tag: widget.heroTag,
-                  child: Image.asset(
-                    widget.imageUrl,
-                    width: size.width,
-                    fit: BoxFit.fitWidth,
-                  ),
+                Image.asset(
+                  widget.imageUrl,
+                  width: size.width,
+                  fit: BoxFit.fitWidth,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Wrap(
                     spacing: 8.0,
                     runSpacing: 4.0,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Chip(
                         label: Text('Tag 1'),
                       ),

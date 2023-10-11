@@ -1,58 +1,20 @@
-import 'package:bootdv2/screens/home/widgets/feedday.dart';
-import 'package:bootdv2/screens/home/widgets/feedevent.dart';
-import 'package:bootdv2/screens/home/widgets/feedmonth.dart';
+import 'package:bootdv2/import/dummy.dart';
 import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
-import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
 import 'package:flutter/material.dart';
 
-import '../../import/dummy.dart';
+bool _isLoading = false;
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class FeedDay extends StatelessWidget {
+  const FeedDay({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Tabbar3items(tabController: _tabController, context: context),
-      body: _buildBody(),
-    );
+    return _buildTabContent(context);
   }
 
-  Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12,0,12,0),
-      child: TabBarView(
-        controller: _tabController,
-        children: [
-          FeedDay(),
-          FeedMonth(),
-          FeedEvent(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabContent() {
+  Widget _buildTabContent(context) {
     final Size size = MediaQuery.of(context).size;
     return ListView.builder(
       shrinkWrap: true,

@@ -31,10 +31,7 @@ class _FeedDayState extends State<FeedDay>
   Widget _buildItem(BuildContext context, int index, Size size) {
     if (index < data.length) {
       var item = data[index];
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-        child: _buildCard(context, item, size),
-      );
+      return _buildCard(context, item, size);
     }
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -46,7 +43,6 @@ class _FeedDayState extends State<FeedDay>
     return GestureDetector(
       child: SizedBox(
         height: size.height * 0.6,
-        width: size.width,
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(

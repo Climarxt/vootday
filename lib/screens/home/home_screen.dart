@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildBody() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TabBarView(
         controller: _tabController,
         children: const [

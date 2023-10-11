@@ -14,8 +14,8 @@ import 'scaffold_with_navbar.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _sectionANavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
+// final GlobalKey<NavigatorState> _sectionANavigatorKey =
+//    GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
 
 GoRouter createRouter(BuildContext context) {
   final authBloc = context.read<AuthBloc>();
@@ -206,7 +206,7 @@ GoRouter createRouter(BuildContext context) {
         branches: <StatefulShellBranch>[
           // Home
           StatefulShellBranch(
-            navigatorKey: _sectionANavigatorKey,
+          // navigatorKey: _sectionANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',

@@ -1,0 +1,16 @@
+export 'test/root_screen.dart';
+export 'test/details_screen.dart';
+export 'login/logins.dart';
+export 'about/about.dart';
+export 'signup/signup_screens.dart';
+export 'test/nav_screen.dart';
+export 'home/home_screen.dart';
+export 'calendar/calendar_screen.dart';
+export 'swipe/swipe_screen.dart';
+export 'search/search_screen.dart';
+export 'add/add_screen.dart';
+export 'notifications/notifications_screen.dart';
+export 'message/message_screen.dart';
+export 'profile/profile_screen.dart';
+export 'profile/profilesettings_screen.dart';
+export 'createpost/createpost_screen.dart';

@@ -2,15 +2,20 @@ import 'package:bootdv2/import/dummy.dart';
 import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
 import 'package:flutter/material.dart';
 
-bool _isLoading = false;
+class FeedDay extends StatefulWidget {
+  const FeedDay({Key? key}) : super(key: key);
 
-class FeedDay extends StatelessWidget {
-  const FeedDay({
-    Key? key,
-  }) : super(key: key);
+  @override
+  _FeedDayState createState() => _FeedDayState();
+}
+
+class _FeedDayState extends State<FeedDay>
+    with AutomaticKeepAliveClientMixin<FeedDay> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Call this method for the mixin to work
     return _buildTabContent(context);
   }
 
@@ -77,4 +82,7 @@ class FeedDay extends StatelessWidget {
             ),
           );
   }
+
+  @override
+  bool get wantKeepAlive => true; // Overridden to retain the state
 }

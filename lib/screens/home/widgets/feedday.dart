@@ -1,5 +1,5 @@
 import 'package:bootdv2/import/dummy.dart';
-import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
+import 'package:bootdv2/widgets/profileimagebasique.dart';
 import 'package:flutter/material.dart';
 
 class FeedDay extends StatefulWidget {

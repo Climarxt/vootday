@@ -1,5 +1,5 @@
 import 'package:bootdv2/import/dummy.dart';
-import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
+import 'package:bootdv2/widgets/profileimagebasique.dart';
 import 'package:flutter/material.dart';
 
 class FeedMonth extends StatefulWidget {
@@ -31,10 +31,7 @@ class _FeedMonthState extends State<FeedMonth>
   Widget _buildItem(BuildContext context, int index, Size size) {
     if (index < data.length) {
       var item = data[index];
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-        child: _buildCard(context, item, size),
-      );
+      return _buildCard(context, item, size);
     }
     return _isLoading
         ? const Center(child: CircularProgressIndicator())

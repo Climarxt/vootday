@@ -1,44 +1,51 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/import/dummy.dart';
-import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
 import 'package:flutter/material.dart';
 
-bool _isLoading = false;
+class FeedEvent extends StatefulWidget {
+  const FeedEvent({super.key});
 
-class FeedEvent extends StatelessWidget {
-  const FeedEvent({
-    Key? key,
-  }) : super(key: key);
+  @override
+  _FeedEventState createState() => _FeedEventState();
+}
+
+class _FeedEventState extends State<FeedEvent> {
+  List<String> imageList = [
+    'assets/images/postImage.jpg',
+    'assets/images/postImage2.jpg',
+    'assets/images/ITG1_1.jpg',
+    'assets/images/ITG1_2.jpg',
+    'assets/images/ITG3_1.jpg',
+    'assets/images/ITG3_2.jpg',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(color: couleurJauneOrange);
-  }
-
-  Widget _buildTabContent(context) {
-    final Size size = MediaQuery.of(context).size;
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: data.length + 1,
-      itemBuilder: (context, index) => _buildItem(context, index, size),
+    return Scaffold(
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: imageList.length,
+        itemBuilder: (context, index) {
+          return _buildCard(context, imageList[index]);
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Add your onPressed code here!
+        },
+        label: Text('Calendar'),
+        backgroundColor: couleurBleuClair2,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  Widget _buildItem(BuildContext context, int index, Size size) {
-    if (index < data.length) {
-      var item = data[index];
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-        child: _buildCard(context, item, size),
-      );
-    }
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : const SizedBox();
-  }
-
-  Widget _buildCard(
-      BuildContext context, Map<String, dynamic> item, Size size) {
+  Widget _buildCard(BuildContext context, String imageUrl) {
+    Size size = MediaQuery.of(context).size;
     return GestureDetector(
       child: SizedBox(
         height: size.height * 0.6,
@@ -50,12 +57,20 @@ class FeedEvent extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              _buildPost(),
-              const Align(
-                alignment: Alignment.topLeft,
-                child: ProfileImageFeed(
-                  username: "ct.bast",
-                  profileUrl: ('assets/images/profile1.jpg'),
+              _buildPost(imageUrl),
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Titre',
+                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: white),
+                    ),
+                    Text('Description',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: white))
+                  ],
                 ),
               ),
             ],
@@ -65,17 +80,32 @@ class FeedEvent extends StatelessWidget {
     );
   }
 
-  Widget _buildPost() {
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/postImage2.jpg'),
-                fit: BoxFit.cover,
-              ),
+  Widget _buildPost(String imageUrl) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            image: DecorationImage(
+              image: AssetImage(imageUrl),
+              fit: BoxFit.cover,
             ),
-          );
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: const Alignment(0, 0.33),
+              colors: [
+                Colors.black.withOpacity(0.8),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

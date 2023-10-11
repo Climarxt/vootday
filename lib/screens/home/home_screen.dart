@@ -1,8 +1,8 @@
+import 'package:bootdv2/screens/home/widgets/profileimagefeed.dart';
 import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
-import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 import '../../import/dummy.dart';
 
@@ -14,9 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  final List<int> _data = List.generate(8, (index) => index); // Initial data
   late TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
   @override
@@ -104,11 +102,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           child: Stack(
             children: [
-              // Commentez cette ligne pour déboguer
               _buildHero(item, heroTag),
-              Align(
+              const Align(
                 alignment: Alignment.topLeft,
-                child: _buildProfileAvatar(item, profileTag),
+                child: ProfileImageFeed(
+                  username: "ct.bast",
+                  profileUrl: ('assets/images/profile2.jpg'),
+                ),
               ),
             ],
           ),
@@ -134,41 +134,4 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildProfileAvatar(Map<String, dynamic> item, Object profileTag) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Row(
-        children: [
-          Hero(
-            tag: profileTag,
-            child: CircleAvatar(
-              radius: 23,
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage: AssetImage(
-                  item['profileUrl']!,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            item['name']!,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-              color: white,
-              shadows: [
-                Shadow(offset: Offset(-0.2, -0.2), color: Colors.grey),
-                Shadow(offset: Offset(0.2, -0.2), color: Colors.grey),
-                Shadow(offset: Offset(0.2, 0.2), color: Colors.grey),
-                Shadow(offset: Offset(-0.2, 0.2), color: Colors.grey),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -35,7 +35,11 @@ class _FeedEventState extends State<FeedEvent> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
-        label: const Text('Calendar'),
+        label: Text('Calendar',
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: white)),
         backgroundColor: couleurBleuClair2,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

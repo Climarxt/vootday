@@ -35,7 +35,7 @@ class Tabbar2items extends StatelessWidget implements PreferredSizeWidget {
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: RectangularIndicator(
               color: couleurBleuClair2,
-              horizontalPadding: 20,
+              horizontalPadding: 30,
               verticalPadding: 4,
               bottomLeftRadius: 100,
               bottomRightRadius: 100,

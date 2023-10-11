@@ -34,10 +34,8 @@ class _FeedEventState extends State<FeedEvent> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
-        label: Text('Calendar'),
+        onPressed: () {},
+        label: const Text('Calendar'),
         backgroundColor: couleurBleuClair2,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -66,10 +64,16 @@ class _FeedEventState extends State<FeedEvent> {
                   children: [
                     Text(
                       'Titre',
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: white),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: white),
                     ),
                     Text('Description',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: white))
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: white))
                   ],
                 ),
               ),

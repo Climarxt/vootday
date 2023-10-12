@@ -1,13 +1,11 @@
-import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/cards/mosaique_event_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_explorer_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class SearchExplorer extends StatefulWidget {
   const SearchExplorer({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SearchExplorerState createState() => _SearchExplorerState();
 }
 

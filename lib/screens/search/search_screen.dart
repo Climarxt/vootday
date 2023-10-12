@@ -1,15 +1,8 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/import/dummy.dart';
-import 'package:bootdv2/screens/home/widgets/feedday.dart';
-import 'package:bootdv2/screens/home/widgets/feedmonth.dart';
 import 'package:bootdv2/screens/search/widgets/search_explorer.dart';
 import 'package:bootdv2/screens/search/widgets/search_following.dart';
 import 'package:bootdv2/screens/search/widgets/tabbar2itemssearch.dart';
-import 'package:bootdv2/screens/swipe/widgets/swipeevent.dart';
-import 'package:bootdv2/screens/swipe/widgets/swipeootd.dart';
-import 'package:bootdv2/widgets/cards/feed_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -23,8 +16,7 @@ class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SearchScreen> {
   // final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
-  final bool _isLoading = false;
-    final SearchController _searchController = SearchController();
+  final SearchController _searchController = SearchController();
 
   @override
   void initState() {
@@ -60,7 +52,8 @@ class _SearchScreenState extends State<SearchScreen>
             backgroundColor: couleurBleuClair2,
           );
         },
-        suggestionsBuilder: (BuildContext context, SearchController controller) {
+        suggestionsBuilder:
+            (BuildContext context, SearchController controller) {
           return List<ListTile>.generate(5, (int index) {
             final String item = 'item $index';
             return ListTile(

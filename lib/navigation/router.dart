@@ -1,6 +1,5 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';

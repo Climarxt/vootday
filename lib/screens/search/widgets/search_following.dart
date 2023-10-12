@@ -1,8 +1,5 @@
-import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/cards/mosaique_event_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_explorer_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class SearchFollowing extends StatefulWidget {
   const SearchFollowing({super.key});

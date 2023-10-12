@@ -1,5 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/widgets/cards/mosaique_event_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FeedEvent extends StatefulWidget {
   const FeedEvent({super.key});
@@ -34,7 +36,7 @@ class _FeedEventState extends State<FeedEvent> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () => GoRouter.of(context).go('/home/calendar'),
         label: Text('Calendar',
             style: Theme.of(context)
                 .textTheme
@@ -47,73 +49,10 @@ class _FeedEventState extends State<FeedEvent> {
   }
 
   Widget _buildCard(BuildContext context, String imageUrl) {
-    Size size = MediaQuery.of(context).size;
-    return GestureDetector(
-      child: SizedBox(
-        height: size.height * 0.6,
-        width: size.width,
-        child: Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Stack(
-            children: [
-              _buildPost(imageUrl),
-              Positioned(
-                bottom: 10,
-                left: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Titre',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(color: white),
-                    ),
-                    Text('Description',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge!
-                            .copyWith(color: white))
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPost(String imageUrl) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            image: DecorationImage(
-              image: AssetImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: const Alignment(0, 0.33),
-              colors: [
-                Colors.black.withOpacity(0.8),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ],
+    return MosaiqueEventCard(
+      imageUrl: imageUrl,
+      title: 'Titre Event',
+      description: 'Description',
     );
   }
 }

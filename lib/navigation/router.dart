@@ -126,12 +126,12 @@ GoRouter createRouter(BuildContext context) {
               title = "Home";
               actionButton = null;
               break;
-            case '/swipe':
-              title = "Swipe";
+            case '/home/calendar':
+              title = "Calendar";
               actionButton = null;
               break;
-            case '/swipe/calendar':
-              title = "Calendar";
+            case '/swipe':
+              title = "Swipe";
               actionButton = null;
               break;
             case '/swipe/search':
@@ -174,7 +174,7 @@ GoRouter createRouter(BuildContext context) {
             appTitle: title,
             appBar: state.uri.toString().startsWith('/home') ||
                     state.uri.toString().startsWith('/profile') ||
-                    state.uri.toString().startsWith('/swipe') 
+                    state.uri.toString().startsWith('/swipe')
                 ? null
                 : AppBar(
                     // If the current location is '/swipe', display a leading IconButton
@@ -206,13 +206,36 @@ GoRouter createRouter(BuildContext context) {
         branches: <StatefulShellBranch>[
           // Home
           StatefulShellBranch(
-          // navigatorKey: _sectionANavigatorKey,
+            // navigatorKey: _sectionANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return NoAnimationPage(child: const HomeScreen());
                 },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'calendar',
+                    pageBuilder: (BuildContext context, GoRouterState state) =>
+                        CustomTransitionPage<void>(
+                      key: state.pageKey,
+                      child: const CalendarScreen(),
+                      transitionsBuilder: (BuildContext context,
+                              Animation<double> animation,
+                              Animation<double> secondaryAnimation,
+                              Widget child) =>
+                          SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        )
+                            .chain(CurveTween(curve: Curves.easeIn))
+                            .animate(animation),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -231,27 +254,6 @@ GoRouter createRouter(BuildContext context) {
                         CustomTransitionPage<void>(
                       key: state.pageKey,
                       child: const SearchScreen(),
-                      transitionsBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation,
-                              Widget child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        )
-                            .chain(CurveTween(curve: Curves.easeIn))
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'calendar',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: const CalendarScreen(),
                       transitionsBuilder: (BuildContext context,
                               Animation<double> animation,
                               Animation<double> secondaryAnimation,
@@ -336,7 +338,7 @@ GoRouter createRouter(BuildContext context) {
                   )..add(
                       ProfileLoadUser(userId: authBloc.state.user!.uid),
                     ),
-                  child:  ProfileScreen(),
+                  child: ProfileScreen(),
                 ),
                 routes: <RouteBase>[
                   GoRoute(

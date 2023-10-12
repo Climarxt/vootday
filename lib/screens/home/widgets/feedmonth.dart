@@ -1,5 +1,5 @@
 import 'package:bootdv2/import/dummy.dart';
-import 'package:bootdv2/widgets/profileimagebasique.dart';
+import 'package:bootdv2/widgets/cards/feed_card.dart';
 import 'package:flutter/material.dart';
 
 class FeedMonth extends StatefulWidget {
@@ -11,7 +11,7 @@ class FeedMonth extends StatefulWidget {
 
 class _FeedMonthState extends State<FeedMonth>
     with AutomaticKeepAliveClientMixin<FeedMonth> {
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,54 +30,16 @@ class _FeedMonthState extends State<FeedMonth>
 
   Widget _buildItem(BuildContext context, int index, Size size) {
     if (index < data.length) {
-      var item = data[index];
-      return _buildCard(context, item, size);
+      return FeedCard(
+        size: size,
+        username: 'ct.bast',
+        profileUrl: 'assets/images/profile1.jpg',
+        imageUrl: 'assets/images/postImage2.jpg',
+      );
     }
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : const SizedBox();
-  }
-
-  Widget _buildCard(
-      BuildContext context, Map<String, dynamic> item, Size size) {
-    return GestureDetector(
-      child: SizedBox(
-        height: size.height * 0.6,
-        width: size.width,
-        child: Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Stack(
-            children: [
-              _buildPost(),
-              const Align(
-                alignment: Alignment.topLeft,
-                child: ProfileImageFeed(
-                  username: "ct.bast",
-                  profileUrl: ('assets/images/profile1.jpg'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPost() {
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/postImage2.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
   }
 
   @override

@@ -170,11 +170,12 @@ GoRouter createRouter(BuildContext context) {
             appBar: state.uri.toString().startsWith('/home') ||
                     state.uri.toString().startsWith('/profile') ||
                     state.uri.toString().startsWith('/swipe') ||
-                    state.uri.toString().startsWith('/search')
+                    state.uri.toString().startsWith('/search') ||
+                    state.uri.toString().startsWith('/notifications')
                 ? null
                 : AppBar(
-                    // If the current location is '/notifications', display a leading IconButton
-                    leading: state.uri.toString() == '/notifications'
+                    // If the current location is '/** */', display a leading IconButton
+                    leading: state.uri.toString() == '/***'
                         ? IconButton(
                             icon: const Icon(Icons.search),
                             onPressed: () {},
@@ -279,31 +280,8 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                 path: '/notifications',
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const NotificationsScreen());
+                  return NoAnimationPage(child: const NotificationScreen());
                 },
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'message',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: const MessageScreen(),
-                      transitionsBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation,
-                              Widget child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        )
-                            .chain(CurveTween(curve: Curves.easeIn))
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

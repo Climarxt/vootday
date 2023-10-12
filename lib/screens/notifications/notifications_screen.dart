@@ -1,41 +1,62 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/notifications/widgets/notifications_list.dart';
+import 'package:bootdv2/screens/notifications/widgets/tabbar2itemsnotif.dart';
+import 'package:bootdv2/screens/search/widgets/search_explorer.dart';
+import 'package:bootdv2/screens/search/widgets/search_following.dart';
+import 'package:bootdv2/screens/search/widgets/tabbar2itemssearch.dart';
 import 'package:flutter/material.dart';
-import 'package:bootdv2/models/wip/model.dart';
-import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
 
-class NotificationsScreen extends StatelessWidget {
-  const NotificationsScreen({Key? key}) : super(key: key);
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _NotificationScreenState createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen>
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<NotificationScreen> {
+  // final TextEditingController _searchController = TextEditingController();
+  late TabController _tabController;
+  final SearchController _searchController = SearchController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      body: _buildNotificationsList(),
+      appBar:
+          Tabbar2itemsNotif(tabController: _tabController, context: context),
+      body: _buildBody(),
     );
   }
 
-
-  // Builds and returns the notifications list.
-  Widget _buildNotificationsList() {
-    // replace this with actual list of notifications or other type of data
-    List<NotifWIP> dummyNotifications = List<NotifWIP>.generate(
-        10,
-        (index) => NotifWIP(
-              fromUser: UserWIP(
-                profileImageUrl: "https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fposts%2Fpost_dfd48067-cdc9-4443-ab4f-7e309cde9217.jpg?alt=media&token=b077a41c-adb5-4de6-b24f-f0cc24dceebb",
-                username: "User ${index + 1}",
-                id: '1',
-              ),
-              type: index % 2 == 0 ? NotifTypeWIP.like : NotifTypeWIP.comment,
-              date: DateTime.now(),
-              post: PostWIP(imageUrl: "https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fposts%2Fpost_39bfbded-e18f-49f7-8b05-c771afddf964.jpg?alt=media&token=3c76f75e-217c-4518-b06c-766316c6ffb0", id: '1'),
-            ));
-
-    return ListView.builder(
-      itemCount: dummyNotifications.length,
-      itemBuilder: (BuildContext context, int index) {
-        return NotificationTile(
-          notification: dummyNotifications[index],
-        );
-      },
+  Widget _buildBody() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: TabBarView(
+        controller: _tabController,
+        children: const [
+          NotificationsList(),
+          NotificationsList(),
+        ],
+      ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

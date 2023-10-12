@@ -76,43 +76,16 @@ GoRouter createRouter(BuildContext context) {
           GoRoute(
             path: 'policies',
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                CustomTransitionPage<void>(
-              key: state.pageKey,
-              child: const SearchScreen(),
-              transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child) =>
-                  SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).chain(CurveTween(curve: Curves.easeIn)).animate(animation),
-                child: child,
-              ),
-            ),
+                const MaterialPage(child: SearchScreen()),
           ),
           GoRoute(
             path: 'conditionsgen',
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                CustomTransitionPage<void>(
-              key: state.pageKey,
-              child: const SearchScreen(),
-              transitionsBuilder: (BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                      Widget child) =>
-                  SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).chain(CurveTween(curve: Curves.easeIn)).animate(animation),
-                child: child,
-              ),
-            ),
+                const MaterialPage(child: SearchScreen()),
           ),
         ],
       ),
+
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
@@ -211,24 +184,9 @@ GoRouter createRouter(BuildContext context) {
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'calendar',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: const CalendarScreen(),
-                      transitionsBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation,
-                              Widget child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        )
-                            .chain(CurveTween(curve: Curves.easeIn))
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return const MaterialPage(child: CalendarScreen());
+                    },
                   ),
                 ],
               ),
@@ -304,28 +262,9 @@ GoRouter createRouter(BuildContext context) {
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'settings',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: BlocProvider<LoginCubit>(
-                        create: (context) => LoginCubit(
-                            authRepository: context.read<AuthRepository>()),
-                        child: const SettingsScreen(),
-                      ),
-                      transitionsBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation,
-                              Widget child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        )
-                            .chain(CurveTween(curve: Curves.easeIn))
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return NoAnimationPage(child: const SettingsScreen());
+                    },
                   ),
                 ],
               ),

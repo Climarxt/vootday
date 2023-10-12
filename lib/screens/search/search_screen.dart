@@ -1,28 +1,96 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/import/dummy.dart';
+import 'package:bootdv2/screens/home/widgets/feedday.dart';
+import 'package:bootdv2/screens/home/widgets/feedmonth.dart';
+import 'package:bootdv2/screens/search/widgets/search_explorer.dart';
+import 'package:bootdv2/screens/search/widgets/search_following.dart';
+import 'package:bootdv2/screens/search/widgets/tabbar2itemssearch.dart';
+import 'package:bootdv2/screens/swipe/widgets/swipeevent.dart';
+import 'package:bootdv2/screens/swipe/widgets/swipeootd.dart';
+import 'package:bootdv2/widgets/cards/feed_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
+  _SearchScreenState createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SearchScreen> {
+  // final TextEditingController _searchController = TextEditingController();
+  late TabController _tabController;
+  final bool _isLoading = false;
+    final SearchController _searchController = SearchController();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final goRouter = GoRouter.of(context);
-        goRouter.go('/swipe');
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
-          color: Colors.amber,
-          child: Center(
-            child: Text(
-              'Search Screen',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-        ),
+    super.build(context);
+    return Scaffold(
+      appBar:
+          Tabbar2itemsSearch(tabController: _tabController, context: context),
+      body: _buildBody(),
+      floatingActionButton: SearchAnchor(
+        searchController: _searchController,
+        builder: (BuildContext context, SearchController controller) {
+          return FloatingActionButton.extended(
+            onPressed: () {
+              controller.openView();
+            },
+            label: Text('Search',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.white)),
+            backgroundColor: couleurBleuClair2,
+          );
+        },
+        suggestionsBuilder: (BuildContext context, SearchController controller) {
+          return List<ListTile>.generate(5, (int index) {
+            final String item = 'item $index';
+            return ListTile(
+              title: Text(item),
+              onTap: () {
+                setState(() {
+                  controller.closeView(item);
+                });
+              },
+            );
+          });
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildBody() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: TabBarView(
+        controller: _tabController,
+        children: const [
+          SearchFollowing(),
+          SearchExplorer(),
+        ],
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -21,6 +21,6 @@ const couleurJauneOrange2 = Color.fromARGB(255, 253, 155, 7);
 
 const Color black = Color(0xff000000);
 const Color white = Color(0xffffffff);
-const Color grey = Color(0xffbdbdbd);
+const Color grey = Color(0xFFE0E0E0);
 const Color red = Color.fromARGB(255, 203, 15, 15);
 const Color green = Color.fromARGB(255, 21, 170, 15);

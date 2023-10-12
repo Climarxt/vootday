@@ -134,12 +134,8 @@ GoRouter createRouter(BuildContext context) {
               title = "Swipe";
               actionButton = null;
               break;
-            case '/swipe/search':
+            case '/search':
               title = "Search";
-              actionButton = null;
-              break;
-            case '/createpost':
-              title = "Create Post";
               actionButton = null;
               break;
             case '/notifications':
@@ -174,16 +170,15 @@ GoRouter createRouter(BuildContext context) {
             appTitle: title,
             appBar: state.uri.toString().startsWith('/home') ||
                     state.uri.toString().startsWith('/profile') ||
-                    state.uri.toString().startsWith('/swipe')
+                    state.uri.toString().startsWith('/swipe') ||
+                    state.uri.toString().startsWith('/search')
                 ? null
                 : AppBar(
-                    // If the current location is '/swipe', display a leading IconButton
+                    // If the current location is '/notifications', display a leading IconButton
                     leading: state.uri.toString() == '/notifications'
                         ? IconButton(
                             icon: const Icon(Icons.search),
-                            onPressed: () {
-                              GoRouter.of(context).go('/swipe/search');
-                            },
+                            onPressed: () {},
                           )
                         : null,
                     // If the current location is '/swipe', don't display a title
@@ -247,37 +242,25 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return NoAnimationPage(child: const SwipeScreen());
                 },
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'search',
-                    pageBuilder: (BuildContext context, GoRouterState state) =>
-                        CustomTransitionPage<void>(
-                      key: state.pageKey,
-                      child: const SearchScreen(),
-                      transitionsBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation,
-                              Widget child) =>
-                          SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        )
-                            .chain(CurveTween(curve: Curves.easeIn))
-                            .animate(animation),
-                        child: child,
-                      ),
-                    ),
-                  ),
-                ],
+              ),
+            ],
+          ),
+          // Search
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/search',
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return NoAnimationPage(child: const SearchScreen());
+                },
               ),
             ],
           ),
           // Create Post
-          StatefulShellBranch(
+          /* StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/createpost',
+                path: '/search',
                 builder: (BuildContext context, GoRouterState state) =>
                     BlocProvider<CreatePostCubit>(
                   create: (context) => CreatePostCubit(
@@ -290,6 +273,7 @@ GoRouter createRouter(BuildContext context) {
               ),
             ],
           ),
+          */
           // Notification
           StatefulShellBranch(
             routes: <RouteBase>[

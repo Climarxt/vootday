@@ -1,9 +1,5 @@
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/notifications/widgets/notifications_list.dart';
 import 'package:bootdv2/screens/notifications/widgets/tabbar2itemsnotif.dart';
-import 'package:bootdv2/screens/search/widgets/search_explorer.dart';
-import 'package:bootdv2/screens/search/widgets/search_following.dart';
-import 'package:bootdv2/screens/search/widgets/tabbar2itemssearch.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -20,7 +16,7 @@ class _NotificationScreenState extends State<NotificationScreen>
         AutomaticKeepAliveClientMixin<NotificationScreen> {
   // final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
-  final SearchController _searchController = SearchController();
+  // final SearchController _searchController = SearchController();
 
   @override
   void initState() {

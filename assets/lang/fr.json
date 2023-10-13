@@ -15,5 +15,8 @@
   "day": "Jour",
   "month": "Mois",
   "event": "Évènement",
-  "calendar": "Calendrier"
+  "calendar": "Calendrier",
+  "thisweek": "Cette semaine",
+  "comingsoon": "Prochainement",
+  "pastevents": "Évènements passés"
 }

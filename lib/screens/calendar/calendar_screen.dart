@@ -1,4 +1,6 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/widgets/cards/mosaique_calendar_card.dart';
+import 'package:bootdv2/widgets/cards/mosaique_event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,19 +13,19 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   List<String> imageList = [
-    'assets/images/postImage.jpg',
+    'assets/images/Stussy.png',
     'assets/images/postImage2.jpg',
-    'assets/images/ITG1_1.jpg',
     'assets/images/ITG1_2.jpg',
-    'assets/images/ITG3_1.jpg',
-    'assets/images/ITG3_2.jpg',
+    'assets/images/Carhartt.png',
+    'assets/images/Obey.png',
+    'assets/images/Sandro.png',
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 62,
-        title: Text("Calendar",
+        title: Text(AppLocalizations.of(context)!.translate('calendar'),
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium!
@@ -40,11 +42,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       body: ListView(
         children: [
-          buildSectionTitle('This Week'),
+          buildSectionTitle(
+              AppLocalizations.of(context)!.translate('thisweek')),
           buildListview(),
-          buildSectionTitle('Coming Soon'),
+          buildSectionTitle(
+              AppLocalizations.of(context)!.translate('comingsoon')),
           buildListview(),
-          buildSectionTitle('Past Event'),
+          buildSectionTitle(
+              AppLocalizations.of(context)!.translate('pastevents')),
           buildListview(),
         ],
       ),
@@ -76,19 +81,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: _buildCard(context, imageList[index]),
+              child: MosaiqueCalendarCard(
+                imageUrl: imageList[index],
+                title: 'Title',
+                description: 'Description',
+              ),
             );
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String imageUrl) {
-    return MosaiqueCalendarCard(
-      imageUrl: imageUrl,
-      title: 'Titre Event',
-      description: 'Description',
     );
   }
 }

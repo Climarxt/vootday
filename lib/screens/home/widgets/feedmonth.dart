@@ -11,6 +11,11 @@ class FeedMonth extends StatefulWidget {
 
 class _FeedMonthState extends State<FeedMonth>
     with AutomaticKeepAliveClientMixin<FeedMonth> {
+  List<String> imageList = [
+    'assets/images/ITG3_1.jpg',
+    'assets/images/ITG1_2.jpg',
+    'assets/images/postImage.jpg',
+  ];
   final bool _isLoading = false;
 
   @override
@@ -33,8 +38,10 @@ class _FeedMonthState extends State<FeedMonth>
       return FeedCard(
         size: size,
         username: 'ct.bast',
-        profileUrl: 'assets/images/profile1.jpg',
-        imageUrl: 'assets/images/postImage2.jpg',
+        profileUrl: 'assets/images/profile2.jpg',
+        imageUrl: imageList[index %
+            imageList
+                .length], // Utiliser le modulo pour éviter les erreurs d'index
       );
     }
     return _isLoading

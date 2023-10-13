@@ -12,6 +12,11 @@ class FeedDay extends StatefulWidget {
 
 class _FeedDayState extends State<FeedDay>
     with AutomaticKeepAliveClientMixin<FeedDay> {
+  List<String> imageList = [
+    'assets/images/postImage2.jpg',
+    'assets/images/ITG1_1.jpg',
+    'assets/images/ITG3_2.jpg',
+  ];
   final bool _isLoading = false;
 
   @override
@@ -35,7 +40,9 @@ class _FeedDayState extends State<FeedDay>
         size: size,
         username: 'ct.bast',
         profileUrl: 'assets/images/profile2.jpg',
-        imageUrl: 'assets/images/postImage.jpg',
+        imageUrl: imageList[index %
+            imageList
+                .length], // Utiliser le modulo pour éviter les erreurs d'index
       );
     }
     return _isLoading

@@ -15,5 +15,8 @@
   "day": "Day",
   "month": "Month",
   "event": "Event",
-  "calendar": "Calendar"
+  "calendar": "Calendar",
+  "thisweek": "This week",
+  "comingsoon": "Coming soon",
+  "pastevents": "Past events"
 }

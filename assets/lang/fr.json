@@ -5,8 +5,11 @@
   "connectbyapple": "Connexion avec Apple",
   "forgottenlogins":"Informations de connexion oubliées? ",
   "askhelp":"Obtenez de l’aide",
-  "termsAndConditions": "En vous inscrivant, vous acceptez nos ",
-  "termsLink": "Conditions Générales d'Utilisation. ",
-  "privacyPolicy": "Découvrez comment on utilise vos données en lisant notre ",
-  "privacyLink": "Politique de Confidentialité."
+  "registeringAgree": "En vous inscrivant, vous acceptez nos ",
+  "termsAndConditions": "Conditions Générales d'Utilisation. ",
+  "termsAndConditionstitle": "Conditions Générales d'Utilisation",
+  "learnHowData": "Découvrez comment on utilise vos données en lisant notre ",
+  "privacyPolicy": "Politique de Confidentialité.",
+  "privacyPolicytitle": "Politique de Confidentialité",
+  "helptitle": "Aide"
 }

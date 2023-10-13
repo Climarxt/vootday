@@ -30,9 +30,24 @@ GoRouter createRouter(BuildContext context) {
             BlocProvider<LoginCubit>(
           create: (context) =>
               LoginCubit(authRepository: context.read<AuthRepository>()),
-          child: LoginScreen(),
+          child: const LoginScreen(),
         ),
         routes: <RouteBase>[
+          GoRoute(
+            path: 'termsandconditions',
+            builder: (BuildContext context, GoRouterState state) =>
+                const TermsAndConditions(),
+          ),
+          GoRoute(
+            path: 'privacypolicy',
+            builder: (BuildContext context, GoRouterState state) =>
+                const PrivacyPolicyScreen(),
+          ),
+          GoRoute(
+            path: 'help',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginHelpScreen(),
+          ),
           GoRoute(
             path: 'mail',
             builder: (BuildContext context, GoRouterState state) =>
@@ -40,15 +55,6 @@ GoRouter createRouter(BuildContext context) {
               create: (context) =>
                   LoginCubit(authRepository: context.read<AuthRepository>()),
               child: LoginMailScreen(),
-            ),
-          ),
-          GoRoute(
-            path: 'help',
-            builder: (BuildContext context, GoRouterState state) =>
-                BlocProvider<LoginCubit>(
-              create: (context) =>
-                  LoginCubit(authRepository: context.read<AuthRepository>()),
-              child: const LoginHelpScreen(),
             ),
           ),
         ],
@@ -63,29 +69,6 @@ GoRouter createRouter(BuildContext context) {
           child: SignupScreen(),
         ),
       ),
-      // About
-      GoRoute(
-        path: '/about',
-        builder: (BuildContext context, GoRouterState state) =>
-            BlocProvider<LoginCubit>(
-          create: (context) =>
-              LoginCubit(authRepository: context.read<AuthRepository>()),
-          child: const AboutScreen(),
-        ),
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'policies',
-            pageBuilder: (BuildContext context, GoRouterState state) =>
-                const MaterialPage(child: SearchScreen()),
-          ),
-          GoRoute(
-            path: 'conditionsgen',
-            pageBuilder: (BuildContext context, GoRouterState state) =>
-                const MaterialPage(child: SearchScreen()),
-          ),
-        ],
-      ),
-
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,

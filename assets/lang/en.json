@@ -5,8 +5,11 @@
   "connectbyapple": "Login by Apple",
   "forgottenlogins":"Forgotten login information? ",
   "askhelp":"Get some help",
-  "termsAndConditions": "By signing up, you agree to our ",
-  "termsLink": "Terms and Conditions. ",
-  "privacyPolicy": "Learn how we use your data by reading our ",
-  "privacyLink": "Privacy Policy."
+  "registeringAgree": "By signing up, you agree to our ",
+  "termsAndConditions": "Terms and Conditions. ",
+  "termsAndConditionstitle": "Terms and Conditions",
+  "learnHowData": "Learn how we use your data by reading our ",
+  "privacyPolicy": "Privacy Policy.",
+  "privacyPolicytitle": "Privacy Policy",
+  "helptitle": "Help"
 }

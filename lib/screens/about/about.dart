@@ -1,3 +1,2 @@
-export 'conditions_gen_screen.dart';
-export 'policies_screen.dart';
-export 'about_screen.dart';
+export 'privacy_pol_screen.dart';
+export 'terms_and_cond_screen.dart';

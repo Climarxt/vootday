@@ -1,21 +1,21 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/widgets.dart';
+import 'package:bootdv2/widgets/appbar_title.dart';
 import 'package:flutter/material.dart';
 
-class LoginHelpScreen extends StatelessWidget {
-  const LoginHelpScreen({super.key});
+class TermsAndConditions extends StatelessWidget {
+  const TermsAndConditions({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarTitle(
         title:
-            AppLocalizations.of(context)!.translate('helptitle'),
+            AppLocalizations.of(context)!.translate('termsAndConditionstitle'),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Text(
-          'Vos Aides vont ici. '
+          'Vos termes et conditions vont ici. '
           'Assurez-vous d\'inclure toutes les informations pertinentes concernant '
           'l\'utilisation de votre application, la confidentialité des données, '
           'les obligations de l\'utilisateur, etc.',

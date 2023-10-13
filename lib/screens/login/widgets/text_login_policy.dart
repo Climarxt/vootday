@@ -19,25 +19,25 @@ class TextLoginPolicy extends StatelessWidget {
               children: <TextSpan>[
                 TextSpan(
                   text: AppLocalizations.of(context)!
-                      .translate('termsAndConditions'),
+                      .translate('registeringAgree'),
                 ),
                 TextSpan(
                   text: AppLocalizations.of(context)!
-                      .translate('termsLink'),
+                      .translate('termsAndConditions'),
                   style: AppTextStyles.bodyLinkBold(context),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => GoRouter.of(context).go('/about'),
+                    ..onTap = () => GoRouter.of(context).go('/login/termsandconditions'),
+                ),
+                TextSpan(
+                  text: AppLocalizations.of(context)!
+                      .translate('learnHowData'),
                 ),
                 TextSpan(
                   text: AppLocalizations.of(context)!
                       .translate('privacyPolicy'),
-                ),
-                TextSpan(
-                  text: AppLocalizations.of(context)!
-                      .translate('privacyLink'),
                   style: AppTextStyles.bodyLinkBold(context),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => GoRouter.of(context).go('/privacy'),
+                    ..onTap = () => GoRouter.of(context).go('/login/privacypolicy'),
                 ),
               ],
             ),

@@ -1,4 +1,3 @@
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/login/widgets/buttons_login.dart';
 import 'package:bootdv2/screens/login/widgets/logo_title.dart';
 import 'package:bootdv2/screens/login/widgets/text_login_policy.dart';

@@ -13,13 +13,20 @@ class Tabbar3items extends StatelessWidget implements PreferredSizeWidget {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(62);
-  
+  Size get preferredSize => const Size.fromHeight(62);
+
+  @override
   Widget build(BuildContext context) {
-    List<Tab> tabs = const [
-      Tab(child: Text("Day")),
-      Tab(child: Text("Month")),
-      Tab(child: Text("Event")),
+    List<Tab> tabs = [
+      Tab(
+        child: Text(AppLocalizations.of(context)!.translate('day')),
+      ),
+      Tab(
+        child: Text(AppLocalizations.of(context)!.translate('month')),
+      ),
+      Tab(
+        child: Text(AppLocalizations.of(context)!.translate('event')),
+      ),
     ];
     return AppBar(
       toolbarHeight: 62,
@@ -35,7 +42,7 @@ class Tabbar3items extends StatelessWidget implements PreferredSizeWidget {
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: RectangularIndicator(
               color: couleurBleuClair2,
-              horizontalPadding: 20,
+              horizontalPadding: 4,
               verticalPadding: 4,
               bottomLeftRadius: 100,
               bottomRightRadius: 100,

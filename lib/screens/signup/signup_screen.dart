@@ -49,14 +49,14 @@ class SignupScreen extends StatelessWidget {
                               children: [
                                 // svg image
                                 SvgPicture.asset(
-                                  'assets/ic_instagram.svg',
+                                  'assets/images/ic_instagram.svg',
                                   // ignore: deprecated_member_use
                                   color: Colors.black,
                                   height: 64,
                                 ),
                                 const SizedBox(height: 34),
                                 SvgPicture.asset(
-                                  'assets/logo.svg',
+                                  'assets/images/logo.svg',
                                   height: 64,
                                 ),
                                 const SizedBox(height: 64),

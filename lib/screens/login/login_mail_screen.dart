@@ -54,12 +54,12 @@ class LoginMailScreen extends StatelessWidget {
                             children: [
                               const SizedBox(width: 24),
                               SvgPicture.asset(
-                                'assets/logo.svg',
+                                'assets/images/logo.svg',
                                 height: 44,
                               ),
                               const SizedBox(width: 14),
                               SvgPicture.asset(
-                                'assets/ic_instagram.svg',
+                                'assets/images/ic_instagram.svg',
                                 height: 42,
                               ),
                             ],

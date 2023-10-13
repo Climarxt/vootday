@@ -73,15 +73,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/ic_instagram.svg
-    - assets/00_Interface_24H.svg
-    - assets/00_Interface_24H.png
     - assets/icons/
     - assets/logos/
     - assets/images/
-    - assets/logo.svg
-    - assets/logo.jpeg
-    - assets/couple.svg
     - assets/lang/en.json
     - assets/lang/fr.json
     

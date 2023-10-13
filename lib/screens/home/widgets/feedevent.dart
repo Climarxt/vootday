@@ -12,12 +12,12 @@ class FeedEvent extends StatefulWidget {
 
 class _FeedEventState extends State<FeedEvent> {
   List<String> imageList = [
-    'assets/images/postImage.jpg',
-    'assets/images/postImage2.jpg',
-    'assets/images/ITG1_1.jpg',
     'assets/images/ITG1_2.jpg',
-    'assets/images/ITG3_1.jpg',
-    'assets/images/ITG3_2.jpg',
+    'assets/images/Carhartt.png',
+    'assets/images/Obey.png',
+    'assets/images/postImage2.jpg',
+    'assets/images/Sandro.png',
+    'assets/images/Stussy.png',
   ];
 
   @override
@@ -32,27 +32,26 @@ class _FeedEventState extends State<FeedEvent> {
         ),
         itemCount: imageList.length,
         itemBuilder: (context, index) {
-          return _buildCard(context, imageList[index]);
+          return MosaiqueEventCard(
+            context,
+            imageUrl: imageList[index],
+            title: 'Title',
+            description: 'Description',
+          );
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => GoRouter.of(context).go('/home/calendar'),
-        label: Text('Calendar',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: white)),
+        label: Text(
+          AppLocalizations.of(context)!.translate('calendar'),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: white),
+        ),
         backgroundColor: couleurBleuClair2,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String imageUrl) {
-    return MosaiqueEventCard(
-      imageUrl: imageUrl,
-      title: 'Titre Event',
-      description: 'Description',
     );
   }
 }

@@ -11,5 +11,9 @@
   "learnHowData": "Learn how we use your data by reading our ",
   "privacyPolicy": "Privacy Policy.",
   "privacyPolicytitle": "Privacy Policy",
-  "helptitle": "Help"
+  "helptitle": "Help",
+  "day": "Day",
+  "month": "Month",
+  "event": "Event",
+  "calendar": "Calendar"
 }

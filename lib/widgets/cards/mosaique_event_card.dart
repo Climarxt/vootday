@@ -5,7 +5,7 @@ class MosaiqueEventCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const MosaiqueEventCard({
+  const MosaiqueEventCard(BuildContext context, {
     Key? key,
     required this.imageUrl,
     required this.title,

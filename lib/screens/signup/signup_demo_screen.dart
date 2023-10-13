@@ -60,7 +60,7 @@ class SignupDemoScreen extends StatelessWidget {
                               children: [
                                 // svg image
                                 SvgPicture.asset(
-                                  'assets/ic_instagram.svg',
+                                  'assets/images/ic_instagram.svg',
                                   // ignore: deprecated_member_use
                                   color: Colors.black,
                                   height: 64,

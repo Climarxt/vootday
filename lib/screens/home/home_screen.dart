@@ -13,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen> {
-  // Added mixin
   late TabController _tabController;
 
   @override
@@ -30,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Call this method for the mixin to work
+    super.build(context);
     return Scaffold(
       appBar: Tabbar3items(tabController: _tabController, context: context),
       body: _buildBody(),
@@ -52,5 +51,5 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  bool get wantKeepAlive => true; // Overridden to retain the state
+  bool get wantKeepAlive => true;
 }

@@ -24,8 +24,8 @@ class AppLocalizations {
     return true;
   }
 
-  String? translate(String key) {
-    return _localizedStrings[key];
+  String translate(String key) {
+    return _localizedStrings[key] ?? key;
   }
 }
 

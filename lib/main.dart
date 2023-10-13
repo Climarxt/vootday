@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'navigation/router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -53,6 +54,16 @@ class MyApp extends StatelessWidget {
             AuthBloc(authRepository: context.read<AuthRepository>()),
         child: Builder(
           builder: (context) => MaterialApp.router(
+            localizationsDelegates: const [
+              AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en', ''),
+              Locale('fr', ''),
+            ],
+            locale: const Locale('fr', ''),  // Force la localisation française ,
             title: 'VOOTDAY',
             theme: theme(),
             routerConfig: createRouter(context),

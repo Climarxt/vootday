@@ -6,7 +6,7 @@ import '../config/configs.dart';
 class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String icon;
-  final String texte;
+  final String? texte;
 
   const MyButton(
       {super.key,
@@ -37,7 +37,7 @@ class MyButton extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                texte,
+                texte!,
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,

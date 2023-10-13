@@ -1,0 +1,12 @@
+{
+  "connectbymail": "Login by mail",
+  "connectbytel": "Login by phone",
+  "connectbygoogle": "Login by Google",
+  "connectbyapple": "Login by Apple",
+  "forgottenlogins":"Forgotten login information? ",
+  "askhelp":"Get some help",
+  "termsAndConditions": "By signing up, you agree to our ",
+  "termsLink": "Terms and Conditions. ",
+  "privacyPolicy": "Learn how we use your data by reading our ",
+  "privacyLink": "Privacy Policy."
+}

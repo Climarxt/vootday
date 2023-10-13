@@ -1,0 +1,12 @@
+{
+  "connectbymail": "Connexion avec mail",
+  "connectbytel": "Connexion avec téléphone",
+  "connectbygoogle": "Connexion avec Google",
+  "connectbyapple": "Connexion avec Apple",
+  "forgottenlogins":"Informations de connexion oubliées? ",
+  "askhelp":"Obtenez de l’aide",
+  "termsAndConditions": "En vous inscrivant, vous acceptez nos ",
+  "termsLink": "Conditions Générales d'Utilisation. ",
+  "privacyPolicy": "Découvrez comment on utilise vos données en lisant notre ",
+  "privacyLink": "Politique de Confidentialité."
+}

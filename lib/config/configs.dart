@@ -5,3 +5,5 @@ export 'utils.dart';
 export 'enums/enums.dart';
 export 'constants_event.dart';
 export 'animation/noanimationpage.dart';
+export 'styles.dart';
+export 'localizations.dart';

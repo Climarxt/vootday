@@ -20,40 +20,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final goRouter = GoRouter.of(context);
-        goRouter.go('/home');
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 62,
-          title: Text("Calendar",
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium!
-                  .copyWith(color: Colors.black)),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              final goRouter = GoRouter.of(context);
-              goRouter.go('/home');
-            },
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 62,
+        title: Text("Calendar",
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            final goRouter = GoRouter.of(context);
+            goRouter.go('/home');
+          },
         ),
-        body: ListView(
-          children: [
-            buildSectionTitle('This Week'),
-            buildListview(),
-            buildSectionTitle('Coming Soon'),
-            buildListview(),
-            buildSectionTitle('Past Event'),
-            buildListview(),
-          ],
-        ),
+      ),
+      body: ListView(
+        children: [
+          buildSectionTitle('This Week'),
+          buildListview(),
+          buildSectionTitle('Coming Soon'),
+          buildListview(),
+          buildSectionTitle('Past Event'),
+          buildListview(),
+        ],
       ),
     );
   }

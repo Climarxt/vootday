@@ -26,7 +26,7 @@ class MosaiqueEventCard extends StatelessWidget {
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Stack(
             children: [
@@ -64,7 +64,7 @@ class MosaiqueEventCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             image: DecorationImage(
               image: AssetImage(imageUrl),
               fit: BoxFit.cover,
@@ -73,7 +73,7 @@ class MosaiqueEventCard extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: const Alignment(0, 0.33),

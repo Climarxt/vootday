@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-class MosaiqueExplorerCard extends StatelessWidget {
+class MosaiqueProfileCard extends StatelessWidget {
   final String imageUrl;
 
-  const MosaiqueExplorerCard({
+  const MosaiqueProfileCard(
+    BuildContext context, {
     Key? key,
     required this.imageUrl,
   }) : super(key: key);
@@ -21,16 +22,11 @@ class MosaiqueExplorerCard extends StatelessWidget {
         height: size.height * 0.6,
         width: size.width,
         child: Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            children: [
-              _buildPost(imageUrl),
-            ],
-          ),
-        ),
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: _buildPost(imageUrl)),
       ),
     );
   }
@@ -44,6 +40,19 @@ class MosaiqueExplorerCard extends StatelessWidget {
             image: DecorationImage(
               image: AssetImage(imageUrl),
               fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: const Alignment(0, 0.33),
+              colors: [
+                Colors.black.withOpacity(0.8),
+                Colors.transparent,
+              ],
             ),
           ),
         ),

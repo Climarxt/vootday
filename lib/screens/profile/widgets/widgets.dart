@@ -1,10 +1,10 @@
 export 'profile_stats.dart';
-export 'profile_button.dart';
+export '../old/profile_button.dart';
 export 'profile_userbio.dart';
-export 'profile_appbar.dart';
-export 'profile_info.dart';
-export 'gridview.dart';
-export 'listview.dart';
+export '../old/profile_appbar.dart';
+export '../old/profile_info.dart';
+export '../old/gridview.dart';
+export '../profile_tab2.dart';
 export 'button.dart';
 export 'section_buttons.dart';
 export 'section_location.dart';

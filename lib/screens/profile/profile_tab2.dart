@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import '../bloc/profile_bloc.dart';
-import 'widgets.dart';
+import 'bloc/profile_bloc.dart';
+import 'widgets/widgets.dart';
 
-class PersistentListView extends StatefulWidget {
+class ProfileTab2 extends StatefulWidget {
   final BuildContext context;
   final ProfileState state;
 
-  const PersistentListView(
+  const ProfileTab2(
       {super.key, required this.context, required this.state});
 
   @override
   // ignore: library_private_types_in_public_api
-  _PersistentListViewState createState() => _PersistentListViewState();
+  _ProfileTab2State createState() => _ProfileTab2State();
 }
 
-class _PersistentListViewState extends State<PersistentListView>
+class _ProfileTab2State extends State<ProfileTab2>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -30,17 +30,14 @@ Widget _buildListView(BuildContext context, ProfileState state) {
   return SingleChildScrollView(
     physics: const ClampingScrollPhysics(),
     // padding: const EdgeInsets.only(top: 100.0),
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ButtonsSection(state: state),
-          LocationSection(location: state.user.username),
-          const SocialNetSection(),
-          AboutSection(state: state),
-        ],
-      ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ButtonsSection(state: state),
+        LocationSection(location: state.user.username),
+        const SocialNetSection(),
+        AboutSection(state: state),
+      ],
     ),
   );
 }

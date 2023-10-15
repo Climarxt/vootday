@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 
-class MosaiqueCalendarCard extends StatelessWidget {
+class MosaiqueCollectionCard extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final String description;
-
-  const MosaiqueCalendarCard({
+  const MosaiqueCollectionCard(BuildContext context, {
     Key? key,
     required this.imageUrl,
     required this.title,
-    required this.description,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return _buildCard(context, imageUrl, title, description);
+    return _buildCard(context, imageUrl, title);
   }
 
-  Widget _buildCard(BuildContext context, String imageUrl, String title, String description) {
+  Widget _buildCard(BuildContext context, String imageUrl, String title) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       child: SizedBox(
-        width: size.width * 0.6,
+        height: size.height * 0.6,
+        width: size.width,
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -31,7 +29,7 @@ class MosaiqueCalendarCard extends StatelessWidget {
             children: [
               _buildPost(imageUrl),
               Positioned(
-                bottom: 10,
+                bottom: 20,
                 left: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,11 +41,6 @@ class MosaiqueCalendarCard extends StatelessWidget {
                           .headlineSmall!
                           .copyWith(color: Colors.white),
                     ),
-                    Text(description,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge!
-                            .copyWith(color: Colors.white))
                   ],
                 ),
               ),

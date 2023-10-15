@@ -20,16 +20,22 @@ class ProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Show 'Edit Profile' button for the current user, otherwise show 'Follow/Unfollow' button.
-    return isCurrentUser ? buildEditProfileButton(context) : buildFollowButton(context);
+    return isCurrentUser
+        ? buildEditProfileButton(context)
+        : buildFollowButton(context);
   }
 
   // Builds the 'Edit Profile' button.
   TextButton buildEditProfileButton(BuildContext context) {
     return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: couleurBleuClair1,
-      ),
       onPressed: () => navigateToEditProfile(context),
+      style: TextButton.styleFrom(
+        backgroundColor: couleurBleuClair2,
+        shape: RoundedRectangleBorder(
+          // Ajoute des bords arrondis
+          borderRadius: BorderRadius.circular(18), // Rayon des bords arrondis
+        ),
+      ),
       child: const Text(
         'Edit Profile',
         style: TextStyle(fontSize: 16.0, color: Colors.white),
@@ -46,7 +52,7 @@ class ProfileButton extends StatelessWidget {
   TextButton buildFollowButton(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        backgroundColor: isFollowing ? Colors.grey[300] : couleurBleuClair1,
+        backgroundColor: isFollowing ? Colors.grey[300] : couleurBleuClair2,
       ),
       onPressed: () => toggleFollowStatus(context),
       child: Text(

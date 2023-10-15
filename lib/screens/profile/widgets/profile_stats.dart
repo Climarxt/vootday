@@ -31,19 +31,21 @@ class ProfileStats extends StatelessWidget {
 
   Row buildStatisticsRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Stats(count: posts, label: 'posts'),
-        Stats(count: followers, label: 'followers'),
-        Stats(count: following, label: 'following'),
-        Stats(count: 4, label: 'stars'),
+        Expanded(
+          child: Stats(count: followers, label: 'FOLLOWERS'),
+        ),
+        Stats(count: posts, label: 'OOTD'),
+        const Expanded(
+          child: Stats(count: 3532, label: 'VOOTD'),
+        ),
       ],
     );
   }
 
   Padding buildProfileButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 134.0),
       child: ProfileButton(
         isCurrentUser: isCurrentUser,
         isFollowing: isFollowing,
@@ -51,4 +53,3 @@ class ProfileStats extends StatelessWidget {
     );
   }
 }
-

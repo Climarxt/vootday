@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/widgets.dart';
 import '../bloc/profile_bloc.dart';
-import 'widgets.dart';
+import '../widgets/widgets.dart';
 
 class ProfileInfo extends StatelessWidget {
   final ProfileState state;

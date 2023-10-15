@@ -1,10 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 // ignore: must_be_immutable
-class Tabbar2itemsNotif extends StatelessWidget
-    implements PreferredSizeWidget {
+class Tabbar2itemsNotif extends StatelessWidget implements PreferredSizeWidget {
   late TabController tabController;
   final BuildContext context;
   Tabbar2itemsNotif({
@@ -30,6 +30,13 @@ class Tabbar2itemsNotif extends StatelessWidget
         color: Colors.black,
       ),
       elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          final goRouter = GoRouter.of(context);
+          goRouter.go('/profile');
+        },
+      ),
       title: Column(
         children: [
           TabBar(

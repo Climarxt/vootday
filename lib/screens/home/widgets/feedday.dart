@@ -37,14 +37,13 @@ class _FeedDayState extends State<FeedDay>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => GoRouter.of(context).go('/home/calendar'),
-        label: Text(
-          AppLocalizations.of(context)!.translate('calendar'),
+        label: Text("Test",
           style: Theme.of(context)
               .textTheme
               .headlineMedium!
               .copyWith(color: white),
         ),
-        backgroundColor: couleurBleuClair2,
+        backgroundColor: couleurJauneOrange,
       ),
     );
   }

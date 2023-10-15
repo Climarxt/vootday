@@ -1,3 +1,4 @@
+import 'package:bootdv2/widgets/appbar/appbar_title_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -7,13 +8,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: const BackButton(
-          color: Colors.black,
-        ),
-      ),
+      appBar: const AppBarProfile(title: "Settings"),
       body: ListView(
         children: [
           buildSettingsCategory(
@@ -67,7 +62,10 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: Colors.black),
           ),
         ),
         ...settingsItems,

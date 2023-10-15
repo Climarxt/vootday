@@ -1,9 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class AppBarTitle extends StatelessWidget implements PreferredSizeWidget {
+class AppBarProfile extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
-  const AppBarTitle({super.key, required this.title});
+  const AppBarProfile({super.key, required this.title});
 
   @override
   Size get preferredSize => Size.fromHeight(62);
@@ -21,6 +22,13 @@ class AppBarTitle extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 62,
       backgroundColor: Colors.white,
       elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {
+          final goRouter = GoRouter.of(context);
+          goRouter.go('/profile');
+        },
+      ),
     );
   }
 }

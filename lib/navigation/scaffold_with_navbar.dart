@@ -22,9 +22,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar'),
           BottomNavigationBarItem(icon: Icon(Icons.swipe), label: 'Swipe'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Notifications'),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Profile')
         ],
         backgroundColor: white,

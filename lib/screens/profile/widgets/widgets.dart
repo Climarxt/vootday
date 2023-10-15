@@ -1,5 +1,5 @@
 export 'profile_stats.dart';
-export '../old/profile_button.dart';
+export 'profile_button.dart';
 export 'profile_userbio.dart';
 export '../old/profile_appbar.dart';
 export '../old/profile_info.dart';

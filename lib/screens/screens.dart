@@ -12,5 +12,5 @@ export 'add/add_screen.dart';
 export 'notifications/notifications_screen.dart';
 export 'message/message_screen.dart';
 export 'profile/profile_screen.dart';
-export 'profile/old/profilesettings_screen.dart';
+export 'profile/profilesettings_screen.dart';
 export 'createpost/createpost_screen.dart';

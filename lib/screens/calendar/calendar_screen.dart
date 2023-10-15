@@ -1,7 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/widgets/cards/mosaique_calendar_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -24,20 +23,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 62,
-        title: Text(AppLocalizations.of(context)!.translate('calendar'),
+        title: Text(AppLocalizations.of(context)!.translate('event'),
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium!
                 .copyWith(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            final goRouter = GoRouter.of(context);
-            goRouter.go('/home');
-          },
-        ),
       ),
       body: ListView(
         children: [

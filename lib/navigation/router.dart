@@ -3,8 +3,8 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/profileedit_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
-import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -70,14 +70,18 @@ GoRouter createRouter(BuildContext context) {
           child: SignupScreen(),
         ),
       ),
-      // Signup
+      // Post
       GoRoute(
         path: '/post',
         builder: (BuildContext context, GoRouterState state) =>
             BlocProvider<SignupCubit>(
           create: (context) =>
               SignupCubit(authRepository: context.read<AuthRepository>()),
-          child: PostScreen(title: 'Title', imageUrl: '', profileUrl: '',),
+          child: PostScreen(
+            title: 'Title',
+            imageUrl: '',
+            profileUrl: '',
+          ),
         ),
       ),
       // StatefulShellBranch
@@ -92,10 +96,6 @@ GoRouter createRouter(BuildContext context) {
               title = "Home";
               actionButton = null;
               break;
-            case '/home/calendar':
-              title = "Calendar";
-              actionButton = null;
-              break;
             case '/swipe':
               title = "Swipe";
               actionButton = null;
@@ -104,7 +104,7 @@ GoRouter createRouter(BuildContext context) {
               title = "Search";
               actionButton = null;
               break;
-            case '/notifications':
+            /* case '/notifications':
               title = "Notifications";
               actionButton = ActionButton(
                   context: context,
@@ -115,6 +115,7 @@ GoRouter createRouter(BuildContext context) {
               title = "Message";
               actionButton = null;
               break;
+              */
             case '/profile':
               title = "Ctbast";
               actionButton = null;
@@ -138,7 +139,8 @@ GoRouter createRouter(BuildContext context) {
                     state.uri.toString().startsWith('/profile') ||
                     state.uri.toString().startsWith('/swipe') ||
                     state.uri.toString().startsWith('/search') ||
-                    state.uri.toString().startsWith('/notifications')
+                    state.uri.toString().startsWith('/notifications') ||
+                    state.uri.toString().startsWith('/calendar')
                 ? null
                 : AppBar(
                     // If the current location is '/** */', display a leading IconButton
@@ -177,12 +179,28 @@ GoRouter createRouter(BuildContext context) {
                 },
                 routes: <RouteBase>[
                   GoRoute(
-                    path: 'calendar',
+                    path: 'post',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      return const MaterialPage(child: CalendarScreen());
+                      return const MaterialPage(
+                          child: PostScreen(
+                        title: 'Titre',
+                        imageUrl: '',
+                        profileUrl: '',
+                      ));
                     },
                   ),
                 ],
+              ),
+            ],
+          ),
+          // Calendar
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/calendar',
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return NoAnimationPage(child: const CalendarScreen());
+                },
               ),
             ],
           ),
@@ -226,17 +244,6 @@ GoRouter createRouter(BuildContext context) {
             ],
           ),
           */
-          // Notification
-          StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/notifications',
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const NotificationScreen());
-                },
-              ),
-            ],
-          ),
           // Profile
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -255,9 +262,21 @@ GoRouter createRouter(BuildContext context) {
                 ),
                 routes: <RouteBase>[
                   GoRoute(
+                    path: 'editprofile',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return NoAnimationPage(child: const EditProfileScreen());
+                    },
+                  ),
+                  GoRoute(
                     path: 'settings',
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       return NoAnimationPage(child: const SettingsScreen());
+                    },
+                  ),
+                  GoRoute(
+                    path: 'notifications',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return NoAnimationPage(child: const NotificationScreen());
                     },
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:bootdv2/widgets/appbar/appbar_title_profile.dart';
 import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        appBar: const AppBarProfile(title: "Edit profile"),
         body: SingleChildScrollView(
           child: Column(
             children: [

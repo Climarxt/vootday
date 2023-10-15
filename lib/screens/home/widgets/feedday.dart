@@ -1,6 +1,8 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/import/dummy.dart';
 import 'package:bootdv2/widgets/cards/feed_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FeedDay extends StatefulWidget {
   const FeedDay({Key? key}) : super(key: key);
@@ -27,10 +29,23 @@ class _FeedDayState extends State<FeedDay>
 
   Widget _buildTabContent(context) {
     final Size size = MediaQuery.of(context).size;
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: data.length + 1,
-      itemBuilder: (context, index) => _buildItem(context, index, size),
+    return Scaffold(
+      body: ListView.builder(
+        shrinkWrap: true,
+        itemCount: data.length + 1,
+        itemBuilder: (context, index) => _buildItem(context, index, size),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => GoRouter.of(context).go('/home/calendar'),
+        label: Text(
+          AppLocalizations.of(context)!.translate('calendar'),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: white),
+        ),
+        backgroundColor: couleurBleuClair2,
+      ),
     );
   }
 

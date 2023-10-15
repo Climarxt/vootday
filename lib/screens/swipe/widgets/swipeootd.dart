@@ -16,14 +16,11 @@ class SwipeOOTD extends StatelessWidget {
   }
 
   Widget _buildDefaultState(Size size) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildCard('assets/images/ITG1_1.jpg','assets/images/profile1.jpg', 'ct.bast'),
-          const Divider(),
-          _buildCard('assets/images/ITG1_2.jpg','assets/images/profile2.jpg', 'user.test'),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildCard('assets/images/ITG1_1.jpg','assets/images/profile1.jpg', 'ct.bast'),
+        _buildCard('assets/images/ITG1_2.jpg','assets/images/profile2.jpg', 'user.test'),
+      ],
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
+import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 import 'package:bootdv2/widgets/widgets.dart';
@@ -67,6 +68,16 @@ GoRouter createRouter(BuildContext context) {
           create: (context) =>
               SignupCubit(authRepository: context.read<AuthRepository>()),
           child: SignupScreen(),
+        ),
+      ),
+      // Signup
+      GoRoute(
+        path: '/post',
+        builder: (BuildContext context, GoRouterState state) =>
+            BlocProvider<SignupCubit>(
+          create: (context) =>
+              SignupCubit(authRepository: context.read<AuthRepository>()),
+          child: PostScreen(title: 'Title', imageUrl: '', profileUrl: '',),
         ),
       ),
       // StatefulShellBranch

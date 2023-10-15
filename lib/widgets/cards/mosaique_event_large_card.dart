@@ -1,4 +1,6 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MosaiqueEventLargeCard extends StatelessWidget {
   final String imageUrl;
@@ -14,43 +16,58 @@ class MosaiqueEventLargeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildCard(context, imageUrl, title, description);
-  }
-
-  Widget _buildCard(BuildContext context, String imageUrl, String title, String description) {
     Size size = MediaQuery.of(context).size;
+    double cardWidth = size.width * 0.6;
     return GestureDetector(
       child: SizedBox(
-        width: size.width * 0.6,
+        width: cardWidth,
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
+          clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
               _buildPost(imageUrl),
+              /*
               Positioned(
-                bottom: 10,
-                left: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                top: 5,
+                right: -1,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Text(
-                      title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall!
-                          .copyWith(color: Colors.white),
+                    Container(
+                      height: 72,
+                      width: 72,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        image: DecorationImage(
+                          image: AssetImage("assets/icons/bookmark_horiz.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                    Text(description,
+                    /*
+                    const FaIcon(
+                      FontAwesomeIcons.solidBookmark,
+                      color: couleurBleuClair2,
+                      size: 50,
+                    ),
+                    */
+                    Center(
+                      child: Text(
+                        '#17',
                         style: Theme.of(context)
                             .textTheme
-                            .bodyLarge!
-                            .copyWith(color: Colors.white))
+                            .titleSmall!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),
+              */
             ],
           ),
         ),
@@ -59,31 +76,13 @@ class MosaiqueEventLargeCard extends StatelessWidget {
   }
 
   Widget _buildPost(String imageUrl) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            image: DecorationImage(
-              image: AssetImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(imageUrl),
+          fit: BoxFit.cover,
         ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: const Alignment(0, 0.5),
-              colors: [
-                Colors.black.withOpacity(0.3),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

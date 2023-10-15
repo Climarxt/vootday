@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PostScreen extends StatefulWidget {
-  final String title, imageUrl, profileUrl;
 
   const PostScreen({
     Key? key,
-    required this.title,
-    required this.imageUrl,
-    required this.profileUrl,
   }) : super(key: key);
 
   @override
@@ -36,7 +32,7 @@ class _PostScreenState extends State<PostScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset(
-                  widget.imageUrl,
+                  "assets/images/postImage.jpg",
                   width: size.width,
                   fit: BoxFit.fitWidth,
                 ),

@@ -72,19 +72,6 @@ class EventNewCard extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: const Alignment(0, 0.33),
-              colors: [
-                Colors.black.withOpacity(0.3),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }

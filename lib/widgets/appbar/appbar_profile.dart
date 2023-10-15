@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class AppBarProfile extends StatelessWidget implements PreferredSizeWidget {
+class SliverAppBarProfile extends StatelessWidget {
   final String title;
-  const AppBarProfile({super.key, required this.title});
-
-  @override
-  Size get preferredSize => const Size.fromHeight(62);
+  const SliverAppBarProfile({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return SliverAppBar(
+      pinned:
+          true, // Set to true if you want the app bar to stay visible when scrolling
+      expandedHeight: 62.0,
       centerTitle: true,
+      backgroundColor: Colors.white,
+      elevation: 0,
       title: Text(
         title,
         style: Theme.of(context)
@@ -19,9 +21,6 @@ class AppBarProfile extends StatelessWidget implements PreferredSizeWidget {
             .headlineMedium!
             .copyWith(color: Colors.black),
       ),
-      toolbarHeight: 62,
-      backgroundColor: Colors.white,
-      elevation: 0,
       actions: [
         IconButton(
           onPressed: () => GoRouter.of(context).go('/profile/notifications'),

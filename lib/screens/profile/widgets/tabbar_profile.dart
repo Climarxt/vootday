@@ -3,17 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 // ignore: must_be_immutable
-class TabbarProfile extends StatelessWidget implements PreferredSizeWidget {
-  late TabController tabController;
-  final BuildContext context;
-  TabbarProfile({
+class TabbarProfile extends StatelessWidget {
+  const TabbarProfile({
     Key? key,
-    required this.tabController,
-    required this.context,
   }) : super(key: key);
-
-  @override
-  Size get preferredSize => const Size.fromHeight(62);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +26,6 @@ class TabbarProfile extends StatelessWidget implements PreferredSizeWidget {
         topLeftRadius: 100,
         topRightRadius: 100,
       ),
-      controller: tabController,
       labelStyle: Theme.of(context).textTheme.headlineMedium!,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.black,

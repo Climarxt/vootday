@@ -77,13 +77,10 @@ GoRouter createRouter(BuildContext context) {
             BlocProvider<SignupCubit>(
           create: (context) =>
               SignupCubit(authRepository: context.read<AuthRepository>()),
-          child: PostScreen(
-            title: 'Title',
-            imageUrl: '',
-            profileUrl: '',
-          ),
+          child: PostScreen(),
         ),
       ),
+
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
@@ -181,12 +178,7 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'post',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      return const MaterialPage(
-                          child: PostScreen(
-                        title: 'Titre',
-                        imageUrl: '',
-                        profileUrl: '',
-                      ));
+                      return const MaterialPage(child: PostScreen());
                     },
                   ),
                 ],

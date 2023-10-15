@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MosaiqueEventCard extends StatelessWidget {
+class MosaiqueEventLargeCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
 
-  const MosaiqueEventCard(BuildContext context, {
+  const MosaiqueEventLargeCard({
     Key? key,
     required this.imageUrl,
     required this.title,
@@ -21,8 +21,7 @@ class MosaiqueEventCard extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       child: SizedBox(
-        height: size.height * 0.6,
-        width: size.width,
+        width: size.width * 0.6,
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -76,9 +75,9 @@ class MosaiqueEventCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
-              end: const Alignment(0, 0.33),
+              end: const Alignment(0, 0.5),
               colors: [
-                Colors.black.withOpacity(0.8),
+                Colors.black.withOpacity(0.3),
                 Colors.transparent,
               ],
             ),

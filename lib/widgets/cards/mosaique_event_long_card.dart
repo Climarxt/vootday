@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MosaiqueCalendarCard extends StatelessWidget {
+class MosaiqueEventLongCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
 
-  const MosaiqueCalendarCard({
+  const MosaiqueEventLongCard(BuildContext context, {
     Key? key,
     required this.imageUrl,
     required this.title,
@@ -21,7 +21,8 @@ class MosaiqueCalendarCard extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       child: SizedBox(
-        width: size.width * 0.6,
+        height: size.height * 0.6,
+        width: size.width,
         child: Card(
           elevation: 2,
           shape: RoundedRectangleBorder(

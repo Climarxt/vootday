@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/cards/mosaique_calendar_card.dart';
+import 'package:bootdv2/widgets/cards/event_new_card.dart';
+import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -18,8 +19,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
     'assets/images/Obey.png',
     'assets/images/Sandro.png',
   ];
+
+  List<String> imageList1 = [
+    'assets/images/Sandro.png',
+    'assets/images/Carhartt.png',
+    'assets/images/Stussy.png',
+    'assets/images/postImage2.jpg',
+    'assets/images/ITG1_2.jpg',
+    'assets/images/Obey.png',
+  ];
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 62,
@@ -31,17 +42,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          buildSectionTitle(AppLocalizations.of(context)!.translate('new')),
+          const Expanded(
+            flex: 1,
+            child: EventNewCard(
+                imageUrl: "assets/images/Obey.png",
+                title: "Title",
+                description: "Description"),
+          ),
+          const SizedBox(height: 8),
           buildSectionTitle(
-              AppLocalizations.of(context)!.translate('thisweek')),
-          buildListview(),
+            AppLocalizations.of(context)!.translate('comingsoon'),
+          ),
+          buildListview(size),
+          const SizedBox(height: 8),
           buildSectionTitle(
-              AppLocalizations.of(context)!.translate('comingsoon')),
-          buildListview(),
-          buildSectionTitle(
-              AppLocalizations.of(context)!.translate('pastevents')),
-          buildListview(),
+            AppLocalizations.of(context)!.translate('pastevents'),
+          ),
+          buildListview1(size),
         ],
       ),
     );
@@ -60,20 +81,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget buildListview() {
+  Widget buildListview(Size size) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        height: 196,
+      child: SizedBox(
+        height: size.height * 0.2,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: imageList.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: MosaiqueCalendarCard(
+              child: MosaiqueEventLargeCard(
                 imageUrl: imageList[index],
+                title: 'Title',
+                description: 'Description',
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildListview1(Size size) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: SizedBox(
+        height: size.height * 0.2,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: imageList.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: MosaiqueEventLargeCard(
+                imageUrl: imageList1[index],
                 title: 'Title',
                 description: 'Description',
               ),

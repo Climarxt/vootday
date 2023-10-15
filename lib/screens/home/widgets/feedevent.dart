@@ -1,7 +1,5 @@
-import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/cards/mosaique_event_card.dart';
+import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class FeedEvent extends StatefulWidget {
   const FeedEvent({super.key});
@@ -32,7 +30,7 @@ class _FeedEventState extends State<FeedEvent> {
         ),
         itemCount: imageList.length,
         itemBuilder: (context, index) {
-          return MosaiqueEventCard(
+          return MosaiqueEventLongCard(
             context,
             imageUrl: imageList[index],
             title: 'Title',
@@ -40,18 +38,6 @@ class _FeedEventState extends State<FeedEvent> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => GoRouter.of(context).go('/home/calendar'),
-        label: Text(
-          AppLocalizations.of(context)!.translate('calendar'),
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(color: white),
-        ),
-        backgroundColor: couleurBleuClair2,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

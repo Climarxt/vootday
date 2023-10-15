@@ -167,21 +167,12 @@ GoRouter createRouter(BuildContext context) {
         branches: <StatefulShellBranch>[
           // Home
           StatefulShellBranch(
-            // navigatorKey: _sectionANavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return NoAnimationPage(child: const HomeScreen());
                 },
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: 'post',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      return const MaterialPage(child: PostScreen());
-                    },
-                  ),
-                ],
               ),
             ],
           ),

@@ -36,7 +36,7 @@ class _FeedDayState extends State<FeedDay>
         itemBuilder: (context, index) => _buildItem(context, index, size),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => GoRouter.of(context).go('/home/post'),
+        onPressed: () => GoRouter.of(context).push('/post'),
         label: Text("Test",
           style: Theme.of(context)
               .textTheme

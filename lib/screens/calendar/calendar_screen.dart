@@ -55,12 +55,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           const SizedBox(height: 8),
           buildSectionTitle(
-            AppLocalizations.of(context)!.translate('comingsoon'),
+            AppLocalizations.of(context)!.translate('thisweek'),
           ),
           buildListview(size),
           const SizedBox(height: 8),
           buildSectionTitle(
-            AppLocalizations.of(context)!.translate('pastevents'),
+            AppLocalizations.of(context)!.translate('comingsoon'),
           ),
           buildListview1(size),
         ],

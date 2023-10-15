@@ -101,18 +101,6 @@ GoRouter createRouter(BuildContext context) {
               title = "Search";
               actionButton = null;
               break;
-            /* case '/notifications':
-              title = "Notifications";
-              actionButton = ActionButton(
-                  context: context,
-                  icon: Icons.message,
-                  route: '/notifications/message');
-              break;
-            case '/notifications/message':
-              title = "Message";
-              actionButton = null;
-              break;
-              */
             case '/profile':
               title = "Ctbast";
               actionButton = null;

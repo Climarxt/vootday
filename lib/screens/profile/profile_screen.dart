@@ -44,26 +44,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
       return DefaultTabController(
         length: 3,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBarProfile(title: state.user.username),
-            SliverToBoxAdapter(child: ProfileHeader(state: state)),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: ProfileTabbar(
-                child: Container(
-                  color: Colors.white,
-                  child: const TabbarProfile(),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBarProfile(title: state.user.username),
+              SliverToBoxAdapter(child: ProfileHeader(state: state)),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: ProfileTabbar(
+                  child: Container(
+                    color: Colors.white,
+                    child: const TabbarProfile(),
+                  ),
                 ),
               ),
-            ),
-          ],
-          body: TabBarView(
-            children: [
-              const ProfileTab1(),
-              ProfileTab2(context: context, state: state),
-              const ProfileTab3(),
             ],
+            body: TabBarView(
+              children: [
+                const ProfileTab1(),
+                ProfileTab2(context: context, state: state),
+                const ProfileTab3(),
+              ],
+            ),
           ),
         ),
       );

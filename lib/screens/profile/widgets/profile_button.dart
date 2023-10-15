@@ -52,15 +52,19 @@ class ProfileButton extends StatelessWidget {
   TextButton buildFollowButton(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        backgroundColor: isFollowing ? Colors.grey[300] : couleurBleuClair2,
+        backgroundColor: couleurBleuClair2,
+        shape: RoundedRectangleBorder(
+          // Ajoute des bords arrondis
+          borderRadius: BorderRadius.circular(18), // Rayon des bords arrondis
+        ),
       ),
       onPressed: () => toggleFollowStatus(context),
       child: Text(
         isFollowing ? 'Unfollow' : 'Follow',
-        style: TextStyle(
-          fontSize: 16.0,
-          color: isFollowing ? Colors.black : Colors.white,
-        ),
+        style: Theme.of(context)
+                .textTheme
+                .headlineSmall!
+                .copyWith(color: white),
       ),
     );
   }

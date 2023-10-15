@@ -11,11 +11,11 @@ class FeedEvent extends StatefulWidget {
 class _FeedEventState extends State<FeedEvent> {
   List<String> imageList = [
     'assets/images/ITG1_2.jpg',
-    'assets/images/Carhartt.png',
-    'assets/images/Obey.png',
+    'assets/images/ITG1_1.jpg',
+    'assets/images/postImage.jpg',
     'assets/images/postImage2.jpg',
-    'assets/images/Sandro.png',
-    'assets/images/Stussy.png',
+    'assets/images/9.jpg',
+    'assets/images/10.jpg',
   ];
 
   @override

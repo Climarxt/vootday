@@ -30,6 +30,7 @@ class ProfileButton extends StatelessWidget {
     return TextButton(
       onPressed: () => navigateToEditProfile(context),
       style: TextButton.styleFrom(
+        minimumSize: Size.zero,
         backgroundColor: couleurBleuClair2,
         shape: RoundedRectangleBorder(
           // Ajoute des bords arrondis
@@ -61,10 +62,8 @@ class ProfileButton extends StatelessWidget {
       onPressed: () => toggleFollowStatus(context),
       child: Text(
         isFollowing ? 'Unfollow' : 'Follow',
-        style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: white),
+        style:
+            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
       ),
     );
   }

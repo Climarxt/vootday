@@ -31,6 +31,7 @@ class MosaiqueEventLongCard extends StatelessWidget {
           child: Stack(
             children: [
               _buildPost(imageUrl),
+              /*
               Positioned(
                 bottom: 10,
                 left: 10,
@@ -52,6 +53,7 @@ class MosaiqueEventLongCard extends StatelessWidget {
                   ],
                 ),
               ),
+              */
             ],
           ),
         ),

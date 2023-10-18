@@ -25,11 +25,18 @@ class _SliverAppBarProfileState extends State<SliverAppBarProfile> {
             .headlineMedium!
             .copyWith(color: Colors.black),
       ),
+      leading: IconButton(
+          onPressed: () => GoRouter.of(context).go('/profile/notifications'),
+          icon: const Icon(
+            Icons.notifications,
+            color: Colors.black,
+          ),
+        ),
       actions: [
         IconButton(
           onPressed: () => GoRouter.of(context).go('/profile/notifications'),
           icon: const Icon(
-            Icons.notifications,
+            Icons.add_box,
             color: Colors.black,
           ),
         ),

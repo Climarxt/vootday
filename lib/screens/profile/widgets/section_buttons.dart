@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import '../bloc/profile_bloc.dart';
 import 'widgets.dart';
@@ -9,10 +10,10 @@ class ButtonsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildButtonsSection(state);
+    return _buildButtonsSection(state,context);
   }
 
-  Widget _buildButtonsSection(ProfileState state) {
+  Widget _buildButtonsSection(ProfileState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 4.0, 0, 14),
       child: Column(
@@ -22,8 +23,8 @@ class ButtonsSection extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          _buildTwoButtons(state.user.following, "ABONNEMENTS",
-              state.user.followers, "ABONNÉS"),
+          _buildTwoButtons(state.user.following, AppLocalizations.of(context)!.translate('followingsCap'),
+              state.user.followers, AppLocalizations.of(context)!.translate('followersCap')),
         ],
       ),
     );

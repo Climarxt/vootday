@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import '/screens/profile/widgets/widgets.dart';
 
@@ -22,18 +23,18 @@ class ProfileStats extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        buildStatisticsRow(),
+        buildStatisticsRow(context),
         const SizedBox(height: 8.0),
         buildProfileButton(),
       ],
     );
   }
 
-  Row buildStatisticsRow() {
+  Row buildStatisticsRow(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: Stats(count: followers, label: 'FOLLOWERS'),
+          child: Stats(count: followers, label: AppLocalizations.of(context)!.translate('followersCap')),
         ),
         Stats(count: posts, label: 'OOTD'),
         const Expanded(

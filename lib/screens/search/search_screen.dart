@@ -44,7 +44,7 @@ class _SearchScreenState extends State<SearchScreen>
             onPressed: () {
               controller.openView();
             },
-            label: Text('Search',
+            label: Text(AppLocalizations.of(context)!.translate('search'),
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium!

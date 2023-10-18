@@ -14,13 +14,13 @@ class Tabbar2itemsSearch extends StatelessWidget
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(62);
+  Size get preferredSize => const Size.fromHeight(62);
 
   @override
   Widget build(BuildContext context) {
-    List<Tab> tabs = const [
-      Tab(child: Text("Following")),
-      Tab(child: Text("Explorer")),
+    List<Tab> tabs = [
+      Tab(child: Text(AppLocalizations.of(context)!.translate('following'))),
+      const Tab(child: Text("Explorer")),
     ];
     return AppBar(
       toolbarHeight: 62,

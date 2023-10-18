@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import '../bloc/profile_bloc.dart';
 
@@ -7,28 +8,25 @@ class AboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildAboutSection(state);
+    return _buildAboutSection(state,context);
   }
 
-  Widget _buildAboutSection(ProfileState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "A propos",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Text(
-            state.user.bio,
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
+  Widget _buildAboutSection(ProfileState state, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.translate('about'),
+          style: Theme.of(context).textTheme.headlineSmall!,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Text(
+          state.user.bio,
+          style: Theme.of(context).textTheme.bodyLarge!,
+        ),
+      ],
     );
   }
 }

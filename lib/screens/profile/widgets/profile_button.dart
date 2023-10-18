@@ -37,9 +37,9 @@ class ProfileButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(18), // Rayon des bords arrondis
         ),
       ),
-      child: const Text(
-        'Edit Profile',
-        style: TextStyle(fontSize: 16.0, color: Colors.white),
+      child: Text(
+        AppLocalizations.of(context)!.translate('editProfile'),
+        style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
       ),
     );
   }
@@ -61,7 +61,7 @@ class ProfileButton extends StatelessWidget {
       ),
       onPressed: () => toggleFollowStatus(context),
       child: Text(
-        isFollowing ? 'Unfollow' : 'Follow',
+        isFollowing ? AppLocalizations.of(context)!.translate('unfollow'): AppLocalizations.of(context)!.translate('follow'),
         style:
             Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
       ),

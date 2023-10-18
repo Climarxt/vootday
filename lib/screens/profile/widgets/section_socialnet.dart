@@ -7,25 +7,25 @@ class SocialNetSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildSocialNetworksSection();
+    return _buildSocialNetworksSection(context);
   }
 
-  Widget _buildSocialNetworksSection() {
+  Widget _buildSocialNetworksSection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.only(bottom: 18.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Réseaux",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+           Text(
+            AppLocalizations.of(context)!.translate('networks'),
+            style: Theme.of(context).textTheme.headlineSmall!,
           ),
           const SizedBox(
-            height: 8,
+            height: 6,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
+            children: [
               FaIcon(FontAwesomeIcons.facebook, color: grey, size: 20),
               FaIcon(FontAwesomeIcons.instagram, color: grey, size: 20),
               FaIcon(FontAwesomeIcons.tiktok, color: grey, size: 20),

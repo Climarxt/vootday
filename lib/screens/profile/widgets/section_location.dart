@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
 class LocationSection extends StatelessWidget {
@@ -7,21 +8,21 @@ class LocationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildLocationSection();
+    return _buildLocationSection(context);
   }
 
-  Widget _buildLocationSection() {
+  Widget _buildLocationSection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.only(bottom: 18.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Localisation",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.translate('location'),
+            style: Theme.of(context).textTheme.headlineSmall!,
           ),
           const SizedBox(
-            height: 8,
+            height: 6,
           ),
           Row(
             children: [

@@ -18,5 +18,15 @@
   "calendar": "Calendrier",
   "thisweek": "Cette semaine",
   "comingsoon": "Prochainement",
-  "new": "Nouveauté"
+  "new": "Nouveauté",
+  "followersCap": "ABONNÉS",
+  "search": "Recherche",
+  "following": "Abonnement",
+  "followingsCap": "ABONNEMENTS",
+  "editProfile": "Modifier",
+  "follow": "Suivre",
+  "unfollow": "Ne plus suivre",
+  "about": "À propos",
+  "networks": "Réseaux",
+  "location": "Localisation"
 }

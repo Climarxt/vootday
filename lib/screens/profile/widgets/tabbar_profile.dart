@@ -13,7 +13,7 @@ class TabbarProfile extends StatelessWidget {
     List<Tab> tabs = const [
       Tab(icon: Icon(Icons.border_all)),
       Tab(icon: Icon(Icons.view_list)),
-      Tab(icon: Icon(Icons.bookmark)),
+      Tab(icon: Icon(Icons.bookmark_border)),
     ];
     return TabBar(
       indicatorSize: TabBarIndicatorSize.tab,

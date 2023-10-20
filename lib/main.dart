@@ -28,9 +28,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark));
+        statusBarBrightness: Brightness.dark,
+        systemStatusBarContrastEnforced: false));
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>(

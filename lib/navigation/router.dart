@@ -75,9 +75,14 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         path: '/post',
         builder: (BuildContext context, GoRouterState state) =>
-            BlocProvider<SignupCubit>(
-          create: (context) =>
-              SignupCubit(authRepository: context.read<AuthRepository>()),
+            BlocProvider<ProfileBloc>(
+          create: (_) => ProfileBloc(
+            authBloc: context.read<AuthBloc>(),
+            userRepository: context.read<UserRepository>(),
+            postRepository: context.read<PostRepository>(),
+          )..add(
+              ProfileLoadUser(userId: authBloc.state.user!.uid),
+            ),
           child: PostScreen(),
         ),
       ),
@@ -126,7 +131,8 @@ GoRouter createRouter(BuildContext context) {
                     state.uri.toString().startsWith('/swipe') ||
                     state.uri.toString().startsWith('/search') ||
                     state.uri.toString().startsWith('/notifications') ||
-                    state.uri.toString().startsWith('/calendar')
+                    state.uri.toString().startsWith('/calendar') ||
+                    state.uri.toString().startsWith('/post')
                 ? null
                 : AppBar(
                     // If the current location is '/** */', display a leading IconButton

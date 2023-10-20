@@ -8,7 +8,6 @@ export 'home/home_screen.dart';
 export 'calendar/calendar_screen.dart';
 export 'swipe/swipe_screen.dart';
 export 'search/search_screen.dart';
-export 'add/add_screen.dart';
 export 'notifications/notifications_screen.dart';
 export 'message/message_screen.dart';
 export 'profile/profile_screen.dart';

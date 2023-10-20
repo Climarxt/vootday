@@ -1,7 +1,11 @@
+import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/widgets/appbar/appbar_post.dart';
+import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 
 class PostScreen extends StatefulWidget {
-
   const PostScreen({
     Key? key,
   }) : super(key: key);
@@ -15,72 +19,69 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('username'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: const BackButton(
-          color: Colors.black,
+    return BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.white, // Changer à la couleur souhaitée
+          statusBarIconBrightness: Brightness
+              .dark, // Utilisez `Brightness.dark` pour des icônes sombres si vous avez une couleur de barre d'état claire
         ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Stack(
               children: [
-                Image.asset(
-                  "assets/images/postImage.jpg",
-                  width: size.width,
-                  fit: BoxFit.fitWidth,
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: <Widget>[
-                      Chip(
-                        label: Text('Tag 1'),
-                      ),
-                      Chip(
-                        label: Text('Tag 2'),
-                      ),
-                      Chip(
-                        label: Text('Tag 3'),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 15),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Ceci est un exemple de commentaire.',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      "assets/images/postImage.jpg",
+                      width: size.width,
+                      fit: BoxFit.fitWidth,
                     ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Ceci est un exemple d\'information.',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 18, right: 18),
+                      child: Row(
+                        children: [
+                          ProfileImagePost(
+                            username: 'Username',
+                            profileUrl: 'assets/images/profile2.jpg',
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              SizedBox(height: 12),
+                              Icon(Icons.more_vert,
+                                  color: Colors.black, size: 24),
+                              SizedBox(height: 32),
+                              Icon(Icons.comment,
+                                  color: Colors.black, size: 24),
+                              SizedBox(height: 32),
+                              Icon(Icons.share,
+                                  color: Colors.black, size: 24),
+                              SizedBox(height: 32),
+                              Icon(Icons.add_to_photos,
+                                  color: Colors.black, size: 24),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+        
+                // AppBar personnalisée
+                const Positioned(
+                  top: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: AppBarPost(),
                 ),
               ],
             ),
-          ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

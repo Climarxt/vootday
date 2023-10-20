@@ -18,18 +18,14 @@ class SettingsScreen extends StatelessWidget {
               buildSettingsItem(
                 context,
                 FontAwesomeIcons.user,
-                'Nom d\'utilisateur',
-                onTap: () {
-                  // Mettez ici le code pour naviguer vers la page du nom d'utilisateur
-                },
+                'Gestion du compte',
+                onTap: () {},
               ),
               buildSettingsItem(
                 context,
                 FontAwesomeIcons.key,
                 'Mot de passe',
-                onTap: () {
-                  // Mettez ici le code pour naviguer vers la page du mot de passe
-                },
+                onTap: () {},
               ),
             ],
           ),
@@ -41,13 +37,28 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 FontAwesomeIcons.userShield,
                 'Confidentialité du compte',
-                onTap: () {
-                  // Mettez ici le code pour naviguer vers la page de confidentialité du compte
-                },
+                onTap: () {},
               ),
             ],
           ),
-          // Ajoutez d'autres catégories ici...
+          buildSettingsCategory(
+            context,
+            'Plus d\'info et d\'assistance',
+            [
+              buildSettingsItem(
+                context,
+                FontAwesomeIcons.circleQuestion,
+                'Aide',
+                onTap: () {},
+              ),
+              buildSettingsItem(
+                context,
+                FontAwesomeIcons.info,
+                'À propros',
+                onTap: () {},
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -30,5 +30,7 @@
   "networks": "Networks",
   "location": "Location",
   "dateevent": "Event date",
-  "dateend": "Closing date"
+  "dateend": "Closing date",
+  "participants": "Participants",
+  "prizes": "Prizes"
 }

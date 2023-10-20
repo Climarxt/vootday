@@ -3,8 +3,8 @@
   "connectbytel": "Connexion avec téléphone",
   "connectbygoogle": "Connexion avec Google",
   "connectbyapple": "Connexion avec Apple",
-  "forgottenlogins":"Informations de connexion oubliées? ",
-  "askhelp":"Obtenez de l’aide",
+  "forgottenlogins": "Informations de connexion oubliées? ",
+  "askhelp": "Obtenez de l’aide",
   "registeringAgree": "En vous inscrivant, vous acceptez nos ",
   "termsAndConditions": "Conditions Générales d'Utilisation. ",
   "termsAndConditionstitle": "Conditions Générales d'Utilisation",
@@ -30,5 +30,7 @@
   "networks": "Réseaux",
   "location": "Localisation",
   "dateevent": "Date de l'évènement",
-  "dateend": "Date de clôture"
+  "dateend": "Date de clôture",
+  "participants": "Participants",
+  "prizes": "Prix"
 }

@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
 class ProfileImagePost extends StatelessWidget {
@@ -20,7 +21,7 @@ class ProfileImagePost extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: Colors.black,
+              backgroundColor: greyDark,
               child: CircleAvatar(
                 radius: 39,
                 backgroundImage: AssetImage(profileUrl),
@@ -32,33 +33,24 @@ class ProfileImagePost extends StatelessWidget {
               children: [
                 Text(
                   "Christian Bastide",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(color: Colors.black),
+                  style: AppTextStyles.titleLargeBlackBold(context),
                 ),
                 Text(
                   username,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.grey),
+                  style: AppTextStyles.subtitleLargeGrey(context),
                 ),
               ],
             ),
           ],
         ),
         const SizedBox(height: 12),
-        Container(
+        SizedBox(
           width: 300,
           child: RichText(
             textAlign: TextAlign.left,
             text: TextSpan(
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: Colors.black),
-              children: <TextSpan>[
+              style: AppTextStyles.bodyStyle(context),
+              children: const <TextSpan>[
                 TextSpan(
                   text:
                       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. Donec in efficitur leo. Proin quis tortor orci. Etiam at risus et justo dignissim congue.",
@@ -68,16 +60,13 @@ class ProfileImagePost extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
+        SizedBox(
           width: 300,
           child: RichText(
             textAlign: TextAlign.left,
             text: TextSpan(
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: Colors.grey),
-              children: <TextSpan>[
+              style: AppTextStyles.bodyTag(context),
+              children: const <TextSpan>[
                 TextSpan(
                   text: "#Nike #Sandro #Stussy #Obey",
                 ),

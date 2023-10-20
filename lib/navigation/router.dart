@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -249,6 +250,18 @@ GoRouter createRouter(BuildContext context) {
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       return NoAnimationPage(child: const NotificationScreen());
                     },
+                  ),
+                  GoRoute(
+                    path: 'create',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        BlocProvider<CreatePostCubit>(
+                      create: (context) => CreatePostCubit(
+                        postRepository: context.read<PostRepository>(),
+                        storageRepository: context.read<StorageRepository>(),
+                        authBloc: context.read<AuthBloc>(),
+                      ),
+                      child: const CreatePostScreen(),
+                    ),
                   ),
                 ],
               ),

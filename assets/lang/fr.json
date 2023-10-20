@@ -28,5 +28,7 @@
   "unfollow": "Ne plus suivre",
   "about": "À propos",
   "networks": "Réseaux",
-  "location": "Localisation"
+  "location": "Localisation",
+  "dateevent": "Date de l'évènement",
+  "dateend": "Date de clôture"
 }

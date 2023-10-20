@@ -10,7 +10,7 @@ class ButtonsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildButtonsSection(state,context);
+    return _buildButtonsSection(state, context);
   }
 
   Widget _buildButtonsSection(ProfileState state, BuildContext context) {
@@ -19,28 +19,32 @@ class ButtonsSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildTwoButtons(state.posts.length, "OOTD", 0, "BOOTD"),
+          _buildTwoButtons(state.posts.length, "OOTD", 0, "BOOTD", context),
           const SizedBox(
             height: 10,
           ),
-          _buildTwoButtons(state.user.following, AppLocalizations.of(context)!.translate('followingsCap'),
-              state.user.followers, AppLocalizations.of(context)!.translate('followersCap')),
+          _buildTwoButtons(
+              state.user.following,
+              AppLocalizations.of(context)!.translate('followingsCap'),
+              state.user.followers,
+              AppLocalizations.of(context)!.translate('followersCap'),
+              context),
         ],
       ),
     );
   }
 
-  Widget _buildTwoButtons(
-      int count1, String label1, int count2, String label2) {
+  Widget _buildTwoButtons(int count1, String label1, int count2, String label2,
+      BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(child: buildButton(count1, label1)),
+        Expanded(child: buildButton(count1, label1, context)),
         const SizedBox(
           width: 10,
         ),
-        Expanded(child: buildButton(count2, label2)),
+        Expanded(child: buildButton(count2, label2, context)),
       ],
     );
   }

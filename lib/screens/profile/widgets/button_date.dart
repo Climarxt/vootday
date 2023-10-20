@@ -1,7 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
-ButtonTheme buildButton(int num, String texte, BuildContext context) {
+ButtonTheme buildButtonDate(String date, String texte, BuildContext context) {
   return ButtonTheme(
     minWidth: double.infinity,
     child: OutlinedButton(
@@ -12,7 +12,7 @@ ButtonTheme buildButton(int num, String texte, BuildContext context) {
         padding: const EdgeInsets.all(6.0),
         child: Column(
           children: [
-            Text(num.toString(),style: AppTextStyles.displaySmallBold(context)),
+            Text(date, style: AppTextStyles.displaySmallBold(context)),
             Text(texte, style: AppTextStyles.subtitleLargeGrey(context)),
           ],
         ),

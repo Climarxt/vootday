@@ -30,4 +30,12 @@ class AppTextStyles {
   static TextStyle subtitleLargeGrey(BuildContext context) {
     return Theme.of(context).textTheme.titleLarge!.copyWith(color: greyDark);
   }
+
+    static TextStyle displaySmallBold(BuildContext context) {
+    return Theme.of(context)
+        .textTheme
+        .displaySmall!
+        .copyWith(color: Colors.black, fontWeight: FontWeight.bold);
+  }
+
 }

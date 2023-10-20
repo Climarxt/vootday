@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
@@ -83,7 +84,22 @@ GoRouter createRouter(BuildContext context) {
           )..add(
               ProfileLoadUser(userId: authBloc.state.user!.uid),
             ),
-          child: PostScreen(),
+          child: PostScreen(postImage: 'assets/images/placeholder-image.png'),
+        ),
+      ),
+      // Post
+      GoRoute(
+        path: '/event',
+        builder: (BuildContext context, GoRouterState state) =>
+            BlocProvider<ProfileBloc>(
+          create: (_) => ProfileBloc(
+            authBloc: context.read<AuthBloc>(),
+            userRepository: context.read<UserRepository>(),
+            postRepository: context.read<PostRepository>(),
+          )..add(
+              ProfileLoadUser(userId: authBloc.state.user!.uid),
+            ),
+          child: EventScreen(postImage: 'assets/images/placeholder-image.png'),
         ),
       ),
 

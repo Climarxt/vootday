@@ -1,22 +1,22 @@
+import 'package:bootdv2/screens/calendar/widgets/section_buttons_event.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/appbar/appbar_post.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
 
-class PostScreen extends StatefulWidget {
+class EventScreen extends StatefulWidget {
   final String postImage;
-  const PostScreen({
+  const EventScreen({
     Key? key,
     required this.postImage,
   }) : super(key: key);
 
   @override
-  State<PostScreen> createState() => _PostScreenState();
+  State<EventScreen> createState() => _PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen> {
+class _PostScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -31,9 +31,10 @@ class _PostScreenState extends State<PostScreen> {
                   constraints: BoxConstraints(minHeight: size.height),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        'assets/images/postImage2.jpg',
+                        'assets/images/ITG1_1.jpg',
                         width: size.width,
                         fit: BoxFit.fitWidth,
                       ),
@@ -42,9 +43,9 @@ class _PostScreenState extends State<PostScreen> {
                         child: Row(
                           children: [
                             ProfileImagePost(
-                              title: "Christian Bastide",
-                              subtitle: 'username',
-                              profileUrl: 'assets/images/profile1.jpg',
+                              title: 'Obey',
+                              subtitle: 'Event #1',
+                              profileUrl: 'assets/images/Obey.png',
                             ),
                             Spacer(),
                             Column(
@@ -53,17 +54,18 @@ class _PostScreenState extends State<PostScreen> {
                                 Icon(Icons.more_vert,
                                     color: Colors.black, size: 24),
                                 SizedBox(height: 32),
-                                Icon(Icons.comment, color: Colors.black, size: 24),
+                                Icon(Icons.comment,
+                                    color: Colors.black, size: 24),
                                 SizedBox(height: 32),
-                                Icon(Icons.share, color: Colors.black, size: 24),
-                                SizedBox(height: 32),
-                                Icon(Icons.add_to_photos,
+                                Icon(Icons.share,
                                     color: Colors.black, size: 24),
                               ],
                             )
                           ],
                         ),
                       ),
+                      const SizedBox(height: 32),
+                      ButtonsSectionEvent(state: state),
                     ],
                   ),
                 ),

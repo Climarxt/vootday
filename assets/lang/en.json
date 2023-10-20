@@ -28,5 +28,7 @@
   "unfollow": "Unfollow",
   "about": "About",
   "networks": "Networks",
-  "location": "Location"
+  "location": "Location",
+  "dateevent": "Event date",
+  "dateend": "Closing date"
 }

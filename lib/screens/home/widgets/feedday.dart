@@ -37,7 +37,7 @@ class _FeedDayState extends State<FeedDay>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => GoRouter.of(context).push('/post'),
-        label: Text("Test",
+        label: Text("postTest",
           style: Theme.of(context)
               .textTheme
               .headlineMedium!

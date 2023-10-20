@@ -22,7 +22,7 @@ class AppBarPost extends StatelessWidget {
             width: 25,
             height: 25,
             decoration: const BoxDecoration(
-              color: Colors.black,
+              color: black,
               shape: BoxShape.circle,
             ),
             child: const Center(

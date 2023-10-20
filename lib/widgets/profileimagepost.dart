@@ -2,12 +2,14 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
 class ProfileImagePost extends StatelessWidget {
-  final String username;
+  final String title;
+  final String subtitle;
   final String profileUrl;
 
   const ProfileImagePost({
     Key? key,
-    required this.username,
+    required this.title,
+    required this.subtitle,
     required this.profileUrl,
   }) : super(key: key);
 
@@ -32,11 +34,11 @@ class ProfileImagePost extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Christian Bastide",
+                  title,
                   style: AppTextStyles.titleLargeBlackBold(context),
                 ),
                 Text(
-                  username,
+                  subtitle,
                   style: AppTextStyles.subtitleLargeGrey(context),
                 ),
               ],

@@ -2,6 +2,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/widgets/cards/event_new_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -64,6 +65,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           buildListview1(size),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => GoRouter.of(context).push('/event'),
+        label: Text(
+          "eventTest",
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: white),
+        ),
+        backgroundColor: couleurJauneOrange,
       ),
     );
   }

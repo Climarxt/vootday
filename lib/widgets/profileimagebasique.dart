@@ -18,10 +18,10 @@ class ProfileImageFeed extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: 26,
             backgroundColor: Colors.white,
             child: CircleAvatar(
-              radius: 27,
+              radius: 23,
               backgroundImage: AssetImage(profileUrl),
             ),
           ),

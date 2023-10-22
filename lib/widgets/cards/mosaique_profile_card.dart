@@ -22,9 +22,9 @@ class MosaiqueProfileCard extends StatelessWidget {
         height: size.height * 0.6,
         width: size.width,
         child: Card(
-            elevation: 2,
+            elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: _buildPost(imageUrl)),
       ),
@@ -36,7 +36,7 @@ class MosaiqueProfileCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
               image: AssetImage(imageUrl),
               fit: BoxFit.cover,
@@ -45,7 +45,7 @@ class MosaiqueProfileCard extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: const Alignment(0, 0.33),

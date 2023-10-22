@@ -24,9 +24,9 @@ class EventNewCard extends StatelessWidget {
       child: SizedBox(
         width: size.width,
         child: Card(
-          elevation: 2,
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Stack(
             children: [
@@ -64,7 +64,7 @@ class EventNewCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
               image: AssetImage(imageUrl),
               fit: BoxFit.fitHeight,

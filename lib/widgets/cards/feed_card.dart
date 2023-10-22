@@ -28,9 +28,9 @@ class _FeedCardState extends State<FeedCard> {
       child: SizedBox(
         height: widget.size.height * 0.6,
         child: Card(
-          elevation: 2,
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Stack(
             children: [
@@ -54,7 +54,7 @@ class _FeedCardState extends State<FeedCard> {
         ? const Center(child: CircularProgressIndicator())
         : Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
                 image: AssetImage(widget.imageUrl),
                 fit: BoxFit.cover,

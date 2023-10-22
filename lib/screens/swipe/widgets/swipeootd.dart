@@ -26,14 +26,14 @@ class SwipeOOTD extends StatelessWidget {
 
   Widget _buildCard(String imageUrl, String profileImage, String username) {
     return Card(
-      elevation: 2,
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: AspectRatio(
         aspectRatio: 1.17,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(10),
           child: Stack(
             children: [
               _buildPost(imageUrl),
@@ -56,7 +56,7 @@ class SwipeOOTD extends StatelessWidget {
         ? const Center(child: CircularProgressIndicator())
         : Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
                 image: AssetImage(imageUrl),
                 fit: BoxFit.cover,

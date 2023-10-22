@@ -20,9 +20,9 @@ class MosaiqueEventLargeCard extends StatelessWidget {
       child: SizedBox(
         width: cardWidth,
         child: Card(
-          elevation: 2,
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(10),
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
@@ -39,7 +39,7 @@ class MosaiqueEventLargeCard extends StatelessWidget {
                       height: 72,
                       width: 72,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
                           image: AssetImage("assets/icons/bookmark_horiz.png"),
                           fit: BoxFit.cover,

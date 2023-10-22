@@ -34,7 +34,7 @@ class ProfileButton extends StatelessWidget {
         backgroundColor: couleurBleuClair2,
         shape: RoundedRectangleBorder(
           // Ajoute des bords arrondis
-          borderRadius: BorderRadius.circular(18), // Rayon des bords arrondis
+          borderRadius: BorderRadius.circular(10), // Rayon des bords arrondis
         ),
       ),
       child: Text(
@@ -56,7 +56,7 @@ class ProfileButton extends StatelessWidget {
         backgroundColor: couleurBleuClair2,
         shape: RoundedRectangleBorder(
           // Ajoute des bords arrondis
-          borderRadius: BorderRadius.circular(18), // Rayon des bords arrondis
+          borderRadius: BorderRadius.circular(10), // Rayon des bords arrondis
         ),
       ),
       onPressed: () => toggleFollowStatus(context),

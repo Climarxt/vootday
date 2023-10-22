@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:bootdv2/config/colors.dart';
+import 'package:bootdv2/config/localizations.dart';
+import 'package:bootdv2/widgets/cards/create_post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -22,8 +24,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   void initState() {
     super.initState();
-    final cubit = context.read<CreatePostCubit>();
-    print("Accessed CreatePostCubit: $cubit");
+    _pickAndCropImage(context);
   }
 
   // Image file to be posted
@@ -39,11 +40,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: BlocConsumer<CreatePostCubit, CreatePostState>(
           listener: (context, state) =>
               _handleCreatePostStateChanges(context, state),
           builder: (context, state) => _buildForm(context, state),
         ),
+        floatingActionButton: _buildFloatingActionButton(context),
       ),
     );
   }
@@ -67,33 +70,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   // Builds the form
   Widget _buildForm(BuildContext context, CreatePostState state) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildImageSection(context, state),
-          if (state.status == CreatePostStatus.submitting)
-            const LinearProgressIndicator(),
-          _buildCaptionInputAndButtons(context, state),
-        ],
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildImageSection(context, state),
+            if (state.status == CreatePostStatus.submitting)
+              const LinearProgressIndicator(),
+            _buildCaptionInputAndButtons(context, state),
+            _buildChipInputSection(context, state),
+          ],
+        ),
       ),
     );
   }
 
   // Builds the image section of the form
   Widget _buildImageSection(BuildContext context, CreatePostState state) {
+    double reducedHeight =
+        MediaQuery.of(context).size.height * 0.6 * 0.8; // Reduce by 20%
+    double reducedWidth = reducedHeight * 0.7; // Maintain aspect ratio
+
     return GestureDetector(
       onTap: () async => _pickAndCropImage(context),
-      child: Container(
-        height: MediaQuery.of(context).size.height / 1.3,
-        width: double.infinity,
-        color: Colors.grey[200],
-        child: state.postImage != null
-            ? Image.file(state.postImage!, fit: BoxFit.cover)
-            : const Icon(
-                Icons.image,
-                color: Colors.grey,
-                size: 120.0,
-              ),
+      child: Center(
+        child: SizedBox(
+          height: reducedHeight,
+          width: reducedWidth,
+          child: CreatePostCard(postImage: state.postImage),
+        ),
       ),
     );
   }
@@ -115,6 +120,55 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  // New chip input section
+  Widget _buildChipInputSection(BuildContext context, CreatePostState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Tags:'),
+          Wrap(
+            spacing: 8.0, // gap between adjacent chips
+            runSpacing: 4.0, // gap between lines
+            children: state.tags.map((tag) {
+              return Chip(
+                label: Text(tag),
+                onDeleted: () {
+                  context.read<CreatePostCubit>().removeTag(tag);
+                },
+              );
+            }).toList(),
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              hintText: 'Add a tag',
+              suffixIcon: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  final tag = _tagController.text;
+                  if (tag.isNotEmpty) {
+                    context.read<CreatePostCubit>().addTag(tag);
+                    _tagController.clear();
+                  }
+                },
+              ),
+            ),
+            controller: _tagController,
+            onFieldSubmitted: (tag) {
+              if (tag.isNotEmpty) {
+                context.read<CreatePostCubit>().addTag(tag);
+                _tagController.clear();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  final TextEditingController _tagController = TextEditingController();
+
   // Builds the caption input and buttons
   Widget _buildCaptionInputAndButtons(
       BuildContext context, CreatePostState state) {
@@ -126,10 +180,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildCaptionInput(context),
-            const SizedBox(height: 10.0),
-            _buildPostButton(context, state),
             const SizedBox(height: 20),
-            _buildResetButton(context),
+            //_buildResetButton(context),
           ],
         ),
       ),
@@ -148,16 +200,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   // Builds the post button
-  Widget _buildPostButton(BuildContext context, CreatePostState state) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).primaryColor,
-        textStyle: const TextStyle(color: Colors.white),
-      ),
+  Widget _buildFloatingActionButton(BuildContext context) {
+    final state = context.watch<CreatePostCubit>().state;
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
       onPressed: state.status != CreatePostStatus.submitting
           ? () => _submitForm(context)
           : null,
-      child: const Text('Post'),
+      label: Text(AppLocalizations.of(context)!.translate('add'),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: Colors.white)),
     );
   }
 

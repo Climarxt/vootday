@@ -12,6 +12,7 @@ class Post extends Equatable {
   final String caption;
   final int likes;
   final DateTime date;
+  final List<String> tags; // Add tags attribute
 
   const Post({
     this.id,
@@ -21,6 +22,7 @@ class Post extends Equatable {
     required this.caption,
     required this.likes,
     required this.date,
+    required this.tags, // Make tags required
   });
 
   @override
@@ -32,6 +34,7 @@ class Post extends Equatable {
         caption,
         likes,
         date,
+        tags, // Include tags in props
       ];
 
   Post copyWith({
@@ -42,6 +45,7 @@ class Post extends Equatable {
     String? caption,
     int? likes,
     DateTime? date,
+    List<String>? tags, // Add tags to copyWith
   }) {
     return Post(
       id: id ?? this.id,
@@ -51,6 +55,7 @@ class Post extends Equatable {
       caption: caption ?? this.caption,
       likes: likes ?? this.likes,
       date: date ?? this.date,
+      tags: tags ?? this.tags, // Assign tags in copyWith
     );
   }
 
@@ -63,6 +68,7 @@ class Post extends Equatable {
       'caption': caption,
       'likes': likes,
       'date': Timestamp.fromDate(date),
+      'tags': tags, // Include tags in the document map
     };
   }
 
@@ -80,6 +86,9 @@ class Post extends Equatable {
           caption: data['caption'] ?? '',
           likes: (data['likes'] ?? 0).toInt(),
           date: (data['date'] as Timestamp).toDate(),
+          tags: (data['tags'] as List)
+              .map((item) => item as String)
+              .toList(), // Parse tags from the document
         );
       }
     }

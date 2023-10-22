@@ -58,6 +58,19 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     emit(state.copyWith(caption: caption, status: CreatePostStatus.initial));
   }
 
+  void addTag(String tag) {
+    if (tag.isNotEmpty && !state.tags.contains(tag)) {
+      // Avoid adding empty or duplicate tags
+      final updatedTags = List<String>.from(state.tags)..add(tag);
+      emit(state.copyWith(tags: updatedTags, status: CreatePostStatus.initial));
+    }
+  }
+
+  void removeTag(String tag) {
+    final updatedTags = List<String>.from(state.tags)..remove(tag);
+    emit(state.copyWith(tags: updatedTags, status: CreatePostStatus.initial));
+  }
+
   void submit() async {
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
@@ -85,6 +98,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         caption: state.caption,
         likes: 0,
         date: DateTime.now(),
+        tags: state.tags
       );
 
       await _postRepository.createPost(post: post);

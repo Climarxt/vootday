@@ -32,5 +32,6 @@
   "dateevent": "Event date",
   "dateend": "Closing date",
   "participants": "Participants",
-  "prizes": "Prizes"
+  "prizes": "Prizes",
+  "add": "Add"
 }

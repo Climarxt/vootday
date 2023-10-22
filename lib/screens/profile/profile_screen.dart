@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
             body: TabBarView(
               children: [
-                const ProfileTab1(),
+                ProfileTab1(context: context, state: state),
                 ProfileTab2(context: context, state: state),
                 const ProfileTab3(),
               ],

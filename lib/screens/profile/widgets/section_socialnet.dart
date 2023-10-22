@@ -18,7 +18,7 @@ class SocialNetSection extends StatelessWidget {
         children: [
            Text(
             AppLocalizations.of(context)!.translate('networks'),
-            style: Theme.of(context).textTheme.headlineSmall!,
+            style: AppTextStyles.titleLargeBlackBold(context),
           ),
           const SizedBox(
             height: 6,

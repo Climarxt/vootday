@@ -19,7 +19,7 @@ class LocationSection extends StatelessWidget {
         children: [
           Text(
             AppLocalizations.of(context)!.translate('location'),
-            style: Theme.of(context).textTheme.headlineSmall!,
+            style: AppTextStyles.titleLargeBlackBold(context),
           ),
           const SizedBox(
             height: 6,
@@ -30,7 +30,7 @@ class LocationSection extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 location,
-                style: const TextStyle(fontSize: 12),
+                style: AppTextStyles.bodyStyle(context),
               ),
             ],
           ),

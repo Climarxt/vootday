@@ -17,14 +17,14 @@ class AboutSection extends StatelessWidget {
       children: [
         Text(
           AppLocalizations.of(context)!.translate('about'),
-          style: Theme.of(context).textTheme.headlineSmall!,
+          style: AppTextStyles.titleLargeBlackBold(context),
         ),
         const SizedBox(
           height: 8,
         ),
         Text(
           state.user.bio,
-          style: Theme.of(context).textTheme.bodyLarge!,
+          style: AppTextStyles.bodyStyle(context),
         ),
       ],
     );

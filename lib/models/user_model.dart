@@ -6,6 +6,7 @@ class User extends Equatable {
   final String username;
   final String email;
   final String profileImageUrl;
+  final String location;
   final int followers;
   final int following;
   final String bio;
@@ -15,6 +16,7 @@ class User extends Equatable {
     required this.username,
     required this.email,
     required this.profileImageUrl,
+    required this.location,
     required this.followers,
     required this.following,
     required this.bio,
@@ -25,6 +27,7 @@ class User extends Equatable {
     username: '',
     email: '',
     profileImageUrl: '',
+    location: '',
     followers: 0,
     following: 0,
     bio: '',
@@ -36,6 +39,7 @@ class User extends Equatable {
         username,
         email,
         profileImageUrl,
+        location,
         followers,
         following,
         bio,
@@ -46,6 +50,7 @@ class User extends Equatable {
     String? username,
     String? email,
     String? profileImageUrl,
+    String? location,
     int? followers,
     int? following,
     String? bio,
@@ -55,6 +60,7 @@ class User extends Equatable {
       username: username ?? this.username,
       email: email ?? this.email,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      location: location ?? this.location,
       followers: followers ?? this.followers,
       following: following ?? this.following,
       bio: bio ?? this.bio,
@@ -67,6 +73,7 @@ class User extends Equatable {
       'username': username,
       'email': email,
       'profileImageUrl': profileImageUrl,
+      'location': location,
       'followers': followers,
       'following': following,
       'bio': bio,
@@ -84,6 +91,9 @@ class User extends Equatable {
           : '', //String
       profileImageUrl: snap.data().toString().contains('profileImageUrl')
           ? snap.get('profileImageUrl')
+          : '', //String
+      location: snap.data().toString().contains('location')
+          ? snap.get('location')
           : '', //String
       followers: snap.data().toString().contains('followers')
           ? snap.get('followers')
@@ -106,6 +116,7 @@ class User extends Equatable {
       username: data['username'] ?? '',
       email: data['email'] ?? '',
       profileImageUrl: data['profileImageUrl'] ?? '',
+      location: data['location'] ?? '',
       followers: (data['followers'] ?? 0).toInt(),
       following: (data['following'] ?? 0).toInt(),
       bio: data['bio'] ?? '',

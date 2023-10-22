@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:bootdv2/config/colors.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/localizations.dart';
+import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/cards/create_post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +23,21 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  TextEditingController _tagAutocompleteController = TextEditingController();
+
+  final List<String> predefinedTags = [
+    'Tag1',
+    'Tag2',
+    'Tag3',
+    'Tag4',
+    'Tag5',
+    'Tag6',
+    'Tag7',
+    'Tag8',
+    'Tag9',
+    'Tag10',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -71,15 +88,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // Builds the form
   Widget _buildForm(BuildContext context, CreatePostState state) {
     return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildImageSection(context, state),
-            if (state.status == CreatePostStatus.submitting)
-              const LinearProgressIndicator(),
-            _buildCaptionInputAndButtons(context, state),
-            _buildChipInputSection(context, state),
-          ],
+      child: Scaffold(
+        appBar: AppBarTitle(
+          title: AppLocalizations.of(context)!.translate('addpost'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildImageSection(context, state),
+              if (state.status == CreatePostStatus.submitting)
+                const LinearProgressIndicator(),
+              _buildCaptionInput(context),
+              _buildChipInputSection(context, state),
+            ],
+          ),
         ),
       ),
     );
@@ -127,12 +149,60 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tags:'),
+          Text(
+            AppLocalizations.of(context)!.translate('brand'),
+            style: AppTextStyles.titleLargeBlackBold(context),
+          ),
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return const Iterable.empty();
+              }
+              // Vérifiez d'abord les tags prédéfinis qui contiennent le texte actuel
+              var matchingTags = predefinedTags
+                  .where((tag) => tag.contains(textEditingValue.text));
+
+              // Si le texte actuel ne correspond à aucun tag prédéfini, ajoutez-le comme une nouvelle option
+              if (!matchingTags.contains(textEditingValue.text)) {
+                matchingTags = matchingTags.followedBy([textEditingValue.text]);
+              }
+
+              return matchingTags;
+            },
+            onSelected: (tag) {
+              context.read<CreatePostCubit>().addTag(tag);
+              _tagAutocompleteController
+                  .clear(); // Réinitialise le champ de saisie
+            },
+            fieldViewBuilder: (BuildContext context,
+                TextEditingController textEditingController,
+                FocusNode focusNode,
+                VoidCallback onFieldSubmitted) {
+              _tagAutocompleteController =
+                  textEditingController; // connectez le controller
+              return TextField(
+                cursorColor: couleurBleuClair2,
+                controller: _tagAutocompleteController,
+                focusNode: focusNode,
+                style: AppTextStyles.bodyStyle(context),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintStyle: AppTextStyles.subtitleLargeGrey(context),
+                  hintText: AppLocalizations.of(context)!.translate('addbrand'),
+                ),
+                onSubmitted: (String value) {
+                  onFieldSubmitted();
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 6.0),
           Wrap(
-            spacing: 8.0, // gap between adjacent chips
-            runSpacing: 4.0, // gap between lines
+            spacing: 8.0,
+            runSpacing: 4.0,
             children: state.tags.map((tag) {
               return Chip(
+                backgroundColor: grey,
                 label: Text(tag),
                 onDeleted: () {
                   context.read<CreatePostCubit>().removeTag(tag);
@@ -140,62 +210,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               );
             }).toList(),
           ),
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Add a tag',
-              suffixIcon: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  final tag = _tagController.text;
-                  if (tag.isNotEmpty) {
-                    context.read<CreatePostCubit>().addTag(tag);
-                    _tagController.clear();
-                  }
-                },
-              ),
-            ),
-            controller: _tagController,
-            onFieldSubmitted: (tag) {
-              if (tag.isNotEmpty) {
-                context.read<CreatePostCubit>().addTag(tag);
-                _tagController.clear();
-              }
-            },
-          ),
         ],
       ),
     );
   }
 
-  final TextEditingController _tagController = TextEditingController();
-
-  // Builds the caption input and buttons
-  Widget _buildCaptionInputAndButtons(
-      BuildContext context, CreatePostState state) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildCaptionInput(context),
-            const SizedBox(height: 20),
-            //_buildResetButton(context),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Builds the caption input field
+// Builds the caption input field
   Widget _buildCaptionInput(BuildContext context) {
-    return TextFormField(
-      decoration: const InputDecoration(hintText: 'Caption'),
-      onChanged: (value) =>
-          context.read<CreatePostCubit>().captionChanged(value),
-      validator: (value) =>
-          value!.trim().isEmpty ? 'Caption cannot be empty' : null,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context)!.translate('description'),
+            style: AppTextStyles.titleLargeBlackBold(context),
+          ),
+          Form(
+            key: _formKey,
+            child: TextFormField(
+              cursorColor: couleurBleuClair2,
+              style: AppTextStyles.bodyStyle(context),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintStyle: AppTextStyles.subtitleLargeGrey(context),
+                hintText: AppLocalizations.of(context)!
+                    .translate('detaildescription'),
+              ),
+              onChanged: (value) =>
+                  context.read<CreatePostCubit>().captionChanged(value),
+              validator: (value) => value!.trim().isEmpty
+                  ? AppLocalizations.of(context)!.translate('captionnotempty')
+                  : null,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -212,18 +264,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               .textTheme
               .headlineMedium!
               .copyWith(color: Colors.white)),
-    );
-  }
-
-  // Builds the reset button
-  Widget _buildResetButton(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: grey,
-        textStyle: const TextStyle(color: Colors.white),
-      ),
-      onPressed: () => _resetForm(context),
-      child: const Text('Reset'),
     );
   }
 

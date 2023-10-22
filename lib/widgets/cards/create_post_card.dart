@@ -19,13 +19,9 @@ class CreatePostCard extends StatelessWidget {
 
     return GestureDetector(
       child: SizedBox(
-        child: Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: postImage != null ? _buildPost() : _buildPlaceholder(),
-        ),
+        height: size.height,
+        width: size.width,
+        child: postImage != null ? _buildPost() : _buildPlaceholder(),
       ),
     );
   }

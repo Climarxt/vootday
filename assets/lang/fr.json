@@ -33,5 +33,11 @@
   "dateend": "Date de clôture",
   "participants": "Participants",
   "prizes": "Prix",
-  "add": "Créer"
+  "add": "Créer",
+  "brand": "Marque",
+  "addbrand": "Ajouter une marque",
+  "description": "Description",
+  "detaildescription": "Ajouter une description détaillée",
+  "captionnotempty": "La description ne peut pas être vide",
+  "addpost": "Nouvelle publication"
 }

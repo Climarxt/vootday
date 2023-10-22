@@ -33,5 +33,11 @@
   "dateend": "Closing date",
   "participants": "Participants",
   "prizes": "Prizes",
-  "add": "Add"
+  "add": "Add",
+  "brand": "Brand",
+  "addbrand": "Add a brand",
+  "description": "Description",
+  "detaildescription": "Add a detailed description",
+  "captionnotempty": "Description cannot be empty",
+  "addpost": "New post"
 }

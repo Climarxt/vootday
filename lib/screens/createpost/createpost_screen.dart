@@ -19,6 +19,13 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<CreatePostCubit>();
+    print("Accessed CreatePostCubit: $cubit");
+  }
+
   // Image file to be posted
   late File _postImage;
 

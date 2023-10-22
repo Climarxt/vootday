@@ -277,11 +277,14 @@ GoRouter createRouter(BuildContext context) {
                     path: 'create',
                     builder: (BuildContext context, GoRouterState state) =>
                         BlocProvider<CreatePostCubit>(
-                      create: (context) => CreatePostCubit(
-                        postRepository: context.read<PostRepository>(),
-                        storageRepository: context.read<StorageRepository>(),
-                        authBloc: context.read<AuthBloc>(),
-                      ),
+                      create: (context) {
+                        print("Creating CreatePostCubit");
+                        return CreatePostCubit(
+                          postRepository: context.read<PostRepository>(),
+                          storageRepository: context.read<StorageRepository>(),
+                          authBloc: context.read<AuthBloc>(),
+                        );
+                      },
                       child: const CreatePostScreen(),
                     ),
                   ),

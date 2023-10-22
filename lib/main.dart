@@ -1,4 +1,5 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/blocs/simple_bloc_observer.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
@@ -11,6 +12,7 @@ import 'navigation/router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
+  Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

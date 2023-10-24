@@ -92,14 +92,13 @@ class CreatePostCubit extends Cubit<CreatePostState> {
           thumbnailImageBytes: thumbnailImageBytes);
 
       final post = Post(
-        author: author,
-        imageUrl: postImageUrl,
-        thumbnailUrl: thumbnailImageUrl,
-        caption: state.caption,
-        likes: 0,
-        date: DateTime.now(),
-        tags: state.tags
-      );
+          author: author,
+          imageUrl: postImageUrl,
+          thumbnailUrl: thumbnailImageUrl,
+          caption: state.caption,
+          likes: 0,
+          date: DateTime.now(),
+          tags: state.tags);
 
       await _postRepository.createPost(post: post);
 
@@ -113,6 +112,12 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         ),
       );
     }
+  }
+
+  void tagsChanged(List<String> tags) => emit(state.copyWith(tags: tags));
+
+  void initializeTags(List<String> tags) {
+    emit(state.copyWith(tags: tags));
   }
 
   void reset() {

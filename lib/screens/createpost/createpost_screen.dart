@@ -7,6 +7,7 @@ import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/cards/create_post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'widgets/widgets.dart';
@@ -68,23 +69,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Handles different state changes
-  void _handleCreatePostStateChanges(
-      BuildContext context, CreatePostState state) {
-    if (state.status == CreatePostStatus.success) {
-      _resetForm(context);
-      SnackbarUtil.showSuccessSnackbar(context, 'Post Created !');
-    } else if (state.status == CreatePostStatus.error) {
-      SnackbarUtil.showErrorSnackbar(context, state.failure.message);
-    }
-  }
-
-  // Resets the form
-  void _resetForm(BuildContext context) {
-    _formKey.currentState!.reset();
-    context.read<CreatePostCubit>().reset();
-  }
-
   // Builds the form
   Widget _buildForm(BuildContext context, CreatePostState state) {
     return SafeArea(
@@ -100,46 +84,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 const LinearProgressIndicator(),
               _buildCaptionInput(context),
               _buildChipInputSection(context, state),
+              ListTile(
+                trailing: const Icon(Icons.arrow_forward),
+                title: const Text("Marque"),
+                onTap: () => GoRouter.of(context).go('/profile/create/brand'),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  // Builds the image section of the form
-  Widget _buildImageSection(BuildContext context, CreatePostState state) {
-    double reducedHeight =
-        MediaQuery.of(context).size.height * 0.6 * 0.8; // Reduce by 20%
-    double reducedWidth = reducedHeight * 0.7; // Maintain aspect ratio
-
-    return GestureDetector(
-      onTap: () async => _pickAndCropImage(context),
-      child: Center(
-        child: SizedBox(
-          height: reducedHeight,
-          width: reducedWidth,
-          child: CreatePostCard(postImage: state.postImage),
-        ),
-      ),
-    );
-  }
-
-  // Picks and crops the image
-  Future<void> _pickAndCropImage(BuildContext context) async {
-    final file = await imageHelper.pickImage();
-    if (file != null) {
-      final croppedFile = await imageHelper.crop(
-        file: file,
-        cropStyle: CropStyle.rectangle,
-      );
-      if (croppedFile != null) {
-        setState(() {
-          _postImage = File(croppedFile.path);
-          context.read<CreatePostCubit>().postImageChanged(_postImage);
-        });
-      }
-    }
   }
 
   // New chip input section
@@ -197,18 +151,25 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             },
           ),
           const SizedBox(height: 6.0),
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: state.tags.map((tag) {
-              return Chip(
-                backgroundColor: grey,
-                label: Text(tag),
-                onDeleted: () {
-                  context.read<CreatePostCubit>().removeTag(tag);
-                },
-              );
-            }).toList(),
+          SizedBox(
+            height: 32.0, // Adjust this height as per your needs
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: state.tags.length,
+              itemBuilder: (context, index) {
+                final tag = state.tags[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: RawChip(
+                    backgroundColor: grey,
+                    label: Text(tag),
+                    onPressed: () {
+                      context.read<CreatePostCubit>().removeTag(tag);
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -216,7 +177,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   // Builds the caption input field
-// Builds the caption input field
   Widget _buildCaptionInput(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -273,5 +233,56 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (_formKey.currentState!.validate() && _postImage != null) {
       context.read<CreatePostCubit>().submit();
     }
+  }
+
+  // Builds the image section of the form
+  Widget _buildImageSection(BuildContext context, CreatePostState state) {
+    double reducedHeight = MediaQuery.of(context).size.height * 0.3 * 0.8;
+    double reducedWidth = reducedHeight * 0.7; // Maintain aspect ratio
+
+    return GestureDetector(
+      onTap: () async => _pickAndCropImage(context),
+      child: Center(
+        child: SizedBox(
+          height: reducedHeight,
+          width: reducedWidth,
+          child: CreatePostCard(postImage: state.postImage),
+        ),
+      ),
+    );
+  }
+
+  // Picks and crops the image
+  Future<void> _pickAndCropImage(BuildContext context) async {
+    final file = await imageHelper.pickImage();
+    if (file != null) {
+      final croppedFile = await imageHelper.crop(
+        file: file,
+        cropStyle: CropStyle.rectangle,
+      );
+      if (croppedFile != null) {
+        setState(() {
+          _postImage = File(croppedFile.path);
+          context.read<CreatePostCubit>().postImageChanged(_postImage);
+        });
+      }
+    }
+  }
+
+  // Handles different state changes
+  void _handleCreatePostStateChanges(
+      BuildContext context, CreatePostState state) {
+    if (state.status == CreatePostStatus.success) {
+      _resetForm(context);
+      SnackbarUtil.showSuccessSnackbar(context, 'Post Created !');
+    } else if (state.status == CreatePostStatus.error) {
+      SnackbarUtil.showErrorSnackbar(context, state.failure.message);
+    }
+  }
+
+  // Resets the form
+  void _resetForm(BuildContext context) {
+    _formKey.currentState!.reset();
+    context.read<CreatePostCubit>().reset();
   }
 }

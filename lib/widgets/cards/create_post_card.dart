@@ -48,7 +48,7 @@ class CreatePostCard extends StatelessWidget {
       child: const Icon(
         Icons.image,
         color: Colors.grey,
-        size: 120.0,
+        size: 80.0,
       ),
     );
   }

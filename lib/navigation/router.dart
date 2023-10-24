@@ -292,9 +292,12 @@ GoRouter createRouter(BuildContext context) {
                     routes: [
                       GoRoute(
                           path: 'brand',
-                          builder:
-                              (BuildContext context, GoRouterState state) =>
-                                  BrandSearchScreen())
+                          builder: (BuildContext context, GoRouterState state) {
+                            return BlocProvider.value(
+                              value: state.extra! as CreatePostCubit,
+                              child: BrandSearchScreen(),
+                            );
+                          }),
                     ],
                   ),
                 ],

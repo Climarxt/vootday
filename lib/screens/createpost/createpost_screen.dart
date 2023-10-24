@@ -87,7 +87,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ListTile(
                 trailing: const Icon(Icons.arrow_forward),
                 title: const Text("Marque"),
-                onTap: () => GoRouter.of(context).go('/profile/create/brand'),
+                onTap: () => GoRouter.of(context).go('/profile/create/brand',
+                    extra: context.read<CreatePostCubit>()),
               ),
             ],
           ),

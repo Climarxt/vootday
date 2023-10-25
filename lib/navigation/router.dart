@@ -1,4 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/brands/brands_cubit.dart';
+import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
@@ -291,13 +293,24 @@ GoRouter createRouter(BuildContext context) {
                     ),
                     routes: [
                       GoRoute(
-                          path: 'brand',
-                          builder: (BuildContext context, GoRouterState state) {
-                            return BlocProvider.value(
-                              value: state.extra! as CreatePostCubit,
-                              child: BrandSearchScreen(),
-                            );
-                          }),
+                        path: 'brand',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(
+                                value: state.extra! as CreatePostCubit,
+                              ),
+                              BlocProvider<BrandCubit>(
+                                create: (context) => BrandCubit(
+                                  brandRepository:
+                                      context.read<BrandRepository>(),
+                                ),
+                              ),
+                            ],
+                            child: BrandSearchScreen(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],

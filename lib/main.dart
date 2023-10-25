@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/blocs/simple_bloc_observer.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<NotificationRepository>(
           create: (context) => NotificationRepository(),
+        ),
+        RepositoryProvider<BrandRepository>(
+          create: (context) => BrandRepository(),
         ),
       ],
       child: BlocProvider(

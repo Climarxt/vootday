@@ -3,8 +3,8 @@
   "connectbytel": "Login by phone",
   "connectbygoogle": "Login by Google",
   "connectbyapple": "Login by Apple",
-  "forgottenlogins":"Forgotten login information? ",
-  "askhelp":"Get some help",
+  "forgottenlogins": "Forgotten login information? ",
+  "askhelp": "Get some help",
   "registeringAgree": "By signing up, you agree to our ",
   "termsAndConditions": "Terms and Conditions. ",
   "termsAndConditionstitle": "Terms and Conditions",
@@ -39,5 +39,7 @@
   "description": "Description",
   "detaildescription": "Add a detailed description",
   "captionnotempty": "Description cannot be empty",
-  "addpost": "New post"
+  "addpost": "New post",
+  "validate": "Validate",
+  "searchbrands": "Search for brands"
 }

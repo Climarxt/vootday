@@ -39,5 +39,7 @@
   "description": "Description",
   "detaildescription": "Ajouter une description détaillée",
   "captionnotempty": "La description ne peut pas être vide",
-  "addpost": "Nouvelle publication"
+  "addpost": "Nouvelle publication",
+  "validate": "Valider",
+  "searchbrands": "Rechercher des marques"
 }

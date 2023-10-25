@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:bootdv2/config/colors.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/config/localizations.dart';
-import 'package:bootdv2/widgets/appbar/appbar_title.dart';
+import 'package:bootdv2/widgets/appbar/appbar_create_post.dart';
 import 'package:bootdv2/widgets/cards/create_post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,8 +22,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  TextEditingController _tagAutocompleteController = TextEditingController();
-
   final List<String> predefinedTags = [
     'Tag1',
     'Tag2',
@@ -57,121 +53,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: BlocConsumer<CreatePostCubit, CreatePostState>(
-          listener: (context, state) =>
-              _handleCreatePostStateChanges(context, state),
-          builder: (context, state) => _buildForm(context, state),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBarCreatePost(
+            title: AppLocalizations.of(context)!.translate('addpost'),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          body: BlocConsumer<CreatePostCubit, CreatePostState>(
+            listener: (context, state) =>
+                _handleCreatePostStateChanges(context, state),
+            builder: (context, state) => _buildForm(context, state),
+          ),
+          floatingActionButton: _buildFloatingActionButton(context),
         ),
-        floatingActionButton: _buildFloatingActionButton(context),
       ),
     );
   }
 
   // Builds the form
   Widget _buildForm(BuildContext context, CreatePostState state) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBarTitle(
-          title: AppLocalizations.of(context)!.translate('addpost'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildImageSection(context, state),
-              if (state.status == CreatePostStatus.submitting)
-                const LinearProgressIndicator(),
-              _buildCaptionInput(context),
-              _buildChipInputSection(context, state),
-              ListTile(
-                trailing: const Icon(Icons.arrow_forward),
-                title: const Text("Marque"),
-                onTap: () => GoRouter.of(context).go('/profile/create/brand',
-                    extra: context.read<CreatePostCubit>()),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // New chip input section
-  Widget _buildChipInputSection(BuildContext context, CreatePostState state) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+    return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.of(context)!.translate('brand'),
-            style: AppTextStyles.titleLargeBlackBold(context),
-          ),
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              if (textEditingValue.text == '') {
-                return const Iterable.empty();
-              }
-              // Vérifiez d'abord les tags prédéfinis qui contiennent le texte actuel
-              var matchingTags = predefinedTags
-                  .where((tag) => tag.contains(textEditingValue.text));
-
-              // Si le texte actuel ne correspond à aucun tag prédéfini, ajoutez-le comme une nouvelle option
-              if (!matchingTags.contains(textEditingValue.text)) {
-                matchingTags = matchingTags.followedBy([textEditingValue.text]);
-              }
-
-              return matchingTags;
-            },
-            onSelected: (tag) {
-              context.read<CreatePostCubit>().addTag(tag);
-              _tagAutocompleteController
-                  .clear(); // Réinitialise le champ de saisie
-            },
-            fieldViewBuilder: (BuildContext context,
-                TextEditingController textEditingController,
-                FocusNode focusNode,
-                VoidCallback onFieldSubmitted) {
-              _tagAutocompleteController =
-                  textEditingController; // connectez le controller
-              return TextField(
-                cursorColor: couleurBleuClair2,
-                controller: _tagAutocompleteController,
-                focusNode: focusNode,
-                style: AppTextStyles.bodyStyle(context),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintStyle: AppTextStyles.subtitleLargeGrey(context),
-                  hintText: AppLocalizations.of(context)!.translate('addbrand'),
-                ),
-                onSubmitted: (String value) {
-                  onFieldSubmitted();
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 6.0),
-          SizedBox(
-            height: 32.0, // Adjust this height as per your needs
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: state.tags.length,
-              itemBuilder: (context, index) {
-                final tag = state.tags[index];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: RawChip(
-                    backgroundColor: grey,
-                    label: Text(tag),
-                    onPressed: () {
-                      context.read<CreatePostCubit>().removeTag(tag);
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
+          _buildImageSection(context, state),
+          if (state.status == CreatePostStatus.submitting)
+            const LinearProgressIndicator(),
+          _buildCaptionInput(context),
+          _buildBrandInput(context),
         ],
       ),
     );
@@ -180,7 +89,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // Builds the caption input field
   Widget _buildCaptionInput(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -209,6 +118,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  // Builds the brand ListTile
+  Widget _buildBrandInput(BuildContext context) {
+    return ListTile(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '(${context.read<CreatePostCubit>().state.tags.length})',
+            style: AppTextStyles.subtitleLargeGrey(context),
+          ), // Display the count
+          const SizedBox(
+            width: 8,
+          ),
+          const Icon(Icons.arrow_forward),
+        ],
+      ),
+      title: Text(AppLocalizations.of(context)!.translate('brand'),
+          style: AppTextStyles.titleLargeBlackBold(context)),
+      onTap: () => GoRouter.of(context).go('/profile/create/brand',
+          extra: context.read<CreatePostCubit>()),
     );
   }
 

@@ -17,7 +17,6 @@ class BrandSearchScreen extends StatefulWidget {
 
 class _BrandSearchScreenState extends State<BrandSearchScreen> {
   TextEditingController _tagAutocompleteController = TextEditingController();
-
   final List<String> predefinedTags = [
     'Tag1',
     'Tag2',
@@ -40,146 +39,165 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: BlocBuilder<CreatePostCubit, CreatePostState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Autocomplete<String>(
-                  optionsBuilder: (TextEditingValue textEditingValue) {
-                    if (textEditingValue.text == '') {
-                      return const Iterable.empty();
-                    }
-                    // Vérifiez d'abord les tags prédéfinis qui contiennent le texte actuel
-                    var matchingTags = predefinedTags
-                        .where((tag) => tag.contains(textEditingValue.text));
-
-                    // Si le texte actuel ne correspond à aucun tag prédéfini, ajoutez-le comme une nouvelle option
-                    if (!matchingTags.contains(textEditingValue.text)) {
-                      matchingTags =
-                          matchingTags.followedBy([textEditingValue.text]);
-                    }
-
-                    return matchingTags;
-                  },
-                  optionsViewBuilder: (BuildContext context,
-                      AutocompleteOnSelected<String> onSelected,
-                      Iterable<String> options) {
-                    return Align(
-                      alignment: Alignment.topLeft,
-                      child: Material(
-                        elevation: 0,
-                        child: Container(
-                          color: white,
-                          child: ListView(
-                            padding: const EdgeInsets.all(8.0),
-                            children: options.map((String option) {
-                              return Padding(
-                                  padding: const EdgeInsets.only(
-                                      bottom:
-                                          8.0), // Ajouter un padding en bas pour chaque élément
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: AssetImage(
-                                          predefinedTags.contains(option)
-                                              ? 'assets/images/profile1.jpg'
-                                              : 'assets/images/profile2.jpg' // Remplacez ceci par le chemin vers votre autre image
-                                          ),
-                                      radius:
-                                          24, // Ajustez la taille selon vos besoins
-                                    ),
-                                    title: Text(option),
-                                    onTap: () {
-                                      onSelected(option);
-                                    },
-                                  ));
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  onSelected: (tag) {
-                    context.read<CreatePostCubit>().addTag(tag);
-                    _tagAutocompleteController
-                        .clear(); // Réinitialise le champ de saisie
-                  },
-                  fieldViewBuilder: (BuildContext context,
-                      TextEditingController textEditingController,
-                      FocusNode focusNode,
-                      VoidCallback onFieldSubmitted) {
-                    _tagAutocompleteController =
-                        textEditingController; // connectez le controller
-                    return TextField(
-                      cursorColor: couleurBleuClair2,
-                      controller: _tagAutocompleteController,
-                      focusNode: focusNode,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(color: black),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintStyle: Theme.of(context)
-                              .textTheme
-                              .headlineMedium!
-                              .copyWith(color: grey),
-                          hintText: AppLocalizations.of(context)!
-                              .translate('searchbrands')),
-                      onSubmitted: (String value) {
-                        onFieldSubmitted();
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 6.0),
-                SizedBox(
-                  height: 32.0, // Adjust this height as per your needs
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.tags.length,
-                    itemBuilder: (context, index) {
-                      final tag = state.tags[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: RawChip(
-                          backgroundColor: grey,
-                          label: Text(
-                            tag,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium!
-                                .copyWith(color: black),
-                          ),
-                          onPressed: () {
-                            context.read<CreatePostCubit>().removeTag(tag);
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
+          return _buildBody(context, state);
         },
       ),
     );
   }
 
-  // Builds the post button
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return FloatingActionButton.extended(
-      backgroundColor: couleurBleuClair2,
-      onPressed: () {
-        final goRouter = GoRouter.of(context);
-        goRouter.go('/profile/create');
+  Widget _buildBody(BuildContext context, CreatePostState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAutoComplete(context),
+          const SizedBox(height: 6.0),
+          _buildTagList(context, state),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAutoComplete(BuildContext context) {
+    return Autocomplete<String>(
+      optionsBuilder: (TextEditingValue textEditingValue) =>
+          _buildMatchingTags(textEditingValue),
+      optionsViewBuilder: (BuildContext context,
+          AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+        return _buildOptionsView(context, onSelected, options);
       },
-      label: Text(AppLocalizations.of(context)!.translate('validate'),
+      onSelected: (tag) => _handleTagSelected(context, tag),
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode focusNode,
+          VoidCallback onFieldSubmitted) {
+        return _buildTextField(
+            context, textEditingController, focusNode, onFieldSubmitted);
+      },
+    );
+  }
+
+  Iterable<String> _buildMatchingTags(TextEditingValue textEditingValue) {
+    if (textEditingValue.text == '') {
+      return const Iterable.empty();
+    }
+    var matchingTags =
+        predefinedTags.where((tag) => tag.contains(textEditingValue.text));
+    if (!matchingTags.contains(textEditingValue.text)) {
+      matchingTags = matchingTags.followedBy([textEditingValue.text]);
+    }
+    return matchingTags;
+  }
+
+  Widget _buildOptionsView(BuildContext context,
+      AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Material(
+        elevation: 0,
+        child: Container(
+          color: white,
+          child: ListView(
+            padding: const EdgeInsets.all(8.0),
+            children: options
+                .map((String option) =>
+                    _buildOption(context, onSelected, option))
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOption(BuildContext context,
+      AutocompleteOnSelected<String> onSelected, String option) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: AssetImage(predefinedTags.contains(option)
+              ? 'assets/images/profile1.jpg'
+              : 'assets/images/profile2.jpg'),
+          radius: 24,
+        ),
+        title: Text(option),
+        onTap: () => onSelected(option),
+      ),
+    );
+  }
+
+  void _handleTagSelected(BuildContext context, String tag) {
+    context.read<CreatePostCubit>().addTag(tag);
+    _tagAutocompleteController.clear();
+  }
+
+  Widget _buildTextField(
+      BuildContext context,
+      TextEditingController textEditingController,
+      FocusNode focusNode,
+      VoidCallback onFieldSubmitted) {
+    _tagAutocompleteController = textEditingController;
+    return TextField(
+      cursorColor: couleurBleuClair2,
+      controller: _tagAutocompleteController,
+      focusNode: focusNode,
+      style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: black),
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintStyle:
+            Theme.of(context).textTheme.headlineMedium!.copyWith(color: grey),
+        hintText: AppLocalizations.of(context)!.translate('searchbrands'),
+      ),
+      onSubmitted: (String value) => onFieldSubmitted(),
+    );
+  }
+
+  Widget _buildTagList(BuildContext context, CreatePostState state) {
+    return SizedBox(
+      height: 32.0,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: state.tags.length,
+        itemBuilder: (context, index) =>
+            _buildTagChip(context, state.tags[index]),
+      ),
+    );
+  }
+
+  Widget _buildTagChip(BuildContext context, String tag) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: RawChip(
+        backgroundColor: grey,
+        label: Text(
+          tag,
           style: Theme.of(context)
               .textTheme
               .headlineMedium!
-              .copyWith(color: Colors.white)),
+              .copyWith(color: black),
+        ),
+        onPressed: () => context.read<CreatePostCubit>().removeTag(tag),
+      ),
     );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () => _handlePostButtonPressed(context),
+      label: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style: Theme.of(context)
+            .textTheme
+            .headlineMedium!
+            .copyWith(color: Colors.white),
+      ),
+    );
+  }
+
+  void _handlePostButtonPressed(BuildContext context) {
+    final goRouter = GoRouter.of(context);
+    goRouter.go('/profile/create');
   }
 }

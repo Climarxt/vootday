@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/config/localizations.dart';
+import 'package:bootdv2/cubits/brands/brands_cubit.dart';
+import 'package:bootdv2/cubits/brands/brands_state.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/widgets/appbar/appbar_add_brand.dart';
 import 'package:flutter/material.dart';
@@ -7,65 +8,73 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class BrandSearchScreen extends StatefulWidget {
-  BrandSearchScreen({
-    super.key,
-  });
+  const BrandSearchScreen({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _BrandSearchScreenState createState() => _BrandSearchScreenState();
 }
 
 class _BrandSearchScreenState extends State<BrandSearchScreen> {
   TextEditingController _tagAutocompleteController = TextEditingController();
-  final List<String> predefinedTags = [
-    'Tag1',
-    'Tag2',
-    'Tag3',
-    'Tag4',
-    'Tag5',
-    'Tag6',
-    'Tag7',
-    'Tag8',
-    'Tag9',
-    'Tag10',
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<BrandCubit>()
+        .fetchBrands(); // Appel de la méthode pour obtenir toutes les marques
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarAddBrand(
-          title: AppLocalizations.of(context)!.translate('brand')),
-      floatingActionButton: _buildFloatingActionButton(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: BlocBuilder<CreatePostCubit, CreatePostState>(
-        builder: (context, state) {
-          return _buildBody(context, state);
-        },
-      ),
+    return BlocBuilder<BrandCubit, BrandState>(
+      builder: (context, brandState) {
+        return Scaffold(
+          appBar: AppBarAddBrand(
+              title: AppLocalizations.of(context)!.translate('brand')),
+          floatingActionButton: _buildFloatingActionButton(context),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          body: BlocBuilder<CreatePostCubit, CreatePostState>(
+            builder: (context, createPostState) {
+              return _buildBody(
+                  context,
+                  createPostState,
+                  brandState.brands
+                      .map((brand) => brand.name)
+                      .toList()); // Utilisez `name` ou l'attribut approprié de votre modèle Brand
+            },
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildBody(BuildContext context, CreatePostState state) {
+  Widget _buildBody(BuildContext context, CreatePostState createPostState,
+      List<String> brandTags) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAutoComplete(context),
+          _buildAutoComplete(context, brandTags), // Passez brandTags ici
           const SizedBox(height: 6.0),
-          _buildTagList(context, state),
+          _buildTagList(context, createPostState),
         ],
       ),
     );
   }
 
-  Widget _buildAutoComplete(BuildContext context) {
+  Widget _buildAutoComplete(BuildContext context, List<String> brandTags) {
     return Autocomplete<String>(
-      optionsBuilder: (TextEditingValue textEditingValue) =>
-          _buildMatchingTags(textEditingValue),
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        return _buildMatchingTags(textEditingValue, brandTags);
+      },
       optionsViewBuilder: (BuildContext context,
           AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
-        return _buildOptionsView(context, onSelected, options);
+        return _buildOptionsView(
+            context, onSelected, options, brandTags); // Passez brandTags ici
       },
       onSelected: (tag) => _handleTagSelected(context, tag),
       fieldViewBuilder: (BuildContext context,
@@ -78,20 +87,24 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
     );
   }
 
-  Iterable<String> _buildMatchingTags(TextEditingValue textEditingValue) {
+  Iterable<String> _buildMatchingTags(
+      TextEditingValue textEditingValue, List<String> brandTags) {
     if (textEditingValue.text == '') {
       return const Iterable.empty();
     }
     var matchingTags =
-        predefinedTags.where((tag) => tag.contains(textEditingValue.text));
+        brandTags.where((tag) => tag.contains(textEditingValue.text));
     if (!matchingTags.contains(textEditingValue.text)) {
       matchingTags = matchingTags.followedBy([textEditingValue.text]);
     }
     return matchingTags;
   }
 
-  Widget _buildOptionsView(BuildContext context,
-      AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+  Widget _buildOptionsView(
+      BuildContext context,
+      AutocompleteOnSelected<String> onSelected,
+      Iterable<String> options,
+      List<String> brandTags) {
     return Align(
       alignment: Alignment.topLeft,
       child: Material(
@@ -102,7 +115,7 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
             padding: const EdgeInsets.all(8.0),
             children: options
                 .map((String option) =>
-                    _buildOption(context, onSelected, option))
+                    _buildOption(context, onSelected, option, brandTags))
                 .toList(),
           ),
         ),
@@ -110,15 +123,18 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
     );
   }
 
-  Widget _buildOption(BuildContext context,
-      AutocompleteOnSelected<String> onSelected, String option) {
+  Widget _buildOption(
+      BuildContext context,
+      AutocompleteOnSelected<String> onSelected,
+      String option,
+      List<String> brandTags) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage(predefinedTags.contains(option)
+          backgroundImage: AssetImage(brandTags.contains(option)
               ? 'assets/images/profile1.jpg'
-              : 'assets/images/profile2.jpg'),
+              : 'assets/images/profile2.jpg'), // remplacez par brandTags
           radius: 24,
         ),
         title: Text(option),

@@ -144,6 +144,7 @@ GoRouter createRouter(BuildContext context) {
               actionButton = null;
           }
           return ScaffoldWithNavBar(
+            currentLocation: state.uri.toString(),
             navigationShell: navigationShell,
             appTitle: title,
             appBar: state.uri.toString().startsWith('/home') ||
@@ -295,6 +296,8 @@ GoRouter createRouter(BuildContext context) {
                       GoRoute(
                         path: 'brand',
                         builder: (BuildContext context, GoRouterState state) {
+                          print('State extra value: ${state.extra}');
+
                           return MultiBlocProvider(
                             providers: [
                               BlocProvider.value(

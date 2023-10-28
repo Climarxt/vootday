@@ -1,5 +1,7 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -56,6 +58,20 @@ class SettingsScreen extends StatelessWidget {
                 FontAwesomeIcons.info,
                 'À propros',
                 onTap: () {},
+              ),
+            ],
+          ),
+          buildSettingsCategory(
+            context,
+            'Déconnexion',
+            [
+              buildSettingsItem(
+                context,
+                FontAwesomeIcons.signOutAlt,
+                'Se déconnecter',
+                onTap: () {
+                  context.read<AuthBloc>().add(AuthLogoutRequested());
+                },
               ),
             ],
           ),

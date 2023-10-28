@@ -1,10 +1,13 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/brands/brands_cubit.dart';
+import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
+import 'package:bootdv2/screens/createpost/test.dart';
+import 'package:bootdv2/screens/home/bloc/feed_bloc.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -186,7 +189,16 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                 path: '/home',
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const HomeScreen());
+                  return NoAnimationPage(
+                    child: BlocProvider(
+                      create: (context) => FeedBloc(
+                        postRepository: context.read<PostRepository>(),
+                        authBloc: context.read<AuthBloc>(),
+                        likedPostsCubit: context.read<LikedPostsCubit>(),
+                      ),
+                      child: HomeScreen(),
+                    ),
+                  );
                 },
               ),
             ],

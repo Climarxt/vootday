@@ -4,15 +4,15 @@ import 'package:bootdv2/screens/home/widgets/feedmonth.dart';
 import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreenSave extends StatefulWidget {
+  const HomeScreenSave({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreenSave> createState() => _HomeScreenSaveState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreen> {
+class _HomeScreenSaveState extends State<HomeScreenSave>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreenSave> {
   late TabController _tabController;
 
   @override
@@ -30,9 +30,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      appBar: Tabbar3items(tabController: _tabController, context: context),
-      body: _buildBody(),
+    return Builder(
+      builder: (context) {
+        return Scaffold(
+          appBar: Tabbar3items(tabController: _tabController, context: context),
+          body: _buildBody(),
+        );
+      }
     );
   }
 

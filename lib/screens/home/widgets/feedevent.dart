@@ -1,14 +1,14 @@
 import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
 import 'package:flutter/material.dart';
 
-class FeedEvent extends StatefulWidget {
-  const FeedEvent({super.key});
+class FeedCalendar extends StatefulWidget {
+  const FeedCalendar({super.key});
 
   @override
-  _FeedEventState createState() => _FeedEventState();
+  _FeedCalendarState createState() => _FeedCalendarState();
 }
 
-class _FeedEventState extends State<FeedEvent> {
+class _FeedCalendarState extends State<FeedCalendar> {
   List<String> imageList = [
     'assets/images/ITG1_2.jpg',
     'assets/images/ITG1_1.jpg',

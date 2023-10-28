@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/blocs/simple_bloc_observer.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
@@ -56,9 +57,19 @@ class MyApp extends StatelessWidget {
           create: (context) => BrandRepository(),
         ),
       ],
-      child: BlocProvider(
-        create: (context) =>
-            AuthBloc(authRepository: context.read<AuthRepository>()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                AuthBloc(authRepository: context.read<AuthRepository>()),
+          ),
+          BlocProvider<LikedPostsCubit>(
+            create: (context) => LikedPostsCubit(
+              postRepository: context.read<PostRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            ),
+          ),
+        ],
         child: Builder(
           builder: (context) => MaterialApp.router(
             localizationsDelegates: const [
@@ -71,7 +82,7 @@ class MyApp extends StatelessWidget {
               Locale('en', ''),
               Locale('fr', ''),
             ],
-            locale: const Locale('fr', ''),  // Force la localisation française ,
+            locale: const Locale('fr', ''), // Force la localisation française ,
             title: 'VOOTDAY',
             theme: theme(),
             routerConfig: createRouter(context),

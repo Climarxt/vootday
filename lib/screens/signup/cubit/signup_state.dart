@@ -6,6 +6,7 @@ class SignupState extends Equatable {
   final String username;
   final String email;
   final String password;
+  final String selectedGender;
   final SignupStatus status;
   final Failure failure;
 
@@ -16,6 +17,7 @@ class SignupState extends Equatable {
     required this.username,
     required this.email,
     required this.password,
+    required this.selectedGender,
     required this.status,
     required this.failure,
   });
@@ -25,6 +27,7 @@ class SignupState extends Equatable {
       username: '',
       email: '',
       password: '',
+      selectedGender: '',
       status: SignupStatus.initial,
       failure: Failure(),
     );
@@ -34,12 +37,13 @@ class SignupState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [username, email, password, status, failure];
+  List<Object?> get props => [username, email, password,selectedGender, status, failure];
 
   SignupState copyWith({
     String? username,
     String? email,
     String? password,
+    String? selectedGender,
     SignupStatus? status,
     Failure? failure,
   }) {
@@ -47,6 +51,7 @@ class SignupState extends Equatable {
       username: username ?? this.username,
       email: email ?? this.email,
       password: password ?? this.password,
+      selectedGender: selectedGender ?? this.selectedGender,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );

@@ -24,6 +24,7 @@ class AuthRepository extends BaseAuthRepository {
     required String username,
     required String email,
     required String password,
+    required String selectedGender,
   }) async {
     try {
       final credential = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -34,6 +35,7 @@ class AuthRepository extends BaseAuthRepository {
       _firebaseFirestore.collection(Paths.users).doc(user!.uid).set({
         'username': username,
         'email': email,
+        'selectedGender': selectedGender,
         'followers': 0,
         'following': 0,
       });

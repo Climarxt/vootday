@@ -14,6 +14,7 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? selectedGender;
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
@@ -84,10 +85,34 @@ class SignupScreen extends StatelessWidget {
                                       : null,
                                 ),
                                 const SizedBox(height: 24),
+                                DropdownButtonFormField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Genre',
+                                    labelText: 'Choisir un genre',
+                                  ),
+                                  value: selectedGender,
+                                  items: [
+                                    DropdownMenuItem(
+                                      child: Text("Masculin"),
+                                      value: 'Masculin',
+                                    ),
+                                    DropdownMenuItem(
+                                      child: Text("Féminin"),
+                                      value: 'Féminin',
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    selectedGender = value as String?;
+                                    // Mettez à jour le cubit ou le bloc ici, si nécessaire
+                                    context
+                                        .read<SignupCubit>()
+                                        .selectedGenderChanged(selectedGender!);
+                                  },
+                                ),
                                 // Text Field Password
                                 TextFormField(
-                                  decoration:
-                                      const InputDecoration(hintText: 'Mot de passe'),
+                                  decoration: const InputDecoration(
+                                      hintText: 'Mot de passe'),
                                   obscureText: true,
                                   onChanged: (value) => context
                                       .read<SignupCubit>()

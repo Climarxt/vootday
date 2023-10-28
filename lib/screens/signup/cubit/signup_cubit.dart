@@ -24,6 +24,10 @@ class SignupCubit extends Cubit<SignupState> {
     emit(state.copyWith(password: value, status: SignupStatus.initial));
   }
 
+  void selectedGenderChanged(String value) {
+    emit(state.copyWith(selectedGender: value, status: SignupStatus.initial));
+  }
+
   void signUpWithCredentials() async {
     if (!state.isFormValid || state.status == SignupStatus.submitting) return;
     emit(state.copyWith(status: SignupStatus.submitting));
@@ -32,6 +36,7 @@ class SignupCubit extends Cubit<SignupState> {
         username: state.username,
         email: state.email,
         password: state.password,
+        selectedGender: state.selectedGender,
       );
       emit(state.copyWith(status: SignupStatus.success));
     } on Failure catch (err) {

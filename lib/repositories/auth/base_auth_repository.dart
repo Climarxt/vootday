@@ -6,6 +6,7 @@ abstract class BaseAuthRepository {
     required String username,
     required String email,
     required String password,
+    required String selectedGender,
   });
   Future<auth.User> logInWithEmailAndPassword({
     required String email,

@@ -8,6 +8,8 @@ class Paths {
   static const String following = 'following';
   static const String feeds = 'feeds';
   static const String notifications = 'notifications';
+  static const String feedOotd = 'feed_ootd';
+  static const String feedMonth = 'feed_month';
 
   // Subcollections
   static const String postLikes = 'postLikes';

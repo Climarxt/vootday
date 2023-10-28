@@ -130,25 +130,20 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
-  @override
-  Future<List<Post?>> getFeedSave({
+  Future<List<Post?>> getFeedOOTD({
     required String userId,
     String? lastPostId,
   }) async {
     QuerySnapshot postsSnap;
     if (lastPostId == null) {
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feeds)
-          .doc(userId)
-          .collection(Paths.userFeed)
-          .orderBy('date', descending: true)
+          .collection(Paths.feedOotd)
+          .orderBy('likes', descending: true)
           .limit(5)
           .get();
     } else {
       final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feeds)
-          .doc(userId)
-          .collection(Paths.userFeed)
+          .collection(Paths.feedOotd)
           .doc(lastPostId)
           .get();
 
@@ -157,10 +152,8 @@ class PostRepository extends BasePostRepository {
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feeds)
-          .doc(userId)
-          .collection(Paths.userFeed)
-          .orderBy('date', descending: true)
+          .collection(Paths.feedOotd)
+          .orderBy('likes', descending: true)
           .startAfterDocument(lastPostDoc)
           .limit(3)
           .get();
@@ -172,6 +165,40 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
+  Future<List<Post?>> getFeedMonth({
+    required String userId,
+    String? lastPostId,
+  }) async {
+    QuerySnapshot postsSnap;
+    if (lastPostId == null) {
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedMonth)
+          .orderBy('likes', descending: true)
+          .limit(5)
+          .get();
+    } else {
+      final lastPostDoc = await _firebaseFirestore
+          .collection(Paths.feedMonth)
+          .doc(lastPostId)
+          .get();
+
+      if (!lastPostDoc.exists) {
+        return [];
+      }
+
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedMonth)
+          .orderBy('likes', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(3)
+          .get();
+    }
+
+    final posts = Future.wait(
+      postsSnap.docs.map((doc) => Post.fromDocument(doc)).toList(),
+    );
+    return posts;
+  }
 
   @override
   Future<Set<String>> getLikedPostIds({

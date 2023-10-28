@@ -21,7 +21,7 @@ class _FeedDayState extends State<FeedDay>
   @override
   void initState() {
     super.initState();
-    context.read<FeedBloc>().add(FeedFetchPosts());
+    context.read<FeedBloc>().add(FeedFetchPostsOOTD());
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.offset >=
@@ -69,7 +69,7 @@ class _FeedDayState extends State<FeedDay>
           children: [
             RefreshIndicator(
               onRefresh: () async {
-                context.read<FeedBloc>().add(FeedFetchPosts());
+                context.read<FeedBloc>().add(FeedFetchPostsOOTD());
                 context.read<LikedPostsCubit>().clearAllLikedPosts();
               },
               child: ListView.separated(

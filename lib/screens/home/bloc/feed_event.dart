@@ -9,4 +9,8 @@ abstract class FeedEvent extends Equatable {
 
 class FeedFetchPosts extends FeedEvent {}
 
+class FeedFetchPostsOOTD extends FeedEvent {}
+
+class FeedFetchPostsMonth extends FeedEvent {}
+
 class FeedPaginatePosts extends FeedEvent {}

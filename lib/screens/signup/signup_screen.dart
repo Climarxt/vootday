@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/configs.dart';
-import '../login/cubit/login_cubit.dart';
 import 'cubit/signup_cubit.dart';
 import '/widgets/widgets.dart';
 

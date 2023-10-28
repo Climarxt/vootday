@@ -1,5 +1,3 @@
-import 'package:bootdv2/cubits/brands/brands_cubit.dart';
-import 'package:bootdv2/cubits/brands/brands_state.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/feed_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';

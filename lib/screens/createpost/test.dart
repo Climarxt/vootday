@@ -1,7 +1,5 @@
 import 'package:bootdv2/cubits/brands/brands_cubit.dart';
 import 'package:bootdv2/cubits/brands/brands_state.dart';
-import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
-import 'package:bootdv2/widgets/appbar/appbar_add_brand.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

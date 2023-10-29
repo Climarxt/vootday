@@ -67,50 +67,44 @@ class _FeedMonthState extends State<FeedMonth>
       default:
         return Stack(
           children: [
-            RefreshIndicator(
-              onRefresh: () async {
-                context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
-                context.read<LikedPostsCubit>().clearAllLikedPosts();
+            ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              cacheExtent: 10000,
+              controller: _scrollController,
+              itemCount: state.posts.length + 1,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(height: 10),
+              itemBuilder: (BuildContext context, int index) {
+                // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
+                // ou un SizedBox vide si la pagination n'est pas en cours
+                if (index == state.posts.length) {
+                  return state.status == FeedMonthStatus.paginating
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                } else {
+                  final post = state.posts[index];
+                  final likedPostsState =
+                      context.watch<LikedPostsCubit>().state;
+                  final isLiked =
+                      likedPostsState.likedPostIds.contains(post!.id);
+                  final recentlyLiked =
+                      likedPostsState.recentlyLikedPostIds.contains(post.id);
+                  return PostView(
+                    post: post,
+                    isLiked: isLiked,
+                    recentlyLiked: recentlyLiked,
+                    onLike: () {
+                      if (isLiked) {
+                        context
+                            .read<LikedPostsCubit>()
+                            .unlikePost(post: post);
+                      } else {
+                        context.read<LikedPostsCubit>().likePost(post: post);
+                      }
+                    },
+                  );
+                }
               },
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                cacheExtent: 10000,
-                controller: _scrollController,
-                itemCount: state.posts.length + 1,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (BuildContext context, int index) {
-                  // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
-                  // ou un SizedBox vide si la pagination n'est pas en cours
-                  if (index == state.posts.length) {
-                    return state.status == FeedMonthStatus.paginating
-                        ? const Center(child: CircularProgressIndicator())
-                        : const SizedBox.shrink();
-                  } else {
-                    final post = state.posts[index];
-                    final likedPostsState =
-                        context.watch<LikedPostsCubit>().state;
-                    final isLiked =
-                        likedPostsState.likedPostIds.contains(post!.id);
-                    final recentlyLiked =
-                        likedPostsState.recentlyLikedPostIds.contains(post.id);
-                    return PostView(
-                      post: post,
-                      isLiked: isLiked,
-                      recentlyLiked: recentlyLiked,
-                      onLike: () {
-                        if (isLiked) {
-                          context
-                              .read<LikedPostsCubit>()
-                              .unlikePost(post: post);
-                        } else {
-                          context.read<LikedPostsCubit>().likePost(post: post);
-                        }
-                      },
-                    );
-                  }
-                },
-              ),
             ),
             if (state.status == FeedMonthStatus.paginating)
               const Positioned(

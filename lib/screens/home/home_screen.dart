@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen>
       child: TabBarView(
         controller: _tabController,
         children: const [
-          FeedDay(),
+          FeedOOTD(),
           FeedMonth(),
           FeedCalendar(),
         ],

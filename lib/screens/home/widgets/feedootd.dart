@@ -1,34 +1,34 @@
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/screens/home/bloc/feed_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
 import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FeedDay extends StatefulWidget {
-  const FeedDay({Key? key}) : super(key: key);
+class FeedOOTD extends StatefulWidget {
+  const FeedOOTD({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _FeedDayState createState() => _FeedDayState();
+  _FeedOOTDState createState() => _FeedOOTDState();
 }
 
-class _FeedDayState extends State<FeedDay>
-    with AutomaticKeepAliveClientMixin<FeedDay> {
+class _FeedOOTDState extends State<FeedOOTD>
+    with AutomaticKeepAliveClientMixin<FeedOOTD> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    context.read<FeedBloc>().add(FeedFetchPostsOOTD());
+    context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.offset >=
                 _scrollController.position.maxScrollExtent &&
             !_scrollController.position.outOfRange &&
-            context.read<FeedBloc>().state.status != FeedStatus.paginating) {
-          context.read<FeedBloc>().add(FeedPaginatePosts());
+            context.read<FeedOOTDBloc>().state.status != FeedOOTDStatus.paginating) {
+          context.read<FeedOOTDBloc>().add(FeedOOTDPaginatePosts());
         }
       });
   }
@@ -43,9 +43,9 @@ class _FeedDayState extends State<FeedDay>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedBloc, FeedState>(
+    return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
       listener: (context, state) {
-        if (state.status == FeedStatus.error) {
+        if (state.status == FeedOOTDStatus.error) {
           showDialog(
             context: context,
             builder: (context) => ErrorDialog(content: state.failure.message),
@@ -60,16 +60,16 @@ class _FeedDayState extends State<FeedDay>
     );
   }
 
-  Widget _buildBody(FeedState state) {
+  Widget _buildBody(FeedOOTDState state) {
     switch (state.status) {
-      case FeedStatus.loading:
+      case FeedOOTDStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(
           children: [
             RefreshIndicator(
               onRefresh: () async {
-                context.read<FeedBloc>().add(FeedFetchPostsOOTD());
+                context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
                 context.read<LikedPostsCubit>().clearAllLikedPosts();
               },
               child: ListView.separated(
@@ -83,7 +83,7 @@ class _FeedDayState extends State<FeedDay>
                   // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
                   // ou un SizedBox vide si la pagination n'est pas en cours
                   if (index == state.posts.length) {
-                    return state.status == FeedStatus.paginating
+                    return state.status == FeedOOTDStatus.paginating
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   } else {
@@ -112,7 +112,7 @@ class _FeedDayState extends State<FeedDay>
                 },
               ),
             ),
-            if (state.status == FeedStatus.paginating)
+            if (state.status == FeedOOTDStatus.paginating)
               const Positioned(
                 bottom: 20,
                 left: 0,

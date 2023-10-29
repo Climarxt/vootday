@@ -7,35 +7,34 @@ import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
-part 'feed_event.dart';
-part 'feed_state.dart';
+part 'package:bootdv2/screens/home/bloc/month/feed_month_state.dart';
+part 'package:bootdv2/screens/home/bloc/month/feed_month_event.dart';
 
-class FeedBloc extends Bloc<FeedEvent, FeedState> {
+class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
 
-  FeedBloc({
+  FeedMonthBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
     required LikedPostsCubit likedPostsCubit,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
-        super(FeedState.initial()) {
-    on<FeedFetchPostsOOTD>(_mapFeedFetchPostsOOTD);
-    on<FeedFetchPostsMonth>(_mapFeedFetchPostsMonth);
-    on<FeedFetchPosts>(_mapFeedFetchPostsToState);
-    on<FeedPaginatePosts>(_mapFeedPaginatePostsToState);
+        super(FeedMonthState.initial()) {
+    on<FeedMonthFetchPostsMonth>(_mapFeedMonthFetchPostsMonth);
+    on<FeedMonthFetchPosts>(_mapFeedMonthFetchPostsToState);
+    on<FeedMonthPaginatePosts>(_mapFeedMonthPaginatePostsToState);
   }
 
-  Future<void> _mapFeedFetchPostsOOTD(
-    FeedFetchPostsOOTD event,
-    Emitter<FeedState> emit,
+  Future<void> _mapFeedMonthFetchPostsMonth(
+    FeedMonthFetchPostsMonth event,
+    Emitter<FeedMonthState> emit,
   ) async {
     try {
-      final posts =
-          await _postRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
+      final posts = await _postRepository.getFeedMonth(
+          userId: _authBloc.state.user!.uid);
 
       _likedPostsCubit.clearAllLikedPosts();
 
@@ -47,24 +46,24 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
 
       emit(
-        state.copyWith(posts: posts, status: FeedStatus.loaded),
+        state.copyWith(posts: posts, status: FeedMonthStatus.loaded),
       );
     } catch (err) {
       emit(state.copyWith(
-        status: FeedStatus.error,
+        status: FeedMonthStatus.error,
         failure:
             const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
       ));
     }
   }
 
-    Future<void> _mapFeedFetchPostsMonth(
-    FeedFetchPostsMonth event,
-    Emitter<FeedState> emit,
+  Future<void> _mapFeedMonthFetchPostsToState(
+    FeedMonthFetchPosts event,
+    Emitter<FeedMonthState> emit,
   ) async {
     try {
-      final posts =
-          await _postRepository.getFeedMonth(userId: _authBloc.state.user!.uid);
+      final posts = await _postRepository.getFeedMonth(
+          userId: _authBloc.state.user!.uid);
 
       _likedPostsCubit.clearAllLikedPosts();
 
@@ -76,55 +75,26 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
 
       emit(
-        state.copyWith(posts: posts, status: FeedStatus.loaded),
+        state.copyWith(posts: posts, status: FeedMonthStatus.loaded),
       );
     } catch (err) {
       emit(state.copyWith(
-        status: FeedStatus.error,
+        status: FeedMonthStatus.error,
         failure:
             const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
       ));
     }
   }
 
-  Future<void> _mapFeedFetchPostsToState(
-    FeedFetchPosts event,
-    Emitter<FeedState> emit,
+  Future<void> _mapFeedMonthPaginatePostsToState(
+    FeedMonthPaginatePosts event,
+    Emitter<FeedMonthState> emit,
   ) async {
-    try {
-      final posts =
-          await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid);
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
-
-      emit(
-        state.copyWith(posts: posts, status: FeedStatus.loaded),
-      );
-    } catch (err) {
-      emit(state.copyWith(
-        status: FeedStatus.error,
-        failure:
-            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
-      ));
-    }
-  }
-
-  Future<void> _mapFeedPaginatePostsToState(
-    FeedPaginatePosts event,
-    Emitter<FeedState> emit,
-  ) async {
-    emit(state.copyWith(status: FeedStatus.paginating));
+    emit(state.copyWith(status: FeedMonthStatus.paginating));
     try {
       final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
 
-      final posts = await _postRepository.getUserFeed(
+      final posts = await _postRepository.getFeedMonth(
         userId: _authBloc.state.user!.uid,
         lastPostId: lastPostId,
       );
@@ -138,11 +108,11 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
 
       emit(
-        state.copyWith(posts: updatedPosts, status: FeedStatus.loaded),
+        state.copyWith(posts: updatedPosts, status: FeedMonthStatus.loaded),
       );
     } catch (err) {
       emit(state.copyWith(
-        status: FeedStatus.error,
+        status: FeedMonthStatus.error,
         failure: const Failure(
             message: 'Quelque chose s\'est mal passé ! Veuillez réessayer.'),
       ));

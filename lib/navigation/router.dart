@@ -6,7 +6,8 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
-import 'package:bootdv2/screens/home/bloc/feed_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -182,19 +183,29 @@ GoRouter createRouter(BuildContext context) {
           );
         },
         branches: <StatefulShellBranch>[
-          // Home
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return NoAnimationPage(
-                    child: BlocProvider(
-                      create: (context) => FeedBloc(
-                        postRepository: context.read<PostRepository>(),
-                        authBloc: context.read<AuthBloc>(),
-                        likedPostsCubit: context.read<LikedPostsCubit>(),
-                      ),
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) => FeedMonthBloc(
+                            postRepository: context.read<PostRepository>(),
+                            authBloc: context.read<AuthBloc>(),
+                            likedPostsCubit: context.read<LikedPostsCubit>(),
+                          ),
+                        ),
+                        BlocProvider(
+                          create: (context) => FeedOOTDBloc(
+                            postRepository: context.read<PostRepository>(),
+                            authBloc: context.read<AuthBloc>(),
+                            likedPostsCubit: context.read<LikedPostsCubit>(),
+                          ),
+                        ),
+                      ],
                       child: HomeScreen(),
                     ),
                   );
@@ -202,6 +213,7 @@ GoRouter createRouter(BuildContext context) {
               ),
             ],
           ),
+
           // Calendar
           StatefulShellBranch(
             routes: <RouteBase>[

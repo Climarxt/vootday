@@ -1,22 +1,22 @@
-part of 'feed_bloc.dart';
+part of 'feed_ootd_bloc.dart';
 
-enum FeedStatus { initial, loading, loaded, paginating, error }
+enum FeedOOTDStatus { initial, loading, loaded, paginating, error }
 
-class FeedState extends Equatable {
+class FeedOOTDState extends Equatable {
   final List<Post?> posts;
-  final FeedStatus status;
+  final FeedOOTDStatus status;
   final Failure failure;
 
-  const FeedState({
+  const FeedOOTDState({
     required this.posts,
     required this.status,
     required this.failure,
   });
 
-  factory FeedState.initial() {
-    return const FeedState(
+  factory FeedOOTDState.initial() {
+    return const FeedOOTDState(
       posts: [],
-      status: FeedStatus.initial,
+      status: FeedOOTDStatus.initial,
       failure: Failure(),
     );
   }
@@ -24,12 +24,12 @@ class FeedState extends Equatable {
   @override
   List<Object?> get props => [posts, status, failure];
 
-  FeedState copyWith({
+  FeedOOTDState copyWith({
     List<Post?>? posts,
-    FeedStatus? status,
+    FeedOOTDStatus? status,
     Failure? failure,
   }) {
-    return FeedState(
+    return FeedOOTDState(
       posts: posts ?? this.posts,
       status: status ?? this.status,
       failure: failure ?? this.failure,

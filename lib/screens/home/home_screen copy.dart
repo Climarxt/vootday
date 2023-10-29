@@ -46,7 +46,7 @@ class _HomeScreenSaveState extends State<HomeScreenSave>
       child: TabBarView(
         controller: _tabController,
         children: const [
-          FeedDay(),
+          FeedOOTD(),
           FeedMonth(),
           FeedCalendar(),
         ],

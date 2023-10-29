@@ -1,5 +1,5 @@
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/screens/home/bloc/feed_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
 import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +21,14 @@ class _FeedMonthState extends State<FeedMonth>
   @override
   void initState() {
     super.initState();
-    context.read<FeedBloc>().add(FeedFetchPostsMonth());
+    context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
     _scrollController = ScrollController()
       ..addListener(() {
         if (_scrollController.offset >=
                 _scrollController.position.maxScrollExtent &&
             !_scrollController.position.outOfRange &&
-            context.read<FeedBloc>().state.status != FeedStatus.paginating) {
-          context.read<FeedBloc>().add(FeedPaginatePosts());
+            context.read<FeedMonthBloc>().state.status != FeedMonthStatus.paginating) {
+          context.read<FeedMonthBloc>().add(FeedMonthPaginatePosts());
         }
       });
   }
@@ -43,9 +43,9 @@ class _FeedMonthState extends State<FeedMonth>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedBloc, FeedState>(
+    return BlocConsumer<FeedMonthBloc, FeedMonthState>(
       listener: (context, state) {
-        if (state.status == FeedStatus.error) {
+        if (state.status == FeedMonthStatus.error) {
           showDialog(
             context: context,
             builder: (context) => ErrorDialog(content: state.failure.message),
@@ -60,16 +60,16 @@ class _FeedMonthState extends State<FeedMonth>
     );
   }
 
-  Widget _buildBody(FeedState state) {
+  Widget _buildBody(FeedMonthState state) {
     switch (state.status) {
-      case FeedStatus.loading:
+      case FeedMonthStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(
           children: [
             RefreshIndicator(
               onRefresh: () async {
-                context.read<FeedBloc>().add(FeedFetchPostsMonth());
+                context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
                 context.read<LikedPostsCubit>().clearAllLikedPosts();
               },
               child: ListView.separated(
@@ -83,7 +83,7 @@ class _FeedMonthState extends State<FeedMonth>
                   // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
                   // ou un SizedBox vide si la pagination n'est pas en cours
                   if (index == state.posts.length) {
-                    return state.status == FeedStatus.paginating
+                    return state.status == FeedMonthStatus.paginating
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   } else {
@@ -112,7 +112,7 @@ class _FeedMonthState extends State<FeedMonth>
                 },
               ),
             ),
-            if (state.status == FeedStatus.paginating)
+            if (state.status == FeedMonthStatus.paginating)
               const Positioned(
                 bottom: 20,
                 left: 0,

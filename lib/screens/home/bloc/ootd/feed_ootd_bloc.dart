@@ -62,7 +62,7 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     Emitter<FeedOOTDState> emit,
   ) async {
     try {
-      final posts = await _postRepository.getUserFeed(
+      final posts = await _postRepository.getFeedOOTD(
           userId: _authBloc.state.user!.uid);
 
       _likedPostsCubit.clearAllLikedPosts();
@@ -94,7 +94,7 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     try {
       final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
 
-      final posts = await _postRepository.getUserFeed(
+      final posts = await _postRepository.getFeedOOTD(
         userId: _authBloc.state.user!.uid,
         lastPostId: lastPostId,
       );

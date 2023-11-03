@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/brands/brands_cubit.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/event_screen.dart';
@@ -76,21 +77,6 @@ GoRouter createRouter(BuildContext context) {
           create: (context) =>
               SignupCubit(authRepository: context.read<AuthRepository>()),
           child: SignupScreen(),
-        ),
-      ),
-      // Post
-      GoRoute(
-        path: '/post',
-        builder: (BuildContext context, GoRouterState state) =>
-            BlocProvider<ProfileBloc>(
-          create: (_) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          )..add(
-              ProfileLoadUser(userId: authBloc.state.user!.uid),
-            ),
-          child: PostScreen(postImage: 'assets/images/placeholder-image.png'),
         ),
       ),
       // Post
@@ -198,18 +184,35 @@ GoRouter createRouter(BuildContext context) {
                             likedPostsCubit: context.read<LikedPostsCubit>(),
                           ),
                         ),
-                        BlocProvider(
-                          create: (context) => FeedOOTDBloc(
-                            postRepository: context.read<PostRepository>(),
-                            authBloc: context.read<AuthBloc>(),
-                            likedPostsCubit: context.read<LikedPostsCubit>(),
-                          ),
-                        ),
+                        // D'autres BlocProviders si nécessaire...
                       ],
                       child: HomeScreen(),
                     ),
                   );
                 },
+                routes: [
+                  // Définition des sous-routes ici
+                  GoRoute(
+                    path: ':postId', // Chemin relatif pour la sous-route
+                    builder: (BuildContext context, GoRouterState state) {
+                      final postId = state.pathParameters['postId']!;
+                      // Supposons que vous ayez une manière de récupérer le Post par son ID
+                      final post =
+                          context.read<PostRepository>().getPostById(postId);
+
+                      return BlocProvider<ProfileBloc>(
+                        create: (_) => ProfileBloc(
+                          authBloc: context.read<AuthBloc>(),
+                          userRepository: context.read<UserRepository>(),
+                          postRepository: context.read<PostRepository>(),
+                        )..add(
+                            ProfileLoadUser(userId: authBloc.state.user!.uid),
+                          ),
+                        child: PostScreen(postId: postId),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

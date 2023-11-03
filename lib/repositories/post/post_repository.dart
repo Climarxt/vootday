@@ -241,4 +241,23 @@ class PostRepository extends BasePostRepository {
         .doc(userId)
         .delete();
   }
+
+  Future<Post?> getPostById(String postId) async {
+  try {
+    DocumentSnapshot postSnap = await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
+
+    if (postSnap.exists) {
+      return Post.fromDocument(postSnap);
+    } else {
+      // Handle the case where the post does not exist.
+      print("Le post n'existe pas.");
+      return null;
+    }
+  } catch (e) {
+    // Handle any errors that occur during the fetch.
+    print(e.toString());
+    return null;
+  }
+}
+
 }

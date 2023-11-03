@@ -11,6 +11,7 @@ class FeedOOTDFetchPosts extends FeedOOTDEvent {}
 
 class FeedOOTDFetchPostsOOTD extends FeedOOTDEvent {}
 
+
 class FeedOOTDFetchPostsMonth extends FeedOOTDEvent {}
 
 class FeedOOTDPaginatePosts extends FeedOOTDEvent {}

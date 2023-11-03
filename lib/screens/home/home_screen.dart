@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TabBarView(
         controller: _tabController,
-        children: const [
+        children: [
           FeedOOTD(),
           FeedMonth(),
           FeedCalendar(),

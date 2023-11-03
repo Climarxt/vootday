@@ -1,8 +1,9 @@
-import 'dart:ui';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '/models/models.dart';
 import '/screens/screens.dart';
 import '/widgets/widgets.dart';
@@ -13,36 +14,46 @@ class PostView extends StatelessWidget {
   final VoidCallback onLike;
   final bool recentlyLiked;
 
-  const PostView({
+  PostView({
     Key? key,
     required this.post,
     required this.isLiked,
     required this.onLike,
     this.recentlyLiked = false,
-  }) : super(key: key);
+  }) : super(key: key ?? ValueKey(post.id));
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        height: MediaQuery.of(context).size.height / 1.5,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: CachedNetworkImageProvider(post.imageUrl),
+    return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+        listener: (context, state) {
+      if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
+        context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
+      }
+    }, builder: (context, state) {
+      return GestureDetector(
+        onTap: () => _navigateToPostScreen(context, post),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-/*           boxShadow: const [
-            BoxShadow(color: Colors.grey, offset: Offset(0, 3), blurRadius: 6),
-          ], */
+          child: Container(
+            height: MediaQuery.of(context).size.height / 1.5,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(18)),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(post.imageUrl),
+              ),
+              /*           boxShadow: const [
+                  BoxShadow(color: Colors.grey, offset: Offset(0, 3), blurRadius: 6),
+                ], */
+            ),
+            child: buildScaffold(context),
+          ),
         ),
-        child: buildScaffold(context),
-      ),
-    );
+      );
+    });
   }
 
   Scaffold buildScaffold(BuildContext context) {
@@ -51,6 +62,10 @@ class PostView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: buildBody(context),
     );
+  }
+
+  void _navigateToPostScreen(BuildContext context, Post post) {
+    GoRouter.of(context).push('/home/${post.id}');
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -150,17 +165,11 @@ class PostView extends StatelessWidget {
 
   IconButton buildCommentButton(BuildContext context) {
     return IconButton(
-        icon: const Icon(
-          Icons.comment_outlined,
-          color: white,
-        ),
-        onPressed: () {}
-        /*
-      onPressed: () => Navigator.of(context).pushNamed(
-        CommentsScreen.routeName,
-        arguments: CommentsScreenArgs(post: post),
+      icon: const Icon(
+        Icons.comment_outlined,
+        color: white,
       ),
-      */
-        );
+      onPressed: () {},
+    );
   }
 }

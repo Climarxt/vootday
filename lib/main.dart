@@ -5,6 +5,7 @@ import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
+import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,13 +22,15 @@ void main() async {
   );
   await initializeDateFormatting(
       'fr_FR', null); // Initialisation du formatage des dates
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  const MyApp({super.key});
+  final PageStorageBucket bucket = PageStorageBucket();
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +72,17 @@ class MyApp extends StatelessWidget {
               authBloc: context.read<AuthBloc>(),
             ),
           ),
+          BlocProvider(
+            create: (context) {
+              final feedBloc = FeedOOTDBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+                likedPostsCubit: context.read<LikedPostsCubit>(),
+              );
+              feedBloc.add(FeedOOTDFetchPostsOOTD());
+              return feedBloc;
+            },
+          )
         ],
         child: Builder(
           builder: (context) => MaterialApp.router(

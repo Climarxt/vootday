@@ -97,8 +97,8 @@ GoRouter createRouter(BuildContext context) {
               )..add(
                   ProfileLoadUser(userId: authBloc.state.user!.uid),
                 ),
-              child:
-                  const EventScreen(postImage: 'assets/images/placeholder-image.png'),
+              child: const EventScreen(
+                  postImage: 'assets/images/placeholder-image.png'),
             ),
           );
         },
@@ -182,15 +182,13 @@ GoRouter createRouter(BuildContext context) {
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
-                builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+                builder: (BuildContext context, GoRouterState state) =>
+                    const HomeScreen(),
                 routes: [
-                  // Définition des sous-routes ici
                   GoRoute(
-                    path: ':postId', // Chemin relatif pour la sous-route
+                    path: ':postId',
                     builder: (BuildContext context, GoRouterState state) {
                       final postId = state.pathParameters['postId']!;
-                      // Supposons que vous ayez une manière de récupérer le Post par son ID
-                      // final post = context.read<PostRepository>().getPostById(postId);
                       return PostScreen(postId: postId);
                     },
                   ),

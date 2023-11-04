@@ -5,6 +5,7 @@ import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
+import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -71,13 +72,24 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) {
-              final feedBloc = FeedOOTDBloc(
+              final feedOOTDBloc = FeedOOTDBloc(
                 postRepository: context.read<PostRepository>(),
                 authBloc: context.read<AuthBloc>(),
                 likedPostsCubit: context.read<LikedPostsCubit>(),
               );
-              feedBloc.add(FeedOOTDFetchPostsOOTD());
-              return feedBloc;
+              feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
+              return feedOOTDBloc;
+            },
+          ),
+          BlocProvider(
+            create: (context) {
+              final feedMonthBloc = FeedMonthBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+                likedPostsCubit: context.read<LikedPostsCubit>(),
+              );
+              feedMonthBloc.add(FeedMonthFetchPostsMonth());
+              return feedMonthBloc;
             },
           )
         ],

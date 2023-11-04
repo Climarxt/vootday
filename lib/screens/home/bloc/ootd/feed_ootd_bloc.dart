@@ -16,7 +16,6 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
-  bool _isFirstFetch = true; // Ajout de l'indicateur de premier fetch
 
   FeedOOTDBloc({
     required PostRepository postRepository,
@@ -35,8 +34,6 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     FeedOOTDFetchPostsOOTD event,
     Emitter<FeedOOTDState> emit,
   ) async {
-    if (!_isFirstFetch) return; // Vérifier si on a déjà chargé les données
-
     try {
       final posts =
           await _postRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
@@ -53,11 +50,8 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
       );
-
-      _isFirstFetch =
-          false; // Mettre à jour l'indicateur après le succès du chargement
     } catch (err) {
-      print(err); // Ajoutez ceci pour déboguer
+      print(err);
       emit(state.copyWith(
         status: FeedOOTDStatus.error,
         failure:

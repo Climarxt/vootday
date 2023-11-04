@@ -14,7 +14,9 @@ class HomeScreenSave extends StatefulWidget {
 }
 
 class _HomeScreenSaveState extends State<HomeScreenSave>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomeScreenSave> {
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<HomeScreenSave> {
   late TabController _tabController;
 
   @override
@@ -32,14 +34,12 @@ class _HomeScreenSaveState extends State<HomeScreenSave>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Builder(
-      builder: (context) {
-        return Scaffold(
-          appBar: Tabbar3items(tabController: _tabController, context: context),
-          body: _buildBody(),
-        );
-      }
-    );
+    return Builder(builder: (context) {
+      return Scaffold(
+        appBar: Tabbar3items(tabController: _tabController, context: context),
+        body: _buildBody(),
+      );
+    });
   }
 
   Widget _buildBody() {
@@ -49,7 +49,7 @@ class _HomeScreenSaveState extends State<HomeScreenSave>
         controller: _tabController,
         children: [
           FeedOOTD(),
-          const FeedMonth(),
+          FeedMonth(),
           const FeedCalendar(),
         ],
       ),

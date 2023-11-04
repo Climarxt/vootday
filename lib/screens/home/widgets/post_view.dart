@@ -1,8 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '/models/models.dart';
 import '/screens/screens.dart';
@@ -24,36 +22,29 @@ class PostView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
-        listener: (context, state) {
-      if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
-        context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
-      }
-    }, builder: (context, state) {
-      return GestureDetector(
-        onTap: () => _navigateToPostScreen(context),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height / 1.5,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(18)),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: CachedNetworkImageProvider(post.imageUrl),
-              ),
-              /*           boxShadow: const [
+    return GestureDetector(
+      onTap: () => _navigateToPostScreen(context),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          height: MediaQuery.of(context).size.height / 1.5,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(18)),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: CachedNetworkImageProvider(post.imageUrl),
+            ),
+            /*           boxShadow: const [
                   BoxShadow(color: Colors.grey, offset: Offset(0, 3), blurRadius: 6),
                 ], */
-            ),
-            child: buildScaffold(context),
           ),
+          child: buildScaffold(context),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Scaffold buildScaffold(BuildContext context) {

@@ -1,12 +1,13 @@
+// ignore_for_file: avoid_print
+
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
-import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FeedMonth extends StatefulWidget {
-  const FeedMonth({Key? key}) : super(key: key);
+  FeedMonth({Key? key}) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api
@@ -17,20 +18,24 @@ class _FeedMonthState extends State<FeedMonth>
     with AutomaticKeepAliveClientMixin<FeedMonth> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
+  bool _isFetching = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
-    _scrollController = ScrollController()
-      ..addListener(() {
-        if (_scrollController.offset >=
-                _scrollController.position.maxScrollExtent &&
-            !_scrollController.position.outOfRange &&
-            context.read<FeedMonthBloc>().state.status != FeedMonthStatus.paginating) {
-          context.read<FeedMonthBloc>().add(FeedMonthPaginatePosts());
-        }
-      });
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange &&
+        !_isFetching &&
+        context.read<FeedMonthBloc>().state.status !=
+            FeedMonthStatus.paginating) {
+      _isFetching = true;
+      context.read<FeedMonthBloc>().add(FeedMonthPaginatePosts());
+    }
   }
 
   @override
@@ -45,11 +50,8 @@ class _FeedMonthState extends State<FeedMonth>
     super.build(context);
     return BlocConsumer<FeedMonthBloc, FeedMonthState>(
       listener: (context, state) {
-        if (state.status == FeedMonthStatus.error) {
-          showDialog(
-            context: context,
-            builder: (context) => ErrorDialog(content: state.failure.message),
-          );
+        if (state.status == FeedMonthStatus.initial && state.posts.isEmpty) {
+          context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
         }
       },
       builder: (context, state) {
@@ -95,9 +97,7 @@ class _FeedMonthState extends State<FeedMonth>
                     recentlyLiked: recentlyLiked,
                     onLike: () {
                       if (isLiked) {
-                        context
-                            .read<LikedPostsCubit>()
-                            .unlikePost(post: post);
+                        context.read<LikedPostsCubit>().unlikePost(post: post);
                       } else {
                         context.read<LikedPostsCubit>().likePost(post: post);
                       }
@@ -118,6 +118,7 @@ class _FeedMonthState extends State<FeedMonth>
     }
   }
 
+// Overridden to retain the state
   @override
-  bool get wantKeepAlive => true; // Overridden to retain the state
+  bool get wantKeepAlive => true;
 }

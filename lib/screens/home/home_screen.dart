@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen>
         controller: _tabController,
         children: [
           FeedOOTD(),
-          const FeedMonth(),
+          FeedMonth(),
           const FeedCalendar(),
         ],
       ),

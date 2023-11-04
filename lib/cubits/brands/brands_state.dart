@@ -6,13 +6,13 @@ class BrandState extends Equatable {
   final List<Brand> brands;
   final Status status;
 
-  BrandState({
+  const BrandState({
     required this.brands,
     required this.status,
   });
 
   static BrandState initial() {
-    return BrandState(brands: [], status: Status.initial);
+    return const BrandState(brands: [], status: Status.initial);
   }
 
   BrandState copyWith({

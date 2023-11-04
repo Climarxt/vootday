@@ -5,6 +5,7 @@ class FeedCalendar extends StatefulWidget {
   const FeedCalendar({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _FeedCalendarState createState() => _FeedCalendarState();
 }
 

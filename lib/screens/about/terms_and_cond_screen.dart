@@ -12,7 +12,7 @@ class TermsAndConditions extends StatelessWidget {
         title:
             AppLocalizations.of(context)!.translate('termsAndConditionstitle'),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Text(
           'Vos termes et conditions vont ici. '

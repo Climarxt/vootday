@@ -83,6 +83,7 @@ class SignupScreen extends StatelessWidget {
       children: [
         SvgPicture.asset(
           'assets/images/ic_instagram.svg',
+          // ignore: deprecated_member_use
           color: Colors.black,
           height: 64,
         ),
@@ -138,16 +139,16 @@ class SignupScreen extends StatelessWidget {
           value: selectedGender,
           items: const [
             DropdownMenuItem(
-              child: Text("Masculin"),
               value: 'Masculin',
+              child: Text("Masculin"),
             ),
             DropdownMenuItem(
-              child: Text("Féminin"),
               value: 'Féminin',
+              child: Text("Féminin"),
             ),
           ],
           onChanged: (value) {
-            selectedGender = value as String?;
+            selectedGender = value;
             context.read<SignupCubit>().selectedGenderChanged(selectedGender!);
           },
         ),
@@ -231,9 +232,9 @@ class SignupScreen extends StatelessWidget {
   }
 
   Widget _buildSocialButtons() {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
+      children: [
         SquareTile(imagePath: 'assets/logos/google.png'),
         SizedBox(width: 25),
         SquareTile(imagePath: 'assets/logos/apple.png'),

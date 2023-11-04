@@ -12,7 +12,7 @@ class LoginHelpScreen extends StatelessWidget {
         title:
             AppLocalizations.of(context)!.translate('helptitle'),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Text(
           'Vos Aides vont ici. '

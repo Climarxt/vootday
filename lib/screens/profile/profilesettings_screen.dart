@@ -67,6 +67,7 @@ class SettingsScreen extends StatelessWidget {
             [
               buildSettingsItem(
                 context,
+                // ignore: deprecated_member_use
                 FontAwesomeIcons.signOutAlt,
                 'Se déconnecter',
                 onTap: () {

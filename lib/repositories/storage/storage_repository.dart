@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import '/repositories/storage/base_storage_repository.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:uuid/uuid.dart';
 
 class StorageRepository extends BaseStorageRepository {

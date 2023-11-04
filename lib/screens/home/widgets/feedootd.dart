@@ -1,11 +1,11 @@
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/repositories/post/post_repository.dart';
-import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
+// ignore_for_file: avoid_print
+
+import 'package:bootdv2/config/colors.dart';
 import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
-import 'package:bootdv2/screens/home/widgets/post_view.dart';
+import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class FeedOOTD extends StatefulWidget {
   FeedOOTD({Key? key}) : super(key: key ?? GlobalKey());
@@ -20,7 +20,15 @@ class _FeedOOTDState extends State<FeedOOTD>
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
   bool _isFetching = false;
-  final PageStorageKey _key = PageStorageKey('feedScreenKey');
+
+  List<String> imageList = [
+    'assets/images/Stussy.png',
+    'assets/images/postImage2.jpg',
+    'assets/images/ITG1_2.jpg',
+    'assets/images/Carhartt.png',
+    'assets/images/Obey.png',
+    'assets/images/Sandro.png',
+  ];
 
   @override
   void initState() {
@@ -52,62 +60,54 @@ class _FeedOOTDState extends State<FeedOOTD>
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
     super.build(context);
-    return BlocProvider<FeedMonthBloc>(
-      create: (context) => FeedMonthBloc(
-        postRepository: context.read<PostRepository>(),
-        authBloc: context.read<AuthBloc>(),
-        likedPostsCubit: context.read<LikedPostsCubit>(),
-      ),
-      child: BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
-        listener: (context, state) {
-          if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
-            context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            body: _buildPostList(state),
-          );
-        },
-      ),
+    return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+      listener: (context, state) {
+        if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
+          context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: buildListview(size),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => GoRouter.of(context).push('/event'),
+            label: Text(
+              "eventTest",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(color: white),
+            ),
+            backgroundColor: couleurJauneOrange,
+          ),
+        );
+      },
     );
   }
 
-  ListView _buildPostList(FeedOOTDState state) {
-    return ListView.separated(
-      key: _key,
-      physics: const BouncingScrollPhysics(),
-      cacheExtent: 10000,
-      controller: _scrollController,
-      itemCount: state.posts.length + 1,
-      separatorBuilder: (BuildContext context, int index) =>
-          const SizedBox(height: 10),
-      itemBuilder: (BuildContext context, int index) {
-        if (index == state.posts.length) {
-          return state.status == FeedOOTDStatus.paginating
-              ? const Center(child: CircularProgressIndicator())
-              : const SizedBox.shrink();
-        } else {
-          final post = state.posts[index];
-          final likedPostsState = context.watch<LikedPostsCubit>().state;
-          final isLiked = likedPostsState.likedPostIds.contains(post!.id);
-          final recentlyLiked =
-              likedPostsState.recentlyLikedPostIds.contains(post.id);
-          return PostView(
-            post: post,
-            isLiked: isLiked,
-            recentlyLiked: recentlyLiked,
-            onLike: () {
-              if (isLiked) {
-                context.read<LikedPostsCubit>().unlikePost(post: post);
-              } else {
-                context.read<LikedPostsCubit>().likePost(post: post);
-              }
-            },
-          );
-        }
-      },
+  Widget buildListview(Size size) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: SizedBox(
+        height: size.height * 0.2,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: imageList.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: MosaiqueEventLargeCard(
+                imageUrl: imageList[index],
+                title: 'Title',
+                description: 'Description',
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

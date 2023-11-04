@@ -86,11 +86,9 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  // TODO: implement maxExtent
   double get maxExtent => 48;
 
   @override
-  // TODO: implement minExtent
   double get minExtent => 48;
 
   @override

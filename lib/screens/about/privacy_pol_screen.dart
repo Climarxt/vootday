@@ -12,7 +12,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         title:
             AppLocalizations.of(context)!.translate('privacyPolicytitle'),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Text(
           'Vos privacy et policy vont ici. '

@@ -20,17 +20,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await initializeDateFormatting(
-      'fr_FR', null); // Initialisation du formatage des dates
-  runApp(MyApp());
+  await initializeDateFormatting('fr_FR', null);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  final PageStorageBucket bucket = PageStorageBucket();
-
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

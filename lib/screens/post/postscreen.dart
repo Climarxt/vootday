@@ -4,7 +4,6 @@ import 'package:bootdv2/widgets/appbar/appbar_post.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
 
 class PostScreen extends StatelessWidget {
   final String postId; // Utilisation d'un String pour l'ID du post

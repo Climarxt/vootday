@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:bootdv2/screens/home/widgets/feedootd.dart';
 import 'package:bootdv2/screens/home/widgets/feedevent.dart';
 import 'package:bootdv2/screens/home/widgets/feedmonth.dart';
@@ -47,8 +49,8 @@ class _HomeScreenSaveState extends State<HomeScreenSave>
         controller: _tabController,
         children: [
           FeedOOTD(),
-          FeedMonth(),
-          FeedCalendar(),
+          const FeedMonth(),
+          const FeedCalendar(),
         ],
       ),
     );

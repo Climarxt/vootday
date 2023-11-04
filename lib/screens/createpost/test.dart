@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
@@ -9,6 +11,7 @@ class Test extends StatefulWidget {
   const Test({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _TestState createState() => _TestState();
 }
 

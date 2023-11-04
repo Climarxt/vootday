@@ -4,7 +4,7 @@ class AppBarWhite extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWhite({super.key});
 
   @override
-  Size get preferredSize => Size.fromHeight(62);
+  Size get preferredSize => const Size.fromHeight(62);
 
   @override
   Widget build(BuildContext context) {

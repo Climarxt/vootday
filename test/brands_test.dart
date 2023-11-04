@@ -1,3 +1,5 @@
+// ignore_for_file: subtype_of_sealed_class
+
 import 'package:bootdv2/models/brand.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
+// ignore: must_be_immutable
 class MockCollectionReference extends Mock implements CollectionReference {}
 
 class MockQuerySnapshot extends Mock implements QuerySnapshot {}

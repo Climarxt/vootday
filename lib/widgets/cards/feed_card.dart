@@ -16,11 +16,12 @@ class FeedCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _FeedCardState createState() => _FeedCardState();
 }
 
 class _FeedCardState extends State<FeedCard> {
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {

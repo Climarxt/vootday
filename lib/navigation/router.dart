@@ -1,10 +1,14 @@
+// ignore_for_file: avoid_print
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/brands/brands_cubit.dart';
+import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
+import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -83,17 +87,21 @@ GoRouter createRouter(BuildContext context) {
       // Post
       GoRoute(
         path: '/event',
-        builder: (BuildContext context, GoRouterState state) =>
-            BlocProvider<ProfileBloc>(
-          create: (_) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          )..add(
-              ProfileLoadUser(userId: authBloc.state.user!.uid),
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return NoAnimationPage(
+            child: BlocProvider<ProfileBloc>(
+              create: (_) => ProfileBloc(
+                authBloc: context.read<AuthBloc>(),
+                userRepository: context.read<UserRepository>(),
+                postRepository: context.read<PostRepository>(),
+              )..add(
+                  ProfileLoadUser(userId: authBloc.state.user!.uid),
+                ),
+              child:
+                  const EventScreen(postImage: 'assets/images/placeholder-image.png'),
             ),
-          child: EventScreen(postImage: 'assets/images/placeholder-image.png'),
-        ),
+          );
+        },
       ),
 
       // StatefulShellBranch
@@ -174,11 +182,7 @@ GoRouter createRouter(BuildContext context) {
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(
-                    child: HomeScreen(),
-                  );
-                },
+                builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
                 routes: [
                   // Définition des sous-routes ici
                   GoRoute(
@@ -201,11 +205,22 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                 path: '/calendar',
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const CalendarScreen());
+                  // Le BlocProvider est ajouté ici pour envelopper CalendarScreen
+                  return NoAnimationPage(
+                    child: BlocProvider<FeedMonthBloc>(
+                      create: (context) => FeedMonthBloc(
+                        postRepository: context.read<PostRepository>(),
+                        authBloc: context.read<AuthBloc>(),
+                        likedPostsCubit: context.read<LikedPostsCubit>(),
+                      ),
+                      child: const CalendarScreen(),
+                    ),
+                  );
                 },
               ),
             ],
           ),
+
           // Swipe
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -260,7 +275,7 @@ GoRouter createRouter(BuildContext context) {
                   )..add(
                       ProfileLoadUser(userId: authBloc.state.user!.uid),
                     ),
-                  child: ProfileScreen(),
+                  child: const ProfileScreen(),
                 ),
                 routes: <RouteBase>[
                   GoRoute(
@@ -313,7 +328,7 @@ GoRouter createRouter(BuildContext context) {
                                 ),
                               ),
                             ],
-                            child: BrandSearchScreen(),
+                            child: const BrandSearchScreen(),
                           );
                         },
                       ),

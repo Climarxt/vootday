@@ -1,7 +1,5 @@
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
-import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
-import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/appbar/appbar_post.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:flutter/material.dart';

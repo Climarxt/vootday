@@ -31,7 +31,7 @@ class PostView extends StatelessWidget {
       }
     }, builder: (context, state) {
       return GestureDetector(
-        onTap: () => _navigateToPostScreen(context, post),
+        onTap: () => _navigateToPostScreen(context),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -64,7 +64,7 @@ class PostView extends StatelessWidget {
     );
   }
 
-  void _navigateToPostScreen(BuildContext context, Post post) {
+  void _navigateToPostScreen(BuildContext context) {
     GoRouter.of(context).push('/home/${post.id}');
   }
 

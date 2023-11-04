@@ -1,7 +1,9 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
+import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
-import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,10 +25,12 @@ class _FeedOOTDState extends State<FeedOOTD>
   @override
   void initState() {
     super.initState();
+    print('FeedOOTD initState()');
     _scrollController = ScrollController()..addListener(_onScroll);
   }
 
   void _onScroll() {
+    print('FeedOOTD is scrolling');
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
@@ -40,6 +44,7 @@ class _FeedOOTDState extends State<FeedOOTD>
 
   @override
   void dispose() {
+    print('FeedOOTD dispose()');
     _textController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -48,38 +53,24 @@ class _FeedOOTDState extends State<FeedOOTD>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
-      listener: (context, state) {
-        if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
-          context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
-        );
-      },
-    );
-  }
-
-  Widget _buildBody(FeedOOTDState state) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: () async {
+    return BlocProvider<FeedMonthBloc>(
+      create: (context) => FeedMonthBloc(
+        postRepository: context.read<PostRepository>(),
+        authBloc: context.read<AuthBloc>(),
+        likedPostsCubit: context.read<LikedPostsCubit>(),
+      ),
+      child: BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
             context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
-            context.read<LikedPostsCubit>().clearAllLikedPosts();
-          },
-          child: _buildPostList(state),
-        ),
-        if (state.status == FeedOOTDStatus.paginating)
-          const Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Center(child: CircularProgressIndicator()),
-          ),
-      ],
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            body: _buildPostList(state),
+          );
+        },
+      ),
     );
   }
 
@@ -120,6 +111,7 @@ class _FeedOOTDState extends State<FeedOOTD>
     );
   }
 
+// Overridden to retain the state
   @override
-  bool get wantKeepAlive => true; // Overridden to retain the state
+  bool get wantKeepAlive => true;
 }

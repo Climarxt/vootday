@@ -36,9 +36,6 @@ class PostView extends StatelessWidget {
               fit: BoxFit.cover,
               image: post.imageProvider,
             ),
-            /*           boxShadow: const [
-                  BoxShadow(color: Colors.grey, offset: Offset(0, 3), blurRadius: 6),
-                ], */
           ),
           child: buildScaffold(context),
         ),

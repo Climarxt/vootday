@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class ProfileImagePost extends StatelessWidget {
   final String title;
   final String subtitle;
-  final String profileUrl;
+  final ImageProvider<Object>? profileImageProvider;
 
   const ProfileImagePost({
     super.key,
     required this.title,
     required this.subtitle,
-    required this.profileUrl,
+    this.profileImageProvider,
   });
 
   @override
@@ -26,7 +26,7 @@ class ProfileImagePost extends StatelessWidget {
               backgroundColor: greyDark,
               child: CircleAvatar(
                 radius: 39,
-                backgroundImage: AssetImage(profileUrl),
+                backgroundImage: profileImageProvider,
               ),
             ),
             const SizedBox(width: 8),

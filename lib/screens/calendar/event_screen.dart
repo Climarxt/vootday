@@ -38,11 +38,13 @@ class _PostScreenState extends State<EventScreen> {
                       padding: EdgeInsets.only(left: 18, right: 18),
                       child: Row(
                         children: [
+                          /*
                           ProfileImagePost(
                             title: 'Obey',
                             subtitle: 'Event #1',
                             profileUrl: 'assets/images/Obey.png',
                           ),
+                          */
                           Spacer(),
                           Column(
                             children: [

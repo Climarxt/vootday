@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -93,6 +94,11 @@ class User extends Equatable {
       'bio': bio,
     };
   }
+
+    CachedNetworkImageProvider get profileImageProvider {
+    return CachedNetworkImageProvider(profileImageUrl);
+  }
+
 
   static User fromSnapshot(DocumentSnapshot snap) {
     User user = User(

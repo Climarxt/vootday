@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class ProfileImagePost extends StatelessWidget {
   final String title;
-  final String subtitle;
   final String description;
   final ImageProvider<Object>? profileImageProvider;
   final List<String> tags;
@@ -11,7 +10,6 @@ class ProfileImagePost extends StatelessWidget {
   const ProfileImagePost({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.description,
     required this.profileImageProvider,
     required this.tags,
@@ -40,10 +38,6 @@ class ProfileImagePost extends StatelessWidget {
                 Text(
                   title,
                   style: AppTextStyles.titleLargeBlackBold(context),
-                ),
-                Text(
-                  subtitle,
-                  style: AppTextStyles.subtitleLargeGrey(context),
                 ),
               ],
             ),

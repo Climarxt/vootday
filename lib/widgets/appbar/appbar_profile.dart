@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,7 @@ class _SliverAppBarProfileState extends State<SliverAppBarProfile> {
       centerTitle: true,
       backgroundColor: Colors.white,
       elevation: 0,
+      iconTheme: const IconThemeData(color: black),
       title: Text(
         widget.title,
         style: Theme.of(context)
@@ -25,13 +27,7 @@ class _SliverAppBarProfileState extends State<SliverAppBarProfile> {
             .headlineMedium!
             .copyWith(color: Colors.black),
       ),
-      leading: IconButton(
-        onPressed: () => GoRouter.of(context).pop(),
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.black,
-        ),
-      ),
+
       actions: [
         IconButton(
           onPressed: () => GoRouter.of(context).go('/profile/settings'),

@@ -1,7 +1,7 @@
 import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
-import 'package:bootdv2/widgets/appbar/appbar_post.dart';
+import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +67,7 @@ class PostScreen extends StatelessWidget {
               {
                 return SafeArea(
                   child: Scaffold(
+                    appBar: AppBarTitle(title: user.username),
                     body: Stack(
                       children: [
                         SingleChildScrollView(
@@ -88,7 +89,6 @@ class PostScreen extends StatelessWidget {
                                       ProfileImagePost(
                                         title:
                                             '${user.firstName} ${user.lastName}',
-                                        subtitle: user.username,
                                         profileImageProvider:
                                             user.profileImageProvider,
                                         description: post.caption,
@@ -120,12 +120,13 @@ class PostScreen extends StatelessWidget {
                         ),
 
                         // AppBar personnalisée
-                        const Positioned(
+                        /* const Positioned(
                           top: 0.0,
                           left: 0.0,
                           right: 0.0,
                           child: AppBarPost(),
                         ),
+                        */
                       ],
                     ),
                   ),

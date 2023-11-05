@@ -24,7 +24,7 @@ class PostView extends StatelessWidget {
       onTap: () => _navigateToPostScreen(context),
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Container(
           height: MediaQuery.of(context).size.height / 1.5,

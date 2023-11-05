@@ -4,7 +4,7 @@ import 'package:bootdv2/screens/profile/profile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';
 import 'package:bootdv2/screens/profile/widgets/tabbar_profile.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
+import 'package:bootdv2/widgets/appbar/my_appbar_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,7 +25,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBarProfile(title: state.user.username),
+              MySliverAppBarProfile(title: state.user.username),
               SliverToBoxAdapter(child: ProfileHeader(state: state)),
               SliverPersistentHeader(
                 pinned: true,

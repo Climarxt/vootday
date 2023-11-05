@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SliverAppBarProfile extends StatefulWidget {
+class MySliverAppBarProfile extends StatefulWidget {
   final String title;
-  const SliverAppBarProfile({super.key, required this.title});
+  const MySliverAppBarProfile({super.key, required this.title});
 
   @override
-  State<SliverAppBarProfile> createState() => _SliverAppBarProfileState();
+  State<MySliverAppBarProfile> createState() => _MySliverAppBarProfileState();
 }
 
-class _SliverAppBarProfileState extends State<SliverAppBarProfile> {
+class _MySliverAppBarProfileState extends State<MySliverAppBarProfile> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
@@ -26,13 +26,20 @@ class _SliverAppBarProfileState extends State<SliverAppBarProfile> {
             .copyWith(color: Colors.black),
       ),
       leading: IconButton(
-        onPressed: () => GoRouter.of(context).pop(),
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.black,
+          onPressed: () => GoRouter.of(context).go('/profile/create'),
+          icon: const Icon(
+            Icons.add_box,
+            color: Colors.black,
+          ),
         ),
-      ),
       actions: [
+        IconButton(
+          onPressed: () => GoRouter.of(context).go('/profile/notifications'),
+          icon: const Icon(
+            Icons.notifications,
+            color: Colors.black,
+          ),
+        ),
         IconButton(
           onPressed: () => GoRouter.of(context).go('/profile/settings'),
           icon: const Icon(

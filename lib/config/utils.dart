@@ -3,9 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:collection';
-import 'package:table_calendar/table_calendar.dart';
-
-import '../models/event.dart';
 
 pickImage(ImageSource source) async {
   final ImagePicker imagePicker = ImagePicker();
@@ -43,10 +40,6 @@ showSnackBar(String content, BuildContext context) {
 /// Example events.
 ///
 /// Using a [LinkedHashMap] is highly recommended if you decide to use a map.
-final kEvents = LinkedHashMap<DateTime, List<Event>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-);
 // ..addAll(_kEventSource);
 
 // final _kEventSource = Map.fromIterable(List.generate(50, (index) => index),

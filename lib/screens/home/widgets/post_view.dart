@@ -70,10 +70,9 @@ class PostView extends StatelessWidget {
       children: [
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => Navigator.of(context).pushNamed(
-            ProfileScreen.routeName,
-            arguments: ProfileScreenArgs(userId: post.author.id),
-          ),
+          onTap: () {
+            context.go('/profile/${post.author.id}');
+          },
           child: UserProfileImage(
             radius: 22.0,
             outerCircleRadius: 23,

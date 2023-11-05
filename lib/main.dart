@@ -7,6 +7,7 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
+import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,7 +92,14 @@ class MyApp extends StatelessWidget {
               feedMonthBloc.add(FeedMonthFetchPostsMonth());
               return feedMonthBloc;
             },
-          )
+          ),
+          BlocProvider<ProfileBloc>(
+            create: (context) => ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+            ),
+          ),
         ],
         child: Builder(
           builder: (context) => MaterialApp.router(

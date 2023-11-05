@@ -263,19 +263,18 @@ GoRouter createRouter(BuildContext context) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/profile',
+                path: '/',
                 builder: (BuildContext context, GoRouterState state) =>
-                    BlocProvider<ProfileBloc>(
-                  create: (_) => ProfileBloc(
-                    authBloc: context.read<AuthBloc>(),
-                    userRepository: context.read<UserRepository>(),
-                    postRepository: context.read<PostRepository>(),
-                  )..add(
-                      ProfileLoadUser(userId: authBloc.state.user!.uid),
-                    ),
-                  child: const ProfileScreen(),
-                ),
-                routes: <RouteBase>[
+                    const HomeScreen(),
+                routes: [
+                  GoRoute(
+                    path:
+                        'profile/:userId', // Ici, `profile/:userId` est une route enfant de '/'
+                    builder: (BuildContext context, GoRouterState state) {
+                      final userId = state.pathParameters['userId']!;
+                      return ProfileScreen(userId: userId);
+                    },
+                  ),
                   GoRoute(
                     path: 'editprofile',
                     pageBuilder: (BuildContext context, GoRouterState state) {

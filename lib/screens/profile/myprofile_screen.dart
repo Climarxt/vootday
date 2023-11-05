@@ -1,6 +1,4 @@
-import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';

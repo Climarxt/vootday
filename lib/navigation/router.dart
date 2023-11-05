@@ -15,7 +15,6 @@ import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
-import 'package:bootdv2/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

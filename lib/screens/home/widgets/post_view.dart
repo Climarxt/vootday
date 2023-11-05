@@ -2,7 +2,6 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '/models/models.dart';
-import '/screens/screens.dart';
 import '/widgets/widgets.dart';
 
 class PostView extends StatelessWidget {

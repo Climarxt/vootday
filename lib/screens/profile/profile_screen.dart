@@ -1,6 +1,4 @@
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';
@@ -9,7 +7,6 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String userId;
@@ -108,31 +105,34 @@ class ProfileHeader extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    return Center(
-      child: Column(
-        children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/images/profile1.jpg'),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Christian Bastide',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: black),
-          ),
-          const SizedBox(height: 12),
-          ProfileStats(
-            isCurrentUser: state.isCurrentUser,
-            isFollowing: state.isFollowing,
-            posts: state.posts.length,
-            followers: state.user.followers,
-            following: state.user.following,
-          ),
-          const SizedBox(height: 8), // Bottom space
-        ],
+    return Container(
+      color: white,
+      child: Center(
+        child: Column(
+          children: [
+            const CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage('assets/images/profile1.jpg'),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Christian Bastide',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(color: black),
+            ),
+            const SizedBox(height: 12),
+            ProfileStats(
+              isCurrentUser: state.isCurrentUser,
+              isFollowing: state.isFollowing,
+              posts: state.posts.length,
+              followers: state.user.followers,
+              following: state.user.following,
+            ),
+            const SizedBox(height: 8), // Bottom space
+          ],
+        ),
       ),
     );
   }

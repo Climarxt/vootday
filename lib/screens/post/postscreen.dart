@@ -2,7 +2,6 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/widgets/appbar/appbar_post.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +21,11 @@ class PostScreen extends StatelessWidget {
         future: context.read<PostRepository>().getPostById(postId),
         builder: (BuildContext context, AsyncSnapshot<Post?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+              ),
+            );
           }
 
           if (snapshot.hasError) {

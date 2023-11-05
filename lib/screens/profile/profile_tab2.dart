@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import 'bloc/profile_bloc.dart';
 import 'widgets/widgets.dart';
@@ -29,14 +30,17 @@ class _ProfileTab2State extends State<ProfileTab2>
 Widget _buildListView(BuildContext context, ProfileState state) {
   return Padding(
     padding: const EdgeInsets.only(left: 7.0, right: 7.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ButtonsSection(state: state),
-        LocationSection(location: state.user.location),
-        const SocialNetSection(),
-        AboutSection(state: state),
-      ],
+    child: Container(
+      color: white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonsSection(state: state),
+          LocationSection(location: state.user.location),
+          const SocialNetSection(),
+          AboutSection(state: state),
+        ],
+      ),
     ),
   );
 }

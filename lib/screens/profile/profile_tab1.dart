@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_profile_card.dart';
 import 'package:flutter/material.dart';
@@ -19,22 +20,25 @@ class _ProfileTab1State extends State<ProfileTab1> {
 }
 
 Widget _buildGridView(BuildContext context, ProfileState state) {
-  return GridView.builder(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-    physics: const ClampingScrollPhysics(),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      crossAxisSpacing: 6,
-      mainAxisSpacing: 6,
-      childAspectRatio: 0.8,
+  return Container(
+    color: white,
+    child: GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+      physics: const ClampingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 6,
+        mainAxisSpacing: 6,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: state.posts.length,
+      itemBuilder: (context, index) {
+        final post = state.posts[index];
+        return MosaiqueProfileCard(
+          context,
+          imageUrl: post!.thumbnailUrl,
+        );
+      },
     ),
-    itemCount: state.posts.length,
-    itemBuilder: (context, index) {
-      final post = state.posts[index];
-      return MosaiqueProfileCard(
-        context,
-        imageUrl: post!.thumbnailUrl,
-      );
-    },
   );
 }

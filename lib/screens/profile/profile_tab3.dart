@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/widgets/cards/mosaique_collection_card.dart';
 import 'package:flutter/material.dart';
 
@@ -19,23 +20,26 @@ class _ProfileTab3State extends State<ProfileTab3> {
   ];
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      physics: const ClampingScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 4,
-        mainAxisSpacing: 4,
-        childAspectRatio: 0.8,
+    return Container(
+      color: white,
+      child: GridView.builder(
+        padding: EdgeInsets.zero,
+        physics: const ClampingScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: imageList.length,
+        itemBuilder: (context, index) {
+          return MosaiqueCollectionCard(
+            context,
+            title: "Titre",
+            imageUrl: imageList[index],
+          );
+        },
       ),
-      itemCount: imageList.length,
-      itemBuilder: (context, index) {
-        return MosaiqueCollectionCard(
-          context,
-          title: "Titre",
-          imageUrl: imageList[index],
-        );
-      },
     );
   }
 }

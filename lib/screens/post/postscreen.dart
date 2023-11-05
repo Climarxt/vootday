@@ -38,6 +38,7 @@ class PostScreen extends StatelessWidget {
           }
 
           final Post post = snapshot.data!;
+          // String formattedTags = post.tags.map((tag) => '#$tag').join(' ');
 
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
@@ -90,6 +91,8 @@ class PostScreen extends StatelessWidget {
                                         subtitle: user.username,
                                         profileImageProvider:
                                             user.profileImageProvider,
+                                        description: post.caption,
+                                        tags: post.tags,
                                       ),
                                       const Spacer(),
                                       const Column(

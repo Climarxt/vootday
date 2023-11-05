@@ -1,5 +1,4 @@
 import 'package:bootdv2/widgets/appbar/appbar_post.dart';
-import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:flutter/material.dart';
 
 class EventScreen extends StatefulWidget {

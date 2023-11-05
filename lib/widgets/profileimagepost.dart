@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 class ProfileImagePost extends StatelessWidget {
   final String title;
   final String subtitle;
+  final String description;
   final ImageProvider<Object>? profileImageProvider;
+  final List<String> tags;
 
   const ProfileImagePost({
     super.key,
     required this.title,
     required this.subtitle,
-    this.profileImageProvider,
+    required this.description,
+    required this.profileImageProvider,
+    required this.tags,
   });
 
   @override
@@ -52,10 +56,9 @@ class ProfileImagePost extends StatelessWidget {
             textAlign: TextAlign.left,
             text: TextSpan(
               style: AppTextStyles.bodyStyle(context),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
-                  text:
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. Donec in efficitur leo. Proin quis tortor orci. Etiam at risus et justo dignissim congue.",
+                  text: description,
                 ),
               ],
             ),
@@ -67,12 +70,20 @@ class ProfileImagePost extends StatelessWidget {
           child: RichText(
             textAlign: TextAlign.left,
             text: TextSpan(
-              style: AppTextStyles.bodyTag(context),
-              children: const <TextSpan>[
-                TextSpan(
-                  text: "#Nike #Sandro #Stussy #Obey",
-                ),
-              ],
+              children: tags.map((tag) {
+                return WidgetSpan(
+                  child: InkWell(
+                    onTap: () {
+                      // Gérez l'événement de clic ici, par exemple, naviguez vers un écran de recherche avec le tag.
+                      print('Tag "$tag" a été cliqué');
+                    },
+                    child: Text(
+                      '#$tag ',
+                      style: AppTextStyles.bodyTag(context),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import '../config/configs.dart';
@@ -70,6 +71,10 @@ class Post extends Equatable {
       'date': Timestamp.fromDate(date),
       'tags': tags, // Include tags in the document map
     };
+  }
+
+  CachedNetworkImageProvider get imageProvider {
+    return CachedNetworkImageProvider(imageUrl);
   }
 
   static Future<Post?> fromDocument(DocumentSnapshot doc) async {

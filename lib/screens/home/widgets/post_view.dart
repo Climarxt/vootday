@@ -35,7 +35,7 @@ class PostView extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(18)),
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(post.imageUrl),
+              image: post.imageProvider,
             ),
             /*           boxShadow: const [
                   BoxShadow(color: Colors.grey, offset: Offset(0, 3), blurRadius: 6),

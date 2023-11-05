@@ -2,6 +2,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/widgets/appbar/appbar_post.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,9 +46,8 @@ class PostScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Exemple pour afficher l'image de Post (mettez à jour le reste du code en conséquence)
-                          Image.network(
-                            post.imageUrl,
+                          Image(
+                            image: post.imageProvider,
                             width: size.width,
                             fit: BoxFit.fitWidth,
                           ),

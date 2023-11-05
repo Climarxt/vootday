@@ -12,8 +12,10 @@ import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
+import 'package:bootdv2/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -103,7 +105,24 @@ GoRouter createRouter(BuildContext context) {
           );
         },
       ),
-
+      // Profile
+     /* 
+      GoRoute(
+        path: '/user',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SplashScreen(),
+        routes: [
+          GoRoute(
+            path:
+                ':userId', // Ici, `profile/:userId` est une route enfant de '/'
+            builder: (BuildContext context, GoRouterState state) {
+              final userId = state.pathParameters['userId']!;
+              return ProfileScreen(userId: userId);
+            },
+          ),
+        ],
+      ),
+      */
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
@@ -178,6 +197,7 @@ GoRouter createRouter(BuildContext context) {
           );
         },
         branches: <StatefulShellBranch>[
+          // Home
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
@@ -186,17 +206,24 @@ GoRouter createRouter(BuildContext context) {
                     const HomeScreen(),
                 routes: [
                   GoRoute(
-                    path: ':postId',
+                    path: 'post/:postId',
                     builder: (BuildContext context, GoRouterState state) {
                       final postId = state.pathParameters['postId']!;
                       return PostScreen(postId: postId);
+                    },
+                  ),
+                  GoRoute(
+                    path:
+                        'user/:userId', // Ici, `profile/:userId` est une route enfant de '/'
+                    builder: (BuildContext context, GoRouterState state) {
+                      final userId = state.pathParameters['userId']!;
+                      return ProfileScreen(userId: userId);
                     },
                   ),
                 ],
               ),
             ],
           ),
-
           // Calendar
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -218,7 +245,6 @@ GoRouter createRouter(BuildContext context) {
               ),
             ],
           ),
-
           // Swipe
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -241,40 +267,23 @@ GoRouter createRouter(BuildContext context) {
               ),
             ],
           ),
-          // Create Post
-          /* StatefulShellBranch(
-            routes: <RouteBase>[
-              GoRoute(
-                path: '/search',
-                builder: (BuildContext context, GoRouterState state) =>
-                    BlocProvider<CreatePostCubit>(
-                  create: (context) => CreatePostCubit(
-                    postRepository: context.read<PostRepository>(),
-                    storageRepository: context.read<StorageRepository>(),
-                    authBloc: context.read<AuthBloc>(),
-                  ),
-                  child: const CreatePostScreen(),
-                ),
-              ),
-            ],
-          ),
-          */
           // Profile
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/',
+                path: '/profile',
                 builder: (BuildContext context, GoRouterState state) =>
-                    const HomeScreen(),
-                routes: [
-                  GoRoute(
-                    path:
-                        'profile/:userId', // Ici, `profile/:userId` est une route enfant de '/'
-                    builder: (BuildContext context, GoRouterState state) {
-                      final userId = state.pathParameters['userId']!;
-                      return ProfileScreen(userId: userId);
-                    },
-                  ),
+                    BlocProvider<ProfileBloc>(
+                  create: (_) => ProfileBloc(
+                    authBloc: context.read<AuthBloc>(),
+                    userRepository: context.read<UserRepository>(),
+                    postRepository: context.read<PostRepository>(),
+                  )..add(
+                      ProfileLoadUser(userId: authBloc.state.user!.uid),
+                    ),
+                  child: const MyProfileScreen(),
+                ),
+                routes: <RouteBase>[
                   GoRoute(
                     path: 'editprofile',
                     pageBuilder: (BuildContext context, GoRouterState state) {

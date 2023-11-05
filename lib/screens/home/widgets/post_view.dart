@@ -52,7 +52,7 @@ class PostView extends StatelessWidget {
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    GoRouter.of(context).push('/home/${post.id}');
+    GoRouter.of(context).push('/home/post/${post.id}');
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -71,7 +71,7 @@ class PostView extends StatelessWidget {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            context.go('/profile/${post.author.id}');
+            context.go('/home/user/${post.author.id}');
           },
           child: UserProfileImage(
             radius: 22.0,

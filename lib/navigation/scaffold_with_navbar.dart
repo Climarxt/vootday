@@ -21,7 +21,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       appBar: appBar,
       body: navigationShell,
-      bottomNavigationBar: currentLocation != '/profile/create'
+      bottomNavigationBar: currentLocation != '/profile/create' 
           ? BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

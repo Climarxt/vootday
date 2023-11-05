@@ -1,4 +1,4 @@
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -9,66 +9,47 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-class ProfileScreen extends StatefulWidget {
-  final String userId;
-  const ProfileScreen({super.key, required this.userId});
+class MyProfileScreen extends StatefulWidget {
+  const MyProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  late final String userId;
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProfileBloc>().add(ProfileLoadUser(userId: widget.userId));
-  }
-
+class _MyProfileScreenState extends State<MyProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        if (state.status == ProfileStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state.status == ProfileStatus.error) {
-          return Center(child: Text(state.failure.message));
-        }
-        // Maintenant que le ProfileBloc est accessible, construisez l'UI
-        return DefaultTabController(
-          length: 3,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBarProfile(title: state.user.username),
-                SliverToBoxAdapter(child: ProfileHeader(state: state)),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: ProfileTabbar(
-                    child: Container(
-                      color: Colors.white,
-                      child: const TabbarProfile(),
-                    ),
+    return BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+      return DefaultTabController(
+        length: 3,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBarProfile(title: state.user.username),
+              SliverToBoxAdapter(child: ProfileHeader(state: state)),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: ProfileTabbar(
+                  child: Container(
+                    color: Colors.white,
+                    child: const TabbarProfile(),
                   ),
                 ),
-              ],
-              body: TabBarView(
-                children: [
-                  ProfileTab1(context: context, state: state),
-                  ProfileTab2(context: context, state: state),
-                  const ProfileTab3(),
-                ],
               ),
+            ],
+            body: TabBarView(
+              children: [
+                ProfileTab1(context: context, state: state),
+                ProfileTab2(context: context, state: state),
+                const ProfileTab3(),
+              ],
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 }
 
@@ -80,10 +61,7 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // Ajouter un Material widget ici pour s'assurer que le TabBar a un ancêtre Material
-    return Material(
-      child: child,
-    );
+    return child;
   }
 
   @override

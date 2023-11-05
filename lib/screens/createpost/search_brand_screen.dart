@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 
 // Main screen for brand searching
 class BrandSearchScreen extends StatefulWidget {
-  const BrandSearchScreen({Key? key}) : super(key: key);
+  const BrandSearchScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

@@ -7,11 +7,11 @@ class ProfileImagePost extends StatelessWidget {
   final String profileUrl;
 
   const ProfileImagePost({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.profileUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

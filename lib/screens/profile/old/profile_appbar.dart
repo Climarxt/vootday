@@ -8,8 +8,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ProfileState state;
   final BuildContext parentContext;
   const ProfileAppBar(
-      {Key? key, required this.parentContext, required this.state})
-      : super(key: key);
+      {super.key, required this.parentContext, required this.state});
 
   @override
   Widget build(BuildContext context) {

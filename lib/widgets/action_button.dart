@@ -6,11 +6,11 @@ class ActionButton extends StatelessWidget {
   final String route;
   final BuildContext context;
   const ActionButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.route,
     required this.context,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,9 +5,9 @@ class CreatePostCard extends StatelessWidget {
   final File? postImage;
 
   const CreatePostCard({
-    Key? key,
+    super.key,
     this.postImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

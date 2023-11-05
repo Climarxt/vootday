@@ -6,9 +6,9 @@ class MosaiqueProfileCard extends StatelessWidget {
 
   const MosaiqueProfileCard(
     BuildContext context, {
-    Key? key,
+    super.key,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

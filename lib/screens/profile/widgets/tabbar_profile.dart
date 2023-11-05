@@ -5,8 +5,8 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 // ignore: must_be_immutable
 class TabbarProfile extends StatelessWidget {
   const TabbarProfile({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

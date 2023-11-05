@@ -11,12 +11,12 @@ class UserProfileImage extends StatelessWidget {
   final File? profileImage;
 
   const UserProfileImage({
-    Key? key,
+    super.key,
     required this.radius,
     required this.outerCircleRadius,
     required this.profileImageUrl,
     this.profileImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,8 +5,8 @@ bool _isLoading = false;
 
 class SwipeEvent extends StatelessWidget {
   const SwipeEvent({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

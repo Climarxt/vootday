@@ -8,10 +8,10 @@ class Tabbar2itemsSearch extends StatelessWidget
   late TabController tabController;
   final BuildContext context;
   Tabbar2itemsSearch({
-    Key? key,
+    super.key,
     required this.tabController,
     required this.context,
-  }) : super(key: key);
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(62);

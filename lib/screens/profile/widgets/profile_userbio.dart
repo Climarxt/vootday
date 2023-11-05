@@ -5,10 +5,10 @@ class ProfileUserBio extends StatelessWidget {
   final String bio;
 
   const ProfileUserBio({
-    Key? key,
+    super.key,
     required this.username,
     required this.bio,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

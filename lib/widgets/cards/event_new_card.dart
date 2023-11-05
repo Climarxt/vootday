@@ -6,11 +6,11 @@ class EventNewCard extends StatelessWidget {
   final String description;
 
   const EventNewCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.title,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

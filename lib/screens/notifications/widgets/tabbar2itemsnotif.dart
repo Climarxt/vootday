@@ -8,10 +8,10 @@ class Tabbar2itemsNotif extends StatelessWidget implements PreferredSizeWidget {
   late TabController tabController;
   final BuildContext context;
   Tabbar2itemsNotif({
-    Key? key,
+    super.key,
     required this.tabController,
     required this.context,
-  }) : super(key: key);
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(62);

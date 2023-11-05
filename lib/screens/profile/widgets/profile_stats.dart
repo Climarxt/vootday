@@ -10,13 +10,13 @@ class ProfileStats extends StatelessWidget {
   final int following;
 
   const ProfileStats({
-    Key? key,
+    super.key,
     required this.isCurrentUser,
     required this.isFollowing,
     required this.posts,
     required this.followers,
     required this.following,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

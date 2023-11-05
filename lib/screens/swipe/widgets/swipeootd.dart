@@ -5,8 +5,8 @@ bool _isLoading = false;
 
 class SwipeOOTD extends StatelessWidget {
   const SwipeOOTD({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

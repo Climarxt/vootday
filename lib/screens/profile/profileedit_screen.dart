@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class EditProfileScreen extends StatefulWidget {
 
   const EditProfileScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();

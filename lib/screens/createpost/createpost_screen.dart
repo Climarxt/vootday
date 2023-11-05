@@ -15,7 +15,7 @@ import 'cubit/create_post_cubit.dart';
 class CreatePostScreen extends StatefulWidget {
   static const String routeName = '/createPost';
 
-  const CreatePostScreen({Key? key}) : super(key: key);
+  const CreatePostScreen({super.key});
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();

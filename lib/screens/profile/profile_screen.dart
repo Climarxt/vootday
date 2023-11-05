@@ -99,9 +99,9 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
 class ProfileHeader extends StatelessWidget {
   final ProfileState state;
   const ProfileHeader({
-    Key? key,
+    super.key,
     required this.state,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(

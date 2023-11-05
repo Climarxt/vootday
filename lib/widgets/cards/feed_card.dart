@@ -8,12 +8,12 @@ class FeedCard extends StatefulWidget {
   final String imageUrl;
 
   const FeedCard({
-    Key? key,
+    super.key,
     required this.size,
     required this.username,
     required this.profileUrl,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api

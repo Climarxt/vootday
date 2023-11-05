@@ -5,10 +5,10 @@ class Stats extends StatelessWidget {
   final String label;
 
   const Stats({
-    Key? key,
+    super.key,
     required this.count,
     required this.label,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

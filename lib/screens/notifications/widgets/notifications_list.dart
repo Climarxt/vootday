@@ -3,7 +3,7 @@ import 'package:bootdv2/models/wip/model.dart';
 import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
 
 class NotificationsList extends StatelessWidget {
-  const NotificationsList({Key? key}) : super(key: key);
+  const NotificationsList({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 class EventScreen extends StatefulWidget {
   final String postImage;
   const EventScreen({
-    Key? key,
+    super.key,
     required this.postImage,
-  }) : super(key: key);
+  });
 
   @override
   State<EventScreen> createState() => _PostScreenState();

@@ -8,9 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PostScreen extends StatelessWidget {
   final String postId; // Utilisation d'un String pour l'ID du post
   const PostScreen({
-    Key? key,
+    super.key,
     required this.postId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -4,10 +4,10 @@ class MosaiqueCollectionCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   const MosaiqueCollectionCard(BuildContext context, {
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Test extends StatefulWidget {
-  const Test({Key? key}) : super(key: key);
+  const Test({super.key});
 
   @override
   // ignore: library_private_types_in_public_api

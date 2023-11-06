@@ -12,10 +12,10 @@ class PostScreen extends StatelessWidget {
   final String username;
 
   const PostScreen({
-    Key? key,
+    super.key,
     required this.postId,
     required this.username,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

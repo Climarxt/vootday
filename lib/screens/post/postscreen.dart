@@ -8,132 +8,142 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PostScreen extends StatelessWidget {
-  final String postId; // Utilisation d'un String pour l'ID du post
+  final String postId;
+  final String username;
+
   const PostScreen({
-    super.key,
+    Key? key,
     required this.postId,
-  });
+    required this.username,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
-    return FutureBuilder<Post?>(
-        future: context.read<PostRepository>().getPostById(postId),
-        builder: (BuildContext context, AsyncSnapshot<Post?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
-              ),
-            );
-          }
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBarTitle(title: username),
+        body: FutureBuilder<Post?>(
+          future: context.read<PostRepository>().getPostById(postId),
+          builder: (context, postSnapshot) {
+            if (postSnapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox.shrink();
+            }
+            if (!postSnapshot.hasData) {
+              return const Center(child: Text('Post not found'));
+            }
+            final Post post = postSnapshot.data!;
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection(Paths.users)
+                  .doc(post.author.id)
+                  .get(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                }
+                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                  return Center(child: Text('User not found'));
+                }
+                final User user = User.fromDocument(userSnapshot.data!);
 
-          if (!snapshot.hasData) {
-            return const Center(child: Text('Post not found'));
-          }
-
-          final Post post = snapshot.data!;
-          // String formattedTags = post.tags.map((tag) => '#$tag').join(' ');
-
-          return FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection(Paths.users)
-                .doc(post.author.id)
-                .get(),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.transparent),
-                  ),
-                );
-              }
-
-              if (userSnapshot.hasError) {
-                return Center(child: Text('Error: ${userSnapshot.error}'));
-              }
-
-              if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                return const Center(child: Text('User not found'));
-              }
-
-              final User user = User.fromDocument(userSnapshot.data!);
-              {
-                return SafeArea(
-                  child: Scaffold(
-                    appBar: AppBarTitle(title: user.username),
-                    body: Stack(
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: size.height),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SingleChildScrollView(
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(minHeight: size.height),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image(
-                                  image: post.imageProvider,
-                                  width: size.width,
-                                  fit: BoxFit.fitWidth,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 18, right: 18),
-                                  child: Row(
-                                    children: [
-                                      ProfileImagePost(
-                                        title:
-                                            '${user.firstName} ${user.lastName}',
-                                        profileImageProvider:
-                                            user.profileImageProvider,
-                                        description: post.caption,
-                                        tags: post.tags,
-                                      ),
-                                      const Spacer(),
-                                      const Column(
-                                        children: [
-                                          SizedBox(height: 12),
-                                          Icon(Icons.more_vert,
-                                              color: Colors.black, size: 24),
-                                          SizedBox(height: 32),
-                                          Icon(Icons.comment,
-                                              color: Colors.black, size: 24),
-                                          SizedBox(height: 32),
-                                          Icon(Icons.share,
-                                              color: Colors.black, size: 24),
-                                          SizedBox(height: 32),
-                                          Icon(Icons.add_to_photos,
-                                              color: Colors.black, size: 24),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                        FutureBuilder<void>(
+                          future: Future.delayed(
+                              const Duration(seconds: 0, milliseconds: 200)),
+                          builder: (context, delaySnapshot) {
+                            Widget imageWidget;
+                            if (delaySnapshot.connectionState ==
+                                ConnectionState.done) {
+                              imageWidget = Image(
+                                key: ValueKey(post.id),
+                                image: post.imageProvider,
+                                width: size.width,
+                                height: size.height / 1.5,
+                                fit: BoxFit.cover,
+                              );
+                            } else {
+                              imageWidget = Container(
+                                key: const ValueKey('placeholder'),
+                                width: size.width,
+                                height: size.height / 1.5,
+                                color: Colors.white,
+                              );
+                            }
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: imageWidget,
+                            );
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 18, right: 18),
+                          child: Row(
+                            children: [
+                              FutureBuilder<void>(
+                                future: Future.delayed(
+                                    const Duration(milliseconds: 200)),
+                                builder: (context, delaySnapshot) {
+                                  Widget profileImageWidget;
+                                  if (delaySnapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    profileImageWidget = ProfileImagePost(
+                                      title:
+                                          '${user.firstName} ${user.lastName}',
+                                      profileImageProvider:
+                                          user.profileImageProvider,
+                                      description: post.caption,
+                                      tags: post.tags,
+                                    );
+                                  } else {
+                                    profileImageWidget = Container(
+                                      width: 48,
+                                      height: 48,
+                                      color: Colors.white,
+                                    );
+                                  }
+                                  return AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 200),
+                                    child: profileImageWidget,
+                                  );
+                                },
+                              ),
+                              const Spacer(),
+                              const Column(
+                                children: [
+                                  SizedBox(height: 12),
+                                  Icon(Icons.more_vert,
+                                      color: Colors.black, size: 24),
+                                  SizedBox(height: 32),
+                                  Icon(Icons.comment,
+                                      color: Colors.black, size: 24),
+                                  SizedBox(height: 32),
+                                  Icon(Icons.share,
+                                      color: Colors.black, size: 24),
+                                  SizedBox(height: 32),
+                                  Icon(Icons.add_to_photos,
+                                      color: Colors.black, size: 24),
+                                ],
+                              )
+                            ],
                           ),
                         ),
-
-                        // AppBar personnalisée
-                        /* const Positioned(
-                          top: 0.0,
-                          left: 0.0,
-                          right: 0.0,
-                          child: AppBarPost(),
-                        ),
-                        */
                       ],
                     ),
                   ),
                 );
-              }
-            },
-          );
-        });
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }

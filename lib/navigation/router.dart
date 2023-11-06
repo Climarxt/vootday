@@ -105,7 +105,7 @@ GoRouter createRouter(BuildContext context) {
         },
       ),
       // Profile
-     /* 
+      /* 
       GoRoute(
         path: '/user',
         builder: (BuildContext context, GoRouterState state) =>
@@ -208,7 +208,9 @@ GoRouter createRouter(BuildContext context) {
                     path: 'post/:postId',
                     builder: (BuildContext context, GoRouterState state) {
                       final postId = state.pathParameters['postId']!;
-                      return PostScreen(postId: postId);
+                      final username = state.uri.queryParameters['username'] ??
+                          'Unknown'; // Utiliser une valeur par défaut si non fourni.
+                      return PostScreen(postId: postId, username: username);
                     },
                   ),
                   GoRoute(

@@ -51,7 +51,8 @@ class PostView extends StatelessWidget {
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    GoRouter.of(context).push('/home/post/${post.id}');
+    final username = post.author.username;
+    GoRouter.of(context).push('/home/post/${post.id}?username=$username');
   }
 
   AppBar buildAppBar(BuildContext context) {

@@ -45,7 +45,7 @@ class PostScreen extends StatelessWidget {
                   return const SizedBox.shrink();
                 }
                 if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                  return Center(child: Text('User not found'));
+                  return const Center(child: Text('User not found'));
                 }
                 final User user = User.fromDocument(userSnapshot.data!);
 

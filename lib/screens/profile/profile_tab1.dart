@@ -21,7 +21,7 @@ class _ProfileTab1State extends State<ProfileTab1> {
 
 Widget _buildGridView(BuildContext context, ProfileState state) {
   return Container(
-    color: white,
+    color: Colors.white, // Ensuring the background is white
     child: GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       physics: const ClampingScrollPhysics(),
@@ -34,8 +34,13 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
       itemCount: state.posts.length,
       itemBuilder: (context, index) {
         final post = state.posts[index];
-        return MosaiqueProfileCard(
-          imageUrl: post!.thumbnailUrl,
+
+        // Wrap the MosaiqueProfileCard with a white Container and AnimatedOpacity
+        return Container(
+          color: Colors.white, // White container before the image appears
+          child: MosaiqueProfileCard(
+            imageUrl: post!.thumbnailUrl,
+          ),
         );
       },
     ),

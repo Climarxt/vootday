@@ -124,8 +124,8 @@ class PostView extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: 33,
-            right: -1,
+            top: 32,
+            right: -2,
             child: Container(
               width: 74,
               height: 24,

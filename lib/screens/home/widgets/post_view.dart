@@ -112,10 +112,21 @@ class PostView extends StatelessWidget {
     );
   }
 
-  Text buildLikeCount(BuildContext context) {
-    return Text(
-      '${recentlyLiked ? post.likes + 1 : post.likes}',
-      style: AppTextStyles.titlePost(context),
+  Widget buildLikeCount(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '${recentlyLiked ? post.likes + 1 : post.likes}',
+          style: AppTextStyles.titlePost(context),
+        ),
+        const SizedBox(width: 2),
+        const Icon(
+          Icons.emoji_events,
+          color: white,
+          size: 14,
+        ),
+      ],
     );
   }
 

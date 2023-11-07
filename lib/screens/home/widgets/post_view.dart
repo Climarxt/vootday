@@ -92,7 +92,7 @@ class PostView extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
               child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(18),

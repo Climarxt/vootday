@@ -31,11 +31,24 @@ class AppTextStyles {
     return Theme.of(context).textTheme.titleLarge!.copyWith(color: greyDark);
   }
 
-    static TextStyle displaySmallBold(BuildContext context) {
+  static TextStyle displaySmallBold(BuildContext context) {
     return Theme.of(context)
         .textTheme
         .displaySmall!
         .copyWith(color: Colors.black, fontWeight: FontWeight.bold);
   }
 
+  static TextStyle titlePost(BuildContext context) {
+    return Theme.of(context).textTheme.titleLarge!.copyWith(
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+      shadows: const [
+        Shadow(offset: Offset(-0.2, -0.2), color: Colors.grey),
+        Shadow(offset: Offset(0.2, -0.2), color: Colors.grey),
+        Shadow(offset: Offset(0.2, 0.2), color: Colors.grey),
+        Shadow(offset: Offset(-0.2, 0.2), color: Colors.grey),
+      ],
+    );
+  }
+  
 }

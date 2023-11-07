@@ -63,59 +63,50 @@ class _FeedOOTDState extends State<FeedOOTD>
   }
 
   Widget _buildBody(FeedOOTDState state) {
-    switch (state.status) {
-      case FeedOOTDStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              cacheExtent: 10000,
-              controller: _scrollController,
-              itemCount: state.posts.length + 1,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const SizedBox(height: 10),
-              itemBuilder: (BuildContext context, int index) {
-                // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
-                // ou un SizedBox vide si la pagination n'est pas en cours
-                if (index == state.posts.length) {
-                  return state.status == FeedOOTDStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final post = state.posts[index];
-                  final likedPostsState =
-                      context.watch<LikedPostsCubit>().state;
-                  final isLiked =
-                      likedPostsState.likedPostIds.contains(post!.id);
-                  final recentlyLiked =
-                      likedPostsState.recentlyLikedPostIds.contains(post.id);
-                  return PostView(
-                    post: post,
-                    isLiked: isLiked,
-                    recentlyLiked: recentlyLiked,
-                    onLike: () {
-                      if (isLiked) {
-                        context.read<LikedPostsCubit>().unlikePost(post: post);
-                      } else {
-                        context.read<LikedPostsCubit>().likePost(post: post);
-                      }
-                    },
-                  );
-                }
-              },
-            ),
-            if (state.status == FeedOOTDStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
-    }
+    return Stack(
+      children: [
+        ListView.separated(
+          physics: const BouncingScrollPhysics(),
+          cacheExtent: 10000,
+          controller: _scrollController,
+          itemCount: state.posts.length + 1,
+          separatorBuilder: (BuildContext context, int index) =>
+              const SizedBox(height: 10),
+          itemBuilder: (BuildContext context, int index) {
+            if (index == state.posts.length) {
+              return state.status == FeedOOTDStatus.paginating
+                  ? const Center(child: CircularProgressIndicator())
+                  : const SizedBox.shrink();
+            } else {
+              final post = state.posts[index];
+              final likedPostsState = context.watch<LikedPostsCubit>().state;
+              final isLiked = likedPostsState.likedPostIds.contains(post!.id);
+              final recentlyLiked =
+                  likedPostsState.recentlyLikedPostIds.contains(post.id);
+              return PostView(
+                post: post,
+                isLiked: isLiked,
+                recentlyLiked: recentlyLiked,
+                onLike: () {
+                  if (isLiked) {
+                    context.read<LikedPostsCubit>().unlikePost(post: post);
+                  } else {
+                    context.read<LikedPostsCubit>().likePost(post: post);
+                  }
+                },
+              );
+            }
+          },
+        ),
+        if (state.status == FeedOOTDStatus.paginating)
+          const Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+      ],
+    );
   }
 
 // Overridden to retain the state

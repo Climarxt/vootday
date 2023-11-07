@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,7 +38,7 @@ class PostView extends StatelessWidget {
               image: post.imageProvider,
             ),
           ),
-          child: buildScaffold(context),
+          child: buildBody(context),
         ),
       ),
     );
@@ -61,11 +63,23 @@ class PostView extends StatelessWidget {
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: buildTitleColumn(context),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(top: 24, right: 26.0),
+          child: buildLikeCount(context),
+        ),
+      ],
     );
   }
 
-  Column buildTitleColumn(BuildContext context) {
+  Text buildLikeCount(BuildContext context) {
+    return Text(
+      '${recentlyLiked ? post.likes + 1 : post.likes}',
+      style: AppTextStyles.titlePost(context),
+    );
+  }
+
+  Column buildTitle(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -73,25 +87,32 @@ class PostView extends StatelessWidget {
           onTap: () {
             context.go('/home/user/${post.author.id}');
           },
-          child: UserProfileImage(
-            radius: 22.0,
-            outerCircleRadius: 23,
-            profileImageUrl: post.author.profileImageUrl,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          post.author.username,
-          style: const TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: white,
-            shadows: [
-              Shadow(offset: Offset(-0.2, -0.2), color: Colors.grey),
-              Shadow(offset: Offset(0.2, -0.2), color: Colors.grey),
-              Shadow(offset: Offset(0.2, 0.2), color: Colors.grey),
-              Shadow(offset: Offset(-0.2, 0.2), color: Colors.grey),
-            ],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Row(
+                  children: [
+                    UserProfileImage(
+                      radius: 22.0,
+                      outerCircleRadius: 23,
+                      profileImageUrl: post.author.profileImageUrl,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      post.author.username,
+                      style: AppTextStyles.titlePost(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -100,59 +121,85 @@ class PostView extends StatelessWidget {
 
   Container buildBody(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [buildActionRow(context)],
-      ),
-    );
-  }
-
-  Row buildActionRow(BuildContext context) {
-    return Row(
-      children: [
-        const Spacer(),
-        Column(
-          children: [
-            buildLikeButton(),
-            buildLikeCount(),
-            const SizedBox(width: 38),
-            buildCommentButton(context),
-          ],
-        ),
-      ],
-    );
-  }
-
-  IconButton buildLikeButton() {
-    return IconButton(
-      icon: isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite, color: white),
-      onPressed: onLike,
-    );
-  }
-
-  Text buildLikeCount() {
-    return Text(
-      '${recentlyLiked ? post.likes + 1 : post.likes}',
-      style: const TextStyle(
-        fontWeight: FontWeight.w600,
-        color: white,
-        shadows: [
-          Shadow(offset: Offset(-0.2, -0.2), color: Colors.grey),
-          Shadow(offset: Offset(0.2, -0.2), color: Colors.grey),
-          Shadow(offset: Offset(0.2, 0.2), color: Colors.grey),
-          Shadow(offset: Offset(-0.2, 0.2), color: Colors.grey),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 33,
+            right: -1,
+            child: Container(
+              width: 74,
+              height: 24,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: couleurBleuClair2,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 36,
+            right: 24,
+            child: buildLikeCount(context),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 12,
+            child: buildTitle(context),
+          ),
         ],
       ),
+    );
+  }
+
+  ClipRRect buildIconColumn(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildCommentButton(context),
+                const SizedBox(height: 16),
+                buildShareButton(context),
+                const SizedBox(height: 16),
+                buildSaveButton(context),
+              ],
+            )),
+      ),
+    );
+  }
+
+  IconButton buildSaveButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(
+        Icons.add_to_photos,
+        color: white,
+      ),
+      onPressed: () {},
     );
   }
 
   IconButton buildCommentButton(BuildContext context) {
     return IconButton(
       icon: const Icon(
-        Icons.comment_outlined,
+        Icons.comment,
+        color: white,
+      ),
+      onPressed: () {},
+    );
+  }
+
+  IconButton buildShareButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(
+        Icons.share,
         color: white,
       ),
       onPressed: () {},

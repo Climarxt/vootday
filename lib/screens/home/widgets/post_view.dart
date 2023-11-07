@@ -44,41 +44,6 @@ class PostView extends StatelessWidget {
     );
   }
 
-  Scaffold buildScaffold(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context),
-      backgroundColor: Colors.transparent,
-      body: buildBody(context),
-    );
-  }
-
-  void _navigateToPostScreen(BuildContext context) {
-    final username = post.author.username;
-    GoRouter.of(context).push('/home/post/${post.id}?username=$username');
-  }
-
-  AppBar buildAppBar(BuildContext context) {
-    return AppBar(
-      toolbarHeight: 75,
-      centerTitle: true,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(top: 24, right: 26.0),
-          child: buildLikeCount(context),
-        ),
-      ],
-    );
-  }
-
-  Text buildLikeCount(BuildContext context) {
-    return Text(
-      '${recentlyLiked ? post.likes + 1 : post.likes}',
-      style: AppTextStyles.titlePost(context),
-    );
-  }
-
   Column buildTitle(BuildContext context) {
     return Column(
       children: [
@@ -119,90 +84,43 @@ class PostView extends StatelessWidget {
     );
   }
 
-  Container buildBody(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 32,
-            right: -2,
-            child: Container(
-              width: 74,
-              height: 24,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: couleurBleuClair2,
-                borderRadius: BorderRadius.circular(4),
+  Stack buildBody(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 32,
+          right: -1,
+          child: Container(
+            width: 74,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: couleurBleuClair2,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                bottomLeft: Radius.circular(4),
               ),
             ),
+            child: Center(child: buildLikeCount(context)),
           ),
-          Positioned(
-            top: 36,
-            right: 24,
-            child: buildLikeCount(context),
-          ),
-          Positioned(
-            bottom: 10,
-            left: 12,
-            child: buildTitle(context),
-          ),
-        ],
-      ),
+        ),
+        Positioned(
+          bottom: 10,
+          left: 12,
+          child: buildTitle(context),
+        ),
+      ],
     );
   }
 
-  ClipRRect buildIconColumn(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildCommentButton(context),
-                const SizedBox(height: 16),
-                buildShareButton(context),
-                const SizedBox(height: 16),
-                buildSaveButton(context),
-              ],
-            )),
-      ),
+  Text buildLikeCount(BuildContext context) {
+    return Text(
+      '${recentlyLiked ? post.likes + 1 : post.likes}',
+      style: AppTextStyles.titlePost(context),
     );
   }
 
-  IconButton buildSaveButton(BuildContext context) {
-    return IconButton(
-      icon: const Icon(
-        Icons.add_to_photos,
-        color: white,
-      ),
-      onPressed: () {},
-    );
-  }
-
-  IconButton buildCommentButton(BuildContext context) {
-    return IconButton(
-      icon: const Icon(
-        Icons.comment,
-        color: white,
-      ),
-      onPressed: () {},
-    );
-  }
-
-  IconButton buildShareButton(BuildContext context) {
-    return IconButton(
-      icon: const Icon(
-        Icons.share,
-        color: white,
-      ),
-      onPressed: () {},
-    );
+  void _navigateToPostScreen(BuildContext context) {
+    final username = post.author.username;
+    GoRouter.of(context).push('/home/post/${post.id}?username=$username');
   }
 }

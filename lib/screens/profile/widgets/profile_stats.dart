@@ -17,6 +17,7 @@ class ProfileStats extends StatelessWidget {
     required this.followers,
     required this.following,
   });
+  
 
   @override
   Widget build(BuildContext context) {

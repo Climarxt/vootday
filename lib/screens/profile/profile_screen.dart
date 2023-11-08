@@ -29,34 +29,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
+        if (state.status == ProfileStatus.initial) {
+          return Container(color: white);
+        }
         if (state.status == ProfileStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.status == ProfileStatus.error) {
           return Center(child: Text(state.failure.message));
         }
-        return DefaultTabController(
-          length: 3,
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBarProfile(title: state.user.username),
-              SliverToBoxAdapter(child: ProfileHeader(state: state)),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: ProfileTabbar(
-                  child: Container(
-                    color: Colors.white,
-                    child: const TabbarProfile(),
+        return Container(
+          color: Colors.white,
+          child: DefaultTabController(
+            length: 3,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverAppBarProfile(title: state.user.username),
+                  SliverToBoxAdapter(child: ProfileHeader(state: state)),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: ProfileTabbar(
+                      child: Container(
+                        color: Colors.white,
+                        child: const TabbarProfile(),
+                      ),
+                    ),
                   ),
+                ],
+                body: TabBarView(
+                  children: [
+                    ProfileTab1(context: context, state: state),
+                    ProfileTab2(context: context, state: state),
+                    const ProfileTab3(),
+                  ],
                 ),
               ),
-            ],
-            body: TabBarView(
-              children: [
-                ProfileTab1(context: context, state: state),
-                ProfileTab2(context: context, state: state),
-                const ProfileTab3(),
-              ],
             ),
           ),
         );

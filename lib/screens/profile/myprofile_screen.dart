@@ -101,7 +101,7 @@ class ProfileHeader extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ProfileStats(
-            isCurrentUser: state.isCurrentUser,
+            isCurrentUser: true,
             isFollowing: state.isFollowing,
             posts: state.posts.length,
             followers: state.user.followers,

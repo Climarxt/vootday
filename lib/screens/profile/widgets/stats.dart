@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Stats extends StatelessWidget {
+class Stats extends StatefulWidget {
   final int count;
   final String label;
 
@@ -11,22 +11,42 @@ class Stats extends StatelessWidget {
   });
 
   @override
+  _StatsState createState() => _StatsState();
+}
+
+class _StatsState extends State<Stats> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Démarrez l'animation après un certain délai
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        setState(() {
+          _opacity = 1.0;
+        });
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          label,
+          widget.label,
           style: Theme.of(context).textTheme.titleLarge!,
         ),
-        buildCountText(context),
+        AnimatedOpacity(
+          opacity: _opacity,
+          duration: const Duration(milliseconds: 200),
+          child: Text(
+            widget.count.toString(),
+            style: Theme.of(context).textTheme.headlineSmall!,
+          ),
+        ),
       ],
-    );
-  }
-
-  Text buildCountText(BuildContext context) {
-    return Text(
-      count.toString(),
-      style: Theme.of(context).textTheme.headlineSmall!,
     );
   }
 }

@@ -35,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state.status == ProfileStatus.error) {
           return Center(child: Text(state.failure.message));
         }
-        // Maintenant que le ProfileBloc est accessible, construisez l'UI
         return DefaultTabController(
           length: 3,
           child: NestedScrollView(

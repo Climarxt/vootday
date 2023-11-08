@@ -1,4 +1,3 @@
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_profile_card.dart';
 import 'package:flutter/material.dart';

@@ -27,7 +27,7 @@ class _FeedCalendarState extends State<FeedCalendar> {
           crossAxisCount: 2,
           crossAxisSpacing: 4,
           mainAxisSpacing: 4,
-          childAspectRatio: 0.8,
+          childAspectRatio: 0.5,
         ),
         itemCount: imageList.length,
         itemBuilder: (context, index) {

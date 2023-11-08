@@ -223,13 +223,13 @@ class PostRepository extends BasePostRepository {
     QuerySnapshot postsSnap;
     if (lastPostId == null) {
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedEvents)
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
     } else {
       final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedEvents)
           .doc(lastPostId)
           .get();
 
@@ -238,7 +238,7 @@ class PostRepository extends BasePostRepository {
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedEvents)
           .orderBy('likes', descending: true)
           .startAfterDocument(lastPostDoc)
           .limit(2)

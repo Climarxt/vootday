@@ -105,7 +105,7 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
     }
 
     // Convert the list of Brand objects to a list of brand names
-    List<String> brandNames = brands.map((brand) => brand.name).toList();
+    List<String> brandNames = brands.map((brand) => brand.author).toList();
 
     // Find matching brand names
     var matchingTags =
@@ -149,9 +149,9 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
       String option,
       List<Brand> brands) {
     // Find the brand object that matches the selected option
-    final brand = brands.firstWhere((b) => b.name == option,
+    final brand = brands.firstWhere((b) => b.author == option,
         orElse: () => Brand(
-            name: option,
+            author: option,
             logoUrl:
                 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fquestionmarklogo.svg?alt=media&token=0803c330-d49c-4808-ba80-80f1e6258897&_gl=1*111mjg0*_ga*NzczMDE3MDE2LjE2OTcwMzM5MTE.*_ga_CW55HF8NVT*MTY5ODM0ODMxMS4yMC4xLjE2OTgzNDkxMDUuMzkuMC4w'));
 

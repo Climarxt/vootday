@@ -3,33 +3,33 @@ import 'package:equatable/equatable.dart';
 
 class Brand extends Equatable {
   final String? id;
-  final String name;
+  final String author;
   final String logoUrl;
 
   const Brand({
     this.id,
-    required this.name,
+    required this.author,
     required this.logoUrl,
   });
 
   @override
-  List<Object?> get props => [id, name, logoUrl];
+  List<Object?> get props => [id, author, logoUrl];
 
   Brand copyWith({
     String? id,
-    String? name,
+    String? author,
     String? logoUrl,
   }) {
     return Brand(
       id: id ?? this.id,
-      name: name ?? this.name,
+      author: author ?? this.author,
       logoUrl: logoUrl ?? this.logoUrl,
     );
   }
 
   Map<String, dynamic> toDocument() {
     return {
-      'name': name,
+      'author': author,
       'logoUrl': logoUrl,
     };
   }
@@ -37,8 +37,19 @@ class Brand extends Equatable {
   static Brand fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Brand(
-      name: data['name'] ?? '',
+      author: data['author'] ?? '',
       logoUrl: data['logoUrl'] ?? '',
     );
+  }
+
+  static Brand fromSnapshot(DocumentSnapshot snap) {
+    Brand user = Brand(
+      id: snap.id,
+      author:
+          snap.data().toString().contains('author') ? snap.get('author') : '',
+      logoUrl:
+          snap.data().toString().contains('logoUrl') ? snap.get('logoUrl') : '',
+    );
+    return user;
   }
 }

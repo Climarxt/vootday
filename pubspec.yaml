@@ -51,6 +51,7 @@ dependencies:
   transparent_image: ^2.0.1
   tab_indicator_styler: ^2.0.0
   shimmer: ^3.0.0
+  fake_cloud_firestore: ^2.4.3
   flutter_localizations:
     sdk: flutter
 

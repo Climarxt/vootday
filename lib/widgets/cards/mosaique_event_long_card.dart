@@ -42,7 +42,7 @@ Widget _buildCard(
               left: 10,
               right: 10,
               child: Center(
-                child: buildTitle(context),
+                child: buildTitle(context,title),
               ),
             ),
           ],
@@ -59,7 +59,7 @@ Widget _buildCard(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             image: DecorationImage(
-              image: AssetImage(imageUrl),
+              image: NetworkImage(imageUrl),
               fit: BoxFit.cover,
             ),
           ),
@@ -68,7 +68,7 @@ Widget _buildCard(
     );
   }
 
-  Column buildTitle(BuildContext context) {
+  Column buildTitle(BuildContext context, String title) {
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -94,7 +94,7 @@ Widget _buildCard(
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'username',
+                      title,
                       style: AppTextStyles.titlePost(context),
                     ),
                   ],

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/event_model.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/models/models.dart';
@@ -258,6 +259,37 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
+  Future<List<Event?>> getEvents() async {
+    try {
+      print('Attempting to fetch event documents from Firestore...');
+      QuerySnapshot eventSnap =
+          await _firebaseFirestore.collection(Paths.events).get();
+
+      if (eventSnap.docs.isEmpty) {
+        print('No event documents found in Firestore.');
+        return [];
+      }
+
+      print('Event documents fetched. Converting to Event objects...');
+      List<Future<Event?>> futureEvents =
+          eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
+
+      // Utilisez Future.wait pour résoudre tous les événements
+      List<Event?> events = await Future.wait(futureEvents);
+
+      print('Event objects created. Total events: ${events.length}');
+      // Ici, vous pouvez également imprimer un événement pour le vérifier
+      if (events.isNotEmpty) {
+        print('First event details: ${events.first}');
+      }
+
+      return events;
+    } catch (e) {
+      print('An error occurred while fetching events: ${e.toString()}');
+      return [];
+    }
+  }
+
   @override
   Future<Set<String>> getLikedPostIds({
     required String userId,
@@ -294,21 +326,21 @@ class PostRepository extends BasePostRepository {
   }
 
   Future<Post?> getPostById(String postId) async {
-  try {
-    DocumentSnapshot postSnap = await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
+    try {
+      DocumentSnapshot postSnap =
+          await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
 
-    if (postSnap.exists) {
-      return Post.fromDocument(postSnap);
-    } else {
-      // Handle the case where the post does not exist.
-      print("Le post n'existe pas.");
+      if (postSnap.exists) {
+        return Post.fromDocument(postSnap);
+      } else {
+        // Handle the case where the post does not exist.
+        print("Le post n'existe pas.");
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors that occur during the fetch.
+      print(e.toString());
       return null;
     }
-  } catch (e) {
-    // Handle any errors that occur during the fetch.
-    print(e.toString());
-    return null;
   }
-}
-
 }

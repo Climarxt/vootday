@@ -12,3 +12,5 @@ class FeedEventFetchPosts extends FeedEventEvent {}
 class FeedEventFetchPostsMonth extends FeedEventEvent {}
 
 class FeedEventPaginatePosts extends FeedEventEvent {}
+
+class FeedEventFetchEvents extends FeedEventEvent {}

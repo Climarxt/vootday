@@ -77,8 +77,6 @@ class _FeedMonthState extends State<FeedMonth>
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(height: 10),
               itemBuilder: (BuildContext context, int index) {
-                // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
-                // ou un SizedBox vide si la pagination n'est pas en cours
                 if (index == state.posts.length) {
                   return state.status == FeedMonthStatus.paginating
                       ? const Center(child: CircularProgressIndicator())

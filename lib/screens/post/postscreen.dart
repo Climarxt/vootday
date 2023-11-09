@@ -1,12 +1,14 @@
 import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class PostScreen extends StatefulWidget {
   final String postId;
@@ -22,141 +24,124 @@ class PostScreen extends StatefulWidget {
   State<PostScreen> createState() => _PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen> {
+class _PostScreenState extends State<PostScreen>
+    with AutomaticKeepAliveClientMixin {
+  Post? _post;
+  User? _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPost();
+  }
+
+  Future<void> _loadPost() async {
+    try {
+      final post =
+          await context.read<PostRepository>().getPostById(widget.postId);
+      if (post != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection(Paths.users)
+            .doc(post.author.id)
+            .get();
+        if (userDoc.exists) {
+          setState(() {
+            _post = post;
+            _user = User.fromDocument(userDoc);
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final Size size = MediaQuery.of(context).size;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBarTitle(title: widget.username),
+        body: const Center(
+          child: Opacity(
+            opacity: 0.0,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    if (_post == null || _user == null) {
+      return Scaffold(
+        appBar: AppBarTitle(title: widget.username),
+        body: const Center(child: Text('Post or user not found')),
+      );
+    }
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBarTitle(title: widget.username),
-        body: FutureBuilder<Post?>(
-          future: context.read<PostRepository>().getPostById(widget.postId),
-          builder: (context, postSnapshot) {
-            if (postSnapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox.shrink();
-            }
-            if (!postSnapshot.hasData) {
-              return const Center(child: Text('Post not found'));
-            }
-            final Post post = postSnapshot.data!;
-
-            return FutureBuilder<DocumentSnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection(Paths.users)
-                  .doc(post.author.id)
-                  .get(),
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox.shrink();
-                }
-                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                  return const Center(child: Text('User not found'));
-                }
-                final User user = User.fromDocument(userSnapshot.data!);
-
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: size.height),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FutureBuilder<void>(
-                          future: Future.delayed(
-                              const Duration(seconds: 0, milliseconds: 200)),
-                          builder: (context, delaySnapshot) {
-                            Widget imageWidget;
-                            if (delaySnapshot.connectionState ==
-                                ConnectionState.done) {
-                              imageWidget = Image(
-                                key: ValueKey(post.id),
-                                image: post.imageProvider,
-                                width: size.width,
-                                height: size.height / 1.5,
-                                fit: BoxFit.cover,
-                              );
-                            } else {
-                              imageWidget = Container(
-                                key: const ValueKey('placeholder'),
-                                width: size.width,
-                                height: size.height / 1.5,
-                                color: Colors.white,
-                              );
-                            }
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: imageWidget,
-                            );
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 18, right: 18),
-                          child: Row(
-                            children: [
-                              FutureBuilder<void>(
-                                future: Future.delayed(
-                                    const Duration(milliseconds: 200)),
-                                builder: (context, delaySnapshot) {
-                                  Widget profileImageWidget;
-                                  if (delaySnapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    profileImageWidget = ProfileImagePost(
-                                      title:
-                                          '${user.firstName} ${user.lastName}',
-                                      profileImageProvider:
-                                          user.profileImageProvider,
-                                      description: post.caption,
-                                      tags: post.tags,
-                                      onTitleTap: () => _navigateToUserScreen(
-                                          context,
-                                          user), // Pass the callback here
-                                    );
-                                  } else {
-                                    profileImageWidget = Container(
-                                      width: 48,
-                                      height: 48,
-                                      color: Colors.white,
-                                    );
-                                  }
-                                  return AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 200),
-                                    child: profileImageWidget,
-                                  );
-                                },
-                              ),
-                              const Spacer(),
-                              const Column(
-                                children: [
-                                  SizedBox(height: 12),
-                                  Icon(Icons.more_vert,
-                                      color: Colors.black, size: 24),
-                                  SizedBox(height: 32),
-                                  Icon(Icons.comment,
-                                      color: Colors.black, size: 24),
-                                  SizedBox(height: 32),
-                                  Icon(Icons.share,
-                                      color: Colors.black, size: 24),
-                                  SizedBox(height: 32),
-                                  Icon(Icons.add_to_photos,
-                                      color: Colors.black, size: 24),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: size.height),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ImageLoader(
+                  imageProvider: _post!.imageProvider,
+                  width: size.width,
+                  height: size.height / 1.5,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 18, right: 18),
+                  child: Row(
+                    children: [
+                      ProfileImagePost(
+                        title: '${_user!.firstName} ${_user!.lastName}',
+                        profileImageProvider: _user!.profileImageProvider,
+                        description: _post!.caption,
+                        tags: _post!.tags,
+                        onTitleTap: () =>
+                            _navigateToUserScreen(context, _user!),
+                      ),
+                      const Spacer(),
+                      const Column(
+                        children: [
+                          SizedBox(height: 12),
+                          Icon(Icons.more_vert, color: Colors.black, size: 24),
+                          SizedBox(height: 32),
+                          Icon(Icons.comment, color: Colors.black, size: 24),
+                          SizedBox(height: 32),
+                          Icon(Icons.share, color: Colors.black, size: 24),
+                          SizedBox(height: 32),
+                          Icon(Icons.add_to_photos,
+                              color: Colors.black, size: 24),
+                        ],
+                      )
+                    ],
                   ),
-                );
-              },
-            );
-          },
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {
-    context.go('/home/post/${widget.postId}/user/${user.id}?username=${widget.username}');
+    context.go(
+        '/home/post/${widget.postId}/user/${user.id}?username=${widget.username}');
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

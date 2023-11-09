@@ -30,13 +30,12 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration:
-          const Duration(seconds: 1), // Adjust the duration if needed
+      duration: const Duration(seconds: 1),
     );
-    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController)
-      ..addListener(() {
-        setState(() {});
-      });
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
     _animationController.forward();
   }
 

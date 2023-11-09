@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -32,22 +31,20 @@ class EventLogoImage extends StatelessWidget {
     );
   }
 
-CircleAvatar buildInnerCircle() {
-  return CircleAvatar(
-    radius: radius,
-    backgroundColor: Colors.grey[200],
-    // Utilisez SvgPicture.network pour charger une image SVG
-    child: ClipOval(
-      child: SvgPicture.network(
-        profileImageUrl,
-        fit: BoxFit.cover, // Assurez-vous que l'image SVG couvre le cercle
-        width: radius * 2, // Définissez la largeur au diamètre du cercle
-        height: radius * 2, // Définissez la hauteur au diamètre du cercle
+  CircleAvatar buildInnerCircle() {
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: Colors.grey[200],
+      child: ClipOval(
+        child: SvgPicture.network(
+          profileImageUrl,
+          fit: BoxFit.cover,
+          width: radius * 2,
+          height: radius * 2,
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Icon? getNoProfileIcon() {
     if (profileImage == null && profileImageUrl.isEmpty) {

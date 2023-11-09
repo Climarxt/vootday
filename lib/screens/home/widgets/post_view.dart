@@ -110,7 +110,7 @@ class _PostViewState extends State<PostView>
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            context.go('/home/user/${widget.post.author.id}');
+            context.go('/home/user/${widget.post.author.id}?username=${widget.post.author.username}');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),

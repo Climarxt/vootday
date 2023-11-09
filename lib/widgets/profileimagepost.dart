@@ -6,6 +6,7 @@ class ProfileImagePost extends StatelessWidget {
   final String description;
   final ImageProvider<Object>? profileImageProvider;
   final List<String> tags;
+  final VoidCallback? onTitleTap;
 
   const ProfileImagePost({
     super.key,
@@ -13,6 +14,7 @@ class ProfileImagePost extends StatelessWidget {
     required this.description,
     required this.profileImageProvider,
     required this.tags,
+    this.onTitleTap,
   });
 
   @override
@@ -23,21 +25,27 @@ class ProfileImagePost extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: greyDark,
+            GestureDetector(
+              onTap: onTitleTap,
               child: CircleAvatar(
-                radius: 39,
-                backgroundImage: profileImageProvider,
+                radius: 40,
+                backgroundColor: greyDark,
+                child: CircleAvatar(
+                  radius: 39,
+                  backgroundImage: profileImageProvider,
+                ),
               ),
             ),
             const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: AppTextStyles.titleLargeBlackBold(context),
+                GestureDetector(
+                  onTap: onTitleTap,
+                  child: Text(
+                    title,
+                    style: AppTextStyles.titleLargeBlackBold(context),
+                  ),
                 ),
               ],
             ),

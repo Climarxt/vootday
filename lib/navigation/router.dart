@@ -208,23 +208,45 @@ GoRouter createRouter(BuildContext context) {
                     path: 'post/:postId',
                     builder: (BuildContext context, GoRouterState state) {
                       final postId = state.pathParameters['postId']!;
-                      final username = state.uri.queryParameters['username'] ??
-                          'Unknown'; // Utiliser une valeur par défaut si non fourni.
+                      final username =
+                          state.uri.queryParameters['username'] ?? 'Unknown';
                       return PostScreen(postId: postId, username: username);
                     },
+                    routes: [
+                      GoRoute(
+                        path: 'user/:userId',
+                        builder: (BuildContext context, GoRouterState state) {
+                          final userId = state.pathParameters['userId']!;
+                          // Supposons que vous vouliez également passer le username à ProfileScreen
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          return ProfileScreen(
+                              userId: userId,
+                              username:
+                                  username); // Ajoutez username ici en tant que paramètre
+                        },
+                      ),
+                    ],
                   ),
                   GoRoute(
-                    path:
-                        'user/:userId', // Ici, `profile/:userId` est une route enfant de '/'
+                    path: 'user/:userId',
                     builder: (BuildContext context, GoRouterState state) {
                       final userId = state.pathParameters['userId']!;
-                      return ProfileScreen(userId: userId);
+                      // Ici aussi, vous pourriez récupérer username si nécessaire
+                      final username =
+                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      return ProfileScreen(
+                        userId: userId,
+                        username: username,
+                      ); // Si vous ajoutez le username, ajoutez-le ici également
                     },
                   ),
                 ],
               ),
             ],
           ),
+
           // Calendar
           StatefulShellBranch(
             routes: <RouteBase>[

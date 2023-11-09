@@ -6,8 +6,9 @@ import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class PostScreen extends StatelessWidget {
+class PostScreen extends StatefulWidget {
   final String postId;
   final String username;
 
@@ -18,14 +19,19 @@ class PostScreen extends StatelessWidget {
   });
 
   @override
+  State<PostScreen> createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen> {
+  @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBarTitle(title: username),
+        appBar: AppBarTitle(title: widget.username),
         body: FutureBuilder<Post?>(
-          future: context.read<PostRepository>().getPostById(postId),
+          future: context.read<PostRepository>().getPostById(widget.postId),
           builder: (context, postSnapshot) {
             if (postSnapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox.shrink();
@@ -101,6 +107,9 @@ class PostScreen extends StatelessWidget {
                                           user.profileImageProvider,
                                       description: post.caption,
                                       tags: post.tags,
+                                      onTitleTap: () => _navigateToUserScreen(
+                                          context,
+                                          user), // Pass the callback here
                                     );
                                   } else {
                                     profileImageWidget = Container(
@@ -145,5 +154,9 @@ class PostScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _navigateToUserScreen(BuildContext context, User user) {
+    context.go('/home/post/${widget.postId}/user/${user.id}?username=${widget.username}');
   }
 }

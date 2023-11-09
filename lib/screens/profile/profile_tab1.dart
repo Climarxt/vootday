@@ -1,11 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_profile_card.dart';
-import 'package:flutter/material.dart';
+import '/models/models.dart'; // Import your Post model
 
 class ProfileTab1 extends StatefulWidget {
   final BuildContext context;
   final ProfileState state;
-  const ProfileTab1({super.key, required this.state, required this.context});
+
+  const ProfileTab1({
+    super.key,
+    required this.state,
+    required this.context,
+  });
 
   @override
   State<ProfileTab1> createState() => _ProfileTab1State();
@@ -33,14 +39,14 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
       itemCount: state.posts.length,
       itemBuilder: (context, index) {
         final post = state.posts[index];
-
-        // Wrap the MosaiqueProfileCard with a white Container and AnimatedOpacity
-        return Container(
-          color: Colors.white, // White container before the image appears
-          child: MosaiqueProfileCard(
-            imageUrl: post!.thumbnailUrl,
-          ),
-        );
+        // Check if post is not null before creating the card
+        if (post != null) {
+          // Pass the entire post object to the MosaiqueProfileCard
+          return MosaiqueProfileCard(post: post);
+        } else {
+          // If the post is null, return an empty placeholder widget
+          return SizedBox.shrink();
+        }
       },
     ),
   );

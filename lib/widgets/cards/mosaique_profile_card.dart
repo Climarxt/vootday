@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '/models/models.dart';
 
 class MosaiqueProfileCard extends StatefulWidget {
-  final String imageUrl;
+  final Post post;
 
   const MosaiqueProfileCard({
     super.key,
-    required this.imageUrl,
+    required this.post,
   });
 
   @override
@@ -19,7 +21,6 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
   @override
   void initState() {
     super.initState();
-    // Delay the visibility of the image
     Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
         setState(() {
@@ -35,26 +36,27 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
       opacity: isImageVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 200),
       child: isImageVisible
-          ? _buildCard(context, widget.imageUrl)
-          : Container(
-              color: Colors.white), // White container is the placeholder
+          ? GestureDetector(
+              onTap: () => _navigateToPostScreen(context),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.6,
+                width: MediaQuery.of(context).size.width,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.post.thumbnailUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            )
+          : Container(color: Colors.white),
     );
   }
 
-  Widget _buildCard(BuildContext context, String imageUrl) {
-    Size size = MediaQuery.of(context).size;
-    return GestureDetector(
-      child: SizedBox(
-        height: size.height * 0.6,
-        width: size.width,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: CachedNetworkImage(
-            imageUrl: imageUrl,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
+  void _navigateToPostScreen(BuildContext context) {
+    final username = widget.post.author.username;
+    GoRouter.of(context)
+        .push('/home/post/${widget.post.id}?username=$username');
   }
 }

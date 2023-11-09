@@ -1,29 +1,30 @@
 import 'dart:ui';
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/widgets/event_logo_image.dart';
 import 'package:bootdv2/widgets/event_profile_image.dart';
 import 'package:flutter/material.dart';
 
 class MosaiqueEventLongCard extends StatelessWidget {
   final String imageUrl;
+  final String logoUrl;
   final String title;
-  final String description;
 
   const MosaiqueEventLongCard(
     BuildContext context, {
     super.key,
     required this.imageUrl,
+    required this.logoUrl,
     required this.title,
-    required this.description,
   });
 
   @override
   Widget build(BuildContext context) {
-    return _buildCard(context, imageUrl, title, description);
+    return _buildCard(context, imageUrl, title, logoUrl);
   }
 
 Widget _buildCard(
-  BuildContext context, String imageUrl, String title, String description) {
+  BuildContext context, String imageUrl, String title, String logoUrl) {
   Size size = MediaQuery.of(context).size;
   return GestureDetector(
     child: SizedBox(
@@ -86,11 +87,10 @@ Widget _buildCard(
                 ),
                 child: Row(
                   children: [
-                    const EventProfileImage(
+                    EventLogoImage(
                       radius: 22.0,
                       outerCircleRadius: 23,
-                      profileImageUrl:
-                          'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fthumbnails%2F1692461647733.jpg?alt=media&token=7ba67ead-3404-4d58-987a-f9caa156c4d3',
+                      profileImageUrl: logoUrl,
                     ),
                     const SizedBox(width: 12),
                     Text(

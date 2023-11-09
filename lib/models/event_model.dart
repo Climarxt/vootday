@@ -16,6 +16,7 @@ class Event {
   final List<String> tags;
   final String reward;
   final bool done;
+  final String logoUrl;
 
   const Event({
     this.id,
@@ -29,6 +30,7 @@ class Event {
     required this.tags,
     required this.reward,
     this.done = false,
+    required this.logoUrl,
   });
 
   List<Object?> get props => [
@@ -43,6 +45,7 @@ class Event {
         tags,
         reward,
         done,
+        logoUrl
       ];
 
   CachedNetworkImageProvider get imageProvider {
@@ -70,6 +73,7 @@ class Event {
     if (authorRef != null) {
       final authorDoc = await authorRef.get();
       if (authorDoc.exists) {
+        Brand author = Brand.fromSnapshot(authorDoc);
         return Event(
           id: doc.id,
           author: Brand.fromSnapshot(authorDoc),
@@ -82,6 +86,7 @@ class Event {
           tags: (data['tags'] as List).map((item) => item as String).toList(),
           reward: data['reward'] ?? '',
           done: (data['done'] ?? false) as bool,
+          logoUrl: author.logoUrl,
         );
       }
     }

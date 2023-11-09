@@ -39,7 +39,7 @@ class _FeedCalendarState extends State<FeedCalendar> {
                         context,
                         imageUrl: event.imageUrl,
                         title: event.title,
-                        description: event.caption,
+                        logoUrl: event.logoUrl,
                       )
                     : const SizedBox.shrink();
               },

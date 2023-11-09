@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_profile_card.dart';
-import '/models/models.dart'; // Import your Post model
 
 class ProfileTab1 extends StatefulWidget {
   final BuildContext context;

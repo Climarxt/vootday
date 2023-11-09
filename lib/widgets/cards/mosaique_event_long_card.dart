@@ -4,7 +4,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/widgets/event_logo_image.dart';
 import 'package:flutter/material.dart';
 
-class MosaiqueEventLongCard extends StatelessWidget {
+class MosaiqueEventLongCard extends StatefulWidget {
   final String imageUrl;
   final String logoUrl;
   final String title;
@@ -18,39 +18,71 @@ class MosaiqueEventLongCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return _buildCard(context, imageUrl, title, logoUrl);
+  State<MosaiqueEventLongCard> createState() => _MosaiqueEventLongCardState();
+}
+
+class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+    _animationController.forward();
   }
 
-Widget _buildCard(
-  BuildContext context, String imageUrl, String title, String logoUrl) {
-  Size size = MediaQuery.of(context).size;
-  return GestureDetector(
-    child: SizedBox(
-      height: size.height * 0.6,
-      width: size.width,
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Stack(
-          children: [
-            _buildPost(imageUrl),
-            Positioned(
-              bottom: 10,
-              left: 10,
-              right: 10,
-              child: Center(
-                child: buildTitle(context,title),
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _animation,
+      child: _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
+    );
+  }
+
+  Widget _buildCard(
+      BuildContext context, String imageUrl, String title, String logoUrl) {
+    Size size = MediaQuery.of(context).size;
+    return GestureDetector(
+      child: SizedBox(
+        height: size.height * 0.6,
+        width: size.width,
+        child: Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Stack(
+            children: [
+              _buildPost(imageUrl),
+              Positioned(
+                bottom: 10,
+                left: 10,
+                right: 10,
+                child: Center(
+                  child: buildTitle(context, title),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildPost(String imageUrl) {
     return Stack(
@@ -89,7 +121,7 @@ Widget _buildCard(
                     EventLogoImage(
                       radius: 22.0,
                       outerCircleRadius: 23,
-                      profileImageUrl: logoUrl,
+                      profileImageUrl: widget.logoUrl,
                     ),
                     const SizedBox(width: 12),
                     Text(

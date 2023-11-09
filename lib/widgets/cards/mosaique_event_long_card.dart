@@ -9,13 +9,12 @@ class MosaiqueEventLongCard extends StatefulWidget {
   final String logoUrl;
   final String title;
 
-  const MosaiqueEventLongCard(
-    BuildContext context, {
-    super.key,
+  const MosaiqueEventLongCard({
+    Key? key,
     required this.imageUrl,
     required this.logoUrl,
     required this.title,
-  });
+  }) : super(key: key);
 
   @override
   State<MosaiqueEventLongCard> createState() => _MosaiqueEventLongCardState();
@@ -31,12 +30,13 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration:
+          const Duration(seconds: 1), // Adjust the duration if needed
     );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    );
+    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
     _animationController.forward();
   }
 
@@ -48,9 +48,15 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
+    return Stack(
+      children: [
+        _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
+        Positioned.fill(
+          child: Container(
+            color: Colors.white.withOpacity(_animation.value),
+          ),
+        ),
+      ],
     );
   }
 

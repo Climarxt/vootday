@@ -37,7 +37,6 @@ class _FeedCalendarState extends State<FeedCalendar>
                 final event = state.posts[index];
                 return event != null
                     ? MosaiqueEventLongCard(
-                        context,
                         imageUrl: event.imageUrl,
                         title: event.title,
                         logoUrl: event.author.logoUrl,

@@ -11,7 +11,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ProfileScreen extends StatefulWidget {
   final String userId;
   final String username;
-  const ProfileScreen({super.key, required this.userId, required this.username,});
+  const ProfileScreen({
+    super.key,
+    required this.userId,
+    required this.username,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -75,8 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-
-
 class ProfileTabbar extends SliverPersistentHeaderDelegate {
   final Widget child;
 
@@ -102,41 +104,65 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
       false;
 }
 
-class ProfileHeader extends StatelessWidget {
+class ProfileHeader extends StatefulWidget {
   final ProfileState state;
+
   const ProfileHeader({
     super.key,
     required this.state,
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  _ProfileHeaderState createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<ProfileHeader> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        setState(() {
+          _opacity = 1.0;
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Utiliser widget.state pour accéder à l'état passé à ProfileHeader
     return Container(
-      color: white,
+      color: Colors
+          .white, // Assurez-vous que `Colors.white` est importé correctement
       child: Center(
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/images/profile1.jpg'),
+              backgroundImage: NetworkImage(widget.state.user.profileImageUrl),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Christian Bastide',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium!
-                  .copyWith(color: black),
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 200),
+              child: Text(
+                '${widget.state.user.firstName} ${widget.state.user.lastName}',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
             ),
             const SizedBox(height: 12),
             ProfileStats(
-              isCurrentUser: state.isCurrentUser,
-              isFollowing: state.isFollowing,
-              posts: state.posts.length,
-              followers: state.user.followers,
-              following: state.user.following,
+              isCurrentUser: widget.state.isCurrentUser,
+              isFollowing: widget.state.isFollowing,
+              posts: widget.state.posts.length,
+              followers: widget.state.user.followers,
+              following: widget.state.user.following,
             ),
             const SizedBox(height: 8), // Bottom space
           ],

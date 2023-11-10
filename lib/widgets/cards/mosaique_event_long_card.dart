@@ -1,11 +1,8 @@
 import 'dart:ui';
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
-import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/widgets/event_logo_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class MosaiqueEventLongCard extends StatefulWidget {
@@ -68,10 +65,9 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
     );
   }
 
-void _navigateToEventFeed(BuildContext context) {
-  GoRouter.of(context).go('/home/event/${widget.eventId}');
-}
-
+  void _navigateToEventFeed(BuildContext context) {
+    GoRouter.of(context).go('/home/event/${widget.eventId}');
+  }
 
   Widget _buildCard(
       BuildContext context, String imageUrl, String title, String logoUrl) {

@@ -108,8 +108,6 @@ class MyApp extends StatelessWidget {
           BlocProvider<HomeEventBloc>(
             create: (context) => HomeEventBloc(
               postRepository: context.read<PostRepository>(),
-              authBloc: context.read<AuthBloc>(),
-              likedPostsCubit: context.read<LikedPostsCubit>(),
             ),
           ),
           BlocProvider<ProfileBloc>(

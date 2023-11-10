@@ -1,5 +1,5 @@
 import 'package:bootdv2/screens/home/feed_ootd.dart';
-import 'package:bootdv2/screens/home/home_feed.dart';
+import 'package:bootdv2/screens/home/home_event.dart';
 import 'package:bootdv2/screens/home/feed_month.dart';
 import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           FeedOOTD(),
           FeedMonth(),
-          const HomeFeed(),
+          const HomeEvent(),
         ],
       ),
     );

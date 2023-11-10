@@ -256,9 +256,11 @@ GoRouter createRouter(BuildContext context) {
                     path: 'event/:eventId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       final eventId = state.pathParameters['eventId']!;
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'title';
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: FeedEvent(eventId: eventId),
+                        child: FeedEvent(eventId: eventId, title: title),
                       );
                     },
                     routes: [

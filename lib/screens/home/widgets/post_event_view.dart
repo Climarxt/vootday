@@ -60,8 +60,15 @@ class _PostEventViewState extends State<PostEventView>
   }
 
   void _navigateToPostScreen(BuildContext context) {
+    final String encodedUsername =
+        Uri.encodeComponent(widget.post.author.username);
+    final String encodedTitle = Uri.encodeComponent(widget.title);
+
     GoRouter.of(context).go(
-        '/home/event/${widget.eventId}/post/${widget.post.id}?title=${widget.title}');
+      '/home/event/${widget.eventId}/post/${widget.post.id}'
+      '?username=$encodedUsername'
+      '&title=$encodedTitle',
+    );
   }
 
   void _navigateToUserScreen(BuildContext context) {

@@ -141,8 +141,8 @@ class _PostEventScreenState extends State<PostEventScreen>
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {
-    final String encodedUsername = Uri.encodeComponent(user.username ?? '');
-    final String encodedTitle = Uri.encodeComponent(widget.title ?? '');
+    final String encodedUsername = Uri.encodeComponent(user.username);
+    final String encodedTitle = Uri.encodeComponent(widget.title);
 
     context.go(
       '/home/event/${widget.eventId}/post/${widget.postId}/user/${user.id}'

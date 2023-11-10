@@ -102,7 +102,6 @@ class MyApp extends StatelessWidget {
                 authBloc: context.read<AuthBloc>(),
                 likedPostsCubit: context.read<LikedPostsCubit>(),
               );
-              feedEventBloc.add(FeedEventFetchPostsMonth());
               return feedEventBloc;
             },
           ),

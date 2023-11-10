@@ -218,44 +218,64 @@ class PostRepository extends BasePostRepository {
   }
 
   Future<List<Post?>> getFeedEvent({
+    required String eventId,
     required String userId,
     String? lastPostId,
   }) async {
+    print(
+        'getFeedEvent called with eventId: $eventId, userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
+    final eventDocRef = _firebaseFirestore.collection('events').doc(eventId);
+
     if (lastPostId == null) {
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.feedEvents)
+      print('Fetching initial posts...');
+      postsSnap = await eventDocRef
+          .collection('feed_event')
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
+      print('Fetched ${postsSnap.docs.length} initial posts.');
     } else {
-      final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feedEvents)
-          .doc(lastPostId)
-          .get();
+      print('Fetching posts after postId: $lastPostId');
+      final lastPostDoc =
+          await eventDocRef.collection('feed_event').doc(lastPostId).get();
 
       if (!lastPostDoc.exists) {
+        print('Last post not found. Returning empty list.');
         return [];
       }
 
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.feedEvents)
+      postsSnap = await eventDocRef
+          .collection('feed_event')
           .orderBy('likes', descending: true)
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
+      print('Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      DocumentReference postRef = doc['post_ref'];
-      DocumentSnapshot postSnap = await postRef.get();
-      if (postSnap.exists) {
-        return Post.fromDocument(postSnap);
+      try {
+        if (doc.exists) {
+          print('Processing post document with ID: ${doc.id}');
+          DocumentReference postRef = doc['post_ref'];
+          DocumentSnapshot postSnap = await postRef.get();
+          if (postSnap.exists) {
+            return Post.fromDocument(postSnap);
+          } else {
+            print('Referenced post document does not exist.');
+          }
+        } else {
+          print('Document does not exist, skipping.');
+        }
+      } catch (e) {
+        print('Error processing post document: ${doc.id}, Error: $e');
       }
       return null;
     }).toList();
 
     final posts = await Future.wait(postFutures);
+    print('Total posts processed: ${posts.length}');
     return posts;
   }
 

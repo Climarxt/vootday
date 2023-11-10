@@ -40,6 +40,7 @@ class _HomeEventState extends State<HomeEvent>
                         imageUrl: event.imageUrl,
                         title: event.title,
                         logoUrl: event.author.logoUrl,
+                        eventId: '8wloNbJWzQEoowzdS2Vv',
                       )
                     : const SizedBox.shrink();
               },

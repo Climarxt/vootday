@@ -23,47 +23,19 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
         super(FeedEventState.initial()) {
-    on<FeedEventFetchPostsMonth>(_mapFeedEventFetchPostsMonth);
-    on<FeedEventFetchPosts>(_mapFeedEventFetchPostsToState);
+    on<FeedEventFetchPostsEvent>(_mapFeedEventFetchPostsEvent);
     on<FeedEventPaginatePosts>(_mapFeedEventPaginatePostsToState);
   }
 
-  Future<void> _mapFeedEventFetchPostsMonth(
-    FeedEventFetchPostsMonth event,
+  Future<void> _mapFeedEventFetchPostsEvent(
+    FeedEventFetchPostsEvent event,
     Emitter<FeedEventState> emit,
   ) async {
     try {
       final posts = await _postRepository.getFeedEvent(
-          userId: _authBloc.state.user!.uid);
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
         userId: _authBloc.state.user!.uid,
-        posts: posts,
+        eventId: event.eventId,
       );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
-
-      emit(
-        state.copyWith(posts: posts, status: FeedEventStatus.loaded),
-      );
-    } catch (err) {
-      emit(state.copyWith(
-        status: FeedEventStatus.error,
-        failure:
-            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
-      ));
-    }
-  }
-
-  Future<void> _mapFeedEventFetchPostsToState(
-    FeedEventFetchPosts event,
-    Emitter<FeedEventState> emit,
-  ) async {
-    try {
-      final posts = await _postRepository.getFeedEvent(
-          userId: _authBloc.state.user!.uid);
 
       _likedPostsCubit.clearAllLikedPosts();
 
@@ -97,6 +69,7 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       final posts = await _postRepository.getFeedEvent(
         userId: _authBloc.state.user!.uid,
         lastPostId: lastPostId,
+        eventId: event.eventId,
       );
       final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
 

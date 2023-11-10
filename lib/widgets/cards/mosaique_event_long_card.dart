@@ -1,19 +1,25 @@
 import 'dart:ui';
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
+import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/widgets/event_logo_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class MosaiqueEventLongCard extends StatefulWidget {
   final String imageUrl;
   final String logoUrl;
   final String title;
+  final String eventId;
 
   const MosaiqueEventLongCard({
     Key? key,
     required this.imageUrl,
     required this.logoUrl,
     required this.title,
+    required this.eventId,
   }) : super(key: key);
 
   @override
@@ -30,7 +36,7 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
     );
     _animation = CurvedAnimation(
       parent: _animationController,
@@ -47,17 +53,25 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
-        Positioned.fill(
-          child: Container(
-            color: Colors.white.withOpacity(_animation.value),
+    return GestureDetector(
+      onTap: () => _navigateToEventFeed(context),
+      child: Stack(
+        children: [
+          _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
+          Positioned.fill(
+            child: Container(
+              color: Colors.white.withOpacity(_animation.value),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+
+void _navigateToEventFeed(BuildContext context) {
+  GoRouter.of(context).go('/home/event/${widget.eventId}');
+}
+
 
   Widget _buildCard(
       BuildContext context, String imageUrl, String title, String logoUrl) {

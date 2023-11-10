@@ -9,6 +9,7 @@ import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
+import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/postscreen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -233,13 +234,19 @@ GoRouter createRouter(BuildContext context) {
                     path: 'user/:userId',
                     builder: (BuildContext context, GoRouterState state) {
                       final userId = state.pathParameters['userId']!;
-                      // Ici aussi, vous pourriez récupérer username si nécessaire
                       final username =
                           state.uri.queryParameters['username'] ?? 'Unknown';
                       return ProfileScreen(
                         userId: userId,
                         username: username,
-                      ); // Si vous ajoutez le username, ajoutez-le ici également
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'event/:eventId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      final eventId = state.pathParameters['eventId']!;
+                      return FeedEvent(eventId: eventId);
                     },
                   ),
                 ],

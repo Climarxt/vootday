@@ -1,22 +1,22 @@
 // ignore_for_file: avoid_print
 
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeEvent extends StatefulWidget {
-  HomeEvent({Key? key}) : super(key: key ?? GlobalKey());
+class FeedEvent extends StatefulWidget {
+  final String eventId;
+  FeedEvent({Key? key, required this.eventId}) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api
-  _HomeEventState createState() => _HomeEventState();
+  _FeedEventState createState() => _FeedEventState();
 }
 
-class _HomeEventState extends State<HomeEvent>
-    with AutomaticKeepAliveClientMixin<HomeEvent> {
+class _FeedEventState extends State<FeedEvent>
+    with AutomaticKeepAliveClientMixin<FeedEvent> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
   bool _isFetching = false;
@@ -25,6 +25,9 @@ class _HomeEventState extends State<HomeEvent>
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_onScroll);
+    context
+        .read<FeedEventBloc>()
+        .add(FeedEventFetchPostsEvent(eventId: widget.eventId));
   }
 
   void _onScroll() {
@@ -32,10 +35,9 @@ class _HomeEventState extends State<HomeEvent>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
         !_isFetching &&
-        context.read<HomeEventBloc>().state.status !=
-            HomeEventStatus.paginating) {
+        context.read<FeedEventBloc>().state.status !=
+            FeedEventStatus.paginating) {
       _isFetching = true;
-      context.read<HomeEventBloc>().add(HomeEventPaginatePosts());
     }
   }
 
@@ -49,10 +51,12 @@ class _HomeEventState extends State<HomeEvent>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<HomeEventBloc, HomeEventState>(
+    return BlocConsumer<FeedEventBloc, FeedEventState>(
       listener: (context, state) {
-        if (state.status == HomeEventStatus.initial && state.events.isEmpty) {
-          context.read<HomeEventBloc>().add(HomeEventFetchPostsMonth());
+        if (state.status == FeedEventStatus.initial && state.posts.isEmpty) {
+          context
+              .read<FeedEventBloc>()
+              .add(FeedEventFetchPostsEvent(eventId: widget.eventId));
         }
       },
       builder: (context, state) {
@@ -63,9 +67,9 @@ class _HomeEventState extends State<HomeEvent>
     );
   }
 
-  Widget _buildBody(HomeEventState state) {
+  Widget _buildBody(FeedEventState state) {
     switch (state.status) {
-      case HomeEventStatus.loading:
+      case FeedEventStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(
@@ -74,25 +78,23 @@ class _HomeEventState extends State<HomeEvent>
               physics: const BouncingScrollPhysics(),
               cacheExtent: 10000,
               controller: _scrollController,
-              itemCount: state.events.length + 1,
+              itemCount: state.posts.length + 1,
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(height: 10),
               itemBuilder: (BuildContext context, int index) {
-                if (index == state.events.length) {
-                  return state.status == HomeEventStatus.paginating
+                if (index == state.posts.length) {
+                  return state.status == FeedEventStatus.paginating
                       ? const Center(child: CircularProgressIndicator())
                       : const SizedBox.shrink();
                 } else {
-                  final post = state.events[index];
+                  final post = state.posts[index];
                   final likedPostsState =
                       context.watch<LikedPostsCubit>().state;
                   final isLiked =
                       likedPostsState.likedPostIds.contains(post!.id);
                   final recentlyLiked =
                       likedPostsState.recentlyLikedPostIds.contains(post.id);
-                  return Container(color: couleurJauneOrange);
-
-                  /* PostView(
+                  return PostView(
                     post: post,
                     isLiked: isLiked,
                     recentlyLiked: recentlyLiked,
@@ -104,11 +106,10 @@ class _HomeEventState extends State<HomeEvent>
                       }
                     },
                   );
-                  */
                 }
               },
             ),
-            if (state.status == HomeEventStatus.paginating)
+            if (state.status == FeedEventStatus.paginating)
               const Positioned(
                 bottom: 20,
                 left: 0,

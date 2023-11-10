@@ -77,12 +77,21 @@ class Post extends Equatable {
     return CachedNetworkImageProvider(imageUrl);
   }
 
-  static Future<Post?> fromDocument(DocumentSnapshot doc) async {
-    final data = doc.data() as Map<String, dynamic>;
+static Future<Post?> fromDocument(DocumentSnapshot doc) async {
+  try {
+    print('fromDocument called with doc ID: ${doc.id}');
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      print('Document data is null for doc ID: ${doc.id}');
+      return null;
+    }
+
     final authorRef = data['author'] as DocumentReference?;
     if (authorRef != null) {
       final authorDoc = await authorRef.get();
       if (authorDoc.exists) {
+        print('Author document exists for doc ID: ${doc.id}');
+        // Create and return the Post instance
         return Post(
           id: doc.id,
           author: User.fromSnapshot(authorDoc),
@@ -91,12 +100,19 @@ class Post extends Equatable {
           caption: data['caption'] ?? '',
           likes: (data['likes'] ?? 0).toInt(),
           date: (data['date'] as Timestamp).toDate(),
-          tags: (data['tags'] as List)
-              .map((item) => item as String)
-              .toList(), // Parse tags from the document
+          tags: (data['tags'] as List).map((item) => item as String).toList(),
         );
+      } else {
+        print('Author document does not exist for doc ID: ${doc.id}');
       }
+    } else {
+      print('Author reference is null for doc ID: ${doc.id}');
     }
-    return null;
+  } catch (e) {
+    print('Error in fromDocument for doc ID: ${doc.id}: $e');
   }
+
+  return null;
+}
+
 }

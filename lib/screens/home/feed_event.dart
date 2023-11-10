@@ -23,8 +23,7 @@ class FeedEvent extends StatefulWidget {
   _FeedEventState createState() => _FeedEventState();
 }
 
-class _FeedEventState extends State<FeedEvent>
-    with AutomaticKeepAliveClientMixin<FeedEvent> {
+class _FeedEventState extends State<FeedEvent> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
   bool _isFetching = false;
@@ -61,7 +60,6 @@ class _FeedEventState extends State<FeedEvent>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocConsumer<FeedEventBloc, FeedEventState>(
       listener: (context, state) {
         if (state.status == FeedEventStatus.initial && state.posts.isEmpty) {

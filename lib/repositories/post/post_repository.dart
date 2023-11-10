@@ -228,20 +228,22 @@ class PostRepository extends BasePostRepository {
     final eventDocRef = _firebaseFirestore.collection('events').doc(eventId);
 
     if (lastPostId == null) {
-      print('Method getFeedEvent : Fetching initial posts...');
+      print('Method getFeedEvent : Fetching initial events...');
       postsSnap = await eventDocRef
           .collection('feed_event')
           .orderBy('likes', descending: true)
-          .limit(100)
+          .limit(4)
           .get();
-      print('Method getFeedEvent : Fetched ${postsSnap.docs.length} initial posts.');
+      print(
+          'Method getFeedEvent : Fetched ${postsSnap.docs.length} initial events.');
     } else {
       print('Method getFeedEvent : Fetching posts after postId: $lastPostId');
       final lastPostDoc =
           await eventDocRef.collection('feed_event').doc(lastPostId).get();
 
       if (!lastPostDoc.exists) {
-        print('Method getFeedEvent : Last post not found. Returning empty list.');
+        print(
+            'Method getFeedEvent : Last post not found. Returning empty list.');
         return [];
       }
 
@@ -251,25 +253,29 @@ class PostRepository extends BasePostRepository {
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
-      print('Method getFeedEvent : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
+      print(
+          'Method getFeedEvent : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
       try {
         if (doc.exists) {
-          print('Method getFeedEvent : Processing post document with ID: ${doc.id}');
+          print(
+              'Method getFeedEvent : Processing post document with ID: ${doc.id}');
           DocumentReference postRef = doc['post_ref'];
           DocumentSnapshot postSnap = await postRef.get();
           if (postSnap.exists) {
             return Post.fromDocument(postSnap);
           } else {
-            print('Method getFeedEvent : Referenced post document does not exist.');
+            print(
+                'Method getFeedEvent : Referenced post document does not exist.');
           }
         } else {
           print('Method getFeedEvent : Document does not exist, skipping.');
         }
       } catch (e) {
-        print('Method getFeedEvent : Error processing post document: ${doc.id}, Error: $e');
+        print(
+            'Method getFeedEvent : Error processing post document: ${doc.id}, Error: $e');
       }
       return null;
     }).toList();
@@ -281,7 +287,8 @@ class PostRepository extends BasePostRepository {
 
   Future<List<Event?>> getEvents() async {
     try {
-      print('Method getEvents : Attempting to fetch event documents from Firestore...');
+      print(
+          'Method getEvents : Attempting to fetch event documents from Firestore...');
       QuerySnapshot eventSnap =
           await _firebaseFirestore.collection(Paths.events).get();
 
@@ -290,14 +297,16 @@ class PostRepository extends BasePostRepository {
         return [];
       }
 
-      print('Method getEvents : Event documents fetched. Converting to Event objects...');
+      print(
+          'Method getEvents : Event documents fetched. Converting to Event objects...');
       List<Future<Event?>> futureEvents =
           eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
 
       // Utilisez Future.wait pour résoudre tous les événements
       List<Event?> events = await Future.wait(futureEvents);
 
-      print('Method getEvents : Event objects created. Total events: ${events.length}');
+      print(
+          'Method getEvents : Event objects created. Total events: ${events.length}');
       // Ici, vous pouvez également imprimer un événement pour le vérifier
       if (events.isNotEmpty) {
         print('Method getEvents : First event details: ${events.first}');
@@ -305,7 +314,8 @@ class PostRepository extends BasePostRepository {
 
       return events;
     } catch (e) {
-      print('Method getEvents : An error occurred while fetching events: ${e.toString()}');
+      print(
+          'Method getEvents : An error occurred while fetching events: ${e.toString()}');
       return [];
     }
   }
@@ -316,7 +326,8 @@ class PostRepository extends BasePostRepository {
           await _firebaseFirestore.collection(Paths.events).doc(eventId).get();
 
       if (eventSnap.exists) {
-        print('Method getEventById : Event document found. Converting to Event object...');
+        print(
+            'Method getEventById : Event document found. Converting to Event object...');
         return Event.fromDocument(eventSnap);
       } else {
         print("Method getEventById : L'événement n'existe pas.");

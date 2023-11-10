@@ -1,28 +1,28 @@
-part of 'feed_event_bloc.dart';
+part of 'home_event_bloc.dart';
 
 enum FeedEventStatus { initial, loading, loaded, paginating, error }
 
 class FeedEventState extends Equatable {
-  final List<Event?> posts;
+  final List<Event?> events;
   final FeedEventStatus status;
   final Failure failure;
 
   const FeedEventState({
-    required this.posts,
+    required this.events,
     required this.status,
     required this.failure,
   });
 
   factory FeedEventState.initial() {
     return const FeedEventState(
-      posts: [],
+      events: [],
       status: FeedEventStatus.initial,
       failure: Failure(),
     );
   }
 
   @override
-  List<Object?> get props => [posts, status, failure];
+  List<Object?> get props => [events, status, failure];
 
   FeedEventState copyWith({
     List<Event?>? events,
@@ -30,7 +30,7 @@ class FeedEventState extends Equatable {
     Failure? failure
   }) {
     return FeedEventState(
-      posts: events ?? posts,
+      events: events ?? this.events,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );

@@ -1,17 +1,17 @@
-import 'package:bootdv2/screens/home/bloc/event/feed_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/event/home_event_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
 
-class FeedCalendar extends StatefulWidget {
-  const FeedCalendar({super.key});
+class HomeFeed extends StatefulWidget {
+  const HomeFeed({super.key});
 
   @override
-  _FeedCalendarState createState() => _FeedCalendarState();
+  _HomeFeedState createState() => _HomeFeedState();
 }
 
-class _FeedCalendarState extends State<FeedCalendar>
-    with AutomaticKeepAliveClientMixin<FeedCalendar> {
+class _HomeFeedState extends State<HomeFeed>
+    with AutomaticKeepAliveClientMixin<HomeFeed> {
   @override
   void initState() {
     super.initState();
@@ -32,9 +32,9 @@ class _FeedCalendarState extends State<FeedCalendar>
                 mainAxisSpacing: 4,
                 childAspectRatio: 0.5,
               ),
-              itemCount: state.posts.length,
+              itemCount: state.events.length,
               itemBuilder: (context, index) {
-                final event = state.posts[index];
+                final event = state.events[index];
                 return event != null
                     ? MosaiqueEventLongCard(
                         imageUrl: event.imageUrl,

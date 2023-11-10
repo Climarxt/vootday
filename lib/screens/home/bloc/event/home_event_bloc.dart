@@ -8,8 +8,8 @@ import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
-part 'package:bootdv2/screens/home/bloc/event/feed_event_event.dart';
-part 'package:bootdv2/screens/home/bloc/event/feed_event_state.dart';
+part 'package:bootdv2/screens/home/bloc/event/home_event_event.dart';
+part 'package:bootdv2/screens/home/bloc/event/home_event_state.dart';
 
 class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
   final PostRepository _postRepository;

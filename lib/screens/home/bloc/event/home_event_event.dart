@@ -1,4 +1,4 @@
-part of 'feed_event_bloc.dart';
+part of 'home_event_bloc.dart';
 
 abstract class FeedEventEvent extends Equatable {
   const FeedEventEvent();

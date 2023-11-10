@@ -109,6 +109,7 @@ class _FeedEventState extends State<FeedEvent>
                   final recentlyLiked =
                       likedPostsState.recentlyLikedPostIds.contains(post.id);
                   return PostEventView(
+                    title: widget.title,
                     eventId: widget.eventId,
                     post: post,
                     isLiked: isLiked,

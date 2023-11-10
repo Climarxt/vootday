@@ -273,9 +273,12 @@ GoRouter createRouter(BuildContext context) {
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
                           final eventId = state.pathParameters['eventId']!;
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: PostEventScreen(
+                                title: title,
                                 postId: postId,
                                 username: username,
                                 eventId: eventId),

@@ -12,12 +12,14 @@ import 'package:go_router/go_router.dart';
 class PostEventScreen extends StatefulWidget {
   final String postId;
   final String username;
+  final String title;
   final String eventId;
 
   const PostEventScreen({
     super.key,
     required this.postId,
     required this.username,
+    required this.title,
     required this.eventId,
   });
 

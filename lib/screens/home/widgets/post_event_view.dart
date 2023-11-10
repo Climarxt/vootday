@@ -9,6 +9,7 @@ import '/widgets/widgets.dart';
 class PostEventView extends StatefulWidget {
   final Post post;
   final String eventId;
+  final String title;
   final bool isLiked;
   final VoidCallback onLike;
   final bool recentlyLiked;
@@ -16,6 +17,7 @@ class PostEventView extends StatefulWidget {
   PostEventView({
     Key? key,
     required this.post,
+    required this.title,
     required this.eventId,
     required this.isLiked,
     required this.onLike,
@@ -60,7 +62,7 @@ class _PostEventViewState extends State<PostEventView>
 
   void _navigateToPostScreen(BuildContext context) {
     GoRouter.of(context)
-        .go('/home/event/${widget.eventId}/post/${widget.post.id}');
+        .go('/home/event/${widget.eventId}/post/${widget.post.id}?title=${widget.title}');
   }
 
   Stack buildBody(BuildContext context) {

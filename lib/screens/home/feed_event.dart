@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/models/event_model.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_event_view.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title_logo.dart';

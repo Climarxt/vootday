@@ -267,9 +267,12 @@ GoRouter createRouter(BuildContext context) {
                       final eventId = state.pathParameters['eventId']!;
                       final title =
                           state.uri.queryParameters['title'] ?? 'title';
+                      final logoUrl =
+                          state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: FeedEvent(eventId: eventId, title: title),
+                        child: FeedEvent(
+                            eventId: eventId, title: title, logoUrl: logoUrl),
                       );
                     },
                     routes: [
@@ -284,13 +287,17 @@ GoRouter createRouter(BuildContext context) {
                           final eventId = state.pathParameters['eventId']!;
                           final title =
                               state.uri.queryParameters['title'] ?? 'title';
+                          final logoUrl =
+                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: PostEventScreen(
-                                title: title,
-                                postId: postId,
-                                username: username,
-                                eventId: eventId),
+                              title: title,
+                              postId: postId,
+                              username: username,
+                              eventId: eventId,
+                              logoUrl: logoUrl,
+                            ),
                           );
                         },
                         routes: [

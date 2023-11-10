@@ -10,6 +10,7 @@ class PostEventView extends StatefulWidget {
   final Post post;
   final String eventId;
   final String title;
+  final String logoUrl;
   final bool isLiked;
   final VoidCallback onLike;
   final bool recentlyLiked;
@@ -18,6 +19,7 @@ class PostEventView extends StatefulWidget {
     Key? key,
     required this.post,
     required this.title,
+    required this.logoUrl,
     required this.eventId,
     required this.isLiked,
     required this.onLike,
@@ -63,11 +65,13 @@ class _PostEventViewState extends State<PostEventView>
     final String encodedUsername =
         Uri.encodeComponent(widget.post.author.username);
     final String encodedTitle = Uri.encodeComponent(widget.title);
+    final String encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
     GoRouter.of(context).go(
       '/home/event/${widget.eventId}/post/${widget.post.id}'
       '?username=$encodedUsername'
-      '&title=$encodedTitle',
+      '&title=$encodedTitle'
+      '&logoUrl=$encodedLogoUrl',
     );
   }
 
@@ -75,7 +79,8 @@ class _PostEventViewState extends State<PostEventView>
     GoRouter.of(context).go(
       '/home/event/${widget.eventId}/user/${widget.post.author.id}'
       '?username=${Uri.encodeComponent(widget.post.author.username)}'
-      '&title=${Uri.encodeComponent(widget.title)}',
+      '&title=${Uri.encodeComponent(widget.title)}'
+      '&logoUrl=${Uri.encodeComponent(widget.logoUrl)}',
     );
   }
 

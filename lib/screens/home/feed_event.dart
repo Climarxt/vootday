@@ -10,10 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FeedEvent extends StatefulWidget {
   final String eventId;
   final String title;
+  final String logoUrl;
   FeedEvent({
     Key? key,
     required this.eventId,
     required this.title,
+    required this.logoUrl,
   }) : super(key: key ?? GlobalKey());
 
   @override
@@ -70,10 +72,7 @@ class _FeedEventState extends State<FeedEvent>
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBarTitleLogo(
-              title: widget.title,
-              logoUrl:
-                  'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fnewbalancelogo.svg?alt=media&token=b51e9748-7a45-4194-a14f-e3c26e739fdb'),
+          appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl),
           body: _buildBody(state),
         );
       },
@@ -109,6 +108,7 @@ class _FeedEventState extends State<FeedEvent>
                   final recentlyLiked =
                       likedPostsState.recentlyLikedPostIds.contains(post.id);
                   return PostEventView(
+                    logoUrl: widget.logoUrl,
                     title: widget.title,
                     eventId: widget.eventId,
                     post: post,

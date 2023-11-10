@@ -14,6 +14,7 @@ class PostEventScreen extends StatefulWidget {
   final String username;
   final String title;
   final String eventId;
+  final String logoUrl;
 
   const PostEventScreen({
     super.key,
@@ -21,6 +22,7 @@ class PostEventScreen extends StatefulWidget {
     required this.username,
     required this.title,
     required this.eventId,
+    required this.logoUrl,
   });
 
   @override
@@ -143,11 +145,13 @@ class _PostEventScreenState extends State<PostEventScreen>
   void _navigateToUserScreen(BuildContext context, User user) {
     final String encodedUsername = Uri.encodeComponent(user.username);
     final String encodedTitle = Uri.encodeComponent(widget.title);
+    final String encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
     context.go(
       '/home/event/${widget.eventId}/post/${widget.postId}/user/${user.id}'
       '?username=$encodedUsername'
-      '&title=$encodedTitle',
+      '&title=$encodedTitle'
+      '&logoUrl=$encodedLogoUrl',
     );
   }
 

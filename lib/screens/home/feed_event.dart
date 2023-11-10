@@ -134,8 +134,4 @@ class _FeedEventState extends State<FeedEvent> {
         );
     }
   }
-
-// Overridden to retain the state
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -12,12 +12,12 @@ class MosaiqueEventLongCard extends StatefulWidget {
   final String eventId;
 
   const MosaiqueEventLongCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.logoUrl,
     required this.title,
     required this.eventId,
-  }) : super(key: key);
+  });
 
   @override
   State<MosaiqueEventLongCard> createState() => _MosaiqueEventLongCardState();

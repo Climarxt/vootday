@@ -3,6 +3,7 @@
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
+import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,6 +62,7 @@ class _FeedEventState extends State<FeedEvent>
       },
       builder: (context, state) {
         return Scaffold(
+          appBar: AppBarTitle(title: widget.eventId),
           body: _buildBody(state),
         );
       },

@@ -48,20 +48,35 @@ class Event {
         logoUrl
       ];
 
-  static Event empty = Event(
-    id: '',
-    author: Brand.empty,
-    imageUrl: '',
-    caption: '',
-    participants: 0,
-    title: '',
-    date: DateTime(2000), // Utilisez une date arbitraire pour l'initialisation
-    dateEvent: DateTime(2000),
-    tags: [],
-    reward: '',
-    done: false,
-    logoUrl: '',
-  );
+  Event copyWith({
+    String? id,
+    Brand? author,
+    String? imageUrl,
+    String? caption,
+    int? participants,
+    String? title,
+    DateTime? date,
+    DateTime? dateEvent,
+    List<String>? tags,
+    String? reward,
+    bool? done,
+    String? logoUrl,
+  }) {
+    return Event(
+      id: id ?? this.id,
+      author: author ?? this.author,
+      imageUrl: imageUrl ?? this.imageUrl,
+      caption: caption ?? this.caption,
+      participants: participants ?? this.participants,
+      title: title ?? this.title,
+      date: date ?? this.date,
+      dateEvent: dateEvent ?? this.dateEvent,
+      tags: tags ?? this.tags,
+      reward: reward ?? this.reward,
+      done: done ?? this.done,
+      logoUrl: logoUrl ?? this.logoUrl,
+    );
+  }
 
   CachedNetworkImageProvider get imageProvider {
     return CachedNetworkImageProvider(imageUrl);

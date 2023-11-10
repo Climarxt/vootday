@@ -11,6 +11,6 @@ class HomeEventFetchPosts extends HomeEventEvent {}
 
 class HomeEventFetchPostsMonth extends HomeEventEvent {}
 
-class HomeEventPaginatePosts extends HomeEventEvent {}
+class HomeEventPaginateEvents extends HomeEventEvent {}
 
 class HomeEventFetchEvents extends HomeEventEvent {}

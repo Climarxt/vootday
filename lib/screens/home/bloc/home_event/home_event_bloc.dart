@@ -8,28 +8,28 @@ import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
-part 'package:bootdv2/screens/home/bloc/event/home_event_event.dart';
-part 'package:bootdv2/screens/home/bloc/event/home_event_state.dart';
+part 'package:bootdv2/screens/home/bloc/home_event/home_event_event.dart';
+part 'package:bootdv2/screens/home/bloc/home_event/home_event_state.dart';
 
-class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
+class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
 
-  FeedEventBloc({
+  HomeEventBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
     required LikedPostsCubit likedPostsCubit,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
-        super(FeedEventState.initial()) {
-    on<FeedEventFetchEvents>(_mapFeedEventFetchEventsToState);
+        super(HomeEventState.initial()) {
+    on<HomeEventFetchEvents>(_mapHomeEventFetchEventsToState);
   }
 
-  Future<void> _mapFeedEventFetchEventsToState(
-    FeedEventFetchEvents event,
-    Emitter<FeedEventState> emit,
+  Future<void> _mapHomeEventFetchEventsToState(
+    HomeEventFetchEvents event,
+    Emitter<HomeEventState> emit,
   ) async {
     try {
       print('Fetching events...');
@@ -42,14 +42,14 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       }
 
       emit(
-        state.copyWith(events: events, status: FeedEventStatus.loaded),
+        state.copyWith(events: events, status: HomeEventStatus.loaded),
       );
     } catch (err) {
       // Le log ici vous donnera des détails sur l'exception attrapée
       print('Error fetching events: ${err.toString()}');
 
       emit(state.copyWith(
-        status: FeedEventStatus.error,
+        status: HomeEventStatus.error,
         failure: const Failure(message: 'Impossible de charger les événements'),
         events: [],
       ));

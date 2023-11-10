@@ -2,21 +2,21 @@
 
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/screens/home/bloc/event/home_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FeedEvent extends StatefulWidget {
-  FeedEvent({Key? key}) : super(key: key ?? GlobalKey());
+class HomeEvent extends StatefulWidget {
+  HomeEvent({Key? key}) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api
-  _FeedEventState createState() => _FeedEventState();
+  _HomeEventState createState() => _HomeEventState();
 }
 
-class _FeedEventState extends State<FeedEvent>
-    with AutomaticKeepAliveClientMixin<FeedEvent> {
+class _HomeEventState extends State<HomeEvent>
+    with AutomaticKeepAliveClientMixin<HomeEvent> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
   bool _isFetching = false;
@@ -32,10 +32,10 @@ class _FeedEventState extends State<FeedEvent>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
         !_isFetching &&
-        context.read<FeedEventBloc>().state.status !=
-            FeedEventStatus.paginating) {
+        context.read<HomeEventBloc>().state.status !=
+            HomeEventStatus.paginating) {
       _isFetching = true;
-      context.read<FeedEventBloc>().add(FeedEventPaginatePosts());
+      context.read<HomeEventBloc>().add(HomeEventPaginatePosts());
     }
   }
 
@@ -49,10 +49,10 @@ class _FeedEventState extends State<FeedEvent>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedEventBloc, FeedEventState>(
+    return BlocConsumer<HomeEventBloc, HomeEventState>(
       listener: (context, state) {
-        if (state.status == FeedEventStatus.initial && state.events.isEmpty) {
-          context.read<FeedEventBloc>().add(FeedEventFetchPostsMonth());
+        if (state.status == HomeEventStatus.initial && state.events.isEmpty) {
+          context.read<HomeEventBloc>().add(HomeEventFetchPostsMonth());
         }
       },
       builder: (context, state) {
@@ -63,9 +63,9 @@ class _FeedEventState extends State<FeedEvent>
     );
   }
 
-  Widget _buildBody(FeedEventState state) {
+  Widget _buildBody(HomeEventState state) {
     switch (state.status) {
-      case FeedEventStatus.loading:
+      case HomeEventStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(
@@ -79,7 +79,7 @@ class _FeedEventState extends State<FeedEvent>
                   const SizedBox(height: 10),
               itemBuilder: (BuildContext context, int index) {
                 if (index == state.events.length) {
-                  return state.status == FeedEventStatus.paginating
+                  return state.status == HomeEventStatus.paginating
                       ? const Center(child: CircularProgressIndicator())
                       : const SizedBox.shrink();
                 } else {
@@ -108,7 +108,7 @@ class _FeedEventState extends State<FeedEvent>
                 }
               },
             ),
-            if (state.status == FeedEventStatus.paginating)
+            if (state.status == HomeEventStatus.paginating)
               const Positioned(
                 bottom: 20,
                 left: 0,

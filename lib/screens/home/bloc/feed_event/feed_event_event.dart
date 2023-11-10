@@ -1,4 +1,4 @@
-part of 'home_event_bloc.dart';
+part of 'feed_event_bloc.dart';
 
 abstract class FeedEventEvent extends Equatable {
   const FeedEventEvent();
@@ -12,5 +12,3 @@ class FeedEventFetchPosts extends FeedEventEvent {}
 class FeedEventFetchPostsMonth extends FeedEventEvent {}
 
 class FeedEventPaginatePosts extends FeedEventEvent {}
-
-class FeedEventFetchEvents extends FeedEventEvent {}

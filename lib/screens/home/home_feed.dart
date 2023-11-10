@@ -1,4 +1,4 @@
-import 'package:bootdv2/screens/home/bloc/event/home_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
@@ -15,15 +15,15 @@ class _HomeFeedState extends State<HomeFeed>
   @override
   void initState() {
     super.initState();
-    context.read<FeedEventBloc>().add(FeedEventFetchEvents());
+    context.read<HomeEventBloc>().add(HomeEventFetchEvents());
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocBuilder<FeedEventBloc, FeedEventState>(
+    return BlocBuilder<HomeEventBloc, HomeEventState>(
       builder: (context, state) {
-        if (state.status == FeedEventStatus.loaded) {
+        if (state.status == HomeEventStatus.loaded) {
           return Scaffold(
             body: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -45,7 +45,7 @@ class _HomeFeedState extends State<HomeFeed>
               },
             ),
           );
-        } else if (state.status == FeedEventStatus.loading) {
+        } else if (state.status == HomeEventStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         } else {
           return Center(child: Text(state.failure.message));

@@ -5,7 +5,8 @@ import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
-import 'package:bootdv2/screens/home/bloc/event/home_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -94,8 +95,19 @@ class MyApp extends StatelessWidget {
               return feedMonthBloc;
             },
           ),
-          BlocProvider<FeedEventBloc>(
-            create: (context) => FeedEventBloc(
+          BlocProvider(
+            create: (context) {
+              final feedEventBloc = FeedEventBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+                likedPostsCubit: context.read<LikedPostsCubit>(),
+              );
+              feedEventBloc.add(FeedEventFetchPostsMonth());
+              return feedEventBloc;
+            },
+          ),
+          BlocProvider<HomeEventBloc>(
+            create: (context) => HomeEventBloc(
               postRepository: context.read<PostRepository>(),
               authBloc: context.read<AuthBloc>(),
               likedPostsCubit: context.read<LikedPostsCubit>(),

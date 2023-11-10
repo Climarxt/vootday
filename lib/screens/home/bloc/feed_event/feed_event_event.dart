@@ -25,6 +25,8 @@ class FeedEventPaginatePosts extends FeedEventEvent {
   List<Object> get props => [eventId];
 }
 
+class FeedEventClean extends FeedEventEvent {}
+
 class FeedEventFetchEventDetails extends FeedEventEvent {
   final String eventId;
 

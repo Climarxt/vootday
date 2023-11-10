@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:bootdv2/config/colors.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_event_view.dart';
@@ -79,6 +80,8 @@ class _FeedEventState extends State<FeedEvent> {
 
   Widget _buildBody(FeedEventState state) {
     switch (state.status) {
+      case FeedEventStatus.initial:
+        return Center(child: Container(color: white));
       case FeedEventStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
@@ -106,6 +109,7 @@ class _FeedEventState extends State<FeedEvent> {
                   final recentlyLiked =
                       likedPostsState.recentlyLikedPostIds.contains(post.id);
                   return PostEventView(
+                    key: ValueKey('${widget.eventId}-${post.id}'),
                     logoUrl: widget.logoUrl,
                     title: widget.title,
                     eventId: widget.eventId,

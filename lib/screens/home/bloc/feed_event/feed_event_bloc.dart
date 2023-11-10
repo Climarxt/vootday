@@ -27,12 +27,14 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     on<FeedEventFetchPostsEvent>(_mapFeedEventFetchPostsEvent);
     on<FeedEventPaginatePosts>(_mapFeedEventPaginatePostsToState);
     on<FeedEventFetchEventDetails>(_onFeedEventFetchEventDetails);
+    on<FeedEventClean>(_onFeedEventClean);
   }
 
   Future<void> _mapFeedEventFetchPostsEvent(
     FeedEventFetchPostsEvent event,
     Emitter<FeedEventState> emit,
   ) async {
+    emit(FeedEventState.initial());
     try {
       final posts = await _postRepository.getFeedEvent(
         userId: _authBloc.state.user!.uid,
@@ -54,8 +56,9 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     } catch (err) {
       emit(state.copyWith(
         status: FeedEventStatus.error,
-        failure:
-            const Failure(message: '_mapFeedEventFetchPostsEvent : Nous n\'avons pas pu charger votre flux'),
+        failure: const Failure(
+            message:
+                '_mapFeedEventFetchPostsEvent : Nous n\'avons pas pu charger votre flux'),
       ));
     }
   }
@@ -65,9 +68,11 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     Emitter<FeedEventState> emit,
   ) async {
     try {
-      print('_onFeedEventFetchEventDetails : Fetching event details for event ID: ${event.eventId}');
+      print(
+          '_onFeedEventFetchEventDetails : Fetching event details for event ID: ${event.eventId}');
       final eventDetails = await _postRepository.getEventById(event.eventId);
-      print('_onFeedEventFetchEventDetails : Fetched event details: $eventDetails');
+      print(
+          '_onFeedEventFetchEventDetails : Fetched event details: $eventDetails');
       emit(state.copyWith(
           event: eventDetails)); // Mettez à jour l'état avec l'Event
     } catch (_) {
@@ -75,7 +80,8 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       emit(state.copyWith(
         status: FeedEventStatus.error,
         failure: Failure(
-            message: '_onFeedEventFetchEventDetails : Erreur de chargement des détails de l\'événement'),
+            message:
+                '_onFeedEventFetchEventDetails : Erreur de chargement des détails de l\'événement'),
       ));
     }
   }
@@ -112,5 +118,12 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
             message: 'Quelque chose s\'est mal passé ! Veuillez réessayer.'),
       ));
     }
+  }
+
+  Future<void> _onFeedEventClean(
+    FeedEventClean event,
+    Emitter<FeedEventState> emit,
+  ) async {
+    emit(FeedEventState.initial()); // Remet l'état à son état initial
   }
 }

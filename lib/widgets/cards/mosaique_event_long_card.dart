@@ -69,7 +69,7 @@ void _navigateToEventFeed(BuildContext context) {
   final encodedTitle = Uri.encodeComponent(widget.title);
   final encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
-  GoRouter.of(context).go(
+  GoRouter.of(context).push(
     '/home/event/${widget.eventId}?title=$encodedTitle&logoUrl=$encodedLogoUrl',
   );
 }

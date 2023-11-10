@@ -11,9 +11,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ProfileScreen extends StatefulWidget {
   final String userId;
   final String username;
+  final String title;
   const ProfileScreen({
     super.key,
     required this.userId,
+    required this.title,
     required this.username,
   });
 

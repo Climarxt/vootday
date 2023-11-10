@@ -30,7 +30,6 @@ class PostEventView extends StatefulWidget {
 
 class _PostEventViewState extends State<PostEventView>
     with SingleTickerProviderStateMixin {
-
   @override
   void initState() {
     super.initState();
@@ -61,8 +60,16 @@ class _PostEventViewState extends State<PostEventView>
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    GoRouter.of(context)
-        .go('/home/event/${widget.eventId}/post/${widget.post.id}?title=${widget.title}');
+    GoRouter.of(context).go(
+        '/home/event/${widget.eventId}/post/${widget.post.id}?title=${widget.title}');
+  }
+
+  void _navigateToUserScreen(BuildContext context) {
+    GoRouter.of(context).go(
+      '/home/event/${widget.eventId}/user/${widget.post.author.id}'
+      '?username=${Uri.encodeComponent(widget.post.author.username)}'
+      '&title=${Uri.encodeComponent(widget.title)}',
+    );
   }
 
   Stack buildBody(BuildContext context) {
@@ -98,10 +105,7 @@ class _PostEventViewState extends State<PostEventView>
       children: [
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () {
-            context.go(
-                '/home/event/${widget.eventId}/user/${widget.post.author.id}?username=${widget.post.author.username}');
-          },
+          onTap: () => _navigateToUserScreen(context),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
             child: BackdropFilter(

@@ -230,10 +230,14 @@ GoRouter createRouter(BuildContext context) {
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: ProfileScreen(
-                                userId: userId, username: username),
+                                userId: userId,
+                                username: username,
+                                title: title),
                           );
                         },
                       ),
@@ -245,10 +249,15 @@ GoRouter createRouter(BuildContext context) {
                       final userId = state.pathParameters['userId']!;
                       final username =
                           state.uri.queryParameters['username'] ?? 'Unknown';
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'title';
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child:
-                            ProfileScreen(userId: userId, username: username),
+                        child: ProfileScreen(
+                          userId: userId,
+                          username: username,
+                          title: title,
+                        ),
                       );
                     },
                   ),
@@ -293,10 +302,14 @@ GoRouter createRouter(BuildContext context) {
                               final username =
                                   state.uri.queryParameters['username'] ??
                                       'Unknown';
+                              final title =
+                                  state.uri.queryParameters['title'] ?? 'title';
                               return MaterialPage<void>(
                                 key: state.pageKey,
                                 child: ProfileScreen(
-                                    userId: userId, username: username),
+                                    userId: userId,
+                                    username: username,
+                                    title: title),
                               );
                             },
                           ),
@@ -310,10 +323,15 @@ GoRouter createRouter(BuildContext context) {
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: ProfileScreen(
-                                userId: userId, username: username),
+                              userId: userId,
+                              username: username,
+                              title: title,
+                            ),
                           );
                         },
                       ),

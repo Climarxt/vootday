@@ -83,6 +83,7 @@ class _FeedEventState extends State<FeedEvent>
         return Stack(
           children: [
             ListView.separated(
+              key: PageStorageKey<String>('feed-event-list-${widget.eventId}'),
               physics: const BouncingScrollPhysics(),
               cacheExtent: 10000,
               controller: _scrollController,

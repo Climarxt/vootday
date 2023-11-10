@@ -11,7 +11,8 @@ import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
-import 'package:bootdv2/screens/post/postscreen.dart';
+import 'package:bootdv2/screens/post/post_event_screen.dart';
+import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';
@@ -202,72 +203,113 @@ GoRouter createRouter(BuildContext context) {
             routes: <RouteBase>[
               GoRoute(
                 path: '/home',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const HomeScreen(),
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return MaterialPage<void>(
+                    key: state.pageKey,
+                    child: const HomeScreen(),
+                  );
+                },
                 routes: [
                   GoRoute(
                     path: 'post/:postId',
-                    builder: (BuildContext context, GoRouterState state) {
+                    pageBuilder: (BuildContext context, GoRouterState state) {
                       final postId = state.pathParameters['postId']!;
                       final username =
                           state.uri.queryParameters['username'] ?? 'Unknown';
-                      return PostScreen(postId: postId, username: username);
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: PostScreen(postId: postId, username: username),
+                      );
                     },
                     routes: [
                       GoRoute(
                         path: 'user/:userId',
-                        builder: (BuildContext context, GoRouterState state) {
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
                           final userId = state.pathParameters['userId']!;
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
-                          return ProfileScreen(
-                              userId: userId, username: username);
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: ProfileScreen(
+                                userId: userId, username: username),
+                          );
                         },
                       ),
                     ],
                   ),
                   GoRoute(
                     path: 'user/:userId',
-                    builder: (BuildContext context, GoRouterState state) {
+                    pageBuilder: (BuildContext context, GoRouterState state) {
                       final userId = state.pathParameters['userId']!;
                       final username =
                           state.uri.queryParameters['username'] ?? 'Unknown';
-                      return ProfileScreen(
-                        userId: userId,
-                        username: username,
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child:
+                            ProfileScreen(userId: userId, username: username),
                       );
                     },
                   ),
                   GoRoute(
                     path: 'event/:eventId',
-                    builder: (BuildContext context, GoRouterState state) {
+                    pageBuilder: (BuildContext context, GoRouterState state) {
                       final eventId = state.pathParameters['eventId']!;
-                      return FeedEvent(eventId: eventId);
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: FeedEvent(eventId: eventId),
+                      );
                     },
                     routes: [
                       GoRoute(
                         path: 'post/:postId',
-                        builder: (BuildContext context, GoRouterState state) {
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
                           final postId = state.pathParameters['postId']!;
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
-                          return PostScreen(postId: postId, username: username);
+                          final eventId = state.pathParameters['eventId']!;
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: PostEventScreen(
+                                postId: postId,
+                                username: username,
+                                eventId: eventId),
+                          );
                         },
+                        routes: [
+                          GoRoute(
+                            path: 'user/:userId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final userId = state.pathParameters['userId']!;
+                              final username =
+                                  state.uri.queryParameters['username'] ??
+                                      'Unknown';
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: ProfileScreen(
+                                    userId: userId, username: username),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       GoRoute(
                         path: 'user/:userId',
-                        builder: (BuildContext context, GoRouterState state) {
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
                           final userId = state.pathParameters['userId']!;
-                          // Supposons que vous vouliez également passer le username à ProfileScreen
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
-                          return ProfileScreen(
-                              userId: userId,
-                              username:
-                                  username); // Ajoutez username ici en tant que paramètre
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: ProfileScreen(
+                                userId: userId, username: username),
+                          );
                         },
                       ),
                     ],
@@ -276,7 +318,6 @@ GoRouter createRouter(BuildContext context) {
               ),
             ],
           ),
-
           // Calendar
           StatefulShellBranch(
             routes: <RouteBase>[

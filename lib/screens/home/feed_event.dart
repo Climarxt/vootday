@@ -3,13 +3,20 @@
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_view.dart';
-import 'package:bootdv2/widgets/widgets.dart';
+import 'package:bootdv2/widgets/appbar/appbar_title_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FeedEvent extends StatefulWidget {
   final String eventId;
-  FeedEvent({Key? key, required this.eventId}) : super(key: key ?? GlobalKey());
+  final String title;
+  final String logoUrl;
+  FeedEvent({
+    Key? key,
+    required this.eventId,
+    required this.title,
+    required this.logoUrl,
+  }) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api
@@ -62,7 +69,7 @@ class _FeedEventState extends State<FeedEvent>
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBarTitle(title: widget.eventId),
+          appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl,),
           body: _buildBody(state),
         );
       },

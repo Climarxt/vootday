@@ -246,7 +246,13 @@ GoRouter createRouter(BuildContext context) {
                     path: 'event/:eventId',
                     builder: (BuildContext context, GoRouterState state) {
                       final eventId = state.pathParameters['eventId']!;
-                      return FeedEvent(eventId: eventId);
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'Default Title';
+                      final logoUrl =
+                          state.uri.queryParameters['logoUrl'] ?? 'Default Logo URL';
+
+                      return FeedEvent(
+                          eventId: eventId, title: title, logoUrl: logoUrl);
                     },
                   ),
                 ],

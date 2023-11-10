@@ -15,6 +15,12 @@ class Brand extends Equatable {
   @override
   List<Object?> get props => [id, author, logoUrl];
 
+  static const empty = Brand(
+    id: '', // Un identifiant vide
+    author: '', // Un auteur fictif ou vide
+    logoUrl: '', // Une URL de logo fictive ou vide
+  );
+
   Brand copyWith({
     String? id,
     String? author,

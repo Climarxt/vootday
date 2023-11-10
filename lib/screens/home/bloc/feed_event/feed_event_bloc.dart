@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
+import 'package:bootdv2/models/event_model.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
@@ -25,6 +26,7 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         super(FeedEventState.initial()) {
     on<FeedEventFetchPostsEvent>(_mapFeedEventFetchPostsEvent);
     on<FeedEventPaginatePosts>(_mapFeedEventPaginatePostsToState);
+    on<FeedEventFetchEventDetails>(_onFeedEventFetchEventDetails);
   }
 
   Future<void> _mapFeedEventFetchPostsEvent(
@@ -54,6 +56,23 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         status: FeedEventStatus.error,
         failure:
             const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+      ));
+    }
+  }
+
+  Future<void> _onFeedEventFetchEventDetails(
+    FeedEventFetchEventDetails event,
+    Emitter<FeedEventState> emit,
+  ) async {
+    try {
+      final eventDetails = await _postRepository.getEventById(event.eventId);
+      emit(state.copyWith(
+          event: eventDetails)); // Mettez à jour l'état avec l'Event
+    } catch (_) {
+      emit(state.copyWith(
+        status: FeedEventStatus.error,
+        failure: Failure(
+            message: 'Erreur de chargement des détails de l\'événement'),
       ));
     }
   }

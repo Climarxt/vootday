@@ -310,6 +310,25 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+  Future<Event?> getEventById(String eventId) async {
+    try {
+      DocumentSnapshot eventSnap =
+          await _firebaseFirestore.collection(Paths.events).doc(eventId).get();
+
+      if (eventSnap.exists) {
+        print('Event document found. Converting to Event object...');
+        return Event.fromDocument(eventSnap);
+      } else {
+        print("L'événement n'existe pas.");
+        return null;
+      }
+    } catch (e) {
+      print(
+          'Une erreur est survenue lors de la récupération de l\'événement: ${e.toString()}');
+      return null;
+    }
+  }
+
   @override
   Future<Set<String>> getLikedPostIds({
     required String userId,

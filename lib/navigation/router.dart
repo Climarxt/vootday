@@ -218,14 +218,11 @@ GoRouter createRouter(BuildContext context) {
                         path: 'user/:userId',
                         builder: (BuildContext context, GoRouterState state) {
                           final userId = state.pathParameters['userId']!;
-                          // Supposons que vous vouliez également passer le username à ProfileScreen
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
                           return ProfileScreen(
-                              userId: userId,
-                              username:
-                                  username); // Ajoutez username ici en tant que paramètre
+                              userId: userId, username: username);
                         },
                       ),
                     ],
@@ -246,14 +243,34 @@ GoRouter createRouter(BuildContext context) {
                     path: 'event/:eventId',
                     builder: (BuildContext context, GoRouterState state) {
                       final eventId = state.pathParameters['eventId']!;
-                      final title =
-                          state.uri.queryParameters['title'] ?? 'Default Title';
-                      final logoUrl =
-                          state.uri.queryParameters['logoUrl'] ?? 'Default Logo URL';
-
-                      return FeedEvent(
-                          eventId: eventId, title: title, logoUrl: logoUrl);
+                      return FeedEvent(eventId: eventId);
                     },
+                    routes: [
+                      GoRoute(
+                        path: 'post/:postId',
+                        builder: (BuildContext context, GoRouterState state) {
+                          final postId = state.pathParameters['postId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          return PostScreen(postId: postId, username: username);
+                        },
+                      ),
+                      GoRoute(
+                        path: 'user/:userId',
+                        builder: (BuildContext context, GoRouterState state) {
+                          final userId = state.pathParameters['userId']!;
+                          // Supposons que vous vouliez également passer le username à ProfileScreen
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          return ProfileScreen(
+                              userId: userId,
+                              username:
+                                  username); // Ajoutez username ici en tant que paramètre
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

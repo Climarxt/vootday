@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
-  final String? id;
+  final String id;
   final Brand author;
   final String imageUrl;
   final String caption;
@@ -19,7 +19,7 @@ class Event {
   final String logoUrl;
 
   const Event({
-    this.id,
+    required this.id,
     required this.author,
     required this.imageUrl,
     required this.caption,
@@ -47,6 +47,21 @@ class Event {
         done,
         logoUrl
       ];
+
+  static Event empty = Event(
+    id: '',
+    author: Brand.empty,
+    imageUrl: '',
+    caption: '',
+    participants: 0,
+    title: '',
+    date: DateTime(2000), // Utilisez une date arbitraire pour l'initialisation
+    dateEvent: DateTime(2000),
+    tags: [],
+    reward: '',
+    done: false,
+    logoUrl: '',
+  );
 
   CachedNetworkImageProvider get imageProvider {
     return CachedNetworkImageProvider(imageUrl);

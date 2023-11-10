@@ -24,3 +24,12 @@ class FeedEventPaginatePosts extends FeedEventEvent {
   @override
   List<Object> get props => [eventId];
 }
+
+class FeedEventFetchEventDetails extends FeedEventEvent {
+  final String eventId;
+
+  const FeedEventFetchEventDetails({required this.eventId});
+
+  @override
+  List<Object> get props => [eventId];
+}

@@ -32,6 +32,9 @@ class _FeedEventState extends State<FeedEvent>
     context
         .read<FeedEventBloc>()
         .add(FeedEventFetchPostsEvent(eventId: widget.eventId));
+    context
+        .read<FeedEventBloc>()
+        .add(FeedEventFetchEventDetails(eventId: widget.eventId));
   }
 
   void _onScroll() {
@@ -64,9 +67,14 @@ class _FeedEventState extends State<FeedEvent>
         }
       },
       builder: (context, state) {
+        String title = state.event?.title ??
+            'Chargement...'; // Utilisez un titre par défaut si l'événement est nul
+        String logoUrl = state.event?.logoUrl ??
+            'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fdefaults%2Fdefault_logo.svg?alt=media';
+
         return Scaffold(
           appBar: AppBarTitleLogo(
-              title: 'widget.title',
+              title: title,
               logoUrl:
                   'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fnewbalancelogo.svg?alt=media&token=b51e9748-7a45-4194-a14f-e3c26e739fdb'),
           body: _buildBody(state),

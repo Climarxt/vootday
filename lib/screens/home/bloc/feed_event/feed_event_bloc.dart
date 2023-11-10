@@ -55,7 +55,7 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       emit(state.copyWith(
         status: FeedEventStatus.error,
         failure:
-            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+            const Failure(message: '_mapFeedEventFetchPostsEvent : Nous n\'avons pas pu charger votre flux'),
       ));
     }
   }
@@ -65,14 +65,17 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     Emitter<FeedEventState> emit,
   ) async {
     try {
+      print('_onFeedEventFetchEventDetails : Fetching event details for event ID: ${event.eventId}');
       final eventDetails = await _postRepository.getEventById(event.eventId);
+      print('_onFeedEventFetchEventDetails : Fetched event details: $eventDetails');
       emit(state.copyWith(
           event: eventDetails)); // Mettez à jour l'état avec l'Event
     } catch (_) {
+      print('_onFeedEventFetchEventDetails : Error loading event details');
       emit(state.copyWith(
         status: FeedEventStatus.error,
         failure: Failure(
-            message: 'Erreur de chargement des détails de l\'événement'),
+            message: '_onFeedEventFetchEventDetails : Erreur de chargement des détails de l\'événement'),
       ));
     }
   }

@@ -31,7 +31,6 @@ class _PostEventViewState extends State<PostEventView>
 
   @override
   void initState() {
-    print("Mon event ID est : ${widget.eventId}");
     super.initState();
   }
 

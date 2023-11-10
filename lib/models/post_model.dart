@@ -79,10 +79,8 @@ class Post extends Equatable {
 
 static Future<Post?> fromDocument(DocumentSnapshot doc) async {
   try {
-    print('fromDocument called with doc ID: ${doc.id}');
     final data = doc.data() as Map<String, dynamic>?;
     if (data == null) {
-      print('Document data is null for doc ID: ${doc.id}');
       return null;
     }
 
@@ -90,7 +88,6 @@ static Future<Post?> fromDocument(DocumentSnapshot doc) async {
     if (authorRef != null) {
       final authorDoc = await authorRef.get();
       if (authorDoc.exists) {
-        print('Author document exists for doc ID: ${doc.id}');
         // Create and return the Post instance
         return Post(
           id: doc.id,
@@ -103,13 +100,13 @@ static Future<Post?> fromDocument(DocumentSnapshot doc) async {
           tags: (data['tags'] as List).map((item) => item as String).toList(),
         );
       } else {
-        print('Author document does not exist for doc ID: ${doc.id}');
+        print('Class POST fromDocument : Author document does not exist for doc ID: ${doc.id}');
       }
     } else {
-      print('Author reference is null for doc ID: ${doc.id}');
+      print('Class POST fromDocument : Author reference is null for doc ID: ${doc.id}');
     }
   } catch (e) {
-    print('Error in fromDocument for doc ID: ${doc.id}: $e');
+    print('Class POST fromDocument : Error in fromDocument for doc ID: ${doc.id}: $e');
   }
 
   return null;

@@ -66,8 +66,13 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
   }
 
   void _navigateToEventFeed(BuildContext context) {
-    GoRouter.of(context)
-        .go('/home/event/${widget.eventId}');
+    GoRouter.of(context).go(
+      '/home/event/${widget.eventId}',
+      extra: {
+        'logoUrl': widget.logoUrl,
+        'title': widget.title,
+      },
+    );
   }
 
   Widget _buildCard(

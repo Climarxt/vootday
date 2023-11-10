@@ -24,13 +24,13 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
     Emitter<HomeEventState> emit,
   ) async {
     try {
-      print('Fetching events...');
+      print('Method _mapHomeEventFetchEventsToState : Fetching events...');
       final events = await _postRepository.getEvents();
 
       if (events.isEmpty) {
-        print('No events found.');
+        print('Method _mapHomeEventFetchEventsToState : No events found.');
       } else {
-        print('Events fetched successfully. Total events: ${events.length}');
+        print('Method _mapHomeEventFetchEventsToState : Events fetched successfully. Total events: ${events.length}');
       }
 
       emit(
@@ -38,11 +38,11 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
       );
     } catch (err) {
       // Le log ici vous donnera des détails sur l'exception attrapée
-      print('Error fetching events: ${err.toString()}');
+      print('Method _mapHomeEventFetchEventsToState : Error fetching events: ${err.toString()}');
 
       emit(state.copyWith(
         status: HomeEventStatus.error,
-        failure: const Failure(message: 'Impossible de charger les événements'),
+        failure: const Failure(message: 'Method _mapHomeEventFetchEventsToState : Impossible de charger les événements'),
         events: [],
       ));
     }

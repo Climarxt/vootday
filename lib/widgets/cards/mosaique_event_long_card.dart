@@ -50,30 +50,27 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _navigateToEventFeed(context),
-      child: Stack(
-        children: [
-          _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
-          Positioned.fill(
-            child: Container(
-              color: Colors.white.withOpacity(_animation.value),
-            ),
-          ),
-        ],
+    return FadeTransition(
+      opacity: _animation,
+      child: GestureDetector(
+        onTap: () => _navigateToEventFeed(context),
+        child: Stack(
+          children: [
+            _buildCard(context, widget.imageUrl, widget.title, widget.logoUrl),
+          ],
+        ),
       ),
     );
   }
 
-void _navigateToEventFeed(BuildContext context) {
-  final encodedTitle = Uri.encodeComponent(widget.title);
-  final encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
+  void _navigateToEventFeed(BuildContext context) {
+    final encodedTitle = Uri.encodeComponent(widget.title);
+    final encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
-  GoRouter.of(context).push(
-    '/home/event/${widget.eventId}?title=$encodedTitle&logoUrl=$encodedLogoUrl',
-  );
-}
-
+    GoRouter.of(context).push(
+      '/home/event/${widget.eventId}?title=$encodedTitle&logoUrl=$encodedLogoUrl',
+    );
+  }
 
   Widget _buildCard(
       BuildContext context, String imageUrl, String title, String logoUrl) {

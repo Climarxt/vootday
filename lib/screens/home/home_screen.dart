@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           FeedOOTD(),
           FeedMonth(),
-          const HomeEvent(),
+          HomeEvent(),
         ],
       ),
     );

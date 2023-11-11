@@ -33,6 +33,21 @@ class Event {
     required this.logoUrl,
   });
 
+  static var empty = Event(
+    id: '',
+    author: Brand.empty, // Assuming you have an empty constructor for Brand
+    imageUrl: '',
+    caption: '',
+    participants: 0,
+    title: '',
+    date: DateTime(0),
+    dateEvent: DateTime(0),
+    tags: [],
+    reward: '',
+    done: false,
+    logoUrl: '',
+  );
+
   List<Object?> get props => [
         id,
         author,

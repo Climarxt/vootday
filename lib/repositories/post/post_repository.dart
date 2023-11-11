@@ -285,16 +285,40 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
-  Future<List<Event?>> getEvents() async {
+  Future<List<Event?>> getEvents({
+    required String userId,
+    String? lastEventId,
+  }) async {
     try {
       print(
           'Method getEvents : Attempting to fetch event documents from Firestore...');
-      QuerySnapshot eventSnap =
-          await _firebaseFirestore.collection(Paths.events).get();
+      QuerySnapshot eventSnap;
+      if (lastEventId == null) {
+        // Initial fetch
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .orderBy('dateEvent',
+                descending: true) // Assume we order by the event date.
+            .limit(100) // Or some other limit you prefer.
+            .get();
+      } else {
+        // Pagination fetch
+        final lastEventDoc = await _firebaseFirestore
+            .collection(Paths.events)
+            .doc(lastEventId)
+            .get();
 
-      if (eventSnap.docs.isEmpty) {
-        print('Method getEvents : No event documents found in Firestore.');
-        return [];
+        if (!lastEventDoc.exists) {
+          print('Method getEvents : Last event document does not exist.');
+          return [];
+        }
+
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .orderBy('dateEvent', descending: true)
+            .startAfterDocument(lastEventDoc)
+            .limit(2) // Fetch next set of events.
+            .get();
       }
 
       print(
@@ -302,12 +326,12 @@ class PostRepository extends BasePostRepository {
       List<Future<Event?>> futureEvents =
           eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
 
-      // Utilisez Future.wait pour résoudre tous les événements
+      // Use Future.wait to resolve all events
       List<Event?> events = await Future.wait(futureEvents);
 
       print(
           'Method getEvents : Event objects created. Total events: ${events.length}');
-      // Ici, vous pouvez également imprimer un événement pour le vérifier
+      // Here, you might also print an event for debugging
       if (events.isNotEmpty) {
         print('Method getEvents : First event details: ${events.first}');
       }

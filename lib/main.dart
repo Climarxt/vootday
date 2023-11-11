@@ -105,10 +105,14 @@ class MyApp extends StatelessWidget {
               return feedEventBloc;
             },
           ),
-          BlocProvider<HomeEventBloc>(
-            create: (context) => HomeEventBloc(
-              postRepository: context.read<PostRepository>(),
-            ),
+          BlocProvider(
+            create: (context) {
+              final homeEventBloc = HomeEventBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+              );
+              return homeEventBloc;
+            },
           ),
           BlocProvider<ProfileBloc>(
             create: (context) => ProfileBloc(

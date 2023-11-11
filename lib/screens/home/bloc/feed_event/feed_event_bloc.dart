@@ -24,14 +24,14 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
         super(FeedEventState.initial()) {
-    on<FeedEventFetchPostsEvent>(_mapFeedEventFetchPostsEvent);
-    on<FeedEventPaginatePosts>(_mapFeedEventPaginatePostsToState);
+    on<FeedEventFetchPostsEvents>(_mapFeedEventFetchPostsEvent);
+    on<FeedEventPaginatePostsEvents>(_mapFeedEventPaginatePostsToState);
     on<FeedEventFetchEventDetails>(_onFeedEventFetchEventDetails);
     on<FeedEventClean>(_onFeedEventClean);
   }
 
   Future<void> _mapFeedEventFetchPostsEvent(
-    FeedEventFetchPostsEvent event,
+    FeedEventFetchPostsEvents event,
     Emitter<FeedEventState> emit,
   ) async {
     emit(FeedEventState.initial());
@@ -87,7 +87,7 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
   }
 
   Future<void> _mapFeedEventPaginatePostsToState(
-    FeedEventPaginatePosts event,
+    FeedEventPaginatePostsEvents event,
     Emitter<FeedEventState> emit,
   ) async {
     emit(state.copyWith(status: FeedEventStatus.paginating));

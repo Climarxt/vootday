@@ -35,7 +35,7 @@ class _FeedEventState extends State<FeedEvent> {
     _scrollController = ScrollController()..addListener(_onScroll);
     context
         .read<FeedEventBloc>()
-        .add(FeedEventFetchPostsEvent(eventId: widget.eventId));
+        .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
     context
         .read<FeedEventBloc>()
         .add(FeedEventFetchEventDetails(eventId: widget.eventId));
@@ -66,7 +66,7 @@ class _FeedEventState extends State<FeedEvent> {
         if (state.status == FeedEventStatus.initial && state.posts.isEmpty) {
           context
               .read<FeedEventBloc>()
-              .add(FeedEventFetchPostsEvent(eventId: widget.eventId));
+              .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
         }
       },
       builder: (context, state) {

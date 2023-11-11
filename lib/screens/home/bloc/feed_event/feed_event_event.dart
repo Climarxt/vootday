@@ -7,19 +7,19 @@ abstract class FeedEventEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FeedEventFetchPostsEvent extends FeedEventEvent {
+class FeedEventFetchPostsEvents extends FeedEventEvent {
   final String eventId;
 
-  const FeedEventFetchPostsEvent({required this.eventId});
+  const FeedEventFetchPostsEvents({required this.eventId});
 
   @override
   List<Object> get props => [eventId];
 }
 
-class FeedEventPaginatePosts extends FeedEventEvent {
+class FeedEventPaginatePostsEvents extends FeedEventEvent {
   final String eventId;
 
-  const FeedEventPaginatePosts({required this.eventId});
+  const FeedEventPaginatePostsEvents({required this.eventId});
 
   @override
   List<Object> get props => [eventId];

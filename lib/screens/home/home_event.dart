@@ -1,5 +1,6 @@
 import 'package:bootdv2/models/event_model.dart';
 import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
@@ -80,11 +81,30 @@ class _HomeEventState extends State<HomeEvent>
                   : const SizedBox.shrink();
             } else {
               final event = state.events[index] ?? Event.empty;
-              return MosaiqueEventLongCard(
-                imageUrl: event.imageUrl,
-                title: event.title,
-                logoUrl: event.author.logoUrl,
-                eventId: event.id,
+              return FutureBuilder<String>(
+                future: getMostLikedPostImageUrl(event.id),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    // Handle the error state
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // Handle the case where there is no image URL
+                    return Text('No image available');
+                  }
+                  return MosaiqueEventLongCard(
+                    imageUrl: snapshot.data!,
+                    title: event.title,
+                    logoUrl: event.author.logoUrl,
+                    eventId: event.id,
+                  );
+                },
               );
             }
           },
@@ -98,6 +118,45 @@ class _HomeEventState extends State<HomeEvent>
           ),
       ],
     );
+  }
+
+  Future<String> getMostLikedPostImageUrl(String eventId) async {
+    try {
+      final feedEventRef = FirebaseFirestore.instance
+          .collection('events')
+          .doc(eventId)
+          .collection('feed_event');
+
+      final querySnapshot =
+          await feedEventRef.orderBy('likes', descending: true).limit(1).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data()
+            as Map<String, dynamic>?; // Cast as a map
+        final DocumentReference? postRef =
+            data?['post_ref'] as DocumentReference?;
+
+        if (postRef != null) {
+          final postDoc = await postRef.get();
+
+          if (postDoc.exists) {
+            final postData =
+                postDoc.data() as Map<String, dynamic>?; // Cast as a map
+            return postData?['imageUrl'] as String? ?? ''; // Use the map
+          } else {
+            print("Referenced post document does not exist.");
+          }
+        } else {
+          print("Post reference is null.");
+        }
+      } else {
+        print("No posts found in the event's feed.");
+      }
+    } catch (e) {
+      print(
+          "An error occurred while fetching the most liked post image URL: $e");
+    }
+    return '';
   }
 
   // Overridden to retain the state

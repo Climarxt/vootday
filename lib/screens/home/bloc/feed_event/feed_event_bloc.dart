@@ -34,8 +34,13 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     FeedEventFetchPostsEvents event,
     Emitter<FeedEventState> emit,
   ) async {
+    if (state.hasFetchedInitialPosts && event.eventId == state.event?.id) {
+      print(
+          'FeedEventBloc: Already fetched initial posts for event ${event.eventId}.');
+      return;
+    }
+    _onFeedEventClean(FeedEventClean(), emit);
     print('FeedEventBloc: Fetching posts for event ${event.eventId}.');
-    emit(FeedEventState.initial());
 
     try {
       final userId = _authBloc.state.user?.uid;
@@ -45,6 +50,15 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       }
       print('FeedEventBloc: Fetching posts for user $userId.');
 
+      // Retrieve the event details
+      final Event? eventDetails =
+          await _postRepository.getEventById(event.eventId);
+      if (eventDetails == null) {
+        throw Exception("Event with id ${event.eventId} does not exist.");
+      }
+      print('FeedEventBloc: Retrieved event details for ${event.eventId}.');
+
+      // Continue with fetching posts
       final posts = await _postRepository.getFeedEvent(
         userId: userId,
         eventId: event.eventId,
@@ -63,15 +77,21 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
       print('FeedEventBloc: Updated liked posts.');
 
-      emit(state.copyWith(posts: posts, status: FeedEventStatus.loaded));
+      // Emit the new state with the posts and event details
+      emit(state.copyWith(
+        posts: posts,
+        status: FeedEventStatus.loaded,
+        event: eventDetails, // Pass the retrieved Event object here
+        hasFetchedInitialPosts: true, // Set this flag to true after fetching
+      ));
       print('FeedEventBloc: Posts loaded successfully.');
     } catch (err) {
       print('FeedEventBloc: Error fetching posts - ${err.toString()}');
       emit(state.copyWith(
         status: FeedEventStatus.error,
-        failure: const Failure(
+        failure: Failure(
             message:
-                '_mapFeedEventFetchPostsEvent : Nous n\'avons pas pu charger votre flux'),
+                '_mapFeedEventFetchPostsEvent : Unable to load the feed - ${err.toString()}'),
       ));
     }
   }

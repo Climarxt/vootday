@@ -35,11 +35,9 @@ class _FeedEventState extends State<FeedEvent>
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_onScroll);
-    Future.delayed(Duration.zero, () {
-      context
-          .read<FeedEventBloc>()
-          .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
-    });
+    context
+        .read<FeedEventBloc>()
+        .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
   }
 
   void _onScroll() {
@@ -67,13 +65,7 @@ class _FeedEventState extends State<FeedEvent>
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<FeedEventBloc, FeedEventState>(
-      listener: (context, state) {
-        if (state.status == FeedEventStatus.initial && state.posts.isEmpty) {
-          context
-              .read<FeedEventBloc>()
-              .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
           appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl),
@@ -87,6 +79,7 @@ class _FeedEventState extends State<FeedEvent>
     return Stack(
       children: [
         ListView.separated(
+          key: PageStorageKey<String>('feed-event-list-${widget.eventId}'),
           physics: const BouncingScrollPhysics(),
           cacheExtent: 10000,
           controller: _scrollController,
@@ -101,6 +94,7 @@ class _FeedEventState extends State<FeedEvent>
             } else {
               final post = state.posts[index] ?? Post.empty;
               return PostEventView(
+                key: ValueKey('${widget.eventId}-${post.id}'),
                 logoUrl: widget.logoUrl,
                 title: widget.title,
                 eventId: widget.eventId,

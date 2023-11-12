@@ -165,6 +165,8 @@ class _PostViewState extends State<PostView>
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
     GoRouter.of(context)
-        .go('/home/post/${widget.post.id}?username=$username');
+        .push(
+          //'/home/post/${widget.post.id}?username=$username');
+          '/post/${widget.post.id}?username=$username');
   }
 }

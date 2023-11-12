@@ -13,7 +13,6 @@ class PostEventView extends StatefulWidget {
   final String title;
   final String logoUrl;
 
-
   PostEventView({
     Key? key,
     required this.post,
@@ -70,6 +69,7 @@ class _PostEventViewState extends State<PostEventView>
 
     GoRouter.of(context).push(
       '/home/event/${widget.eventId}/post/${widget.post.id}'
+      // '/post/${widget.post.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',
@@ -152,9 +152,13 @@ class _PostEventViewState extends State<PostEventView>
   }
 
   Widget buildLikeCount(BuildContext context) {
-    return const Row(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Text(
+          '${widget.post.likes}',
+          style: AppTextStyles.titlePost(context),
+        ),
         const SizedBox(width: 2),
         const Icon(
           Icons.emoji_events,

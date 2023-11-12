@@ -30,7 +30,7 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
   ) async {
     try {
       print('Method _mapHomeEventFetchEventsToState : Fetching events...');
-      final events = await _postRepository.getEvents(
+      final events = await _postRepository.getEventsDone(
         userId: _authBloc.state.user!.uid,
       );
 
@@ -71,7 +71,7 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
           state.events.isNotEmpty ? state.events.last!.id : null;
       print('HomeEventPaginateEvents:  Last event ID is $lastEventId');
 
-      final List<Event?> events = await _postRepository.getEvents(
+      final List<Event?> events = await _postRepository.getEventsDone(
         userId: _authBloc.state.user!.uid,
         lastEventId: lastEventId,
       );

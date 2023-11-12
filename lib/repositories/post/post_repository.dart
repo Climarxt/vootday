@@ -285,7 +285,7 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
-  Future<List<Event?>> getEvents({
+  Future<List<Event?>> getEventsDone({
     required String userId,
     String? lastEventId,
   }) async {
@@ -297,6 +297,7 @@ class PostRepository extends BasePostRepository {
         // Initial fetch
         eventSnap = await _firebaseFirestore
             .collection(Paths.events)
+            .where('done', isEqualTo: true)
             .orderBy('dateEvent',
                 descending: true) // Assume we order by the event date.
             .limit(100) // Or some other limit you prefer.
@@ -315,6 +316,7 @@ class PostRepository extends BasePostRepository {
 
         eventSnap = await _firebaseFirestore
             .collection(Paths.events)
+            .where('done', isEqualTo: true)
             .orderBy('dateEvent', descending: true)
             .startAfterDocument(lastEventDoc)
             .limit(2) // Fetch next set of events.

@@ -1,7 +1,4 @@
 // ignore_for_file: avoid_print
-
-import 'package:bootdv2/config/colors.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/post_event_view.dart';
@@ -35,9 +32,11 @@ class _FeedEventState extends State<FeedEvent>
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_onScroll);
-    context
-        .read<FeedEventBloc>()
-        .add(FeedEventFetchPostsEvents(eventId: widget.eventId));
+    final feedEventBloc = context.read<FeedEventBloc>();
+    if (!feedEventBloc.state.hasFetchedInitialPosts ||
+        feedEventBloc.state.event?.id != widget.eventId) {
+      feedEventBloc.add(FeedEventFetchPostsEvents(eventId: widget.eventId));
+    }
   }
 
   void _onScroll() {

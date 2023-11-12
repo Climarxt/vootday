@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/post/widgets/image_loader.dart';
+import 'package:bootdv2/screens/post/widgets/image_loader_post_event.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '/models/models.dart';
@@ -47,7 +47,7 @@ class _PostEventViewState extends State<PostEventView>
             height: MediaQuery.of(context).size.height / 1.5,
             child: Stack(
               children: [
-                ImageLoader(
+                ImageLoaderPostEvent(
                   imageProvider: widget.post.imageProvider,
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 1.5,

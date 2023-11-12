@@ -119,19 +119,30 @@ class _PostEventScreenState extends State<PostEventScreen>
                             _navigateToUserScreen(context, _user!),
                       ),
                       const Spacer(),
-                      const Column(
+                      Column(
                         children: [
-                          SizedBox(height: 12),
-                          Icon(Icons.more_vert, color: Colors.black, size: 24),
-                          SizedBox(height: 32),
-                          Icon(Icons.comment, color: Colors.black, size: 24),
-                          SizedBox(height: 32),
-                          Icon(Icons.share, color: Colors.black, size: 24),
-                          SizedBox(height: 32),
-                          Icon(Icons.add_to_photos,
-                              color: Colors.black, size: 24),
+                          IconButton(
+                            icon: const Icon(Icons.more_vert,
+                                color: Colors.black, size: 24),
+                            onPressed: () => _showBottomSheet(context),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.comment,
+                                color: Colors.black, size: 24),
+                            onPressed: () => _showBottomSheet(context),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.share,
+                                color: Colors.black, size: 24),
+                            onPressed: () => _showBottomSheet(context),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_to_photos,
+                                color: Colors.black, size: 24),
+                            onPressed: () => _showBottomSheet(context),
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -153,6 +164,51 @@ class _PostEventScreenState extends State<PostEventScreen>
       '?username=$encodedUsername'
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share'),
+              onTap: () {
+                // Implémentez votre logique de partage ici
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.comment),
+              title: const Text('Comment'),
+              onTap: () {
+                // Implémentez votre logique de commentaire ici
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bookmark),
+              title: const Text('Bookmark'),
+              onTap: () {
+                // Implémentez votre logique d'ajout aux favoris ici
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: const Text('Report'),
+              onTap: () {
+                // Implémentez votre logique de signalement ici
+                Navigator.pop(context);
+              },
+            ),
+            // Ajoutez d'autres options si nécessaire
+          ],
+        );
+      },
     );
   }
 

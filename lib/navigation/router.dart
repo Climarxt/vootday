@@ -5,7 +5,6 @@ import 'package:bootdv2/cubits/brands/brands_cubit.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/calendar/event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';

@@ -82,65 +82,6 @@ GoRouter createRouter(BuildContext context) {
           child: SignupScreen(),
         ),
       ),
-      // Event
-      GoRoute(
-        path: '/event',
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return NoAnimationPage(
-            child: BlocProvider<ProfileBloc>(
-              create: (_) => ProfileBloc(
-                authBloc: context.read<AuthBloc>(),
-                userRepository: context.read<UserRepository>(),
-                postRepository: context.read<PostRepository>(),
-              )..add(
-                  ProfileLoadUser(userId: authBloc.state.user!.uid),
-                ),
-              child: const EventScreen(
-                  postImage: 'assets/images/placeholder-image.png'),
-            ),
-          );
-        },
-      ),
-      // Post
-      GoRoute(
-        path: '/post',
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          final postId = state.pathParameters['postId']!;
-          final username = state.uri.queryParameters['username'] ?? 'Unknown';
-          return MaterialPage<void>(
-            key: state.pageKey,
-            child: PostScreen(postId: postId, username: username),
-          );
-        },
-        routes: [
-          GoRoute(
-            path: 'user/:userId',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              final userId = state.pathParameters['userId']!;
-              final username =
-                  state.uri.queryParameters['username'] ?? 'Unknown';
-              final title = state.uri.queryParameters['title'] ?? 'title';
-              return MaterialPage<void>(
-                key: state.pageKey,
-                child: ProfileScreen(
-                    userId: userId, username: username, title: title),
-              );
-            },
-          ),
-          GoRoute(
-            path: ':postId',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              final postId = state.pathParameters['postId']!;
-              final username =
-                  state.uri.queryParameters['username'] ?? 'Unknown';
-              return MaterialPage<void>(
-                key: state.pageKey,
-                child: PostScreen(postId: postId, username: username),
-              );
-            },
-          )
-        ],
-      ),
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,

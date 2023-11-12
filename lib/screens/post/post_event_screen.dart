@@ -149,7 +149,6 @@ class _PostEventScreenState extends State<PostEventScreen>
 
     context.push(
       '/home/event/${widget.eventId}/post/${widget.postId}/user/${user.id}'
-      // '/post/${widget.postId}/user/${user.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',

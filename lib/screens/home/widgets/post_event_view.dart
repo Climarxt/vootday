@@ -52,7 +52,7 @@ class _PostEventViewState extends State<PostEventView>
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 1.5,
                 ),
-                buildBody(context), // Ceci reste inchangé
+                buildBody(context),
               ],
             ),
           ),
@@ -69,7 +69,6 @@ class _PostEventViewState extends State<PostEventView>
 
     GoRouter.of(context).push(
       '/home/event/${widget.eventId}/post/${widget.post.id}'
-      // '/post/${widget.post.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',

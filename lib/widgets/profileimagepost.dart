@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class ProfileImagePost extends StatelessWidget {
   final String title;
+  final int likes;
   final String description;
   final ImageProvider<Object>? profileImageProvider;
   final List<String> tags;
@@ -11,6 +12,7 @@ class ProfileImagePost extends StatelessWidget {
   const ProfileImagePost({
     super.key,
     required this.title,
+    required this.likes,
     required this.description,
     required this.profileImageProvider,
     required this.tags,
@@ -46,6 +48,21 @@ class ProfileImagePost extends StatelessWidget {
                     title,
                     style: AppTextStyles.titleLargeBlackBold(context),
                   ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(
+                      '$likes',
+                      style: AppTextStyles.bodyStyle(context),
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(
+                      Icons.emoji_events,
+                      color: black,
+                      size: 12,
+                    ),
+                  ],
                 ),
               ],
             ),

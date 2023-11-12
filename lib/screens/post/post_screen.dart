@@ -105,6 +105,7 @@ class _PostScreenState extends State<PostScreen>
                     children: [
                       ProfileImagePost(
                         title: '${_user!.firstName} ${_user!.lastName}',
+                        likes: _post!.likes,
                         profileImageProvider: _user!.profileImageProvider,
                         description: _post!.caption,
                         tags: _post!.tags,

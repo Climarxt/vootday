@@ -142,14 +142,19 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       child: Center(
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(widget.state.user.profileImageUrl),
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 300),
+              child: CircleAvatar(
+                backgroundColor: white,
+                radius: 50,
+                backgroundImage: NetworkImage(widget.state.user.profileImageUrl),
+              ),
             ),
             const SizedBox(height: 8),
             AnimatedOpacity(
               opacity: _opacity,
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300),
               child: Text(
                 '${widget.state.user.firstName} ${widget.state.user.lastName}',
                 style: Theme.of(context)

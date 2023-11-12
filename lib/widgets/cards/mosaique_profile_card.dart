@@ -21,7 +21,7 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 200), () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         setState(() {
           isImageVisible = true;
@@ -34,7 +34,7 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
   Widget build(BuildContext context) {
     return AnimatedOpacity(
       opacity: isImageVisible ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       child: isImageVisible
           ? GestureDetector(
               onTap: () => _navigateToPostScreen(context),

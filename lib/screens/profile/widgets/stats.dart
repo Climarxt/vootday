@@ -40,7 +40,7 @@ class _StatsState extends State<Stats> {
         ),
         AnimatedOpacity(
           opacity: _opacity,
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 300),
           child: Text(
             widget.count.toString(),
             style: Theme.of(context).textTheme.headlineSmall!,

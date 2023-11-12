@@ -34,26 +34,39 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     FeedEventFetchPostsEvents event,
     Emitter<FeedEventState> emit,
   ) async {
+    print('FeedEventBloc: Fetching posts for event ${event.eventId}.');
     emit(FeedEventState.initial());
+
     try {
+      final userId = _authBloc.state.user?.uid;
+      if (userId == null) {
+        throw Exception(
+            'User ID is null. User must be logged in to fetch posts.');
+      }
+      print('FeedEventBloc: Fetching posts for user $userId.');
+
       final posts = await _postRepository.getFeedEvent(
-        userId: _authBloc.state.user!.uid,
+        userId: userId,
         eventId: event.eventId,
       );
+      print('FeedEventBloc: Fetched ${posts.length} posts.');
 
       _likedPostsCubit.clearAllLikedPosts();
+      print('FeedEventBloc: Cleared liked posts.');
 
       final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
+        userId: userId,
         posts: posts,
       );
+      print('FeedEventBloc: Fetched liked post IDs.');
 
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+      print('FeedEventBloc: Updated liked posts.');
 
-      emit(
-        state.copyWith(posts: posts, status: FeedEventStatus.loaded),
-      );
+      emit(state.copyWith(posts: posts, status: FeedEventStatus.loaded));
+      print('FeedEventBloc: Posts loaded successfully.');
     } catch (err) {
+      print('FeedEventBloc: Error fetching posts - ${err.toString()}');
       emit(state.copyWith(
         status: FeedEventStatus.error,
         failure: const Failure(

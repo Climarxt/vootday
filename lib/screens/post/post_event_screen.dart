@@ -147,7 +147,7 @@ class _PostEventScreenState extends State<PostEventScreen>
     final String encodedTitle = Uri.encodeComponent(widget.title);
     final String encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
-    context.go(
+    context.push(
       '/home/event/${widget.eventId}/post/${widget.postId}/user/${user.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'

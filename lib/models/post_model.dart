@@ -26,6 +26,18 @@ class Post extends Equatable {
     required this.tags, // Make tags required
   });
 
+  static var empty = Post(
+    id: '',
+    imageUrl: '',
+    author: User.empty,
+    thumbnailUrl: '',
+    caption: '',
+    likes: 0,
+    date: DateTime(0),
+    tags: [],
+
+  );
+
   @override
   List<Object?> get props => [
         id,
@@ -77,39 +89,41 @@ class Post extends Equatable {
     return CachedNetworkImageProvider(imageUrl);
   }
 
-static Future<Post?> fromDocument(DocumentSnapshot doc) async {
-  try {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
-      return null;
-    }
-
-    final authorRef = data['author'] as DocumentReference?;
-    if (authorRef != null) {
-      final authorDoc = await authorRef.get();
-      if (authorDoc.exists) {
-        // Create and return the Post instance
-        return Post(
-          id: doc.id,
-          author: User.fromSnapshot(authorDoc),
-          imageUrl: data['imageUrl'] ?? '',
-          thumbnailUrl: data['thumbnailUrl'] ?? '',
-          caption: data['caption'] ?? '',
-          likes: (data['likes'] ?? 0).toInt(),
-          date: (data['date'] as Timestamp).toDate(),
-          tags: (data['tags'] as List).map((item) => item as String).toList(),
-        );
-      } else {
-        print('Class POST fromDocument : Author document does not exist for doc ID: ${doc.id}');
+  static Future<Post?> fromDocument(DocumentSnapshot doc) async {
+    try {
+      final data = doc.data() as Map<String, dynamic>?;
+      if (data == null) {
+        return null;
       }
-    } else {
-      print('Class POST fromDocument : Author reference is null for doc ID: ${doc.id}');
+
+      final authorRef = data['author'] as DocumentReference?;
+      if (authorRef != null) {
+        final authorDoc = await authorRef.get();
+        if (authorDoc.exists) {
+          // Create and return the Post instance
+          return Post(
+            id: doc.id,
+            author: User.fromSnapshot(authorDoc),
+            imageUrl: data['imageUrl'] ?? '',
+            thumbnailUrl: data['thumbnailUrl'] ?? '',
+            caption: data['caption'] ?? '',
+            likes: (data['likes'] ?? 0).toInt(),
+            date: (data['date'] as Timestamp).toDate(),
+            tags: (data['tags'] as List).map((item) => item as String).toList(),
+          );
+        } else {
+          print(
+              'Class POST fromDocument : Author document does not exist for doc ID: ${doc.id}');
+        }
+      } else {
+        print(
+            'Class POST fromDocument : Author reference is null for doc ID: ${doc.id}');
+      }
+    } catch (e) {
+      print(
+          'Class POST fromDocument : Error in fromDocument for doc ID: ${doc.id}: $e');
     }
-  } catch (e) {
-    print('Class POST fromDocument : Error in fromDocument for doc ID: ${doc.id}: $e');
+
+    return null;
   }
-
-  return null;
-}
-
 }

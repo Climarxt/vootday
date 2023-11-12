@@ -12,9 +12,7 @@ class PostEventView extends StatefulWidget {
   final String eventId;
   final String title;
   final String logoUrl;
-  final bool isLiked;
-  final VoidCallback onLike;
-  final bool recentlyLiked;
+
 
   PostEventView({
     Key? key,
@@ -22,9 +20,6 @@ class PostEventView extends StatefulWidget {
     required this.title,
     required this.logoUrl,
     required this.eventId,
-    required this.isLiked,
-    required this.onLike,
-    this.recentlyLiked = false,
   }) : super(key: key ?? ValueKey(post.id));
 
   @override
@@ -73,7 +68,7 @@ class _PostEventViewState extends State<PostEventView>
     final String encodedTitle = Uri.encodeComponent(widget.title);
     final String encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
-    GoRouter.of(context).go(
+    GoRouter.of(context).push(
       '/home/event/${widget.eventId}/post/${widget.post.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'
@@ -82,7 +77,7 @@ class _PostEventViewState extends State<PostEventView>
   }
 
   void _navigateToUserScreen(BuildContext context) {
-    GoRouter.of(context).go(
+    GoRouter.of(context).push(
       '/home/event/${widget.eventId}/user/${widget.post.author.id}'
       '?username=${Uri.encodeComponent(widget.post.author.username)}'
       '&title=${Uri.encodeComponent(widget.title)}'
@@ -157,13 +152,9 @@ class _PostEventViewState extends State<PostEventView>
   }
 
   Widget buildLikeCount(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          '${widget.recentlyLiked ? widget.post.likes + 1 : widget.post.likes}',
-          style: AppTextStyles.titlePost(context),
-        ),
         const SizedBox(width: 2),
         const Icon(
           Icons.emoji_events,

@@ -20,11 +20,11 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
         super(HomeEventState.initial()) {
-    on<HomeEventFetchEvents>(_mapHomeEventFetchEventsToState);
+    on<HomeEventFetchEvents>(_mapHomeEventFetchEvents);
     on<HomeEventPaginateEvents>(_mapHomeEventPaginateEventsToState);
   }
 
-  Future<void> _mapHomeEventFetchEventsToState(
+  Future<void> _mapHomeEventFetchEvents(
     HomeEventFetchEvents event,
     Emitter<HomeEventState> emit,
   ) async {

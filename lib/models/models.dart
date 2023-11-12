@@ -5,3 +5,4 @@ export 'post_model.dart';
 export 'wip/model.dart';
 export 'comment_model.dart';
 export 'brand_model.dart';
+export 'event_model.dart';

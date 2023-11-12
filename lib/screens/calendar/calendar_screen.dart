@@ -1,7 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/calendar/bloc/latest_event/calendar_latest_bloc.dart';
 import 'package:bootdv2/widgets/cards/event_new_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -12,6 +15,15 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  @override
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<CalendarLatestEventBloc>()
+        .add(CalendarLatestEventFetchEvent());
+  }
+
   List<String> imageList = [
     'assets/images/Stussy.png',
     'assets/images/postImage2.jpg',
@@ -32,51 +44,64 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 62,
-        title: Text(AppLocalizations.of(context)!.translate('event'),
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildSectionTitle(AppLocalizations.of(context)!.translate('new')),
-          const Expanded(
-            flex: 1,
-            child: EventNewCard(
-                imageUrl: "assets/images/Obey.png",
-                title: "Title",
-                description: "Description"),
-          ),
-          const SizedBox(height: 8),
-          buildSectionTitle(
-            AppLocalizations.of(context)!.translate('thisweek'),
-          ),
-          buildListview(size),
-          const SizedBox(height: 8),
-          buildSectionTitle(
-            AppLocalizations.of(context)!.translate('comingsoon'),
-          ),
-          buildListview1(size),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => GoRouter.of(context).push('/event'),
-        label: Text(
-          "eventTest",
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(color: white),
-        ),
-        backgroundColor: couleurJauneOrange,
-      ),
+    return BlocConsumer<CalendarLatestEventBloc, CalendarLatestEventState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state.status == CalendarLatestEventStatus.loaded) {
+          final latestEvent = state.latestEvent ?? Event.empty;
+          return Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 62,
+              title: Text(AppLocalizations.of(context)!.translate('event'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(color: Colors.black)),
+              backgroundColor: Colors.white,
+              elevation: 0,
+            ),
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSectionTitle(
+                    AppLocalizations.of(context)!.translate('new')),
+                Expanded(
+                  flex: 1,
+                  child: EventNewCard(
+                      imageUrl: latestEvent.logoUrl,
+                      title: "Title",
+                      description: "Description"),
+                ),
+                const SizedBox(height: 8),
+                buildSectionTitle(
+                  AppLocalizations.of(context)!.translate('thisweek'),
+                ),
+                buildListview(size),
+                const SizedBox(height: 8),
+                buildSectionTitle(
+                  AppLocalizations.of(context)!.translate('comingsoon'),
+                ),
+                buildListview1(size),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => GoRouter.of(context).push('/event'),
+              label: Text(
+                "eventTest",
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: white),
+              ),
+              backgroundColor: couleurJauneOrange,
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 

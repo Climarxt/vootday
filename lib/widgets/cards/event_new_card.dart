@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EventNewCard extends StatelessWidget {
   final String imageUrl;
@@ -62,16 +63,11 @@ class EventNewCard extends StatelessWidget {
   Widget _buildPost(String imageUrl) {
     return Stack(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              image: AssetImage(imageUrl),
-              fit: BoxFit.fitHeight,
-              alignment: Alignment.center, // Center the image
-            ),
-          ),
-        ),
+        SvgPicture.network(
+          imageUrl,
+          fit: BoxFit.fitHeight,
+          alignment: Alignment.center,
+        )
       ],
     );
   }

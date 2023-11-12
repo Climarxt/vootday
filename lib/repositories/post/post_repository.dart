@@ -98,6 +98,41 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
+  Future<Set<String>> getLikedPostIds({
+    required String userId,
+    required List<Post?> posts,
+  }) async {
+    final postIds = <String>{};
+    for (final post in posts) {
+      final likeDoc = await _firebaseFirestore
+          .collection(Paths.likes)
+          .doc(post!.id)
+          .collection(Paths.postLikes)
+          .doc(userId)
+          .get();
+      if (likeDoc.exists) {
+        postIds.add(post.id!);
+      }
+    }
+    return postIds;
+  }
+
+  @override
+  void deleteLike({required String postId, required String userId}) {
+    _firebaseFirestore
+        .collection(Paths.posts)
+        .doc(postId)
+        .update({'likes': FieldValue.increment(-1)});
+
+    _firebaseFirestore
+        .collection(Paths.likes)
+        .doc(postId)
+        .collection(Paths.postLikes)
+        .doc(userId)
+        .delete();
+  }
+
+  @override
   Future<List<Post?>> getUserFeed({
     required String userId,
     String? lastPostId,
@@ -217,6 +252,25 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
+  Future<Post?> getPostById(String postId) async {
+    try {
+      DocumentSnapshot postSnap =
+          await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
+
+      if (postSnap.exists) {
+        return Post.fromDocument(postSnap);
+      } else {
+        // Handle the case where the post does not exist.
+        print("Le post n'existe pas.");
+        return null;
+      }
+    } catch (e) {
+      // Handle any errors that occur during the fetch.
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future<List<Post?>> getFeedEvent({
     required String eventId,
     required String userId,
@@ -291,7 +345,7 @@ class PostRepository extends BasePostRepository {
   }) async {
     try {
       print(
-          'Method getEvents : Attempting to fetch event documents from Firestore...');
+          'Method getEventsDone : Attempting to fetch event documents from Firestore...');
       QuerySnapshot eventSnap;
       if (lastEventId == null) {
         // Initial fetch
@@ -310,7 +364,7 @@ class PostRepository extends BasePostRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          print('Method getEvents : Last event document does not exist.');
+          print('Method getEventsDone : Last event document does not exist.');
           return [];
         }
 
@@ -324,7 +378,7 @@ class PostRepository extends BasePostRepository {
       }
 
       print(
-          'Method getEvents : Event documents fetched. Converting to Event objects...');
+          'Method getEventsDone : Event documents fetched. Converting to Event objects...');
       List<Future<Event?>> futureEvents =
           eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
 
@@ -332,17 +386,48 @@ class PostRepository extends BasePostRepository {
       List<Event?> events = await Future.wait(futureEvents);
 
       print(
-          'Method getEvents : Event objects created. Total events: ${events.length}');
+          'Method getEventsDone : Event objects created. Total events: ${events.length}');
       // Here, you might also print an event for debugging
       if (events.isNotEmpty) {
-        print('Method getEvents : First event details: ${events.first}');
+        print('Method getEventsDone : First event details: ${events.first}');
       }
 
       return events;
     } catch (e) {
       print(
-          'Method getEvents : An error occurred while fetching events: ${e.toString()}');
+          'Method getEventsDone : An error occurred while fetching events: ${e.toString()}');
       return [];
+    }
+  }
+
+  Future<Event?> getLatestEvent() async {
+    try {
+      print(
+          'Method getLatestEvent: Attempting to fetch the latest event document from Firestore...');
+      // Fetch the latest event by date
+      QuerySnapshot eventSnap = await _firebaseFirestore
+          .collection(Paths.events)
+          .where('done', isEqualTo: false)
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        print(
+            'Method getLatestEvent: Latest event document fetched. Converting to Event object...');
+        DocumentSnapshot doc = eventSnap.docs.first;
+        Event? latestEvent = await Event.fromDocument(doc);
+        print(
+            'Method getLatestEvent: Event data - ${latestEvent?.toDocument()}');
+        return latestEvent;
+      } else {
+        print('Method getLatestEvent: No events found.');
+        return null;
+      }
+    } catch (e) {
+      print(
+          'Method getLatestEvent: An error occurred while fetching the latest event: $e');
+      return null;
     }
   }
 
@@ -362,60 +447,6 @@ class PostRepository extends BasePostRepository {
     } catch (e) {
       print(
           'Method getEventById : Une erreur est survenue lors de la récupération de l\'événement: ${e.toString()}');
-      return null;
-    }
-  }
-
-  @override
-  Future<Set<String>> getLikedPostIds({
-    required String userId,
-    required List<Post?> posts,
-  }) async {
-    final postIds = <String>{};
-    for (final post in posts) {
-      final likeDoc = await _firebaseFirestore
-          .collection(Paths.likes)
-          .doc(post!.id)
-          .collection(Paths.postLikes)
-          .doc(userId)
-          .get();
-      if (likeDoc.exists) {
-        postIds.add(post.id!);
-      }
-    }
-    return postIds;
-  }
-
-  @override
-  void deleteLike({required String postId, required String userId}) {
-    _firebaseFirestore
-        .collection(Paths.posts)
-        .doc(postId)
-        .update({'likes': FieldValue.increment(-1)});
-
-    _firebaseFirestore
-        .collection(Paths.likes)
-        .doc(postId)
-        .collection(Paths.postLikes)
-        .doc(userId)
-        .delete();
-  }
-
-  Future<Post?> getPostById(String postId) async {
-    try {
-      DocumentSnapshot postSnap =
-          await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
-
-      if (postSnap.exists) {
-        return Post.fromDocument(postSnap);
-      } else {
-        // Handle the case where the post does not exist.
-        print("Le post n'existe pas.");
-        return null;
-      }
-    } catch (e) {
-      // Handle any errors that occur during the fetch.
-      print(e.toString());
       return null;
     }
   }

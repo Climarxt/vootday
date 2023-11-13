@@ -4,7 +4,6 @@ import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/screens/event/widgets/profile_image_event.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
-import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

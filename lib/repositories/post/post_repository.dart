@@ -431,6 +431,37 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+  Future<Event?> getThisWeekEvent() async {
+    try {
+      print(
+          'Method getLatestEvent: Attempting to fetch the latest event document from Firestore...');
+      // Fetch the latest event by date
+      QuerySnapshot eventSnap = await _firebaseFirestore
+          .collection(Paths.events)
+          .where('done', isEqualTo: false)
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        print(
+            'Method getLatestEvent: Latest event document fetched. Converting to Event object...');
+        DocumentSnapshot doc = eventSnap.docs.first;
+        Event? latestEvent = await Event.fromDocument(doc);
+        print(
+            'Method getLatestEvent: Event data - ${latestEvent?.toDocument()}');
+        return latestEvent;
+      } else {
+        print('Method getLatestEvent: No events found.');
+        return null;
+      }
+    } catch (e) {
+      print(
+          'Method getLatestEvent: An error occurred while fetching the latest event: $e');
+      return null;
+    }
+  }
+
   Future<Event?> getEventById(String eventId) async {
     try {
       DocumentSnapshot eventSnap =

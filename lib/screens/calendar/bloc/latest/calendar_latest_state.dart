@@ -1,22 +1,22 @@
 part of 'calendar_latest_bloc.dart';
 
-enum CalendarLatestEventStatus { initial, loading, loaded, noEvents, error }
+enum CalendarLatestStatus { initial, loading, loaded, noEvents, error }
 
-class CalendarLatestEventState extends Equatable {
+class CalendarLatestState extends Equatable {
   final Event? latestEvent;
-  final CalendarLatestEventStatus status;
+  final CalendarLatestStatus status;
   final Failure failure;
 
-  const CalendarLatestEventState({
+  const CalendarLatestState({
     this.latestEvent,
     required this.status,
     required this.failure,
   });
 
-  factory CalendarLatestEventState.initial() {
-    return const CalendarLatestEventState(
+  factory CalendarLatestState.initial() {
+    return const CalendarLatestState(
       latestEvent: null,
-      status: CalendarLatestEventStatus.initial,
+      status: CalendarLatestStatus.initial,
       failure: Failure(),
     );
   }
@@ -24,12 +24,12 @@ class CalendarLatestEventState extends Equatable {
   @override
   List<Object?> get props => [latestEvent, status, failure];
 
-  CalendarLatestEventState copyWith({
+  CalendarLatestState copyWith({
     Event? latestEvent,
-    CalendarLatestEventStatus? status,
+    CalendarLatestStatus? status,
     Failure? failure,
   }) {
-    return CalendarLatestEventState(
+    return CalendarLatestState(
       latestEvent: latestEvent ?? this.latestEvent,
       status: status ?? this.status,
       failure: failure ?? this.failure,

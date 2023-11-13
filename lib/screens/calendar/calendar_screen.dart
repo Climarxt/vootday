@@ -1,6 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/calendar/bloc/latest_event/calendar_latest_bloc.dart';
+import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/widgets/cards/event_new_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +20,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     context
-        .read<CalendarLatestEventBloc>()
-        .add(CalendarLatestEventFetchEvent());
+        .read<CalendarLatestBloc>()
+        .add(CalendarLatestFetchEvent());
   }
 
   List<String> imageList = [
@@ -44,10 +44,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return BlocConsumer<CalendarLatestEventBloc, CalendarLatestEventState>(
+    return BlocConsumer<CalendarLatestBloc, CalendarLatestState>(
       listener: (context, state) {},
       builder: (context, state) {
-        if (state.status == CalendarLatestEventStatus.loaded) {
+        if (state.status == CalendarLatestStatus.loaded) {
           final latestEvent = state.latestEvent ?? Event.empty;
           return Scaffold(
             appBar: AppBar(

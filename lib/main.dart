@@ -5,6 +5,7 @@ import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
+import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
@@ -132,6 +133,15 @@ class MyApp extends StatelessWidget {
                 authBloc: context.read<AuthBloc>(),
               );
               return thisWeekEventsBloc;
+            },
+          ),
+          BlocProvider(
+            create: (context) {
+              final thisComignSoonEventsBloc = CalendarComingSoonBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+              );
+              return thisComignSoonEventsBloc;
             },
           ),
           BlocProvider<ProfileBloc>(

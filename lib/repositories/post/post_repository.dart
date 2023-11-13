@@ -467,6 +467,41 @@ class PostRepository extends BasePostRepository {
     return eventsList;
   }
 
+  Future<List<Event>> getComingSoonEvents() async {
+    List<Event> eventsList = [];
+    try {
+      print(
+          'Method getComingSoonEvents: Attempting to fetch future events from Firestore.');
+
+      DateTime now = DateTime.now();
+      DateTime oneWeekFromNow = now.add(Duration(days: 7));
+
+      QuerySnapshot eventSnap = await FirebaseFirestore.instance
+          .collection('events')
+          .where('done', isEqualTo: false)
+          .where('dateEvent', isGreaterThanOrEqualTo: oneWeekFromNow)
+          .orderBy('dateEvent', descending: true)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        for (var doc in eventSnap.docs) {
+          Event? event = await Event.fromDocument(doc);
+          if (event != null) {
+            eventsList.add(event);
+          }
+        }
+        print(
+            'Method getComingSoonEvents: Future events fetched successfully.');
+      } else {
+        print('Method getComingSoonEvents: No future events found.');
+      }
+    } catch (e) {
+      print(
+          'Method getComingSoonEvents: Error occurred while fetching future events - $e');
+    }
+    return eventsList;
+  }
+
   Future<Event?> getEventById(String eventId) async {
     try {
       DocumentSnapshot eventSnap =

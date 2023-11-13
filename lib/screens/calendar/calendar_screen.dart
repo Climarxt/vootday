@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/widgets/cards/event_new_card.dart';
@@ -22,6 +23,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
     context.read<CalendarLatestBloc>().add(CalendarLatestFetchEvent());
     context.read<CalendarThisWeekBloc>().add(CalendarThisWeekFetchEvent());
+    context.read<CalendarComingSoonBloc>().add(CalendarComingSoonFetchEvent());
   }
 
   @override
@@ -43,6 +45,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // This New Event Section
           buildSectionTitle(AppLocalizations.of(context)!.translate('new')),
           const SizedBox(height: 8),
           BlocBuilder<CalendarLatestBloc, CalendarLatestState>(
@@ -60,7 +63,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   );
                 case CalendarLatestStatus.loading:
                 default:
-                  // Shows a loading indicator while the state is not loaded
                   return const Expanded(
                     flex: 1,
                     child: CircularProgressIndicator(
@@ -72,14 +74,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
           ),
           const SizedBox(height: 8),
+          // This Week Events Section
           buildSectionTitle(
               AppLocalizations.of(context)!.translate('thisweek')),
-          // This Week Events Section
           BlocBuilder<CalendarThisWeekBloc, CalendarThisWeekState>(
             builder: (context, thisWeekState) {
               switch (thisWeekState.status) {
                 case CalendarThisWeekStatus.loaded:
-                  return buildListViewThisWeek(
+                  return buildListViewEvents(
                       size, thisWeekState.thisWeekEvents);
                 case CalendarThisWeekStatus.loading:
                 default:
@@ -94,16 +96,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
             },
           ),
           const SizedBox(height: 8),
+          // This Coming Soon Events Section
           buildSectionTitle(
             AppLocalizations.of(context)!.translate('comingsoon'),
           ),
-          BlocBuilder<CalendarThisWeekBloc, CalendarThisWeekState>(
+          BlocBuilder<CalendarComingSoonBloc, CalendarComingSoonState>(
             builder: (context, thisWeekState) {
               switch (thisWeekState.status) {
-                case CalendarThisWeekStatus.loaded:
-                  return buildListViewThisWeek(
-                      size, thisWeekState.thisWeekEvents);
-                case CalendarThisWeekStatus.loading:
+                case CalendarComingSoonStatus.loaded:
+                  return buildListViewEvents(
+                      size, thisWeekState.thisComingSoonEvents);
+                case CalendarComingSoonStatus.loading:
                 default:
                   return const Expanded(
                     flex: 1,
@@ -117,7 +120,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget buildListViewThisWeek(Size size, List<Event?> events) {
+  Widget buildListViewEvents(Size size, List<Event?> events) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0),
       child: SizedBox(

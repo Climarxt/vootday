@@ -7,6 +7,7 @@ import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
+import 'package:bootdv2/screens/event/event_screen.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
 import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
@@ -312,21 +313,29 @@ GoRouter createRouter(BuildContext context) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/calendar',
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  // Le BlocProvider est ajouté ici pour envelopper CalendarScreen
-                  return NoAnimationPage(
-                    child: BlocProvider<FeedMonthBloc>(
-                      create: (context) => FeedMonthBloc(
-                        postRepository: context.read<PostRepository>(),
-                        authBloc: context.read<AuthBloc>(),
-                        likedPostsCubit: context.read<LikedPostsCubit>(),
-                      ),
+                  path: '/calendar',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return NoAnimationPage(
                       child: const CalendarScreen(),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'event/:eventId',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        final eventId = state.pathParameters['eventId']!;
+                        final title =
+                            state.uri.queryParameters['title'] ?? 'title';
+                        final logoUrl =
+                            state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                        return MaterialPage<void>(
+                          key: state.pageKey,
+                          child: EventScreen(
+                              eventId: eventId, title: title, logoUrl: logoUrl, username: '',),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
+                  ]),
             ],
           ),
           // Swipe

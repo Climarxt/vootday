@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class EventNewCard extends StatelessWidget {
   final String imageUrl;
   final String title;
   final String description;
-
+  final String eventId;
   const EventNewCard({
     super.key,
     required this.imageUrl,
     required this.title,
     required this.description,
+    required this.eventId,
   });
 
   @override
@@ -22,6 +24,7 @@ class EventNewCard extends StatelessWidget {
       BuildContext context, String imageUrl, String title, String description) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
+      onTap: () => _navigateToEventScreen(context),
       child: SizedBox(
         width: size.width,
         child: Card(
@@ -57,6 +60,17 @@ class EventNewCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _navigateToEventScreen(BuildContext context) {
+    final String encodedTitle = Uri.encodeComponent(title);
+    final String encodedLogoUrl = Uri.encodeComponent(imageUrl);
+
+    GoRouter.of(context).push(
+      '/calendar/event/$eventId'
+      '?title=$encodedTitle'
+      '&logoUrl=$encodedLogoUrl',
     );
   }
 

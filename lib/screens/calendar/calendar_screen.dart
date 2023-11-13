@@ -58,6 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       imageUrl: latestEvent.logoUrl,
                       title: latestEvent.title,
                       description: latestEvent.caption,
+                      eventId: latestEvent.id,
                     ),
                   );
                 case CalendarLatestStatus.loading:

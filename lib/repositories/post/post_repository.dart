@@ -480,7 +480,7 @@ class PostRepository extends BasePostRepository {
           .collection('events')
           .where('done', isEqualTo: false)
           .where('dateEvent', isGreaterThanOrEqualTo: oneWeekFromNow)
-          .orderBy('dateEvent', descending: true)
+          .orderBy('dateEvent', descending: false)
           .get();
 
       if (eventSnap.docs.isNotEmpty) {

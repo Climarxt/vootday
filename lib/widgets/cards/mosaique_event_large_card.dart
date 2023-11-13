@@ -1,6 +1,5 @@
 import 'package:bootdv2/screens/post/widgets/image_loader_card_event.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class MosaiqueEventLargeCard extends StatelessWidget {
   final String imageUrl;

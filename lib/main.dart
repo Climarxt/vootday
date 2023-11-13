@@ -8,6 +8,7 @@ import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
+import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
@@ -142,6 +143,15 @@ class MyApp extends StatelessWidget {
                 authBloc: context.read<AuthBloc>(),
               );
               return thisComignSoonEventsBloc;
+            },
+          ),
+          BlocProvider(
+            create: (context) {
+              final eventBloc = EventBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+              );
+              return eventBloc;
             },
           ),
           BlocProvider<ProfileBloc>(

@@ -1,12 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/event/widgets/profile_image_event.dart';
 import 'package:bootdv2/screens/event/widgets/section_buttons_event.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -31,68 +29,37 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen>
     with AutomaticKeepAliveClientMixin {
-  Event? _event;
   User? _user;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadEvent();
-  }
-
-  Future<void> _loadEvent() async {
-    try {
-      final event =
-          await context.read<PostRepository>().getEventById(widget.eventId);
-      if (event != null) {
-        final userDoc = await FirebaseFirestore.instance
-            .collection(Paths.events)
-            .doc(event.id)
-            .get();
-        if (userDoc.exists) {
-          setState(() {
-            _event = event;
-            _user = User.fromDocument(userDoc);
-            _isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    BlocProvider.of<EventBloc>(context)
+        .add(EventFetchEvent(eventId: widget.eventId));
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     super.build(context);
-    final Size size = MediaQuery.of(context).size;
+    return BlocBuilder<EventBloc, EventState>(
+      builder: (context, state) {
+        if (state.status == EventStatus.loading) {
+          return _buildLoadingIndicator();
+        } else if (state.status == EventStatus.loaded) {
+          return _buildEvent(state.event ?? Event.empty, size);
+        } else {
+          return _buildLoadingIndicator();
+        }
+      },
+    );
+  }
 
-    if (_isLoading) {
-      return Scaffold(
-        appBar: AppBarTitle(title: widget.title),
-        body: const Center(
-          child: Opacity(
-            opacity: 0.0,
-            child: CircularProgressIndicator(),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: _buildFloatingActionButton(),
-      );
-    }
+  Widget _buildLoadingIndicator() {
+    return const Center(child: CircularProgressIndicator());
+  }
 
-    if (_event == null || _user == null) {
-      return Scaffold(
-        appBar: AppBarTitle(title: widget.title),
-        body: const Center(child: Text('Post or user not found')),
-      );
-    }
-
+  Widget _buildEvent(Event event, size) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBarTitle(title: widget.title),
@@ -103,7 +70,7 @@ class _EventScreenState extends State<EventScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ImageLoader(
-                  imageProvider: _event!.imageProvider,
+                  imageProvider: event.imageProvider,
                   width: size.width,
                   height: size.height / 1.5,
                 ),
@@ -115,8 +82,8 @@ class _EventScreenState extends State<EventScreen>
                         title: widget.author,
                         likes: 4,
                         profileImage: widget.logoUrl,
-                        description: _event!.caption,
-                        tags: _event!.tags,
+                        description: event.caption,
+                        tags: event.tags,
                         onTitleTap: () =>
                             _navigateToUserScreen(context, _user!),
                       ),
@@ -167,7 +134,7 @@ class _EventScreenState extends State<EventScreen>
   Widget _buildListView(BuildContext context) {
     return Container(
       color: white,
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonsSectionEvent(),

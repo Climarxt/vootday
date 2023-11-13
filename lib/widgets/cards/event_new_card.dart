@@ -7,12 +7,14 @@ class EventNewCard extends StatelessWidget {
   final String title;
   final String description;
   final String eventId;
+  final String author;
   const EventNewCard({
     super.key,
     required this.imageUrl,
     required this.title,
     required this.description,
     required this.eventId,
+    required this.author,
   });
 
   @override
@@ -66,11 +68,13 @@ class EventNewCard extends StatelessWidget {
   void _navigateToEventScreen(BuildContext context) {
     final String encodedTitle = Uri.encodeComponent(title);
     final String encodedLogoUrl = Uri.encodeComponent(imageUrl);
+    final String encodedAuthor = Uri.encodeComponent(author);
 
     GoRouter.of(context).push(
       '/calendar/event/$eventId'
       '?title=$encodedTitle'
-      '&logoUrl=$encodedLogoUrl',
+      '&logoUrl=$encodedLogoUrl'
+      '&author=$encodedAuthor',
     );
   }
 

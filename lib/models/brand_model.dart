@@ -58,4 +58,6 @@ class Brand extends Equatable {
     );
     return user;
   }
+
+  get() {}
 }

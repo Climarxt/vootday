@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/event/widgets/profile_image_event.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
@@ -13,14 +14,14 @@ class EventScreen extends StatefulWidget {
   final String eventId;
   final String title;
   final String logoUrl;
-  final String username;
+  final String author;
 
   const EventScreen({
     super.key,
     required this.eventId,
     required this.title,
     required this.logoUrl,
-    required this.username,
+    required this.author,
   });
 
   @override
@@ -107,10 +108,10 @@ class _EventScreenState extends State<EventScreen>
                   padding: const EdgeInsets.only(left: 18, right: 18),
                   child: Row(
                     children: [
-                      ProfileImagePost(
-                        title: '${_user!.firstName} ${_user!.lastName}',
+                      ProfileImageEvent(
+                        title: widget.author,
                         likes: 4,
-                        profileImageProvider: _user!.profileImageProvider,
+                        profileImage: widget.logoUrl,
                         description: _event!.caption,
                         tags: _event!.tags,
                         onTitleTap: () =>
@@ -154,7 +155,7 @@ class _EventScreenState extends State<EventScreen>
 
   void _navigateToUserScreen(BuildContext context, User user) {
     context.go(
-        '/calendar/event/${widget.eventId}/user/${user.id}?username=${widget.username}');
+        '/calendar/event/${widget.eventId}/user/${user.id}?author=${widget.author}');
   }
 
   void _showBottomSheet(BuildContext context) {

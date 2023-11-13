@@ -52,6 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               switch (latestState.status) {
                 case CalendarLatestStatus.loaded:
                   final latestEvent = latestState.latestEvent ?? Event.empty;
+                  String authorName = latestEvent.author.author;
                   return Expanded(
                     flex: 1,
                     child: EventNewCard(
@@ -59,6 +60,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       title: latestEvent.title,
                       description: latestEvent.caption,
                       eventId: latestEvent.id,
+                      author: authorName,
                     ),
                   );
                 case CalendarLatestStatus.loading:

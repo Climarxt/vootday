@@ -328,10 +328,16 @@ GoRouter createRouter(BuildContext context) {
                             state.uri.queryParameters['title'] ?? 'title';
                         final logoUrl =
                             state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                        final author =
+                            state.uri.queryParameters['author'] ?? 'author';
                         return MaterialPage<void>(
                           key: state.pageKey,
                           child: EventScreen(
-                              eventId: eventId, title: title, logoUrl: logoUrl, username: '',),
+                            eventId: eventId,
+                            title: title,
+                            logoUrl: logoUrl,
+                            author: author,
+                          ),
                         );
                       },
                     ),

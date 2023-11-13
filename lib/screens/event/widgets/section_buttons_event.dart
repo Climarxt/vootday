@@ -2,20 +2,17 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/widgets/button_date.dart';
 import 'package:bootdv2/screens/profile/widgets/button_price.dart';
 import 'package:flutter/material.dart';
-import '../../profile/bloc/profile_bloc.dart';
 import '../../profile/widgets/widgets.dart';
 
 class ButtonsSectionEvent extends StatelessWidget {
-  final ProfileState state;
-
-  const ButtonsSectionEvent({super.key, required this.state});
+  const ButtonsSectionEvent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _buildButtonsSection(state, context);
+    return _buildButtonsSection(context);
   }
 
-  Widget _buildButtonsSection(ProfileState state, BuildContext context) {
+  Widget _buildButtonsSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 4.0, 18, 15),
       child: Column(

@@ -5,7 +5,7 @@ export '../old/profile_appbar.dart';
 export '../old/profile_info.dart';
 export '../old/gridview.dart';
 export '../profile_tab2.dart';
-export 'button.dart';
+export '../../../widgets/buttons/button.dart';
 export 'section_buttons.dart';
 export 'section_location.dart';
 export 'section_socialnet.dart';

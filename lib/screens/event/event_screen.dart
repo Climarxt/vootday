@@ -1,7 +1,9 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/screens/event/widgets/profile_image_event.dart';
+import 'package:bootdv2/screens/event/widgets/section_buttons_event.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -79,6 +81,8 @@ class _EventScreenState extends State<EventScreen>
             child: CircularProgressIndicator(),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _buildFloatingActionButton(),
       );
     }
 
@@ -144,6 +148,9 @@ class _EventScreenState extends State<EventScreen>
                     ],
                   ),
                 ),
+                const SizedBox(height: 8),
+                _buildListView(context),
+                const SizedBox(height: 60),
               ],
             ),
           ),
@@ -155,6 +162,31 @@ class _EventScreenState extends State<EventScreen>
   void _navigateToUserScreen(BuildContext context, User user) {
     context.go(
         '/calendar/event/${widget.eventId}/user/${user.id}?author=${widget.author}');
+  }
+
+  Widget _buildListView(BuildContext context) {
+    return Container(
+      color: white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonsSectionEvent(),
+        ],
+      ),
+    );
+  }
+
+  // Builds the post button
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () {},
+      label: Text(AppLocalizations.of(context)!.translate('participate'),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: Colors.white)),
+    );
   }
 
   void _showBottomSheet(BuildContext context) {

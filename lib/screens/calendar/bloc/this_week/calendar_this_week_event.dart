@@ -7,4 +7,4 @@ abstract class CalendarThisWeekEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CalendarThisWeekEventFetchEvent extends CalendarThisWeekEvent {}
+class CalendarThisWeekFetchEvent extends CalendarThisWeekEvent {}

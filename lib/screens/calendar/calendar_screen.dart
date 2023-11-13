@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
+import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/widgets/cards/event_new_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
@@ -19,89 +20,124 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<CalendarLatestBloc>()
-        .add(CalendarLatestFetchEvent());
+    context.read<CalendarLatestBloc>().add(CalendarLatestFetchEvent());
+    context.read<CalendarThisWeekBloc>().add(CalendarThisWeekFetchEvent());
   }
 
-  List<String> imageList = [
-    'assets/images/Stussy.png',
-    'assets/images/postImage2.jpg',
-    'assets/images/ITG1_2.jpg',
-    'assets/images/Carhartt.png',
-    'assets/images/Obey.png',
-    'assets/images/Sandro.png',
-  ];
-
-  List<String> imageList1 = [
-    'assets/images/Sandro.png',
-    'assets/images/Carhartt.png',
-    'assets/images/Stussy.png',
-    'assets/images/postImage2.jpg',
-    'assets/images/ITG1_2.jpg',
-    'assets/images/Obey.png',
-  ];
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return BlocConsumer<CalendarLatestBloc, CalendarLatestState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        if (state.status == CalendarLatestStatus.loaded) {
-          final latestEvent = state.latestEvent ?? Event.empty;
-          return Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 62,
-              title: Text(AppLocalizations.of(context)!.translate('event'),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: Colors.black)),
-              backgroundColor: Colors.white,
-              elevation: 0,
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildSectionTitle(
-                    AppLocalizations.of(context)!.translate('new')),
-                Expanded(
-                  flex: 1,
-                  child: EventNewCard(
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 62,
+        title: Text(
+          AppLocalizations.of(context)!.translate('event'),
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: black),
+        ),
+        backgroundColor: white,
+        elevation: 0,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildSectionTitle(AppLocalizations.of(context)!.translate('new')),
+          const SizedBox(height: 8),
+          BlocBuilder<CalendarLatestBloc, CalendarLatestState>(
+            builder: (context, latestState) {
+              switch (latestState.status) {
+                case CalendarLatestStatus.loaded:
+                  final latestEvent = latestState.latestEvent ?? Event.empty;
+                  return Expanded(
+                    flex: 1,
+                    child: EventNewCard(
                       imageUrl: latestEvent.logoUrl,
-                      title: "Title",
-                      description: "Description"),
-                ),
-                const SizedBox(height: 8),
-                buildSectionTitle(
-                  AppLocalizations.of(context)!.translate('thisweek'),
-                ),
-                buildListview(size),
-                const SizedBox(height: 8),
-                buildSectionTitle(
-                  AppLocalizations.of(context)!.translate('comingsoon'),
-                ),
-                buildListview1(size),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: () => GoRouter.of(context).push('/event'),
-              label: Text(
-                "eventTest",
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: white),
+                      title: latestEvent.title,
+                      description: latestEvent.caption,
+                    ),
+                  );
+                case CalendarLatestStatus.loading:
+                default:
+                  // Shows a loading indicator while the state is not loaded
+                  return const Expanded(
+                    flex: 1,
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    ),
+                  );
+              }
+            },
+          ),
+          const SizedBox(height: 8),
+          buildSectionTitle(
+              AppLocalizations.of(context)!.translate('thisweek')),
+          // This Week Events Section
+          BlocBuilder<CalendarThisWeekBloc, CalendarThisWeekState>(
+            builder: (context, thisWeekState) {
+              switch (thisWeekState.status) {
+                case CalendarThisWeekStatus.loaded:
+                  return buildListViewThisWeek(
+                      size, thisWeekState.thisWeekEvents);
+                case CalendarThisWeekStatus.loading:
+                default:
+                  return const Expanded(
+                    flex: 1,
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    ),
+                  );
+              }
+            },
+          ),
+          const SizedBox(height: 8),
+          buildSectionTitle(
+            AppLocalizations.of(context)!.translate('comingsoon'),
+          ),
+          BlocBuilder<CalendarThisWeekBloc, CalendarThisWeekState>(
+            builder: (context, thisWeekState) {
+              switch (thisWeekState.status) {
+                case CalendarThisWeekStatus.loaded:
+                  return buildListViewThisWeek(
+                      size, thisWeekState.thisWeekEvents);
+                case CalendarThisWeekStatus.loading:
+                default:
+                  return const Expanded(
+                    flex: 1,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildListViewThisWeek(Size size, List<Event?> events) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: SizedBox(
+        height: size.height * 0.2,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            Event event = events[index] ?? Event.empty;
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: MosaiqueEventLargeCard(
+                imageUrl: event.logoUrl,
+                title: event.title,
+                description: event.caption,
               ),
-              backgroundColor: couleurJauneOrange,
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -114,52 +150,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
             .textTheme
             .headlineSmall!
             .copyWith(color: Colors.black),
-      ),
-    );
-  }
-
-  Widget buildListview(Size size) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
-      child: SizedBox(
-        height: size.height * 0.2,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: imageList.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: MosaiqueEventLargeCard(
-                imageUrl: imageList[index],
-                title: 'Title',
-                description: 'Description',
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildListview1(Size size) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
-      child: SizedBox(
-        height: size.height * 0.2,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: imageList.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: MosaiqueEventLargeCard(
-                imageUrl: imageList1[index],
-                title: 'Title',
-                description: 'Description',
-              ),
-            );
-          },
-        ),
       ),
     );
   }

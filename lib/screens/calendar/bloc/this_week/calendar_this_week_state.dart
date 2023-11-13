@@ -2,35 +2,43 @@ part of 'calendar_this_week_bloc.dart';
 
 enum CalendarThisWeekStatus { initial, loading, loaded, noEvents, error }
 
-class CalendarThisWeekEventState extends Equatable {
-  final Event? latestEvent;
+class CalendarThisWeekState extends Equatable {
+  final List<Event?> thisWeekEvents;
   final CalendarThisWeekStatus status;
   final Failure failure;
 
-  const CalendarThisWeekEventState({
-    this.latestEvent,
+  const CalendarThisWeekState({
+    required this.thisWeekEvents,
     required this.status,
     required this.failure,
   });
 
-  factory CalendarThisWeekEventState.initial() {
-    return const CalendarThisWeekEventState(
-      latestEvent: null,
+  factory CalendarThisWeekState.initial() {
+    return const CalendarThisWeekState(
+      thisWeekEvents: [],
       status: CalendarThisWeekStatus.initial,
       failure: Failure(),
     );
   }
 
-  @override
-  List<Object?> get props => [latestEvent, status, failure];
+  factory CalendarThisWeekState.loading() {
+    return const CalendarThisWeekState(
+      thisWeekEvents: [],
+      status: CalendarThisWeekStatus.loading, // Change this to `.loading`
+      failure: Failure(),
+    );
+  }
 
-  CalendarThisWeekEventState copyWith({
-    Event? latestEvent,
+  @override
+  List<Object?> get props => [thisWeekEvents, status, failure];
+
+  CalendarThisWeekState copyWith({
+    List<Event?>? thisWeekEvents,
     CalendarThisWeekStatus? status,
     Failure? failure,
   }) {
-    return CalendarThisWeekEventState(
-      latestEvent: latestEvent ?? this.latestEvent,
+    return CalendarThisWeekState(
+      thisWeekEvents: thisWeekEvents ?? this.thisWeekEvents,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );

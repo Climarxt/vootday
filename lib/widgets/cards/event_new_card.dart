@@ -25,7 +25,7 @@ class EventNewCard extends StatelessWidget {
       child: SizedBox(
         width: size.width,
         child: Card(
-          elevation: 0,
+          elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

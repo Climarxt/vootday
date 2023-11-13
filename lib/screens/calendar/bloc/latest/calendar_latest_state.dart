@@ -21,6 +21,14 @@ class CalendarLatestState extends Equatable {
     );
   }
 
+  factory CalendarLatestState.loading() {
+    return const CalendarLatestState(
+      latestEvent: null,
+      status: CalendarLatestStatus.loading, // Change this to `.loading`
+      failure: Failure(),
+    );
+  }
+
   @override
   List<Object?> get props => [latestEvent, status, failure];
 

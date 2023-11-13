@@ -7,43 +7,48 @@ import 'package:equatable/equatable.dart';
 part 'calendar_this_week_event.dart';
 part 'calendar_this_week_state.dart';
 
-class CalendarThisWeekEventBloc
-    extends Bloc<CalendarThisWeekEvent, CalendarThisWeekEventState> {
+class CalendarThisWeekBloc
+    extends Bloc<CalendarThisWeekEvent, CalendarThisWeekState> {
   final PostRepository _postRepository;
 
-  CalendarThisWeekEventBloc({
+  CalendarThisWeekBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
-        super(CalendarThisWeekEventState.initial()) {
-    on<CalendarThisWeekEventFetchEvent>(_mapCalendarThisWeekEventFetchEvent);
+        super(CalendarThisWeekState.initial()) {
+    on<CalendarThisWeekFetchEvent>(_mapCalendarThisWeekFetchEvent);
   }
 
-  Future<void> _mapCalendarThisWeekEventFetchEvent(
-    CalendarThisWeekEventFetchEvent event,
-    Emitter<CalendarThisWeekEventState> emit,
+  Future<void> _mapCalendarThisWeekFetchEvent(
+    CalendarThisWeekFetchEvent event,
+    Emitter<CalendarThisWeekState> emit,
   ) async {
     try {
       print(
-          'Method _mapCalendarThisWeekEventFetchEvent: Fetching latest event...');
-      final latestEvent = await _postRepository.getThisWeekEvent();
-      if (latestEvent != null) {
+          'Method _mapCalendarThisWeekFetchEvent: Fetching this week events...');
+      final thisWeekEvents = await _postRepository
+          .getThisWeekEvents(); // This should return List<Event>
+
+      if (thisWeekEvents.isNotEmpty) {
         print(
-            'Method _mapCalendarThisWeekEventFetchEvent: Latest event fetched successfully.');
+            'Method _mapCalendarThisWeekFetchEvent: This week events fetched successfully.');
         emit(state.copyWith(
-            latestEvent: latestEvent,
+            thisWeekEvents: thisWeekEvents, // Update the state with the list
             status: CalendarThisWeekStatus.loaded));
       } else {
-        print('Method _mapCalendarThisWeekEventFetchEvent: No events found.');
+        print(
+            'Method _mapCalendarThisWeekFetchEvent: No events found for this week.');
         emit(state.copyWith(
-            latestEvent: null, status: CalendarThisWeekStatus.noEvents));
+            thisWeekEvents: [], // Empty list indicates no events found
+            status: CalendarThisWeekStatus.noEvents));
       }
     } catch (err) {
       print(
-          'Method _mapCalendarThisWeekEventFetchEvent: Error fetching event - $err');
+          'Method _mapCalendarThisWeekFetchEvent: Error fetching events - $err');
       emit(state.copyWith(
         status: CalendarThisWeekStatus.error,
-        failure: Failure(message: 'Unable to load the event'),
+        failure: Failure(message: 'Unable to load the events'),
+        thisWeekEvents: [],
       ));
     }
   }

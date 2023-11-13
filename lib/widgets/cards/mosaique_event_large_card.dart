@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MosaiqueEventLargeCard extends StatelessWidget {
   final String imageUrl;
@@ -20,7 +21,7 @@ class MosaiqueEventLargeCard extends StatelessWidget {
       child: SizedBox(
         width: cardWidth,
         child: Card(
-          elevation: 0,
+          elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -28,44 +29,6 @@ class MosaiqueEventLargeCard extends StatelessWidget {
           child: Stack(
             children: [
               _buildPost(imageUrl),
-              /*
-              Positioned(
-                top: 5,
-                right: -1,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      height: 72,
-                      width: 72,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage("assets/icons/bookmark_horiz.png"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    /*
-                    const FaIcon(
-                      FontAwesomeIcons.solidBookmark,
-                      color: couleurBleuClair2,
-                      size: 50,
-                    ),
-                    */
-                    Center(
-                      child: Text(
-                        '#17',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              */
             ],
           ),
         ),
@@ -74,13 +37,14 @@ class MosaiqueEventLargeCard extends StatelessWidget {
   }
 
   Widget _buildPost(String imageUrl) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return Stack(
+      children: [
+        SvgPicture.network(
+          imageUrl,
+          fit: BoxFit.fitHeight,
+          alignment: Alignment.center,
+        )
+      ],
     );
   }
 }

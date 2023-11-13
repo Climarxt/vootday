@@ -7,7 +7,6 @@ import 'package:bootdv2/widgets/cards/event_new_card.dart';
 import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});

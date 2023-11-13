@@ -109,7 +109,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 default:
                   return const Expanded(
                     flex: 1,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    ),
                   );
               }
             },

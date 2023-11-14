@@ -3,7 +3,6 @@ import 'package:bootdv2/screens/event/widgets/button_date.dart';
 import 'package:bootdv2/screens/event/widgets/button_participants.dart';
 import 'package:bootdv2/screens/event/widgets/button_price.dart';
 import 'package:flutter/material.dart';
-import '../../profile/widgets/widgets.dart';
 
 class ButtonsSectionEvent extends StatelessWidget {
   final int participants;
@@ -21,7 +20,6 @@ class ButtonsSectionEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("TEST 2 : Nombre de participants $participants");
     return _buildButtonsSection(context);
   }
 

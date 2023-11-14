@@ -62,7 +62,6 @@ class _EventScreenState extends State<EventScreen>
   }
 
   Widget _buildEvent(BuildContext context, event, size) {
-    print("TEST : Nombre de participants $event.participants");
     return SafeArea(
       child: Scaffold(
         appBar: AppBarTitle(title: widget.title),

@@ -32,7 +32,7 @@ class ButtonsSectionEvent extends StatelessWidget {
           _buildTwoButtons(
               participants,
               AppLocalizations.of(context)!.translate('participants'),
-              "100€",
+              "$reward€",
               AppLocalizations.of(context)!.translate('prizes'),
               context),
           const SizedBox(

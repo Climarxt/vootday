@@ -26,7 +26,7 @@ class _ImageLoaderCardEventState extends State<ImageLoaderCardEvent>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     _animation = Tween(begin: 1.0, end: 0.0).animate(_controller)

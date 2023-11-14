@@ -3,8 +3,8 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
-import 'package:bootdv2/widgets/cards/event_new_card.dart';
-import 'package:bootdv2/widgets/cards/mosaique_event_large_card.dart';
+import 'package:bootdv2/screens/event/widgets/event_new_card.dart';
+import 'package:bootdv2/screens/event/widgets/mosaique_event_large_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +17,6 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   @override
-  @override
   void initState() {
     super.initState();
     context.read<CalendarLatestBloc>().add(CalendarLatestFetchEvent());
@@ -27,6 +26,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String imageUrlnull =
+        'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fred_placeholder_logo.svg?alt=media&token=4fa5d78e-eb9b-4ac9-840f-5def6929c38d';
+
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -65,12 +67,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   );
                 case CalendarLatestStatus.loading:
                 default:
-                  return const Expanded(
+                  return Expanded(
                     flex: 1,
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.transparent),
-                    ),
+                    child: Container(color: white)
                   );
               }
             },
@@ -87,13 +86,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       size, thisWeekState.thisWeekEvents);
                 case CalendarThisWeekStatus.loading:
                 default:
-                  return const Expanded(
-                    flex: 1,
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.transparent),
-                    ),
-                  );
+                  return buildListViewEventsLoading(size);
               }
             },
           ),
@@ -110,13 +103,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       size, thisWeekState.thisComingSoonEvents);
                 case CalendarComingSoonStatus.loading:
                 default:
-                  return const Expanded(
-                    flex: 1,
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.transparent),
-                    ),
-                  );
+                  return buildListViewEventsLoading(size);
               }
             },
           ),
@@ -142,6 +129,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 title: event.title,
                 description: event.caption,
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildListViewEventsLoading(Size size) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0),
+      child: SizedBox(
+        height: size.height * 0.2,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 2,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Container(color: white)
             );
           },
         ),

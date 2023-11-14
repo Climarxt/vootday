@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class EventNewCard extends StatelessWidget {
+class EventNewCard extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String description;
@@ -18,8 +18,32 @@ class EventNewCard extends StatelessWidget {
   });
 
   @override
+  State<EventNewCard> createState() => _EventNewCardState();
+}
+
+class _EventNewCardState extends State<EventNewCard> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        setState(() {
+          _opacity = 1.0;
+        });
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _buildCard(context, imageUrl, title, description);
+    return AnimatedOpacity(
+      opacity: _opacity,
+      duration: const Duration(milliseconds: 300),
+      child: _buildCard(
+          context, widget.imageUrl, widget.title, widget.description),
+    );
   }
 
   Widget _buildCard(
@@ -66,12 +90,12 @@ class EventNewCard extends StatelessWidget {
   }
 
   void _navigateToEventScreen(BuildContext context) {
-    final String encodedTitle = Uri.encodeComponent(title);
-    final String encodedLogoUrl = Uri.encodeComponent(imageUrl);
-    final String encodedAuthor = Uri.encodeComponent(author);
+    final String encodedTitle = Uri.encodeComponent(widget.title);
+    final String encodedLogoUrl = Uri.encodeComponent(widget.imageUrl);
+    final String encodedAuthor = Uri.encodeComponent(widget.author);
 
     GoRouter.of(context).push(
-      '/calendar/event/$eventId'
+      '/calendar/event/${widget.eventId}'
       '?title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl'
       '&author=$encodedAuthor',
@@ -79,14 +103,14 @@ class EventNewCard extends StatelessWidget {
   }
 
   Widget _buildPost(String imageUrl) {
-    return Stack(
-      children: [
-        SvgPicture.network(
-          imageUrl,
-          fit: BoxFit.fitHeight,
-          alignment: Alignment.center,
-        )
-      ],
+    return AnimatedOpacity(
+      opacity: _opacity,
+      duration: const Duration(milliseconds: 700),
+      child: SvgPicture.network(
+        imageUrl,
+        fit: BoxFit.fitHeight,
+        alignment: Alignment.center,
+      ),
     );
   }
 }

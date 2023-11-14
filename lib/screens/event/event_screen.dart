@@ -56,7 +56,9 @@ class _EventScreenState extends State<EventScreen>
   }
 
   Widget _buildLoadingIndicator() {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(
+        child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)));
   }
 
   Widget _buildEvent(Event event, size) {

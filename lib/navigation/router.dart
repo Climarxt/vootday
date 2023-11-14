@@ -4,6 +4,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/brands/brands_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/createpost/createpost_event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
 import 'package:bootdv2/screens/event/event_screen.dart';
@@ -319,26 +320,46 @@ GoRouter createRouter(BuildContext context) {
                   },
                   routes: [
                     GoRoute(
-                      path: 'event/:eventId',
-                      pageBuilder: (BuildContext context, GoRouterState state) {
-                        final eventId = state.pathParameters['eventId']!;
-                        final title =
-                            state.uri.queryParameters['title'] ?? 'title';
-                        final logoUrl =
-                            state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
-                        final author =
-                            state.uri.queryParameters['author'] ?? 'author';
-                        return MaterialPage<void>(
-                          key: state.pageKey,
-                          child: EventScreen(
-                            eventId: eventId,
-                            title: title,
-                            logoUrl: logoUrl,
-                            author: author,
+                        path: 'event/:eventId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final eventId = state.pathParameters['eventId']!;
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
+                          final logoUrl =
+                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                          final author =
+                              state.uri.queryParameters['author'] ?? 'author';
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: EventScreen(
+                              eventId: eventId,
+                              title: title,
+                              logoUrl: logoUrl,
+                              author: author,
+                            ),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'create',
+                            builder:
+                                (BuildContext context, GoRouterState state) =>
+                                    BlocProvider<CreatePostCubit>(
+                              create: (context) {
+                                print("Creating CreatePostCubit");
+                                return CreatePostCubit(
+                                  postRepository:
+                                      context.read<PostRepository>(),
+                                  storageRepository:
+                                      context.read<StorageRepository>(),
+                                  authBloc: context.read<AuthBloc>(),
+                                );
+                              },
+                              child: const CreatePostEventScreen(),
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                        ]),
                   ]),
             ],
           ),

@@ -118,7 +118,7 @@ class _EventScreenState extends State<EventScreen>
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildListView(context,event),
+                _buildListView(context, event),
                 const SizedBox(height: 80),
               ],
             ),
@@ -138,7 +138,7 @@ class _EventScreenState extends State<EventScreen>
   Widget _buildListView(BuildContext context, Event event) {
     return Container(
       color: white,
-      child:  Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonsSectionEvent(
@@ -156,7 +156,7 @@ class _EventScreenState extends State<EventScreen>
   Widget _buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,
-      onPressed: () {},
+      onPressed: () => _navigateToCreatePostScreen(context),
       label: Text(AppLocalizations.of(context)!.translate('participate'),
           style: Theme.of(context)
               .textTheme
@@ -208,6 +208,10 @@ class _EventScreenState extends State<EventScreen>
         );
       },
     );
+  }
+
+  void _navigateToCreatePostScreen(BuildContext context) {
+    GoRouter.of(context).push('/calendar/event/${widget.eventId}/create');
   }
 
   @override

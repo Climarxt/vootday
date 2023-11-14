@@ -5,7 +5,18 @@ import 'package:flutter/material.dart';
 import '../../profile/widgets/widgets.dart';
 
 class ButtonsSectionEvent extends StatelessWidget {
-  const ButtonsSectionEvent({super.key});
+  final int participants;
+  final String reward;
+  final DateTime dateEnd;
+  final DateTime dateEvent;
+
+  const ButtonsSectionEvent({
+    super.key,
+    required this.participants,
+    required this.reward,
+    required this.dateEnd,
+    required this.dateEvent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +30,7 @@ class ButtonsSectionEvent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildTwoButtons(
-              820,
+              participants,
               AppLocalizations.of(context)!.translate('participants'),
               "100€",
               AppLocalizations.of(context)!.translate('prizes'),
@@ -28,9 +39,9 @@ class ButtonsSectionEvent extends StatelessWidget {
             height: 10,
           ),
           _buildTwoButtonsDate(
-              "27/03/2024",
+              dateEnd,
               AppLocalizations.of(context)!.translate('dateend'),
-              "31/03/2024",
+              dateEvent,
               AppLocalizations.of(context)!.translate('dateevent'),
               context),
         ],
@@ -53,7 +64,7 @@ class ButtonsSectionEvent extends StatelessWidget {
     );
   }
 
-  Widget _buildTwoButtonsDate(String date1, String label1, String date2,
+  Widget _buildTwoButtonsDate(DateTime date1, String label1, DateTime date2,
       String label2, BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

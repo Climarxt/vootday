@@ -47,7 +47,7 @@ class _EventScreenState extends State<EventScreen>
         if (state.status == EventStatus.loading) {
           return _buildLoadingIndicator();
         } else if (state.status == EventStatus.loaded) {
-          return _buildEvent(state.event ?? Event.empty, size);
+          return _buildEvent(context, state.event ?? Event.empty, size);
         } else {
           return _buildLoadingIndicator();
         }
@@ -61,7 +61,7 @@ class _EventScreenState extends State<EventScreen>
             valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)));
   }
 
-  Widget _buildEvent(Event event, size) {
+  Widget _buildEvent(BuildContext context, event, size) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBarTitle(title: widget.title),
@@ -118,12 +118,14 @@ class _EventScreenState extends State<EventScreen>
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildListView(context),
-                const SizedBox(height: 60),
+                _buildListView(context,event),
+                const SizedBox(height: 80),
               ],
             ),
           ),
         ),
+        floatingActionButton: _buildFloatingActionButton(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -133,20 +135,25 @@ class _EventScreenState extends State<EventScreen>
         '/calendar/event/${widget.eventId}/user/${user.id}?author=${widget.author}');
   }
 
-  Widget _buildListView(BuildContext context) {
+  Widget _buildListView(BuildContext context, Event event) {
     return Container(
       color: white,
-      child: const Column(
+      child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ButtonsSectionEvent(),
+          ButtonsSectionEvent(
+            participants: event.participants,
+            reward: event.reward,
+            dateEnd: event.dateEnd,
+            dateEvent: event.dateEvent,
+          ),
         ],
       ),
     );
   }
 
   // Builds the post button
-  Widget _buildFloatingActionButton() {
+  Widget _buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,
       onPressed: () {},

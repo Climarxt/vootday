@@ -13,6 +13,7 @@ class Event {
   final String title;
   final DateTime date;
   final DateTime dateEvent;
+  final DateTime dateEnd;
   final List<String> tags;
   final String reward;
   final bool done;
@@ -27,6 +28,7 @@ class Event {
     required this.title,
     required this.date,
     required this.dateEvent,
+    required this.dateEnd,
     required this.tags,
     required this.reward,
     this.done = false,
@@ -42,6 +44,7 @@ class Event {
     title: '',
     date: DateTime(0),
     dateEvent: DateTime(0),
+    dateEnd: DateTime(0),
     tags: [],
     reward: '',
     done: false,
@@ -57,6 +60,7 @@ class Event {
         title,
         date,
         dateEvent,
+        dateEnd,
         tags,
         reward,
         done,
@@ -72,6 +76,7 @@ class Event {
     String? title,
     DateTime? date,
     DateTime? dateEvent,
+    DateTime? dateEnd,
     List<String>? tags,
     String? reward,
     bool? done,
@@ -86,6 +91,7 @@ class Event {
       title: title ?? this.title,
       date: date ?? this.date,
       dateEvent: dateEvent ?? this.dateEvent,
+      dateEnd: dateEnd ?? this.dateEnd,
       tags: tags ?? this.tags,
       reward: reward ?? this.reward,
       done: done ?? this.done,
@@ -106,6 +112,7 @@ class Event {
       'title': title,
       'date': Timestamp.fromDate(date),
       'dateEvent': Timestamp.fromDate(dateEvent),
+      'dateEnd': Timestamp.fromDate(dateEnd),
       'tags': tags,
       'reward': reward,
       'done': done,
@@ -128,6 +135,7 @@ class Event {
           title: data['title'] ?? '',
           date: (data['date'] as Timestamp).toDate(),
           dateEvent: (data['dateEvent'] as Timestamp).toDate(),
+          dateEnd: (data['dateEnd'] as Timestamp).toDate(),
           tags: (data['tags'] as List).map((item) => item as String).toList(),
           reward: data['reward'] ?? '',
           done: (data['done'] ?? false) as bool,

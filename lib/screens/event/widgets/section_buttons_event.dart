@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/profile/widgets/button_date.dart';
-import 'package:bootdv2/screens/profile/widgets/button_price.dart';
+import 'package:bootdv2/screens/event/widgets/button_date.dart';
+import 'package:bootdv2/screens/event/widgets/button_participants.dart';
+import 'package:bootdv2/screens/event/widgets/button_price.dart';
 import 'package:flutter/material.dart';
 import '../../profile/widgets/widgets.dart';
 
@@ -20,6 +21,7 @@ class ButtonsSectionEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("TEST 2 : Nombre de participants $participants");
     return _buildButtonsSection(context);
   }
 
@@ -55,7 +57,7 @@ class ButtonsSectionEvent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(child: buildButton(count1, label1, context)),
+        Expanded(child: buildButtonParticipants(count1, label1, context)),
         const SizedBox(
           width: 10,
         ),

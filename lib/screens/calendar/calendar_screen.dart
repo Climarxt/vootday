@@ -26,9 +26,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String imageUrlnull =
-        'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fred_placeholder_logo.svg?alt=media&token=4fa5d78e-eb9b-4ac9-840f-5def6929c38d';
-
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(

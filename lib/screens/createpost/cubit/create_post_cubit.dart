@@ -114,6 +114,50 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     }
   }
 
+  void submitPostEvent(String eventId) async {
+    emit(state.copyWith(status: CreatePostStatus.submitting));
+    try {
+      final author = User.empty.copyWith(id: _authBloc.state.user!.uid);
+
+      // Compress and upload the original image
+      final compressedImage = await compressImage(state.postImage!);
+      final postImageUrl =
+          await _storageRepository.uploadPostImage(image: compressedImage);
+
+      // Compress and create the thumbnail image
+      final thumbnailImage = await createThumbnail(state.postImage!);
+
+      // Read the thumbnail image as bytes
+      final thumbnailImageBytes = await thumbnailImage.readAsBytes();
+
+      // Create and upload the thumbnail
+      final thumbnailImageUrl = await _storageRepository.uploadThumbnailImage(
+          thumbnailImageBytes: thumbnailImageBytes);
+
+      final post = Post(
+          author: author,
+          imageUrl: postImageUrl,
+          thumbnailUrl: thumbnailImageUrl,
+          caption: state.caption,
+          likes: 0,
+          date: DateTime.now(),
+          tags: state.tags);
+
+      // Assurez-vous que la fonction createPostEvent prend un argument eventId et le gère correctement.
+      await _postRepository.createPostEvent(post: post, eventId: eventId);
+
+      emit(state.copyWith(status: CreatePostStatus.success));
+    } catch (err) {
+      emit(
+        state.copyWith(
+          status: CreatePostStatus.error,
+          failure:
+              const Failure(message: 'We were unable to create your post.'),
+        ),
+      );
+    }
+  }
+
   void tagsChanged(List<String> tags) => emit(state.copyWith(tags: tags));
 
   void initializeTags(List<String> tags) {

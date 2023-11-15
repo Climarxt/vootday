@@ -521,4 +521,34 @@ class PostRepository extends BasePostRepository {
       return null;
     }
   }
+
+  Future<void> createPostEvent(
+      {required Post post, required String eventId}) async {
+    // Créer une référence de document pour le nouveau post.
+    DocumentReference postRef =
+        _firebaseFirestore.collection(Paths.posts).doc();
+
+    // Préparer le document pour le post avec une référence aléatoire.
+    final postDocument = post.copyWith(id: postRef.id).toDocument();
+
+    // Créer un document pour le participant dans la sous-collection de l'eventId avec une référence au post.
+    final participantDocument = {
+      'post_ref': postRef,
+      'userId': post.author.id
+    };
+
+    // Écrire les deux documents en utilisant une transaction pour garantir que les deux opérations réussissent ou échouent ensemble.
+    await _firebaseFirestore.runTransaction((transaction) async {
+      // Ajouter le nouveau post à la collection des posts.
+      transaction.set(postRef, postDocument);
+
+      // Ajouter la référence du post au document du participant dans la sous-collection des participants.
+      DocumentReference participantRef = _firebaseFirestore
+          .collection(Paths.events)
+          .doc(eventId)
+          .collection('participants')
+          .doc();
+      transaction.set(participantRef, participantDocument);
+    });
+  }
 }

@@ -13,28 +13,15 @@ import '../../helpers/helpers.dart';
 import 'cubit/create_post_cubit.dart';
 
 class CreatePostEventScreen extends StatefulWidget {
-  static const String routeName = '/createPost';
+  final String eventId;
 
-  const CreatePostEventScreen({super.key});
+  const CreatePostEventScreen({super.key, required this.eventId});
 
   @override
   State<CreatePostEventScreen> createState() => _CreatePostEventScreenState();
 }
 
 class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
-  final List<String> predefinedTags = [
-    'Tag1',
-    'Tag2',
-    'Tag3',
-    'Tag4',
-    'Tag5',
-    'Tag6',
-    'Tag7',
-    'Tag8',
-    'Tag9',
-    'Tag10',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -121,29 +108,6 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
     );
   }
 
-  // Builds the brand ListTile
-  Widget _buildBrandInput(BuildContext context) {
-    return ListTile(
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '(${context.read<CreatePostCubit>().state.tags.length})',
-            style: AppTextStyles.subtitleLargeGrey(context),
-          ), // Display the count
-          const SizedBox(
-            width: 8,
-          ),
-          const Icon(Icons.arrow_forward),
-        ],
-      ),
-      title: Text(AppLocalizations.of(context)!.translate('brand'),
-          style: AppTextStyles.titleLargeBlackBold(context)),
-      onTap: () => GoRouter.of(context).go('/profile/create/brand',
-          extra: context.read<CreatePostCubit>()),
-    );
-  }
-
   // Builds the post button
   Widget _buildFloatingActionButton(BuildContext context) {
     final state = context.watch<CreatePostCubit>().state;
@@ -164,7 +128,8 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
   void _submitForm(BuildContext context) {
     // ignore: unnecessary_null_comparison
     if (_formKey.currentState!.validate() && _postImage != null) {
-      context.read<CreatePostCubit>().submit();
+      final eventId = widget.eventId;
+      context.read<CreatePostCubit>().submitPostEvent(eventId);
     }
   }
 
@@ -211,6 +176,29 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
     } else if (state.status == CreatePostStatus.error) {
       SnackbarUtil.showErrorSnackbar(context, state.failure.message);
     }
+  }
+
+  // Builds the brand ListTile
+  Widget _buildBrandInput(BuildContext context) {
+    return ListTile(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '(${context.read<CreatePostCubit>().state.tags.length})',
+            style: AppTextStyles.subtitleLargeGrey(context),
+          ), // Display the count
+          const SizedBox(
+            width: 8,
+          ),
+          const Icon(Icons.arrow_forward),
+        ],
+      ),
+      title: Text(AppLocalizations.of(context)!.translate('brand'),
+          style: AppTextStyles.titleLargeBlackBold(context)),
+      onTap: () => GoRouter.of(context)
+          .go('/profile/create/brand', extra: context.read<CreatePostCubit>()),
+    );
   }
 
   // Resets the form

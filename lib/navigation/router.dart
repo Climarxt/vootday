@@ -344,20 +344,19 @@ GoRouter createRouter(BuildContext context) {
                           GoRoute(
                             path: 'create',
                             builder:
-                                (BuildContext context, GoRouterState state) =>
-                                    BlocProvider<CreatePostCubit>(
-                              create: (context) {
-                                print("Creating CreatePostCubit");
-                                return CreatePostCubit(
+                                (BuildContext context, GoRouterState state) {
+                              final eventId = state.pathParameters['eventId']!;
+                              return BlocProvider<CreatePostCubit>(
+                                create: (context) => CreatePostCubit(
                                   postRepository:
                                       context.read<PostRepository>(),
                                   storageRepository:
                                       context.read<StorageRepository>(),
                                   authBloc: context.read<AuthBloc>(),
-                                );
-                              },
-                              child: const CreatePostEventScreen(),
-                            ),
+                                ),
+                                child: CreatePostEventScreen(eventId: eventId),
+                              );
+                            },
                           ),
                         ]),
                   ]),

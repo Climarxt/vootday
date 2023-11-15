@@ -357,6 +357,30 @@ GoRouter createRouter(BuildContext context) {
                                 child: CreatePostEventScreen(eventId: eventId),
                               );
                             },
+                            routes: [
+                              GoRoute(
+                                path: 'brand',
+                                builder: (BuildContext context,
+                                    GoRouterState state) {
+                                  print('State extra value: ${state.extra}');
+
+                                  return MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider.value(
+                                        value: state.extra! as CreatePostCubit,
+                                      ),
+                                      BlocProvider<BrandCubit>(
+                                        create: (context) => BrandCubit(
+                                          brandRepository:
+                                              context.read<BrandRepository>(),
+                                        ),
+                                      ),
+                                    ],
+                                    child: const BrandSearchScreen(),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ]),
                   ]),

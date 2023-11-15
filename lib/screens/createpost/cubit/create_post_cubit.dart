@@ -117,33 +117,46 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   void submitPostEvent(String eventId) async {
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
-      final author = User.empty.copyWith(id: _authBloc.state.user!.uid);
+      // Récupérer l'instance de l'événement à partir de son ID
+      final Event? eventDetails = await _postRepository.getEventById(eventId);
+      if (eventDetails == null) {
+        emit(
+          state.copyWith(
+            status: CreatePostStatus.error,
+            failure: const Failure(message: 'Event not found.'),
+          ),
+        );
+        return;
+      }
 
-      // Compress and upload the original image
+      // Récupérer le nom de l'auteur (marque) à partir de l'événement
+      final brandAuthorName = eventDetails.author.author;
+
+      // Compresser et télécharger l'image originale
       final compressedImage = await compressImage(state.postImage!);
       final postImageUrl =
           await _storageRepository.uploadPostImage(image: compressedImage);
 
-      // Compress and create the thumbnail image
+      // Compresser et créer l'image miniature
       final thumbnailImage = await createThumbnail(state.postImage!);
-
-      // Read the thumbnail image as bytes
       final thumbnailImageBytes = await thumbnailImage.readAsBytes();
-
-      // Create and upload the thumbnail
       final thumbnailImageUrl = await _storageRepository.uploadThumbnailImage(
-          thumbnailImageBytes: thumbnailImageBytes);
+        thumbnailImageBytes: thumbnailImageBytes,
+      );
 
+      // Créer l'objet Post avec les informations nécessaires
       final post = Post(
-          author: author,
-          imageUrl: postImageUrl,
-          thumbnailUrl: thumbnailImageUrl,
-          caption: state.caption,
-          likes: 0,
-          date: DateTime.now(),
-          tags: state.tags);
+        author: User.empty.copyWith(id: _authBloc.state.user!.uid),
+        imageUrl: postImageUrl,
+        thumbnailUrl: thumbnailImageUrl,
+        caption: state.caption,
+        likes: 0,
+        date: DateTime.now(),
+        // Ajouter le nom de l'auteur (marque) aux tags existants
+        tags: [brandAuthorName],
+      );
 
-      // Assurez-vous que la fonction createPostEvent prend un argument eventId et le gère correctement.
+      // Créer le post dans Firestore
       await _postRepository.createPostEvent(post: post, eventId: eventId);
 
       emit(state.copyWith(status: CreatePostStatus.success));
@@ -152,7 +165,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         state.copyWith(
           status: CreatePostStatus.error,
           failure:
-              const Failure(message: 'We were unable to create your post.'),
+              Failure(message: 'Unable to create your post: ${err.toString()}'),
         ),
       );
     }

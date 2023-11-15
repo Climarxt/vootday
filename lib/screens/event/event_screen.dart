@@ -107,11 +107,6 @@ class _EventScreenState extends State<EventScreen>
                                 color: Colors.black, size: 24),
                             onPressed: () => _showBottomSheet(context),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add_to_photos,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
                         ],
                       ),
                     ],

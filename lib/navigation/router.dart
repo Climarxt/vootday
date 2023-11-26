@@ -342,6 +342,44 @@ GoRouter createRouter(BuildContext context) {
                         },
                         routes: [
                           GoRoute(
+                            path: 'post/:postId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final postId = state.pathParameters['postId']!;
+                              final username =
+                                  state.uri.queryParameters['username'] ??
+                                      'Unknown';
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: PostScreen(
+                                    postId: postId, username: username),
+                              );
+                            },
+                            routes: [
+                              GoRoute(
+                                path: 'user/:userId',
+                                pageBuilder: (BuildContext context,
+                                    GoRouterState state) {
+                                  final userId =
+                                      state.pathParameters['userId']!;
+                                  final username =
+                                      state.uri.queryParameters['username'] ??
+                                          'Unknown';
+                                  final title =
+                                      state.uri.queryParameters['title'] ??
+                                          'title';
+                                  return MaterialPage<void>(
+                                    key: state.pageKey,
+                                    child: ProfileScreen(
+                                        userId: userId,
+                                        username: username,
+                                        title: title),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          GoRoute(
                             path: 'create',
                             builder:
                                 (BuildContext context, GoRouterState state) {

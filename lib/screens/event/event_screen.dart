@@ -33,6 +33,7 @@ class _EventScreenState extends State<EventScreen>
     with AutomaticKeepAliveClientMixin {
   User? _user;
   bool _isUserAParticipant = false;
+  String? _postRef;
 
   @override
   void initState() {
@@ -59,6 +60,12 @@ class _EventScreenState extends State<EventScreen>
 
     setState(() {
       _isUserAParticipant = querySnapshot.docs.isNotEmpty;
+      if (_isUserAParticipant) {
+        // Récupérez l'objet DocumentReference
+        DocumentReference postRef = querySnapshot.docs.first.get('post_ref');
+        // Enregistrez l'ID du document
+        _postRef = postRef.id;
+      }
     });
   }
 
@@ -169,7 +176,7 @@ class _EventScreenState extends State<EventScreen>
   // Construit le bouton pour naviguer vers le post de l'utilisateur
   Widget _buildFloatingActionButtonMyPost(BuildContext context) {
     return FloatingActionButton.extended(
-      backgroundColor: Colors.green,
+      backgroundColor: couleurBleuClair2,
       onPressed: () => _navigateToPostScreen(context),
       label: Text('Mon Post',
           style: Theme.of(context)
@@ -251,7 +258,8 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    GoRouter.of(context).push('/calendar/event/${widget.eventId}/post/:');
+    GoRouter.of(context)
+        .push('/calendar/event/${widget.eventId}/post/$_postRef');
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
 import 'package:bootdv2/screens/event/event_screen.dart';
 import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
+import 'package:bootdv2/screens/post/post_calendar_screen.dart';
 import 'package:bootdv2/screens/post/post_event_screen.dart';
 import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -349,10 +350,15 @@ GoRouter createRouter(BuildContext context) {
                               final username =
                                   state.uri.queryParameters['username'] ??
                                       'Unknown';
+                              final eventId =
+                                  state.uri.queryParameters['eventId'] ??
+                                      'Unknown';
                               return MaterialPage<void>(
                                 key: state.pageKey,
-                                child: PostScreen(
-                                    postId: postId, username: username),
+                                child: PostCalendarScreen(
+                                    postId: postId,
+                                    username: username,
+                                    eventId: eventId),
                               );
                             },
                             routes: [

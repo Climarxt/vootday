@@ -258,8 +258,9 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToPostScreen(BuildContext context) {
+    final title = widget.title;
     GoRouter.of(context)
-        .push('/calendar/event/${widget.eventId}/post/$_postRef');
+        .push('/calendar/event/${widget.eventId}/post/$_postRef?username=$title');
   }
 
   @override

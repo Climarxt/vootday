@@ -1,3 +1,4 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:bootdv2/screens/event/widgets/profile_image_event.dart';
 import 'package:bootdv2/screens/event/widgets/section_buttons_event.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,12 +32,34 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen>
     with AutomaticKeepAliveClientMixin {
   User? _user;
+  bool _isUserAParticipant = false;
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<EventBloc>(context)
         .add(EventFetchEvent(eventId: widget.eventId));
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    if (userId != null) {
+      _checkIfUserIsAParticipant(userId);
+    } else {
+      print('User ID is null');
+    }
+  }
+
+  // Vérifie si userId est un participant de l'événement
+  void _checkIfUserIsAParticipant(String userId) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Paths.events)
+        .doc(widget.eventId)
+        .collection('participants')
+        .where('userId', isEqualTo: userId)
+        .get();
+
+    setState(() {
+      _isUserAParticipant = querySnapshot.docs.isNotEmpty;
+    });
   }
 
   @override
@@ -125,6 +149,36 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
+  // Builds the post button
+  Widget _buildFloatingActionButton(BuildContext context) {
+    if (_isUserAParticipant) {
+      return _buildFloatingActionButtonMyPost(context);
+    } else {
+      return FloatingActionButton.extended(
+        backgroundColor: couleurBleuClair2,
+        onPressed: () => _navigateToCreatePostScreen(context),
+        label: Text(AppLocalizations.of(context)!.translate('participate'),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: Colors.white)),
+      );
+    }
+  }
+
+  // Construit le bouton pour naviguer vers le post de l'utilisateur
+  Widget _buildFloatingActionButtonMyPost(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: Colors.green,
+      onPressed: () => _navigateToPostScreen(context),
+      label: Text('Mon Post',
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: Colors.white)),
+    );
+  }
+
   void _navigateToUserScreen(BuildContext context, User user) {
     context.go(
         '/calendar/event/${widget.eventId}/user/${user.id}?author=${widget.author}');
@@ -144,19 +198,6 @@ class _EventScreenState extends State<EventScreen>
           ),
         ],
       ),
-    );
-  }
-
-  // Builds the post button
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return FloatingActionButton.extended(
-      backgroundColor: couleurBleuClair2,
-      onPressed: () => _navigateToCreatePostScreen(context),
-      label: Text(AppLocalizations.of(context)!.translate('participate'),
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(color: Colors.white)),
     );
   }
 
@@ -207,6 +248,10 @@ class _EventScreenState extends State<EventScreen>
 
   void _navigateToCreatePostScreen(BuildContext context) {
     GoRouter.of(context).push('/calendar/event/${widget.eventId}/create');
+  }
+
+  void _navigateToPostScreen(BuildContext context) {
+    GoRouter.of(context).push('/calendar/event/${widget.eventId}/post/:');
   }
 
   @override

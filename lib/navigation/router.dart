@@ -14,6 +14,7 @@ import 'package:bootdv2/screens/post/post_calendar_screen.dart';
 import 'package:bootdv2/screens/post/post_event_screen.dart';
 import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
@@ -342,6 +343,25 @@ GoRouter createRouter(BuildContext context) {
                           );
                         },
                         routes: [
+                          GoRoute(
+                            path: 'user/:userId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final userId = state.pathParameters['userId']!;
+                              final username =
+                                  state.uri.queryParameters['username'] ??
+                                      'Unknown';
+                              final title =
+                                  state.uri.queryParameters['title'] ?? 'title';
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: ProfileBrandScreen(
+                                    userId: userId,
+                                    username: username,
+                                    title: title),
+                              );
+                            },
+                          ),
                           GoRoute(
                             path: 'post/:postId',
                             pageBuilder:

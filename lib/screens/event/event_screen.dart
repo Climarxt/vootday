@@ -34,12 +34,14 @@ class _EventScreenState extends State<EventScreen>
   User? _user;
   bool _isUserAParticipant = false;
   String? _postRef;
+  String? _userRefId;
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<EventBloc>(context)
         .add(EventFetchEvent(eventId: widget.eventId));
+    _fetchUserRefFromAuthor(widget.author);
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
     if (userId != null) {
@@ -67,6 +69,27 @@ class _EventScreenState extends State<EventScreen>
         _postRef = postRef.id;
       }
     });
+  }
+
+  void _fetchUserRefFromAuthor(String author) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('brands')
+          .where('author', isEqualTo: author)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot brandDoc = querySnapshot.docs.first;
+        DocumentReference userRef = brandDoc.get('user_ref');
+        _userRefId = userRef.id; // Stockez l'ID de référence de l'utilisateur
+      } else {
+        print(
+            'Aucune correspondance pour l\'author "$author" trouvée dans la collection brands.');
+      }
+    } catch (e) {
+      print(
+          'Une erreur s\'est produite lors de la récupération de user_ref: $e');
+    }
   }
 
   @override
@@ -118,7 +141,7 @@ class _EventScreenState extends State<EventScreen>
                         description: event.caption,
                         tags: event.tags,
                         onTitleTap: () =>
-                            _navigateToUserScreen(context, _user!),
+                            _navigateToUserScreen(context),
                       ),
                       const Spacer(),
                       Column(
@@ -186,9 +209,10 @@ class _EventScreenState extends State<EventScreen>
     );
   }
 
-  void _navigateToUserScreen(BuildContext context, User user) {
-    context.go(
-        '/calendar/event/${widget.eventId}/user/${user.id}?author=${widget.author}');
+  void _navigateToUserScreen(BuildContext context) {
+    final author = widget.author;
+    context.push(
+        '/calendar/event/${widget.eventId}/user/$_userRefId?username=$author');
   }
 
   Widget _buildListView(BuildContext context, Event event) {
@@ -259,8 +283,8 @@ class _EventScreenState extends State<EventScreen>
 
   void _navigateToPostScreen(BuildContext context) {
     final title = widget.title;
-    GoRouter.of(context)
-        .push('/calendar/event/${widget.eventId}/post/$_postRef?username=$title');
+    GoRouter.of(context).push(
+        '/calendar/event/${widget.eventId}/post/$_postRef?username=$title');
   }
 
   @override

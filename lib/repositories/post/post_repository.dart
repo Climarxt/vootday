@@ -132,6 +132,13 @@ class PostRepository extends BasePostRepository {
         .delete();
   }
 
+  void deletePost({required String postId, required String userId}) {
+    _firebaseFirestore
+        .collection(Paths.posts)
+        .doc(postId)
+        .delete();
+  }
+
   @override
   Future<List<Post?>> getUserFeed({
     required String userId,
@@ -532,10 +539,7 @@ class PostRepository extends BasePostRepository {
     final postDocument = post.copyWith(id: postRef.id).toDocument();
 
     // Créer un document pour le participant dans la sous-collection de l'eventId avec une référence au post.
-    final participantDocument = {
-      'post_ref': postRef,
-      'userId': post.author.id
-    };
+    final participantDocument = {'post_ref': postRef, 'userId': post.author.id};
 
     // Écrire les deux documents en utilisant une transaction pour garantir que les deux opérations réussissent ou échouent ensemble.
     await _firebaseFirestore.runTransaction((transaction) async {

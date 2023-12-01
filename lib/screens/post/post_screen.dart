@@ -1,3 +1,4 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
@@ -28,11 +29,40 @@ class _PostScreenState extends State<PostScreen>
   Post? _post;
   User? _user;
   bool _isLoading = true;
+  bool _isUserTheAuthor = false;
 
   @override
   void initState() {
     super.initState();
     _loadPost();
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    if (userId != null) {
+      _checkIfUserIsAuthor(userId);
+    } else {
+      print('User ID is null');
+    }
+  }
+
+  void _checkIfUserIsAuthor(String userId) async {
+    try {
+      DocumentSnapshot postDoc = await FirebaseFirestore.instance
+          .collection(Paths.posts)
+          .doc(widget.postId)
+          .get();
+
+      if (postDoc.exists) {
+        var data = postDoc.data() as Map<String, dynamic>;
+        DocumentReference authorRef = data['author'];
+        if (authorRef.id == userId) {
+          setState(() {
+            _isUserTheAuthor = true;
+          });
+        }
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération du post: $e');
+    }
   }
 
   Future<void> _loadPost() async {
@@ -159,30 +189,15 @@ class _PostScreenState extends State<PostScreen>
       builder: (BuildContext context) {
         return Wrap(
           children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                // Implémentez votre logique de partage ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.comment),
-              title: const Text('Comment'),
-              onTap: () {
-                // Implémentez votre logique de commentaire ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bookmark),
-              title: const Text('Bookmark'),
-              onTap: () {
-                // Implémentez votre logique d'ajout aux favoris ici
-                Navigator.pop(context);
-              },
-            ),
+            if (_isUserTheAuthor) // Affiche cette option seulement si l'utilisateur est l'auteur
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
+                onTap: () {
+                  // Implémentez votre logique de suppression ici
+                  Navigator.pop(context);
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),

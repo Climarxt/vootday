@@ -13,8 +13,42 @@ class PostRepository extends BasePostRepository {
   PostRepository({FirebaseFirestore? firebaseFirestore})
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
-  void deletePost({required String postId}) {
-    _firebaseFirestore.collection(Paths.posts).doc(postId).delete();
+  Future<void> deletePost({required String postId}) async {
+    WriteBatch batch = _firebaseFirestore.batch();
+
+    print('Début de la suppression du post avec ID: $postId');
+
+    // Suppression du post dans la collection 'posts'
+    DocumentReference postRef =
+        _firebaseFirestore.collection(Paths.posts).doc(postId);
+    print('Suppression du post dans la collection posts');
+    batch.delete(postRef);
+
+    // Recherche du post dans toutes les sous-collections 'participants'
+    print('Recherche du post dans les sous-collections participants');
+    QuerySnapshot participantsSnapshot = await _firebaseFirestore
+        .collectionGroup('participants')
+        .where('post_ref', isEqualTo: postRef)
+        .get();
+
+    if (participantsSnapshot.docs.isEmpty) {
+      print('Aucun participant trouvé avec le post_ref: $postId');
+    } else {
+      print(
+          'Nombre de participants trouvés avec le post_ref: ${participantsSnapshot.docs.length}');
+    }
+
+    // Ajout des suppressions des participants dans le batch
+    for (var doc in participantsSnapshot.docs) {
+      print('Suppression du participant: ${doc.id} dans le batch');
+      batch.delete(doc.reference);
+    }
+
+    // Exécution du batch pour effectuer toutes les suppressions
+    print(
+        'Exécution du batch pour la suppression du post et des participants associés');
+    await batch.commit();
+    print('Suppression terminée pour le post avec ID: $postId');
   }
 
   @override

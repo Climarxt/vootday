@@ -13,6 +13,10 @@ class PostRepository extends BasePostRepository {
   PostRepository({FirebaseFirestore? firebaseFirestore})
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
+  void deletePost({required String postId}) {
+    _firebaseFirestore.collection(Paths.posts).doc(postId).delete();
+  }
+
   @override
   Future<void> createPost({required Post post}) async {
     await _firebaseFirestore.collection(Paths.posts).add(post.toDocument());
@@ -129,13 +133,6 @@ class PostRepository extends BasePostRepository {
         .doc(postId)
         .collection(Paths.postLikes)
         .doc(userId)
-        .delete();
-  }
-
-  void deletePost({required String postId, required String userId}) {
-    _firebaseFirestore
-        .collection(Paths.posts)
-        .doc(postId)
         .delete();
   }
 

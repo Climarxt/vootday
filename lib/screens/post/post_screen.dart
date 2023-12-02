@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/paths.dart';
+import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
@@ -194,10 +195,12 @@ class _PostScreenState extends State<PostScreen>
                 leading: const Icon(Icons.delete),
                 title: const Text('Delete'),
                 onTap: () {
-                  // Implémentez votre logique de suppression ici
+                  final postCubit = context.read<DeletePostsCubit>();
+                  postCubit.deletePosts(widget.postId); // Assurez-vous d'avoir l'userId correct
                   Navigator.pop(context);
                 },
               ),
+
             ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),

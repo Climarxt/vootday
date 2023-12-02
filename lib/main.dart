@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/blocs/simple_bloc_observer.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
@@ -76,6 +77,10 @@ class MyApp extends StatelessWidget {
               postRepository: context.read<PostRepository>(),
               authBloc: context.read<AuthBloc>(),
             ),
+          ),
+          BlocProvider<DeletePostsCubit>(
+            create: (context) =>
+                DeletePostsCubit(context.read<PostRepository>()),
           ),
           BlocProvider(
             create: (context) {

@@ -10,13 +10,13 @@ part 'event_state.dart';
 
 class EventBloc extends Bloc<EventEvent, EventState> {
   final PostRepository _postRepository;
-  final AuthBloc _authBloc;
+  // final AuthBloc _authBloc;
 
   EventBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
-        _authBloc = authBloc,
+        // _authBloc = authBloc,
         super(EventState.initial()) {
     on<EventFetchEvent>(_mapEventFetchEvent);
   }

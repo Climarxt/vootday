@@ -31,7 +31,6 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen>
     with AutomaticKeepAliveClientMixin {
-  User? _user;
   bool _isUserAParticipant = false;
   String? _postRef;
   String? _userRefId;

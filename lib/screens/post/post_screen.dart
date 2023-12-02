@@ -3,6 +3,7 @@ import 'package:bootdv2/config/paths.dart';
 import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
@@ -197,7 +198,8 @@ class _PostScreenState extends State<PostScreen>
                 onTap: () {
                   final postCubit = context.read<DeletePostsCubit>();
                   postCubit.deletePosts(widget.postId); // Assurez-vous d'avoir l'userId correct
-                  Navigator.pop(context);
+                  GoRouter.of(context).go('/profile');
+                  SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
                 },
               ),
 

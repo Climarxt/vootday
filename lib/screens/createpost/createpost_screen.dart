@@ -206,9 +206,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   void _handleCreatePostStateChanges(
       BuildContext context, CreatePostState state) {
     if (state.status == CreatePostStatus.success) {
+      // Reset form and show success message
       _resetForm(context);
       SnackbarUtil.showSuccessSnackbar(context, 'Post Created !');
+
+      // Navigate to the calendar route
+      GoRouter.of(context).go('/profile');
     } else if (state.status == CreatePostStatus.error) {
+      // Show error message
       SnackbarUtil.showErrorSnackbar(context, state.failure.message);
     }
   }

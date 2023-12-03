@@ -15,6 +15,7 @@ import 'package:bootdv2/screens/post/post_event_screen.dart';
 import 'package:bootdv2/screens/post/post_profile_screen.dart';
 import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/myprofile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';

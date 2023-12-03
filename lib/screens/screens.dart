@@ -10,6 +10,6 @@ export 'swipe/swipe_screen.dart';
 export 'search/search_screen.dart';
 export 'notifications/notifications_screen.dart';
 export 'message/message_screen.dart';
-export 'profile/myprofile_screen.dart';
+export 'profile/myprofile/myprofile_screen.dart';
 export 'profile/profilesettings_screen.dart';
 export 'createpost/createpost_screen.dart';

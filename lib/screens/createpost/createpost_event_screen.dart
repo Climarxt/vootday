@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'widgets/widgets.dart';
-import '../../helpers/helpers.dart';
 import 'cubit/create_post_cubit.dart';
 
 class CreatePostEventScreen extends StatefulWidget {

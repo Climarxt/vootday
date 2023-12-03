@@ -1,5 +1,6 @@
 export 'animation/animations.dart';
 export 'enums/enums.dart';
+export 'helpers/helpers.dart';
 export 'colors.dart';
 export 'constants_event.dart';
 export 'localizations.dart';

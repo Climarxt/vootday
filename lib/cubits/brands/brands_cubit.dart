@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/cubits/brands/brands_state.dart';
-import 'package:bootdv2/repositories/brand/brand_repository.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 
 
 enum Status { initial, loading, loaded, error }

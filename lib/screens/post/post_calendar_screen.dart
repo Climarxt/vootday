@@ -1,6 +1,9 @@
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/paths.dart';
+import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
+import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
 import 'package:bootdv2/screens/post/widgets/image_loader.dart';
 import 'package:bootdv2/widgets/appbar/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
@@ -30,11 +33,40 @@ class _PostCalendarScreenState extends State<PostCalendarScreen>
   Post? _post;
   User? _user;
   bool _isLoading = true;
+  bool _isUserTheAuthor = false;
 
   @override
   void initState() {
     super.initState();
     _loadPost();
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    if (userId != null) {
+      _checkIfUserIsAuthor(userId);
+    } else {
+      print('User ID is null');
+    }
+  }
+
+  void _checkIfUserIsAuthor(String userId) async {
+    try {
+      DocumentSnapshot postDoc = await FirebaseFirestore.instance
+          .collection(Paths.posts)
+          .doc(widget.postId)
+          .get();
+
+      if (postDoc.exists) {
+        var data = postDoc.data() as Map<String, dynamic>;
+        DocumentReference authorRef = data['author'];
+        if (authorRef.id == userId) {
+          setState(() {
+            _isUserTheAuthor = true;
+          });
+        }
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération du post: $e');
+    }
   }
 
   Future<void> _loadPost() async {
@@ -151,8 +183,7 @@ class _PostCalendarScreenState extends State<PostCalendarScreen>
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {
-    context.go(
-        '/profile');
+    context.go('/profile');
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -161,30 +192,18 @@ class _PostCalendarScreenState extends State<PostCalendarScreen>
       builder: (BuildContext context) {
         return Wrap(
           children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                // Implémentez votre logique de partage ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.comment),
-              title: const Text('Comment'),
-              onTap: () {
-                // Implémentez votre logique de commentaire ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bookmark),
-              title: const Text('Bookmark'),
-              onTap: () {
-                // Implémentez votre logique d'ajout aux favoris ici
-                Navigator.pop(context);
-              },
-            ),
+            if (_isUserTheAuthor) // Affiche cette option seulement si l'utilisateur est l'auteur
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
+                onTap: () {
+                  final postCubit = context.read<DeletePostsCubit>();
+                  postCubit.deletePosts(
+                      widget.postId); // Assurez-vous d'avoir l'userId correct
+                  GoRouter.of(context).go('/calendar');
+                  SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),

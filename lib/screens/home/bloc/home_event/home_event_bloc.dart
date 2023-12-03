@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
-import 'package:bootdv2/models/event_model.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
-import '/models/models.dart';
 import '/repositories/repositories.dart';
 
 part 'package:bootdv2/screens/home/bloc/home_event/home_event_event.dart';

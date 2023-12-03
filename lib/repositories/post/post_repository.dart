@@ -1,11 +1,10 @@
 // ignore_for_file: avoid_debugPrint
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/models/event_model.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '/models/models.dart';
 import '/repositories/repositories.dart';
 
 class PostRepository extends BasePostRepository {

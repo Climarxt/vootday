@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/models/event_model.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
-import '/models/models.dart';
 import '/repositories/repositories.dart';
 
 part 'package:bootdv2/screens/home/bloc/feed_event/feed_event_state.dart';

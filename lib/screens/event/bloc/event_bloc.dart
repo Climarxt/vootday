@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
-import 'package:bootdv2/models/event_model.dart';
-import 'package:bootdv2/models/failure_model.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 

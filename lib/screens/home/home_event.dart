@@ -1,4 +1,4 @@
-import 'package:bootdv2/models/event_model.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

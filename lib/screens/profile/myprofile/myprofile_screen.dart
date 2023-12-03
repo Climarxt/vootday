@@ -4,9 +4,10 @@ import 'package:bootdv2/screens/profile/myprofile/myprofile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';
 import 'package:bootdv2/screens/profile/widgets/tabbar_profile.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
+import 'package:bootdv2/widgets/appbar/appbar_myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class MyProfileScreen extends StatefulWidget {
   final String userId;
@@ -41,36 +42,40 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         if (state.status == ProfileStatus.error) {
           return Center(child: Text(state.failure.message));
         }
-        return Container(
-          color: Colors.white,
-          child: DefaultTabController(
-            length: 3,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverAppBarProfile(title: state.user.username),
-                  SliverToBoxAdapter(child: ProfileHeader(state: state)),
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: ProfileTabbar(
-                      child: Container(
-                        color: Colors.white,
-                        child: const TabbarProfile(),
+        return Stack(
+          children: [
+            Container(
+              color: Colors.white,
+              child: DefaultTabController(
+                length: 3,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverAppBarMyProfile(title: state.user.username),
+                      SliverToBoxAdapter(child: ProfileHeader(state: state)),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: ProfileTabbar(
+                          child: Container(
+                            color: Colors.white,
+                            child: const TabbarProfile(),
+                          ),
+                        ),
                       ),
+                    ],
+                    body: TabBarView(
+                      children: [
+                        MyProfileTab1(context: context, state: state),
+                        ProfileTab2(context: context, state: state),
+                        const ProfileTab3(),
+                      ],
                     ),
                   ),
-                ],
-                body: TabBarView(
-                  children: [
-                    MyProfileTab1(context: context, state: state),
-                    ProfileTab2(context: context, state: state),
-                    const ProfileTab3(),
-                  ],
                 ),
               ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -133,8 +138,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   Widget build(BuildContext context) {
     // Utiliser widget.state pour accéder à l'état passé à ProfileHeader
     return Container(
-      color: Colors
-          .white, // Assurez-vous que `Colors.white` est importé correctement
+      color: Colors.white,
       child: Center(
         child: Column(
           children: [
@@ -173,5 +177,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         ),
       ),
     );
+  }
+
+  void _navigateToCreatePostScreen(BuildContext context) {
+    GoRouter.of(context).push('/profile/create');
   }
 }

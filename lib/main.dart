@@ -1,5 +1,4 @@
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
-import 'package:bootdv2/blocs/simple_bloc_observer.dart';
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';

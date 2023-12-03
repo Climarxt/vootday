@@ -1,7 +1,6 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
+import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';

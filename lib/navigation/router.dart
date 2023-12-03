@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/cubits/brands/brands_cubit.dart';
+import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/createpost_event_screen.dart';
@@ -15,7 +15,6 @@ import 'package:bootdv2/screens/post/post_event_screen.dart';
 import 'package:bootdv2/screens/post/post_profile_screen.dart';
 import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
-import 'package:bootdv2/screens/profile/myprofile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';

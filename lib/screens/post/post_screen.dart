@@ -1,6 +1,6 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/paths.dart';
-import 'package:bootdv2/cubits/delete_posts/delete_posts_cubit.dart';
+import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/screens/createpost/widgets/widgets.dart';

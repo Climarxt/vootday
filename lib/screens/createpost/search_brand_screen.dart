@@ -1,7 +1,6 @@
 // Importing necessary packages and modules
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/cubits/brands/brands_cubit.dart';
-import 'package:bootdv2/cubits/brands/brands_state.dart';
+import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/widgets/appbar/appbar_add_brand.dart';

@@ -1,9 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_debugPrint
 
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/event_model.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
@@ -16,39 +17,39 @@ class PostRepository extends BasePostRepository {
   Future<void> deletePost({required String postId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
 
-    print('Début de la suppression du post avec ID: $postId');
+    debugPrint('Début de la suppression du post avec ID: $postId');
 
     // Suppression du post dans la collection 'posts'
     DocumentReference postRef =
         _firebaseFirestore.collection(Paths.posts).doc(postId);
-    print('Suppression du post dans la collection posts');
+    debugPrint('Suppression du post dans la collection posts');
     batch.delete(postRef);
 
     // Recherche du post dans toutes les sous-collections 'participants'
-    print('Recherche du post dans les sous-collections participants');
+    debugPrint('Recherche du post dans les sous-collections participants');
     QuerySnapshot participantsSnapshot = await _firebaseFirestore
         .collectionGroup('participants')
         .where('post_ref', isEqualTo: postRef)
         .get();
 
     if (participantsSnapshot.docs.isEmpty) {
-      print('Aucun participant trouvé avec le post_ref: $postId');
+      debugPrint('Aucun participant trouvé avec le post_ref: $postId');
     } else {
-      print(
+      debugPrint(
           'Nombre de participants trouvés avec le post_ref: ${participantsSnapshot.docs.length}');
     }
 
     // Ajout des suppressions des participants dans le batch
     for (var doc in participantsSnapshot.docs) {
-      print('Suppression du participant: ${doc.id} dans le batch');
+      debugPrint('Suppression du participant: ${doc.id} dans le batch');
       batch.delete(doc.reference);
     }
 
     // Exécution du batch pour effectuer toutes les suppressions
-    print(
+    debugPrint(
         'Exécution du batch pour la suppression du post et des participants associés');
     await batch.commit();
-    print('Suppression terminée pour le post avec ID: $postId');
+    debugPrint('Suppression terminée pour le post avec ID: $postId');
   }
 
   @override
@@ -252,20 +253,27 @@ class PostRepository extends BasePostRepository {
     required String userId,
     String? lastPostId,
   }) async {
+    debugPrint('getFeedMonth :  appelé pour userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
+
     if (lastPostId == null) {
+      debugPrint('getFeedMonth :  Aucun lastPostId fourni, récupération des premiers posts');
       postsSnap = await _firebaseFirestore
           .collection(Paths.feedMonth)
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
+      debugPrint('getFeedMonth :  Nombre de posts récupérés: ${postsSnap.docs.length}');
     } else {
+      debugPrint('getFeedMonth :  lastPostId fourni: $lastPostId, récupération des posts suivants');
       final lastPostDoc = await _firebaseFirestore
           .collection(Paths.feedMonth)
           .doc(lastPostId)
           .get();
 
       if (!lastPostDoc.exists) {
+        debugPrint(
+            'getFeedMonth :  Le document lastPostDoc n\'existe pas, retour d\'une liste vide');
         return [];
       }
 
@@ -275,18 +283,25 @@ class PostRepository extends BasePostRepository {
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
+      debugPrint(
+          'getFeedMonth :  Nombre de posts récupérés après le lastPostId: ${postsSnap.docs.length}');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
       DocumentReference postRef = doc['post_ref'];
       DocumentSnapshot postSnap = await postRef.get();
+
       if (postSnap.exists) {
+        debugPrint('getFeedMonth :  Post trouvé pour ref: ${postRef.path}');
         return Post.fromDocument(postSnap);
+      } else {
+        debugPrint('getFeedMonth :  Aucun post trouvé pour ref: ${postRef.path}');
+        return null;
       }
-      return null;
     }).toList();
 
     final posts = await Future.wait(postFutures);
+    debugPrint('getFeedMonth :  Nombre total de posts construits: ${posts.length}');
     return posts;
   }
 
@@ -299,12 +314,12 @@ class PostRepository extends BasePostRepository {
         return Post.fromDocument(postSnap);
       } else {
         // Handle the case where the post does not exist.
-        print("Le post n'existe pas.");
+        debugPrint("Le post n'existe pas.");
         return null;
       }
     } catch (e) {
       // Handle any errors that occur during the fetch.
-      print(e.toString());
+      debugPrint(e.toString());
       return null;
     }
   }
@@ -314,27 +329,27 @@ class PostRepository extends BasePostRepository {
     required String userId,
     String? lastPostId,
   }) async {
-    print(
+    debugPrint(
         'Method getFeedEvent : called with eventId: $eventId, userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
     final eventDocRef = _firebaseFirestore.collection('events').doc(eventId);
 
     if (lastPostId == null) {
-      print('Method getFeedEvent : Fetching initial events...');
+      debugPrint('Method getFeedEvent : Fetching initial events...');
       postsSnap = await eventDocRef
           .collection('feed_event')
           .orderBy('likes', descending: true)
           .limit(4)
           .get();
-      print(
+      debugPrint(
           'Method getFeedEvent : Fetched ${postsSnap.docs.length} initial events.');
     } else {
-      print('Method getFeedEvent : Fetching posts after postId: $lastPostId');
+      debugPrint('Method getFeedEvent : Fetching posts after postId: $lastPostId');
       final lastPostDoc =
           await eventDocRef.collection('feed_event').doc(lastPostId).get();
 
       if (!lastPostDoc.exists) {
-        print(
+        debugPrint(
             'Method getFeedEvent : Last post not found. Returning empty list.');
         return [];
       }
@@ -345,35 +360,35 @@ class PostRepository extends BasePostRepository {
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
-      print(
+      debugPrint(
           'Method getFeedEvent : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
       try {
         if (doc.exists) {
-          print(
+          debugPrint(
               'Method getFeedEvent : Processing post document with ID: ${doc.id}');
           DocumentReference postRef = doc['post_ref'];
           DocumentSnapshot postSnap = await postRef.get();
           if (postSnap.exists) {
             return Post.fromDocument(postSnap);
           } else {
-            print(
+            debugPrint(
                 'Method getFeedEvent : Referenced post document does not exist.');
           }
         } else {
-          print('Method getFeedEvent : Document does not exist, skipping.');
+          debugPrint('Method getFeedEvent : Document does not exist, skipping.');
         }
       } catch (e) {
-        print(
+        debugPrint(
             'Method getFeedEvent : Error processing post document: ${doc.id}, Error: $e');
       }
       return null;
     }).toList();
 
     final posts = await Future.wait(postFutures);
-    print('Method getFeedEvent : Total posts processed: ${posts.length}');
+    debugPrint('Method getFeedEvent : Total posts processed: ${posts.length}');
     return posts;
   }
 
@@ -382,7 +397,7 @@ class PostRepository extends BasePostRepository {
     String? lastEventId,
   }) async {
     try {
-      print(
+      debugPrint(
           'Method getEventsDone : Attempting to fetch event documents from Firestore...');
       QuerySnapshot eventSnap;
       if (lastEventId == null) {
@@ -402,7 +417,7 @@ class PostRepository extends BasePostRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          print('Method getEventsDone : Last event document does not exist.');
+          debugPrint('Method getEventsDone : Last event document does not exist.');
           return [];
         }
 
@@ -415,7 +430,7 @@ class PostRepository extends BasePostRepository {
             .get();
       }
 
-      print(
+      debugPrint(
           'Method getEventsDone : Event documents fetched. Converting to Event objects...');
       List<Future<Event?>> futureEvents =
           eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
@@ -423,16 +438,16 @@ class PostRepository extends BasePostRepository {
       // Use Future.wait to resolve all events
       List<Event?> events = await Future.wait(futureEvents);
 
-      print(
+      debugPrint(
           'Method getEventsDone : Event objects created. Total events: ${events.length}');
-      // Here, you might also print an event for debugging
+      // Here, you might also debugPrint an event for debugging
       if (events.isNotEmpty) {
-        print('Method getEventsDone : First event details: ${events.first}');
+        debugPrint('Method getEventsDone : First event details: ${events.first}');
       }
 
       return events;
     } catch (e) {
-      print(
+      debugPrint(
           'Method getEventsDone : An error occurred while fetching events: ${e.toString()}');
       return [];
     }
@@ -440,7 +455,7 @@ class PostRepository extends BasePostRepository {
 
   Future<Event?> getLatestEvent() async {
     try {
-      print(
+      debugPrint(
           'Method getLatestEvent: Attempting to fetch the latest event document from Firestore...');
       // Fetch the latest event by date
       QuerySnapshot eventSnap = await _firebaseFirestore
@@ -451,19 +466,19 @@ class PostRepository extends BasePostRepository {
           .get();
 
       if (eventSnap.docs.isNotEmpty) {
-        print(
+        debugPrint(
             'Method getLatestEvent: Latest event document fetched. Converting to Event object...');
         DocumentSnapshot doc = eventSnap.docs.first;
         Event? latestEvent = await Event.fromDocument(doc);
-        print(
+        debugPrint(
             'Method getLatestEvent: Event data - ${latestEvent?.toDocument()}');
         return latestEvent;
       } else {
-        print('Method getLatestEvent: No events found.');
+        debugPrint('Method getLatestEvent: No events found.');
         return null;
       }
     } catch (e) {
-      print(
+      debugPrint(
           'Method getLatestEvent: An error occurred while fetching the latest event: $e');
       return null;
     }
@@ -472,7 +487,7 @@ class PostRepository extends BasePostRepository {
   Future<List<Event>> getThisWeekEvents() async {
     List<Event> eventsList = [];
     try {
-      print(
+      debugPrint(
           'Method getThisWeekEvents: Attempting to fetch events from Firestore for the current week.');
 
       DateTime now = DateTime.now();
@@ -493,13 +508,13 @@ class PostRepository extends BasePostRepository {
             eventsList.add(event);
           }
         }
-        print('Method getThisWeekEvents: Events fetched successfully.');
+        debugPrint('Method getThisWeekEvents: Events fetched successfully.');
       } else {
-        print(
+        debugPrint(
             'Method getThisWeekEvents: No events found for the current week.');
       }
     } catch (e) {
-      print(
+      debugPrint(
           'Method getThisWeekEvents: Error occurred while fetching events - $e');
     }
     return eventsList;
@@ -508,7 +523,7 @@ class PostRepository extends BasePostRepository {
   Future<List<Event>> getComingSoonEvents() async {
     List<Event> eventsList = [];
     try {
-      print(
+      debugPrint(
           'Method getComingSoonEvents: Attempting to fetch future events from Firestore.');
 
       DateTime now = DateTime.now();
@@ -528,13 +543,13 @@ class PostRepository extends BasePostRepository {
             eventsList.add(event);
           }
         }
-        print(
+        debugPrint(
             'Method getComingSoonEvents: Future events fetched successfully.');
       } else {
-        print('Method getComingSoonEvents: No future events found.');
+        debugPrint('Method getComingSoonEvents: No future events found.');
       }
     } catch (e) {
-      print(
+      debugPrint(
           'Method getComingSoonEvents: Error occurred while fetching future events - $e');
     }
     return eventsList;
@@ -546,15 +561,15 @@ class PostRepository extends BasePostRepository {
           await _firebaseFirestore.collection(Paths.events).doc(eventId).get();
 
       if (eventSnap.exists) {
-        print(
+        debugPrint(
             'Method getEventById : Event document found. Converting to Event object...');
         return Event.fromDocument(eventSnap);
       } else {
-        print("Method getEventById : L'événement n'existe pas.");
+        debugPrint("Method getEventById : L'événement n'existe pas.");
         return null;
       }
     } catch (e) {
-      print(
+      debugPrint(
           'Method getEventById : Une erreur est survenue lors de la récupération de l\'événement: ${e.toString()}');
       return null;
     }

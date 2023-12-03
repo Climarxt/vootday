@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
@@ -32,29 +33,37 @@ class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
     FeedMonthFetchPostsMonth event,
     Emitter<FeedMonthState> emit,
   ) async {
+    debugPrint('_mapFeedMonthFetchPostsMonth : Début de _mapFeedMonthFetchPostsMonth');
     try {
-      final posts = await _postRepository.getFeedMonth(
-          userId: _authBloc.state.user!.uid);
+      final userId = _authBloc.state.user!.uid;
+      debugPrint('_mapFeedMonthFetchPostsMonth : Récupération des posts pour l\'utilisateur : $userId');
+
+      final posts = await _postRepository.getFeedMonth(userId: userId);
+      debugPrint('_mapFeedMonthFetchPostsMonth : Posts récupérés : ${posts.length}');
 
       _likedPostsCubit.clearAllLikedPosts();
 
       final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
+        userId: userId,
         posts: posts,
       );
+      debugPrint('_mapFeedMonthFetchPostsMonth : IDs des posts aimés récupérés : ${likedPostIds.length}');
 
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
 
       emit(
         state.copyWith(posts: posts, status: FeedMonthStatus.loaded),
       );
+      debugPrint('_mapFeedMonthFetchPostsMonth : État mis à jour avec les nouveaux posts');
     } catch (err) {
+      debugPrint('_mapFeedMonthFetchPostsMonth : Erreur lors de la récupération des posts : $err');
       emit(state.copyWith(
         status: FeedMonthStatus.error,
         failure:
-            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+            const Failure(message: '_mapFeedMonthFetchPostsMonth : Nous n\'avons pas pu charger votre flux'),
       ));
     }
+    debugPrint('_mapFeedMonthFetchPostsMonth : Fin de _mapFeedMonthFetchPostsMonth');
   }
 
   Future<void> _mapFeedMonthFetchPostsToState(
@@ -62,8 +71,8 @@ class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
     Emitter<FeedMonthState> emit,
   ) async {
     try {
-      final posts = await _postRepository.getFeedMonth(
-          userId: _authBloc.state.user!.uid);
+      final posts =
+          await _postRepository.getFeedMonth(userId: _authBloc.state.user!.uid);
 
       _likedPostsCubit.clearAllLikedPosts();
 

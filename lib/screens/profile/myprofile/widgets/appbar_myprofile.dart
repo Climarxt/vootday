@@ -36,7 +36,14 @@ class _SliverAppBarMyProfileState extends State<SliverAppBarMyProfile> {
       ),
       actions: [
         IconButton(
-          onPressed: () => GoRouter.of(context).go('/profile/settings'),
+          onPressed: () => GoRouter.of(context).push('/profile/notifications'),
+          icon: const Icon(
+            Icons.notifications,
+            color: Colors.black,
+          ),
+        ),
+        IconButton(
+          onPressed: () => GoRouter.of(context).push('/profile/settings'),
           icon: const Icon(
             Icons.view_headline,
             color: Colors.black,

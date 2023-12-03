@@ -4,7 +4,7 @@ import 'package:bootdv2/screens/profile/myprofile/myprofile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';
 import 'package:bootdv2/screens/profile/widgets/tabbar_profile.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/appbar_myprofile.dart';
+import 'package:bootdv2/screens/profile/myprofile/widgets/appbar_myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

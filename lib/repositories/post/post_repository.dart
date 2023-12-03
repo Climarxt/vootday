@@ -16,7 +16,6 @@ class PostRepository extends BasePostRepository {
 
   Future<void> deletePost({required String postId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
-
     debugPrint('Début de la suppression du post avec ID: $postId');
 
     // Suppression du post dans la collection 'posts'
@@ -25,31 +24,39 @@ class PostRepository extends BasePostRepository {
     debugPrint('Suppression du post dans la collection posts');
     batch.delete(postRef);
 
-    // Recherche du post dans toutes les sous-collections 'participants'
-    debugPrint('Recherche du post dans les sous-collections participants');
-    QuerySnapshot participantsSnapshot = await _firebaseFirestore
-        .collectionGroup('participants')
-        .where('post_ref', isEqualTo: postRef)
-        .get();
-
-    if (participantsSnapshot.docs.isEmpty) {
-      debugPrint('Aucun participant trouvé avec le post_ref: $postId');
-    } else {
-      debugPrint(
-          'Nombre de participants trouvés avec le post_ref: ${participantsSnapshot.docs.length}');
-    }
-
-    // Ajout des suppressions des participants dans le batch
-    for (var doc in participantsSnapshot.docs) {
-      debugPrint('Suppression du participant: ${doc.id} dans le batch');
-      batch.delete(doc.reference);
-    }
+    // Suppression des références du post dans les sous-collections
+    await _deletePostReferencesInSubCollections(batch, postRef, 'participants');
+    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_event');
+    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_month');
+    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_ootd');
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
-        'Exécution du batch pour la suppression du post et des participants associés');
+        'Exécution du batch pour la suppression du post et des références associées');
     await batch.commit();
     debugPrint('Suppression terminée pour le post avec ID: $postId');
+  }
+
+  Future<void> _deletePostReferencesInSubCollections(
+      WriteBatch batch, DocumentReference postRef, String subCollection) async {
+    debugPrint('Recherche du post dans les sous-collections $subCollection');
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collectionGroup(subCollection)
+        .where('post_ref', isEqualTo: postRef)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      debugPrint(
+          'Aucune référence trouvée dans $subCollection pour le post_ref: $postRef');
+    } else {
+      debugPrint(
+          'Nombre de références trouvées dans $subCollection: ${snapshot.docs.length}');
+      for (var doc in snapshot.docs) {
+        debugPrint(
+            'Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
+        batch.delete(doc.reference);
+      }
+    }
   }
 
   @override
@@ -253,19 +260,23 @@ class PostRepository extends BasePostRepository {
     required String userId,
     String? lastPostId,
   }) async {
-    debugPrint('getFeedMonth :  appelé pour userId: $userId, lastPostId: $lastPostId');
+    debugPrint(
+        'getFeedMonth :  appelé pour userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
 
     if (lastPostId == null) {
-      debugPrint('getFeedMonth :  Aucun lastPostId fourni, récupération des premiers posts');
+      debugPrint(
+          'getFeedMonth :  Aucun lastPostId fourni, récupération des premiers posts');
       postsSnap = await _firebaseFirestore
           .collection(Paths.feedMonth)
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
-      debugPrint('getFeedMonth :  Nombre de posts récupérés: ${postsSnap.docs.length}');
+      debugPrint(
+          'getFeedMonth :  Nombre de posts récupérés: ${postsSnap.docs.length}');
     } else {
-      debugPrint('getFeedMonth :  lastPostId fourni: $lastPostId, récupération des posts suivants');
+      debugPrint(
+          'getFeedMonth :  lastPostId fourni: $lastPostId, récupération des posts suivants');
       final lastPostDoc = await _firebaseFirestore
           .collection(Paths.feedMonth)
           .doc(lastPostId)
@@ -295,13 +306,15 @@ class PostRepository extends BasePostRepository {
         debugPrint('getFeedMonth :  Post trouvé pour ref: ${postRef.path}');
         return Post.fromDocument(postSnap);
       } else {
-        debugPrint('getFeedMonth :  Aucun post trouvé pour ref: ${postRef.path}');
+        debugPrint(
+            'getFeedMonth :  Aucun post trouvé pour ref: ${postRef.path}');
         return null;
       }
     }).toList();
 
     final posts = await Future.wait(postFutures);
-    debugPrint('getFeedMonth :  Nombre total de posts construits: ${posts.length}');
+    debugPrint(
+        'getFeedMonth :  Nombre total de posts construits: ${posts.length}');
     return posts;
   }
 
@@ -344,7 +357,8 @@ class PostRepository extends BasePostRepository {
       debugPrint(
           'Method getFeedEvent : Fetched ${postsSnap.docs.length} initial events.');
     } else {
-      debugPrint('Method getFeedEvent : Fetching posts after postId: $lastPostId');
+      debugPrint(
+          'Method getFeedEvent : Fetching posts after postId: $lastPostId');
       final lastPostDoc =
           await eventDocRef.collection('feed_event').doc(lastPostId).get();
 
@@ -378,7 +392,8 @@ class PostRepository extends BasePostRepository {
                 'Method getFeedEvent : Referenced post document does not exist.');
           }
         } else {
-          debugPrint('Method getFeedEvent : Document does not exist, skipping.');
+          debugPrint(
+              'Method getFeedEvent : Document does not exist, skipping.');
         }
       } catch (e) {
         debugPrint(
@@ -417,7 +432,8 @@ class PostRepository extends BasePostRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          debugPrint('Method getEventsDone : Last event document does not exist.');
+          debugPrint(
+              'Method getEventsDone : Last event document does not exist.');
           return [];
         }
 
@@ -442,7 +458,8 @@ class PostRepository extends BasePostRepository {
           'Method getEventsDone : Event objects created. Total events: ${events.length}');
       // Here, you might also debugPrint an event for debugging
       if (events.isNotEmpty) {
-        debugPrint('Method getEventsDone : First event details: ${events.first}');
+        debugPrint(
+            'Method getEventsDone : First event details: ${events.first}');
       }
 
       return events;

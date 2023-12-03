@@ -12,6 +12,7 @@ import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_calendar_screen.dart';
 import 'package:bootdv2/screens/post/post_event_screen.dart';
+import 'package:bootdv2/screens/post/post_profile_screen.dart';
 import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
@@ -477,18 +478,63 @@ GoRouter createRouter(BuildContext context) {
             routes: <RouteBase>[
               GoRoute(
                 path: '/profile',
-                builder: (BuildContext context, GoRouterState state) =>
-                    BlocProvider<ProfileBloc>(
-                  create: (_) => ProfileBloc(
-                    authBloc: context.read<AuthBloc>(),
-                    userRepository: context.read<UserRepository>(),
-                    postRepository: context.read<PostRepository>(),
-                  )..add(
-                      ProfileLoadUser(userId: authBloc.state.user!.uid),
+                builder: (BuildContext context, GoRouterState state) {
+                  final authBloc = context.read<AuthBloc>();
+                  final userId = authBloc.state.user!.uid;
+
+                  return BlocProvider<ProfileBloc>(
+                    create: (_) => ProfileBloc(
+                      authBloc: authBloc,
+                      userRepository: context.read<UserRepository>(),
+                      postRepository: context.read<PostRepository>(),
+                    )..add(ProfileLoadUser(userId: userId)),
+                    child: MyProfileScreen(
+                      userId: userId,
                     ),
-                  child: const MyProfileScreen(),
-                ),
+                  );
+                },
                 routes: <RouteBase>[
+                  GoRoute(
+                    path: 'post/:postId',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      final postId = state.pathParameters['postId']!;
+                      final username =
+                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      final eventId =
+                          state.uri.queryParameters['eventId'] ?? 'Unknown';
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'Unknown';
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: PostProfileScreen(
+                            postId: postId,
+                            username: username,
+                            eventId: eventId,
+                            title: title),
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'user/:userId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final userId = state.pathParameters['userId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: ProfileScreen(
+                                userId: userId,
+                                username: username,
+                                title: title),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                   GoRoute(
                     path: 'editprofile',
                     pageBuilder: (BuildContext context, GoRouterState state) {

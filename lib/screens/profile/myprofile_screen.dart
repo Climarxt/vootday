@@ -1,53 +1,79 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
-import 'package:bootdv2/screens/profile/profile_tab1.dart';
+import 'package:bootdv2/screens/profile/myprofile_tab1.dart';
 import 'package:bootdv2/screens/profile/profile_tab3.dart';
 import 'package:bootdv2/screens/profile/widgets/tabbar_profile.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/my_appbar_profile.dart';
+import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileScreen extends StatefulWidget {
-  const MyProfileScreen({super.key});
+  final String userId;
+  const MyProfileScreen({
+    super.key,
+    required this.userId,
+  });
 
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
+  late final String userId;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProfileBloc>().add(ProfileLoadUser(userId: widget.userId));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-      return DefaultTabController(
-        length: 3,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              MySliverAppBarProfile(title: state.user.username),
-              SliverToBoxAdapter(child: ProfileHeader(state: state)),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: ProfileTabbar(
-                  child: Container(
-                    color: Colors.white,
-                    child: const TabbarProfile(),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state.status == ProfileStatus.initial) {
+          return Container(color: white);
+        }
+        if (state.status == ProfileStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == ProfileStatus.error) {
+          return Center(child: Text(state.failure.message));
+        }
+        return Container(
+          color: Colors.white,
+          child: DefaultTabController(
+            length: 3,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverAppBarProfile(title: state.user.username),
+                  SliverToBoxAdapter(child: ProfileHeader(state: state)),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: ProfileTabbar(
+                      child: Container(
+                        color: Colors.white,
+                        child: const TabbarProfile(),
+                      ),
+                    ),
                   ),
+                ],
+                body: TabBarView(
+                  children: [
+                    MyProfileTab1(context: context, state: state),
+                    ProfileTab2(context: context, state: state),
+                    const ProfileTab3(),
+                  ],
                 ),
               ),
-            ],
-            body: TabBarView(
-              children: [
-                ProfileTab1(context: context, state: state),
-                ProfileTab2(context: context, state: state),
-                const ProfileTab3(),
-              ],
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -59,7 +85,10 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
+    // Ajouter un Material widget ici pour s'assurer que le TabBar a un ancêtre Material
+    return Material(
+      child: child,
+    );
   }
 
   @override
@@ -73,42 +102,75 @@ class ProfileTabbar extends SliverPersistentHeaderDelegate {
       false;
 }
 
-class ProfileHeader extends StatelessWidget {
+class ProfileHeader extends StatefulWidget {
   final ProfileState state;
+
   const ProfileHeader({
     super.key,
     required this.state,
   });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return Center(
-      child: Column(
-        children: [
-          const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage('assets/images/profile1.jpg'),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Christian Bastide',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: black),
-          ),
-          const SizedBox(height: 12),
-          ProfileStats(
-            isCurrentUser: true,
-            isFollowing: state.isFollowing,
-            posts: state.posts.length,
-            followers: state.user.followers,
-            following: state.user.following,
-          ),
-          const SizedBox(height: 8), // Bottom space
-        ],
+  _ProfileHeaderState createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<ProfileHeader> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        setState(() {
+          _opacity = 1.0;
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Utiliser widget.state pour accéder à l'état passé à ProfileHeader
+    return Container(
+      color: Colors
+          .white, // Assurez-vous que `Colors.white` est importé correctement
+      child: Center(
+        child: Column(
+          children: [
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 300),
+              child: CircleAvatar(
+                backgroundColor: white,
+                radius: 50,
+                backgroundImage:
+                    NetworkImage(widget.state.user.profileImageUrl),
+              ),
+            ),
+            const SizedBox(height: 8),
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                '${widget.state.user.firstName} ${widget.state.user.lastName}',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 12),
+            ProfileStats(
+              isCurrentUser: widget.state.isCurrentUser,
+              isFollowing: widget.state.isFollowing,
+              posts: widget.state.posts.length,
+              followers: widget.state.user.followers,
+              following: widget.state.user.following,
+            ),
+            const SizedBox(height: 8), // Bottom space
+          ],
+        ),
       ),
     );
   }

@@ -1,16 +1,18 @@
 import 'dart:io';
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-class EventLogoImage extends StatelessWidget {
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+
+
+class UserProfileImage extends StatelessWidget {
   final double radius;
   final double outerCircleRadius;
   final String profileImageUrl;
   final File? profileImage;
 
-  const EventLogoImage({
+  const UserProfileImage({
     super.key,
     required this.radius,
     required this.outerCircleRadius,
@@ -35,15 +37,19 @@ class EventLogoImage extends StatelessWidget {
     return CircleAvatar(
       radius: radius,
       backgroundColor: Colors.grey[200],
-      child: ClipOval(
-        child: SvgPicture.network(
-          profileImageUrl,
-          fit: BoxFit.cover,
-          width: radius * 2,
-          height: radius * 2,
-        ),
-      ),
+      backgroundImage: getProfileImage(),
+      child: getNoProfileIcon(),
     );
+  }
+
+  ImageProvider<Object>? getProfileImage() {
+    if (profileImage != null) {
+      return FileImage(profileImage!);
+    }
+    if (profileImageUrl.isNotEmpty) {
+      return CachedNetworkImageProvider(profileImageUrl);
+    }
+    return null;
   }
 
   Icon? getNoProfileIcon() {

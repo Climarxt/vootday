@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
-import 'package:bootdv2/screens/home/widgets/post_event_view.dart';
-import 'package:bootdv2/widgets/appbar/appbar_title_logo.dart';
+import 'package:bootdv2/screens/home/bloc/blocs.dart';
+import 'package:bootdv2/screens/home/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

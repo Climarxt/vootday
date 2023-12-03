@@ -9,8 +9,8 @@ import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
-part 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_event.dart';
-part 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_state.dart';
+part 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_event.dart';
+part 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_state.dart';
 
 class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   final PostRepository _postRepository;

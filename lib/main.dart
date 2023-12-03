@@ -7,10 +7,9 @@ import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_b
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
-import 'package:bootdv2/screens/home/bloc/month/feed_month_bloc.dart';
-import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

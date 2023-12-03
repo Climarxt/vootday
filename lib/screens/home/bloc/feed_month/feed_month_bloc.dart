@@ -8,8 +8,8 @@ import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
-part 'package:bootdv2/screens/home/bloc/month/feed_month_state.dart';
-part 'package:bootdv2/screens/home/bloc/month/feed_month_event.dart';
+part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_state.dart';
+part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_event.dart';
 
 class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
   final PostRepository _postRepository;

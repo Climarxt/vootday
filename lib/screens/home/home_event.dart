@@ -1,9 +1,11 @@
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/blocs.dart';
+import 'package:bootdv2/screens/home/widgets/widgets.dart';
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bootdv2/widgets/cards/mosaique_event_long_card.dart';
 
 class HomeEvent extends StatefulWidget {
   HomeEvent({Key? key}) : super(key: key ?? GlobalKey());

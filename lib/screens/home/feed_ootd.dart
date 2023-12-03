@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
+import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/screens/home/bloc/blocs.dart';
+import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
-import 'package:bootdv2/screens/home/bloc/ootd/feed_ootd_bloc.dart';
-import 'package:bootdv2/screens/home/widgets/post_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,10 +1,12 @@
 import 'dart:ui';
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/home/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '/models/models.dart';
-import '/widgets/widgets.dart';
+
 
 class PostView extends StatefulWidget {
   final Post post;

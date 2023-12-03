@@ -1,7 +1,8 @@
 import 'package:bootdv2/screens/home/feed_ootd.dart';
 import 'package:bootdv2/screens/home/home_event.dart';
 import 'package:bootdv2/screens/home/feed_month.dart';
-import 'package:bootdv2/screens/home/widgets/tabbar3items.dart';
+import 'package:bootdv2/screens/home/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {

@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/blocs/blocs.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import '/blocs/blocs.dart';
-import '/models/models.dart';
-import '/repositories/repositories.dart';
+
 
 part 'create_post_state.dart';
 

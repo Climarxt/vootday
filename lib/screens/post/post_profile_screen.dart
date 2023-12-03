@@ -204,7 +204,7 @@ class _PostProfileScreenState extends State<PostProfileScreen>
                   final postCubit = context.read<DeletePostsCubit>();
                   postCubit.deletePosts(
                       widget.postId); // Assurez-vous d'avoir l'userId correct
-                  GoRouter.of(context).go('/home');
+                  GoRouter.of(context).go('/profile');
                   SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
                 },
               ),

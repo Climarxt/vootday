@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/brand/brand_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/createpost_event_screen.dart';
@@ -18,13 +20,11 @@ import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/profileedit_screen.dart';
-import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/screens/screens.dart';
-import 'scaffold_with_navbar.dart';
+import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');

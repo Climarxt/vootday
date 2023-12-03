@@ -1,8 +1,7 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import '/config/paths.dart';
-
-import '/models/models.dart';
 
 class Comment extends Equatable {
   final String? id;

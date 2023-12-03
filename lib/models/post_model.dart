@@ -1,9 +1,9 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import '../config/configs.dart';
 
-import '/models/models.dart';
 
 class Post extends Equatable {
   final String? id;

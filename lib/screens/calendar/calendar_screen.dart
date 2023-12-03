@@ -1,10 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
-import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
-import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
-import 'package:bootdv2/screens/calendar/widgets/event_new_card.dart';
-import 'package:bootdv2/screens/calendar/widgets/mosaique_event_large_card.dart';
+import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
+import 'package:bootdv2/screens/calendar/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

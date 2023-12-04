@@ -1,7 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/search/widgets/search_explorer.dart';
-import 'package:bootdv2/screens/search/widgets/search_following.dart';
-import 'package:bootdv2/screens/search/widgets/tabbar2itemssearch.dart';
+import 'package:bootdv2/screens/search/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {

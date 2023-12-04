@@ -197,9 +197,9 @@ class _PostEventScreenState extends State<PostEventScreen>
     );
   }
 
-    void _navigateToCommentScreen(BuildContext context) {
-    context.go(
-        '/home/event/${widget.eventId}/comment?username=${widget.username}');
+  void _navigateToCommentScreen(BuildContext context) {
+    context.push(
+        '/home/event/${widget.eventId}/post/${widget.postId}/comment?username=${widget.username}');
   }
 
   void _showBottomSheet(BuildContext context) {

@@ -283,6 +283,16 @@ GoRouter createRouter(BuildContext context) {
                               );
                             },
                           ),
+                          GoRoute(
+                            path: 'comment',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: const CommentWIPScreen(),
+                              );
+                            },
+                          ),
                         ],
                       ),
                       GoRoute(
@@ -540,6 +550,16 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'comment',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: const CommentWIPScreen(),
                           );
                         },
                       ),

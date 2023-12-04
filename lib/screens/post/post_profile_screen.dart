@@ -159,7 +159,7 @@ class _PostProfileScreenState extends State<PostProfileScreen>
                           IconButton(
                             icon: const Icon(Icons.comment,
                                 color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
+                            onPressed: () => _navigateToCommentScreen(context),
                           ),
                           IconButton(
                             icon: const Icon(Icons.share,
@@ -186,6 +186,11 @@ class _PostProfileScreenState extends State<PostProfileScreen>
 
   void _navigateToUserScreen(BuildContext context, User user) {
     context.go('/profile');
+  }
+
+  void _navigateToCommentScreen(BuildContext context) {
+    context.go(
+        '/profile/post/${widget.postId}/comment?username=${widget.username}');
   }
 
   void _showBottomSheet(BuildContext context) {

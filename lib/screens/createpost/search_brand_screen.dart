@@ -3,7 +3,8 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
-import 'package:bootdv2/widgets/appbar/appbar_add_brand.dart';
+import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';

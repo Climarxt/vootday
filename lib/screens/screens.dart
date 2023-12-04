@@ -1,5 +1,6 @@
 export 'about/abouts.dart';
 export 'calendar/calendars.dart';
+export 'comment/comments.dart';
 export 'createpost/createposts.dart';
 export 'event/events.dart';
 export 'home/homes.dart';

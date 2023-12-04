@@ -2,23 +2,26 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/colors.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/comments/bloc/comments_bloc.dart';
-import 'package:bootdv2/screens/comments/widgets/widgets.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
+import 'package:bootdv2/screens/comment/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class CommentsScreenArgs {
+class CommentScreenArgs {
   final Post post;
 
-  const CommentsScreenArgs({required this.post});
+  const CommentScreenArgs({required this.post});
 }
 
-class CommentsScreen extends StatefulWidget {
+class CommentScreen extends StatefulWidget {
   static const String routeName = '/comments';
 
-  static Route route({required CommentsScreenArgs args}) {
+  const CommentScreen({super.key});
+
+  static Route route({required CommentScreenArgs args}) {
     return MaterialPageRoute(
       settings: const RouteSettings(name: routeName),
       builder: (context) => BlocProvider<CommentsBloc>(
@@ -26,16 +29,16 @@ class CommentsScreen extends StatefulWidget {
           postRepository: context.read<PostRepository>(),
           authBloc: context.read<AuthBloc>(),
         )..add(CommentsFetchComments(post: args.post)),
-        child: CommentsScreen(),
+        child: CommentScreen(),
       ),
     );
   }
 
   @override
-  _CommentsScreenState createState() => _CommentsScreenState();
+  _CommentScreenState createState() => _CommentScreenState();
 }
 
-class _CommentsScreenState extends State<CommentsScreen> {
+class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
 
   @override

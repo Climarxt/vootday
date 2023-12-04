@@ -192,6 +192,16 @@ GoRouter createRouter(BuildContext context) {
                           );
                         },
                       ),
+                      GoRoute(
+                        path: 'comment',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: CommentScreen(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   // home/user/:userId

@@ -7,6 +7,7 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
@@ -158,6 +159,12 @@ class MyApp extends StatelessWidget {
             create: (context) => ProfileBloc(
               authBloc: context.read<AuthBloc>(),
               userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+            ),
+          ),
+          BlocProvider<CommentsBloc>(
+            create: (context) => CommentsBloc(
+              authBloc: context.read<AuthBloc>(),
               postRepository: context.read<PostRepository>(),
             ),
           ),

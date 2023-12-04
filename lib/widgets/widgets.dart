@@ -1,6 +1,6 @@
 export 'error_dialog.dart';
 export '../screens/profile/widgets/user_profile_image.dart';
-export 'square_tile.dart';
+export '../screens/signup/widgets/square_tile.dart';
 export 'my_textfield.dart';
 export 'my_button.dart';
 export 'centered_text.dart';

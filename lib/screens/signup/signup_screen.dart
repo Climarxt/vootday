@@ -1,10 +1,12 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
+import 'package:bootdv2/screens/signup/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 import 'package:go_router/go_router.dart';
-import '../../config/configs.dart';
-import 'cubit/signup_cubit.dart';
-import '/widgets/widgets.dart';
 
 class SignupScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

@@ -1,22 +1,21 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
-import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/firebase_options.dart';
+import 'package:bootdv2/navigation/router.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
-import 'package:bootdv2/screens/home/bloc/feed_event/feed_event_bloc.dart';
-import 'package:bootdv2/screens/home/bloc/home_event/home_event_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'navigation/router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {

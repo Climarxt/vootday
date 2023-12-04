@@ -1,26 +1,17 @@
 // ignore_for_file: avoid_print
-
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/createpost/createpost_event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
-import 'package:bootdv2/screens/createpost/search_brand_screen.dart';
-import 'package:bootdv2/screens/event/event_screen.dart';
-import 'package:bootdv2/screens/home/feed_event.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
-import 'package:bootdv2/screens/post/post_calendar_screen.dart';
-import 'package:bootdv2/screens/post/post_event_screen.dart';
-import 'package:bootdv2/screens/post/post_profile_screen.dart';
-import 'package:bootdv2/screens/post/post_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
-import 'package:bootdv2/screens/profile/profile_brand_screen.dart';
+import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
-import 'package:bootdv2/screens/profile/profileedit_screen.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

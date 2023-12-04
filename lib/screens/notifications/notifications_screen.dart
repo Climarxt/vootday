@@ -1,5 +1,5 @@
-import 'package:bootdv2/screens/notifications/widgets/notifications_list.dart';
-import 'package:bootdv2/screens/notifications/widgets/tabbar2itemsnotif.dart';
+import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {

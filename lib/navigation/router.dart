@@ -196,9 +196,13 @@ GoRouter createRouter(BuildContext context) {
                         path: 'comment',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
+                          final postId = state.pathParameters['postId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: CommentScreen(),
+                            child: CommentScreen(postId: postId, username: username),
                           );
                         },
                       ),

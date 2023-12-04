@@ -1,40 +1,19 @@
-import 'package:bootdv2/blocs/blocs.dart';
-import 'package:bootdv2/config/colors.dart';
-import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/comment/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class CommentScreenArgs {
-  final Post post;
-
-  const CommentScreenArgs({required this.post});
-}
-
 class CommentScreen extends StatefulWidget {
-  static const String routeName = '/comments';
-
-  const CommentScreen({super.key});
-
-  static Route route({required CommentScreenArgs args}) {
-    return MaterialPageRoute(
-      settings: const RouteSettings(name: routeName),
-      builder: (context) => BlocProvider<CommentsBloc>(
-        create: (_) => CommentsBloc(
-          postRepository: context.read<PostRepository>(),
-          authBloc: context.read<AuthBloc>(),
-        )..add(CommentsFetchComments(post: args.post)),
-        child: CommentScreen(),
-      ),
-    );
-  }
+  final String postId;
+  final String username;
+  const CommentScreen(
+      {super.key, required this.postId, required this.username});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CommentScreenState createState() => _CommentScreenState();
 }
 
@@ -60,18 +39,10 @@ class _CommentScreenState extends State<CommentScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            backgroundColor: white,
-            iconTheme: const IconThemeData(
-              color: black,
-            ),
-            elevation: 3,
-            title: const Text(
-              'Commentaires',
-              style: TextStyle(color: black),
-            ),
+          backgroundColor: white,
+          appBar: AppBarComment(
+            title: "Comments",
+            postId: widget.postId,
           ),
           body: ListView.builder(
             padding: const EdgeInsets.only(bottom: 60.0),
@@ -99,7 +70,7 @@ class _CommentScreenState extends State<CommentScreen> {
                 subtitle: Text(
                   DateFormat.yMd('fr_FR').add_jm().format(comment.date),
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: const Color.fromARGB(255, 65, 65, 65),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -112,39 +83,55 @@ class _CommentScreenState extends State<CommentScreen> {
               );
             },
           ),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (state.status == CommentsStatus.submitting)
-                  const LinearProgressIndicator(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _commentController,
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: const InputDecoration.collapsed(
-                            hintText: 'Ecrire un commentaire...'),
+          bottomSheet: Container(
+            color: white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: white,
+                            borderRadius: BorderRadius.circular(30.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 3.0,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: _commentController,
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: const InputDecoration.collapsed(
+                                hintText: 'Ecrire un commentaire...'),
+                          ),
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () {
-                        final content = _commentController.text.trim();
-                        if (content.isNotEmpty) {
-                          context
-                              .read<CommentsBloc>()
-                              .add(CommentsPostComment(content: content));
-                          _commentController.clear();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          final content = _commentController.text.trim();
+                          if (content.isNotEmpty) {
+                            context
+                                .read<CommentsBloc>()
+                                .add(CommentsPostComment(content: content));
+                            _commentController.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

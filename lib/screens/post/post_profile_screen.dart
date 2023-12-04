@@ -1,12 +1,10 @@
-import 'package:bootdv2/blocs/blocs.dart';
-import 'package:bootdv2/config/paths.dart';
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/post/post_repository.dart';
-import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
-import 'package:bootdv2/config/animation/image_loader.dart';
-import 'package:bootdv2/screens/login/widgets/appbar_title.dart';
-import 'package:bootdv2/widgets/profileimagepost.dart';
+import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/post/widgets/widgets.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

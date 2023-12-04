@@ -1,6 +1,5 @@
-import 'package:bootdv2/screens/swipe/widgets/swipeevent.dart';
-import 'package:bootdv2/screens/swipe/widgets/swipeootd.dart';
-import 'package:bootdv2/screens/swipe/widgets/tabbar2items.dart';
+import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class SwipeScreen extends StatefulWidget {

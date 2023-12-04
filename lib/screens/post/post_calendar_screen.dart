@@ -5,7 +5,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/post_repository.dart';
 import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
 import 'package:bootdv2/config/animation/image_loader.dart';
-import 'package:bootdv2/widgets/appbar/appbar_title.dart';
+import 'package:bootdv2/screens/login/widgets/appbar_title.dart';
 import 'package:bootdv2/widgets/profileimagepost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

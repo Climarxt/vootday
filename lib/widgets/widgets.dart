@@ -5,6 +5,6 @@ export 'my_textfield.dart';
 export 'my_button.dart';
 export 'centered_text.dart';
 export 'action_button.dart';
-export 'appbar/appbar_white.dart';
-export 'appbar/appbar_title.dart';
+export '../screens/login/widgets/appbar_white.dart';
+export '../screens/login/widgets/appbar_title.dart';
 // export 'post_view.dart';

@@ -1,10 +1,9 @@
-import 'package:bootdv2/screens/login/widgets/buttons_login.dart';
-import 'package:bootdv2/screens/login/widgets/logo_title.dart';
-import 'package:bootdv2/screens/login/widgets/text_login_policy.dart';
+import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
+import 'package:bootdv2/screens/login/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'cubit/login_cubit.dart';
-import '/widgets/widgets.dart';
+
 
 // ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {

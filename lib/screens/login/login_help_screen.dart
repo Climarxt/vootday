@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/widgets.dart';
+import 'package:bootdv2/screens/login/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class LoginHelpScreen extends StatelessWidget {

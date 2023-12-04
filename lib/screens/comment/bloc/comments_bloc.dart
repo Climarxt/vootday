@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 import '/blocs/blocs.dart';
 import '/models/models.dart';
@@ -69,28 +70,47 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     CommentsPostComment event,
     Emitter<CommentsState> emit,
   ) async {
+    debugPrint('Début de _mapCommentsPostCommentToState');
+
+    if (state.post == null) {
+      debugPrint('Post is null');
+      emit(state.copyWith(
+        status: CommentsStatus.error,
+        failure: const Failure(message: 'Le post est introuvable'),
+      ));
+      return;
+    }
+
     emit(state.copyWith(status: CommentsStatus.submitting));
+    debugPrint('État de soumission émis');
 
     try {
+      final post = await _postRepository.getPostById(event.postId);
+      if (post == null) {
+        throw Exception('Post récupéré est null');
+      }
+
       final author = User.empty.copyWith(id: _authBloc.state.user!.uid);
       final comment = Comment(
-        postId: state.post!.id!,
+        postId: post.id!,
         author: author,
         content: event.content,
         date: DateTime.now(),
       );
 
-      await _postRepository.createComment(
-        post: state.post!,
-        comment: comment,
-      );
+      await _postRepository.createComment(post: post, comment: comment);
 
       emit(state.copyWith(status: CommentsStatus.loaded));
+      debugPrint('État de chargement émis');
     } catch (err) {
+      debugPrint('Erreur capturée: $err');
       emit(state.copyWith(
         status: CommentsStatus.error,
         failure: const Failure(message: 'Comment failed to post'),
       ));
+      debugPrint('État d\'erreur émis');
     }
+
+    debugPrint('Fin de _mapCommentsPostCommentToState');
   }
 }

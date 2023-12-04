@@ -86,7 +86,8 @@ class _CommentScreenState extends State<CommentScreen> {
           bottomSheet: Container(
             color: white,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -123,7 +124,10 @@ class _CommentScreenState extends State<CommentScreen> {
                           if (content.isNotEmpty) {
                             context
                                 .read<CommentsBloc>()
-                                .add(CommentsPostComment(content: content));
+                                .add(CommentsPostComment(
+                                  content: content,
+                                  postId: widget.postId, // Ajoutez cette ligne
+                                ));
                             _commentController.clear();
                           }
                         },

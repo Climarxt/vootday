@@ -27,9 +27,13 @@ class CommentsUpdateComments extends CommentsEvent {
 
 class CommentsPostComment extends CommentsEvent {
   final String content;
+  final String postId; // Ajoutez cette ligne
 
-  const CommentsPostComment({required this.content});
+  const CommentsPostComment({
+    required this.content,
+    required this.postId, // Ajoutez cette ligne
+  });
 
   @override
-  List<Object?> get props => [content];
+  List<Object?> get props => [content, postId]; // Modifiez cette ligne
 }

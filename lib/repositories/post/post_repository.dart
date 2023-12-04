@@ -68,12 +68,19 @@ class PostRepository extends BasePostRepository {
     required Post post,
     required Comment comment,
   }) async {
+    debugPrint('Début de la méthode createComment');
+
+    debugPrint('Ajout du commentaire dans Firestore');
     await _firebaseFirestore
         .collection(Paths.comments)
         .doc(comment.postId)
         .collection(Paths.postComments)
-        .add(comment.toDocument());
+        .add(comment.toDocument())
+        .then((_) => debugPrint('Commentaire ajouté avec succès'))
+        .catchError(
+            (e) => debugPrint('Erreur lors de l\'ajout du commentaire: $e'));
 
+    debugPrint('Création de la notification');
     final notification = Notif(
       type: NotifType.comment,
       fromUser: comment.author,
@@ -81,11 +88,17 @@ class PostRepository extends BasePostRepository {
       date: DateTime.now(),
     );
 
+    debugPrint('Ajout de la notification dans Firestore');
     _firebaseFirestore
         .collection(Paths.notifications)
         .doc(post.author.id)
         .collection(Paths.userNotifications)
-        .add(notification.toDocument());
+        .add(notification.toDocument())
+        .then((_) => debugPrint('Notification ajoutée avec succès'))
+        .catchError((e) =>
+            debugPrint('Erreur lors de l\'ajout de la notification: $e'));
+
+    debugPrint('Fin de la méthode createComment');
   }
 
   @override

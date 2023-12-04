@@ -1,4 +1,4 @@
-import 'package:bootdv2/widgets/profileimagebasique.dart';
+import 'package:bootdv2/screens/swipe/widgets/profileimagefeed.dart';
 import 'package:flutter/material.dart';
 
 bool _isLoading = false;

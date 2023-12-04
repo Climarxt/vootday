@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/widgets.dart';
+import 'package:bootdv2/screens/about/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../config/configs.dart';
+import '../../../config/configs.dart';
 
 class MyButton extends StatelessWidget {
   final Function()? onTap;

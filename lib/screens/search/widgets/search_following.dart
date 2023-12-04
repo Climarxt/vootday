@@ -1,4 +1,5 @@
-import 'package:bootdv2/widgets/cards/mosaique_explorer_card.dart';
+import 'package:bootdv2/screens/search/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class SearchFollowing extends StatefulWidget {

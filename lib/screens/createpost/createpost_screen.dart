@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/appbar_create_post.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

@@ -1,10 +1,8 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
-import 'package:bootdv2/screens/profile/profile_tab1.dart';
-import 'package:bootdv2/screens/profile/profile_tab3.dart';
-import 'package:bootdv2/screens/profile/widgets/tabbar_profile.dart';
+import 'package:bootdv2/screens/profile/profiles.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/widgets/appbar/appbar_profile.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

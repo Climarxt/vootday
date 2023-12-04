@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/widgets/cards/mosaique_collection_card.dart';
+import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class ProfileTab3 extends StatefulWidget {

@@ -1,7 +1,9 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
-import 'bloc/profile_bloc.dart';
-import 'widgets/widgets.dart';
+
 
 class ProfileTab2 extends StatefulWidget {
   final BuildContext context;

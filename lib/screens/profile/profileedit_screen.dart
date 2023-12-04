@@ -1,6 +1,6 @@
-import 'package:bootdv2/widgets/appbar/appbar_title_profile.dart';
-import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
 

@@ -159,7 +159,7 @@ class _PostEventScreenState extends State<PostEventScreen>
                           IconButton(
                             icon: const Icon(Icons.comment,
                                 color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
+                            onPressed: () => _navigateToCommentScreen(context),
                           ),
                           IconButton(
                             icon: const Icon(Icons.share,
@@ -195,6 +195,11 @@ class _PostEventScreenState extends State<PostEventScreen>
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',
     );
+  }
+
+    void _navigateToCommentScreen(BuildContext context) {
+    context.go(
+        '/home/event/${widget.eventId}/comment?username=${widget.username}');
   }
 
   void _showBottomSheet(BuildContext context) {

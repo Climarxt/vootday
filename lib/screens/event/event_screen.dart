@@ -150,7 +150,7 @@ class _EventScreenState extends State<EventScreen>
                           IconButton(
                             icon: const Icon(Icons.comment,
                                 color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
+                            onPressed: () => _navigateToCommentScreen(context),
                           ),
                           IconButton(
                             icon: const Icon(Icons.share,
@@ -251,6 +251,11 @@ class _EventScreenState extends State<EventScreen>
 
   void _navigateToCreatePostScreen(BuildContext context) {
     GoRouter.of(context).push('/calendar/event/${widget.eventId}/create');
+  }
+
+    void _navigateToCommentScreen(BuildContext context) {
+    context.push(
+        '/calendar/event/${widget.eventId}/comment');
   }
 
   void _navigateToPostScreen(BuildContext context) {

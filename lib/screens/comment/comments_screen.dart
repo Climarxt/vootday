@@ -42,7 +42,6 @@ class _CommentScreenState extends State<CommentScreen> {
           backgroundColor: white,
           appBar: AppBarComment(
             title: "Comments",
-            postId: widget.postId,
           ),
           body: ListView.builder(
             padding: const EdgeInsets.only(bottom: 60.0),

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppBarComment extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
-  final String postId;
-  const AppBarComment({super.key, required this.title, required this.postId});
+  const AppBarComment({super.key, required this.title});
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
@@ -22,7 +21,6 @@ class AppBarComment extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 62,
       backgroundColor: Colors.white,
       elevation: 0,
-
     );
   }
 }

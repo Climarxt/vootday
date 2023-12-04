@@ -235,30 +235,6 @@ class _EventScreenState extends State<EventScreen>
         return Wrap(
           children: <Widget>[
             ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                // Implémentez votre logique de partage ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.comment),
-              title: const Text('Comment'),
-              onTap: () {
-                // Implémentez votre logique de commentaire ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bookmark),
-              title: const Text('Bookmark'),
-              onTap: () {
-                // Implémentez votre logique d'ajout aux favoris ici
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),
               onTap: () {

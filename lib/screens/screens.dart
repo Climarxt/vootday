@@ -3,6 +3,7 @@ export 'calendar/calendars.dart';
 export 'comment/comments.dart';
 export 'createpost/createposts.dart';
 export 'event/events.dart';
+export 'following/followings.dart';
 export 'home/homes.dart';
 export 'login/logins.dart';
 export 'message/messages.dart';

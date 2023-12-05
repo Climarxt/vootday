@@ -21,29 +21,47 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       appBar: appBar,
       body: navigationShell,
-      bottomNavigationBar: currentLocation != '/profile/create' 
+      bottomNavigationBar: currentLocation != '/profile/create'
           ? BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
+              items: <BottomNavigationBarItem>[
+                const BottomNavigationBarItem(
+                    icon: Icon(Icons.home), label: 'Home'),
+                const BottomNavigationBarItem(
                     icon: Icon(Icons.calendar_month), label: 'Calendar'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.swipe), label: 'Swipe'),
-                BottomNavigationBarItem(
+                    icon: _buildSwipeIcon(context), label: 'Swipe'),
+                const BottomNavigationBarItem(
                     icon: Icon(Icons.search), label: 'Search'),
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                     icon: Icon(Icons.account_circle), label: 'Profile')
               ],
               backgroundColor: white,
               currentIndex: navigationShell.currentIndex,
               onTap: (int index) => _onTap(context, index),
-              unselectedItemColor: Colors.black,
-              selectedItemColor: couleurBleuClair2,
+              unselectedItemColor: greyDark,
+              selectedItemColor: black,
               showSelectedLabels: false,
               showUnselectedLabels: false,
               type: BottomNavigationBarType.fixed,
             )
           : null, // Ne pas afficher la barre de navigation
+    );
+  }
+
+  // Méthode pour créer un widget personnalisé pour l'icône "Swipe"
+  Widget _buildSwipeIcon(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [couleurBleu1, couleurBleuClair1],
+        ),
+      ),
+      child: Icon(Icons.swipe, color: white),
     );
   }
 

@@ -488,7 +488,10 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                 path: '/search',
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const SearchScreen());
+                  return MaterialPage<void>(
+                    key: state.pageKey,
+                    child: const SearchScreen(),
+                  );
                 },
               ),
             ],

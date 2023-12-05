@@ -493,6 +493,72 @@ GoRouter createRouter(BuildContext context) {
                     child: const SearchScreen(),
                   );
                 },
+                routes: [
+                  // search/post/:postId
+                  GoRoute(
+                    path: 'post/:postId',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      final postId = state.pathParameters['postId']!;
+                      final username =
+                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: PostSearchScreen(
+                            postId: postId, username: username),
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'user/:userId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final userId = state.pathParameters['userId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: ProfileScreen(
+                                userId: userId,
+                                username: username,
+                                title: title),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'comment',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: const CommentWIPScreen(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  // home/user/:userId
+                  GoRoute(
+                    path: 'user/:userId',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      final userId = state.pathParameters['userId']!;
+                      final username =
+                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'title';
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: ProfileScreen(
+                          userId: userId,
+                          username: username,
+                          title: title,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

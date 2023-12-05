@@ -14,23 +14,28 @@ class FollowingScreen extends StatefulWidget {
 }
 
 class _FollowingScreenState extends State<FollowingScreen>
-    with TickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin<FollowingScreen> {
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
+  bool _isFetching = false;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()
-      ..addListener(() {
-        if (_scrollController.offset >=
-                _scrollController.position.maxScrollExtent &&
-            !_scrollController.position.outOfRange &&
-            context.read<FollowingBloc>().state.status !=
-                FollowingStatus.paginating) {
-          context.read<FollowingBloc>().add(FollowingPaginatePosts());
-        }
-      });
+    _scrollController = ScrollController()..addListener(_onScroll);
+    context.read<FollowingBloc>().add(FollowingFetchPosts());
+  }
+
+  void _onScroll() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange &&
+        !_isFetching &&
+        context.read<FollowingBloc>().state.status !=
+            FollowingStatus.paginating) {
+      _isFetching = true;
+      context.read<FollowingBloc>().add(FollowingPaginatePosts());
+    }
   }
 
   @override
@@ -42,13 +47,11 @@ class _FollowingScreenState extends State<FollowingScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocConsumer<FollowingBloc, FollowingState>(
       listener: (context, state) {
-        if (state.status == FollowingStatus.error) {
-          showDialog(
-            context: context,
-            builder: (context) => ErrorDialog(content: state.failure.message),
-          );
+        if (state.status == FollowingStatus.initial && state.posts.isEmpty) {
+          context.read<FollowingBloc>().add(FollowingFetchPosts());
         }
       },
       builder: (context, state) {
@@ -204,4 +207,8 @@ class _FollowingScreenState extends State<FollowingScreen>
       color: couleurBleu2,
     ),
   ];
+
+  // Overridden to retain the state
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:flutter/material.dart';
 
 part 'following_event.dart';
 part 'following_state.dart';
@@ -27,33 +28,40 @@ class FollowingBloc extends Bloc<FollowingEvent, FollowingState> {
     on<FollowingFetchPosts>(_mapFollowingFetchPostsToState);
     on<FollowingPaginatePosts>(_mapFollowingPaginatePostsToState);
   }
-
   Future<void> _mapFollowingFetchPostsToState(
     FollowingFetchPosts event,
     Emitter<FollowingState> emit,
   ) async {
     try {
+      debugPrint('Fetching posts for user: ${_authBloc.state.user!.uid}');
       final posts =
           await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid);
+      debugPrint('Number of posts fetched: ${posts.length}');
 
       _likedPostsCubit.clearAllLikedPosts();
+      debugPrint('Cleared all liked posts');
 
       final likedPostIds = await _postRepository.getLikedPostIds(
         userId: _authBloc.state.user!.uid,
         posts: posts,
       );
+      debugPrint('Liked post IDs: ${likedPostIds.length}');
 
       _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+      debugPrint('Updated liked posts');
 
       emit(
         state.copyWith(posts: posts, status: FollowingStatus.loaded),
       );
+      debugPrint('State emitted with loaded status');
     } catch (err) {
+      debugPrint('Error in fetching posts: $err');
       emit(state.copyWith(
         status: FollowingStatus.error,
         failure:
             const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
       ));
+      debugPrint('State emitted with error status');
     }
   }
 

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FollowingScreen extends StatefulWidget {
-  const FollowingScreen({super.key});
+  FollowingScreen({Key? key}) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api

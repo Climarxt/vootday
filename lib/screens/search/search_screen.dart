@@ -76,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen>
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TabBarView(
         controller: _tabController,
-        children: const [
+        children: [
           FollowingScreen(),
           SearchExplorer(),
         ],

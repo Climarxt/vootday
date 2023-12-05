@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';

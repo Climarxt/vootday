@@ -13,4 +13,5 @@ export 'section_location.dart';
 export 'section_socialnet.dart';
 export 'stats.dart';
 export 'tabbar_profile.dart';
+export 'tabbar_myprofile.dart';
 export 'user_profile_image.dart';

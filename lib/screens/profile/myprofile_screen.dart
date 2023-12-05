@@ -45,7 +45,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             Container(
               color: Colors.white,
               child: DefaultTabController(
-                length: 3,
+                length: 4,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: NestedScrollView(
@@ -57,7 +57,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         delegate: ProfileTabbar(
                           child: Container(
                             color: Colors.white,
-                            child: const TabbarProfile(),
+                            child: const TabbarMyProfile(),
                           ),
                         ),
                       ),
@@ -66,6 +66,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         MyProfileTab1(context: context, state: state),
                         ProfileTab2(context: context, state: state),
+                        const MyProfileTab3(),
                         const ProfileTab3(),
                       ],
                     ),

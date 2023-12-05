@@ -174,6 +174,7 @@ class MyApp extends StatelessWidget {
               final followingBloc = FollowingBloc(
                 postRepository: context.read<PostRepository>(),
                 authBloc: context.read<AuthBloc>(),
+                likedPostsCubit: context.read<LikedPostsCubit>(),
               );
               return followingBloc;
             },

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/cubits/cubits.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:bootdv2/blocs/blocs.dart';
@@ -13,12 +14,15 @@ part 'following_state.dart';
 class FollowingBloc extends Bloc<FollowingEvent, FollowingState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
+  final LikedPostsCubit _likedPostsCubit;
 
   FollowingBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
+    required LikedPostsCubit likedPostsCubit,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
+        _likedPostsCubit = likedPostsCubit,
         super(FollowingState.initial()) {
     on<FollowingFetchPosts>(_mapFollowingFetchPostsToState);
     on<FollowingPaginatePosts>(_mapFollowingPaginatePostsToState);
@@ -31,6 +35,16 @@ class FollowingBloc extends Bloc<FollowingEvent, FollowingState> {
     try {
       final posts =
           await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid);
+
+      _likedPostsCubit.clearAllLikedPosts();
+
+      final likedPostIds = await _postRepository.getLikedPostIds(
+        userId: _authBloc.state.user!.uid,
+        posts: posts,
+      );
+
+      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+
       emit(
         state.copyWith(posts: posts, status: FollowingStatus.loaded),
       );
@@ -56,6 +70,14 @@ class FollowingBloc extends Bloc<FollowingEvent, FollowingState> {
         lastPostId: lastPostId,
       );
       final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
+
+      final likedPostIds = await _postRepository.getLikedPostIds(
+        userId: _authBloc.state.user!.uid,
+        posts: posts,
+      );
+
+      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+
       emit(
         state.copyWith(posts: updatedPosts, status: FollowingStatus.loaded),
       );

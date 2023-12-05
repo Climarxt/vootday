@@ -1,4 +1,5 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/search/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
@@ -76,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen>
       child: TabBarView(
         controller: _tabController,
         children: const [
-          SearchFollowing(),
+          FollowingScreen(),
           SearchExplorer(),
         ],
       ),

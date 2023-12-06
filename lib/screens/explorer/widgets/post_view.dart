@@ -71,7 +71,6 @@ class _PostViewState extends State<PostView>
                 image: widget.post.imageProvider,
               ),
             ),
-            child: buildBody(context),
           ),
         ),
       ),

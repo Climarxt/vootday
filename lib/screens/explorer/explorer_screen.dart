@@ -1,45 +1,131 @@
-import 'package:bootdv2/screens/search/widgets/mosaique_explorer_card.dart';
+import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
+import 'package:bootdv2/screens/explorer/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SearchExplorer extends StatefulWidget {
-  const SearchExplorer({super.key});
+class ExplorerScreen extends StatefulWidget {
+  ExplorerScreen({Key? key}) : super(key: key ?? GlobalKey());
 
   @override
   // ignore: library_private_types_in_public_api
-  _SearchExplorerState createState() => _SearchExplorerState();
+  _ExplorerScreenState createState() => _ExplorerScreenState();
 }
 
-class _SearchExplorerState extends State<SearchExplorer> {
-  List<String> imageList = [
-    'assets/images/postImage.jpg',
-    'assets/images/postImage2.jpg',
-    'assets/images/ITG1_1.jpg',
-    'assets/images/ITG1_2.jpg',
-    'assets/images/ITG3_1.jpg',
-    'assets/images/ITG3_2.jpg',
-  ];
+class _ExplorerScreenState extends State<ExplorerScreen>
+    with AutomaticKeepAliveClientMixin<ExplorerScreen> {
+  late ScrollController _scrollController;
+  final TextEditingController _textController = TextEditingController();
+  bool _isFetching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+    context.read<ExplorerBloc>().add(ExplorerFetchPosts());
+  }
+
+  void _onScroll() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange &&
+        !_isFetching &&
+        context.read<ExplorerBloc>().state.status !=
+            ExplorerStatus.paginating) {
+      _isFetching = true;
+      context.read<ExplorerBloc>().add(ExplorerPaginatePosts());
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          childAspectRatio: 0.8,
-        ),
-        itemCount: imageList.length,
-        itemBuilder: (context, index) {
-          return _buildCard(context, imageList[index]);
-        },
-      ),
+    super.build(context);
+    return BlocConsumer<ExplorerBloc, ExplorerState>(
+      listener: (context, state) {
+        if (state.status == ExplorerStatus.initial && state.posts.isEmpty) {
+          context.read<ExplorerBloc>().add(ExplorerFetchPosts());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: _buildBody(state),
+        );
+      },
     );
   }
 
-  Widget _buildCard(BuildContext context, String imageUrl) {
-    return MosaiqueExplorerCard(
-      imageUrl: imageUrl,
-    );
+  Widget _buildBody(ExplorerState state) {
+    switch (state.status) {
+      case ExplorerStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      default:
+        return Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: () async {
+                context.read<ExplorerBloc>().add(ExplorerFetchPosts());
+                context.read<LikedPostsCubit>().clearAllLikedPosts();
+              },
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                cacheExtent: 10000,
+                controller: _scrollController,
+                itemCount: state.posts.length + 1,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (BuildContext context, int index) {
+                  // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
+                  // ou un SizedBox vide si la pagination n'est pas en cours
+                  if (index == state.posts.length) {
+                    return state.status == ExplorerStatus.paginating
+                        ? const Center(child: CircularProgressIndicator())
+                        : const SizedBox.shrink();
+                  } else {
+                    final post = state.posts[index];
+                    final likedPostsState =
+                        context.watch<LikedPostsCubit>().state;
+                    final isLiked =
+                        likedPostsState.likedPostIds.contains(post!.id);
+                    final recentlyLiked =
+                        likedPostsState.recentlyLikedPostIds.contains(post.id);
+                    return PostView(
+                      post: post,
+                      isLiked: isLiked,
+                      recentlyLiked: recentlyLiked,
+                      onLike: () {
+                        if (isLiked) {
+                          context
+                              .read<LikedPostsCubit>()
+                              .unlikePost(post: post);
+                        } else {
+                          context.read<LikedPostsCubit>().likePost(post: post);
+                        }
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+            if (state.status == ExplorerStatus.paginating)
+              const Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+    }
   }
+
+  // Overridden to retain the state
+  @override
+  bool get wantKeepAlive => true;
 }

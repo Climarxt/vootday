@@ -78,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen>
         controller: _tabController,
         children: [
           FollowingScreen(),
-          SearchExplorer(),
+          ExplorerScreen(),
         ],
       ),
     );

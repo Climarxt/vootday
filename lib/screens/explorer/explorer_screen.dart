@@ -73,16 +73,18 @@ class _ExplorerScreenState extends State<ExplorerScreen>
                 context.read<ExplorerBloc>().add(ExplorerFetchPosts());
                 context.read<LikedPostsCubit>().clearAllLikedPosts();
               },
-              child: ListView.separated(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                  childAspectRatio: 0.5,
+                ),
                 physics: const BouncingScrollPhysics(),
                 cacheExtent: 10000,
                 controller: _scrollController,
                 itemCount: state.posts.length + 1,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(height: 10),
                 itemBuilder: (BuildContext context, int index) {
-                  // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
-                  // ou un SizedBox vide si la pagination n'est pas en cours
                   if (index == state.posts.length) {
                     return state.status == ExplorerStatus.paginating
                         ? const Center(child: CircularProgressIndicator())

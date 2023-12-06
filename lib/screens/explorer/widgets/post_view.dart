@@ -82,22 +82,6 @@ class _PostViewState extends State<PostView>
     return Stack(
       children: [
         Positioned(
-          top: 32,
-          right: -1,
-          child: Container(
-            width: 74,
-            height: 24,
-            decoration: const BoxDecoration(
-              color: couleurBleuClair2,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4),
-                bottomLeft: Radius.circular(4),
-              ),
-            ),
-            child: Center(child: buildLikeCount(context)),
-          ),
-        ),
-        Positioned(
           bottom: 10,
           left: 12,
           child: buildTitle(context),
@@ -113,7 +97,7 @@ class _PostViewState extends State<PostView>
         GestureDetector(
           onTap: () {
             context.go(
-                '/home/user/${widget.post.author.id}?username=${widget.post.author.username}');
+                '/search/user/${widget.post.author.id}?username=${widget.post.author.username}');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
@@ -168,6 +152,6 @@ class _PostViewState extends State<PostView>
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
     GoRouter.of(context)
-        .push('/home/post/${widget.post.id}?username=$username');
+        .push('/search/post/${widget.post.id}?username=$username');
   }
 }

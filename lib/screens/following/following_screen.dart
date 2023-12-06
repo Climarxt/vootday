@@ -1,4 +1,3 @@
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/following/widgets/widgets.dart';
@@ -125,88 +124,6 @@ class _FollowingScreenState extends State<FollowingScreen>
         );
     }
   }
-
-  List<Tab> tabs = [
-    const Tab(
-      child: Text(
-        "BOOTD1",
-        style: TextStyle(shadows: [
-          Shadow(
-              // bottomLeft
-              offset: Offset(-0.1, -0.1),
-              color: Colors.grey),
-          Shadow(
-              // bottomRight
-              offset: Offset(0.1, -0.1),
-              color: Colors.grey),
-          Shadow(
-              // topRight
-              offset: Offset(0.1, 0.1),
-              color: Colors.grey),
-          Shadow(
-              // topLeft
-              offset: Offset(-0.1, 0.1),
-              color: Colors.grey),
-        ]),
-      ),
-    ),
-    const Tab(
-      child: Text(
-        "BOOTD2",
-        style: TextStyle(shadows: [
-          Shadow(
-              // bottomLeft
-              offset: Offset(-0.1, -0.1),
-              color: Colors.grey),
-          Shadow(
-              // bottomRight
-              offset: Offset(0.1, -0.1),
-              color: Colors.grey),
-          Shadow(
-              // topRight
-              offset: Offset(0.1, 0.1),
-              color: Colors.grey),
-          Shadow(
-              // topLeft
-              offset: Offset(-0.1, 0.1),
-              color: Colors.grey),
-        ]),
-      ),
-    ),
-    const Tab(
-        child: Text(
-      "BOOTD3",
-      style: TextStyle(shadows: [
-        Shadow(
-            // bottomLeft
-            offset: Offset(-0.1, -0.1),
-            color: Colors.grey),
-        Shadow(
-            // bottomRight
-            offset: Offset(0.1, -0.1),
-            color: Colors.grey),
-        Shadow(
-            // topRight
-            offset: Offset(0.1, 0.1),
-            color: Colors.grey),
-        Shadow(
-            // topLeft
-            offset: Offset(-0.1, 0.1),
-            color: Colors.grey),
-      ]),
-    )),
-  ];
-  List<Widget> tabsContent = [
-    Container(
-      color: couleurBleu,
-    ),
-    Container(
-      color: couleurBleu1,
-    ),
-    Container(
-      color: couleurBleu2,
-    ),
-  ];
 
   // Overridden to retain the state
   @override

@@ -12,7 +12,7 @@ import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
-import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

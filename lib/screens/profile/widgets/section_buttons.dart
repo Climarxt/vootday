@@ -1,6 +1,6 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:flutter/material.dart';
-import '../bloc/profile_bloc.dart';
 import 'widgets.dart';
 
 class ButtonsSection extends StatelessWidget {

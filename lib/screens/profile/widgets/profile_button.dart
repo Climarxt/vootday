@@ -1,8 +1,8 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '/screens/profile/bloc/profile_bloc.dart';
 
 class ProfileButton extends StatelessWidget {
   // Indicates whether the profile belongs to the current user.

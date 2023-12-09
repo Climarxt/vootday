@@ -1,5 +1,5 @@
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
 
 import 'package:flutter/material.dart';
 

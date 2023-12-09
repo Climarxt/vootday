@@ -34,10 +34,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: buildCreatenewcollection(context),
-          ),
           body: _buildBody(state),
         );
       },
@@ -51,6 +47,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
       default:
         return Stack(
           children: [
+            buildCreatenewcollection(context),
             GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

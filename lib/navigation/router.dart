@@ -690,6 +690,99 @@ GoRouter createRouter(BuildContext context) {
                       ),
                     ],
                   ),
+                  GoRoute(
+                    path: 'collection/:collectionId',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      final eventId = state.pathParameters['collectionId']!;
+                      final title =
+                          state.uri.queryParameters['title'] ?? 'title';
+                      final logoUrl =
+                          state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: FeedEvent(
+                            eventId: eventId, title: title, logoUrl: logoUrl),
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'post/:postId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final postId = state.pathParameters['postId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          final eventId = state.pathParameters['eventId']!;
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
+                          final logoUrl =
+                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: PostEventScreen(
+                              title: title,
+                              postId: postId,
+                              username: username,
+                              eventId: eventId,
+                              logoUrl: logoUrl,
+                            ),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: 'user/:userId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final userId = state.pathParameters['userId']!;
+                              final username =
+                                  state.uri.queryParameters['username'] ??
+                                      'Unknown';
+                              final title =
+                                  state.uri.queryParameters['title'] ?? 'title';
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: ProfileScreen(
+                                    userId: userId,
+                                    username: username,
+                                    title: title),
+                              );
+                            },
+                          ),
+                          GoRoute(
+                            path: 'comment',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: const CommentWIPScreen(),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      GoRoute(
+                        path: 'user/:userId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final userId = state.pathParameters['userId']!;
+                          final username =
+                              state.uri.queryParameters['username'] ??
+                                  'Unknown';
+                          final title =
+                              state.uri.queryParameters['title'] ?? 'title';
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: ProfileScreen(
+                              userId: userId,
+                              username: username,
+                              title: title,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],

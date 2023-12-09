@@ -33,8 +33,8 @@ class _FeedCollectionState extends State<FeedCollection>
     final feedCollectionBloc = context.read<FeedCollectionBloc>();
     if (!feedCollectionBloc.state.hasFetchedInitialPosts ||
         feedCollectionBloc.state.collection?.id != widget.collectionId) {
-      feedCollectionBloc.add(
-          FeedCollectionFetchPostsCollections(collectionId: widget.collectionId));
+      feedCollectionBloc.add(FeedCollectionFetchPostsCollections(
+          collectionId: widget.collectionId));
     }
   }
 
@@ -47,7 +47,8 @@ class _FeedCollectionState extends State<FeedCollection>
             FeedCollectionStatus.paginating) {
       _isFetching = true;
       context.read<FeedCollectionBloc>().add(
-          FeedCollectionPaginatePostsCollections(collectionId: widget.collectionId));
+          FeedCollectionPaginatePostsCollections(
+              collectionId: widget.collectionId));
     }
   }
 
@@ -75,14 +76,17 @@ class _FeedCollectionState extends State<FeedCollection>
   Widget _buildBody(FeedCollectionState state) {
     return Stack(
       children: [
-        ListView.separated(
-          key: PageStorageKey<String>('feed-event-list-${widget.collectionId}'),
+        GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            childAspectRatio: 0.5,
+          ),
           physics: const BouncingScrollPhysics(),
           cacheExtent: 10000,
           controller: _scrollController,
           itemCount: state.posts.length + 1,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 10),
           itemBuilder: (BuildContext context, int index) {
             if (index == state.posts.length) {
               return state.status == FeedCollectionStatus.paginating

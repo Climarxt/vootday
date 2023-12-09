@@ -6,6 +6,7 @@ import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
+import 'package:bootdv2/screens/post/post_collection_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
@@ -726,22 +727,17 @@ GoRouter createRouter(BuildContext context) {
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
                           final postId = state.pathParameters['postId']!;
+                          final collectionId =
+                              state.pathParameters['collectionId']!;
                           final username =
                               state.uri.queryParameters['username'] ??
                                   'Unknown';
-                          final eventId = state.pathParameters['eventId']!;
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-                          final logoUrl =
-                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: PostEventScreen(
-                              title: title,
+                            child: PostCollectionScreen(
                               postId: postId,
+                              collectionId: collectionId,
                               username: username,
-                              eventId: eventId,
-                              logoUrl: logoUrl,
                             ),
                           );
                         },

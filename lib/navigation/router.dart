@@ -6,7 +6,7 @@ import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
-import 'package:bootdv2/screens/profile/bloc/profile_bloc.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/screens.dart';

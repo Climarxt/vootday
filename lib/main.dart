@@ -190,6 +190,15 @@ class MyApp extends StatelessWidget {
               return explorerBloc;
             },
           ),
+          BlocProvider(
+            create: (context) {
+              final myCollectionBloc = MyCollectionBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+              );
+              return myCollectionBloc;
+            },
+          ),
         ],
         child: Builder(
           builder: (context) => MaterialApp.router(

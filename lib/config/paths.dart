@@ -4,6 +4,7 @@ class Paths {
   static const String posts = 'posts';
   static const String likes = 'likes';
   static const String comments = 'comments';
+  static const String collections = 'collections';
   static const String followers = 'followers';
   static const String following = 'following';
   static const String feeds = 'feeds';

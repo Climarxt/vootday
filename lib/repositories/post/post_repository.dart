@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_debugPrint
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/collection_model.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -610,7 +611,7 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-Future<List<Post?>> getExplorer({
+  Future<List<Post?>> getExplorer({
     required String userId,
     String? lastPostId,
   }) async {
@@ -677,5 +678,44 @@ Future<List<Post?>> getExplorer({
           .doc();
       transaction.set(participantRef, participantDocument);
     });
+  }
+
+  Future<List<Collection?>> getMyCollection({
+    required String userId,
+  }) async {
+    try {
+      debugPrint(
+          'Method getMyCollection : Attempting to fetch collection documents from Firestore...');
+      QuerySnapshot collectionSnap;
+      {
+        collectionSnap = await _firebaseFirestore
+            .collection(Paths.collections)
+            .orderBy('date', descending: true)
+            .get();
+      }
+
+      debugPrint(
+          'Method getMyCollection : Collection documents fetched. Converting to Collection objects...');
+      List<Future<Collection?>> futureCollections = collectionSnap.docs
+          .map((doc) => Collection.fromDocument(doc))
+          .toList();
+
+      // Use Future.wait to resolve all events
+      List<Collection?> collections = await Future.wait(futureCollections);
+
+      debugPrint(
+          'Method getMyCollection : Collection objects created. Total events: ${collections.length}');
+      // Here, you might also debugPrint an event for debugging
+      if (collections.isNotEmpty) {
+        debugPrint(
+            'Method getEventsDone : First event details: ${collections.first}');
+      }
+
+      return collections;
+    } catch (e) {
+      debugPrint(
+          'Method getEventsDone : An error occurred while fetching events: ${e.toString()}');
+      return [];
+    }
   }
 }

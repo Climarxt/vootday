@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
-import 'package:bootdv2/models/collection_model.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+
 import 'package:flutter/material.dart';
-import '/repositories/repositories.dart';
 
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_state.dart';
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart';

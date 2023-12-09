@@ -704,11 +704,11 @@ class PostRepository extends BasePostRepository {
       List<Collection?> collections = await Future.wait(futureCollections);
 
       debugPrint(
-          'Method getMyCollection : Collection objects created. Total events: ${collections.length}');
+          'Method getMyCollection : Collection objects created. Total collections: ${collections.length}');
       // Here, you might also debugPrint an event for debugging
       if (collections.isNotEmpty) {
         debugPrint(
-            'Method getMyCollection : First event details: ${collections.first}');
+            'Method getMyCollection : First collection details: ${collections.first}');
       }
 
       return collections;

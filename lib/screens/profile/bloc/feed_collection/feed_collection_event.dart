@@ -24,14 +24,3 @@ class FeedCollectionPaginatePostsCollections extends FeedCollectionEvent {
   @override
   List<Object> get props => [collectionId];
 }
-
-class FeedCollectionClean extends FeedCollectionEvent {}
-
-class FeedCollectionFetchEventDetails extends FeedCollectionEvent {
-  final String collectionId;
-
-  const FeedCollectionFetchEventDetails({required this.collectionId});
-
-  @override
-  List<Object> get props => [collectionId];
-}

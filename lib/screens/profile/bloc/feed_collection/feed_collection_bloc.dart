@@ -29,8 +29,6 @@ class FeedCollectionBloc
         _mapFeedCollectionFetchPostsCollection);
     on<FeedCollectionPaginatePostsCollections>(
         _mapFeedCollectionPaginatePostsCollectionsToState);
-    on<FeedCollectionFetchEventDetails>(_onFeedCollectionFetchEventDetails);
-    on<FeedCollectionClean>(_onFeedCollectionClean);
   }
 
   Future<void> _mapFeedCollectionFetchPostsCollection(
@@ -43,7 +41,6 @@ class FeedCollectionBloc
           '_mapFeedCollectionFetchPostsCollection : Already fetched initial posts for collection ${event.collectionId}.');
       return;
     }
-    _onFeedCollectionClean(FeedCollectionClean(), emit);
     debugPrint(
         '_mapFeedCollectionFetchPostsCollection : Fetching posts for collection ${event.collectionId}.');
 
@@ -97,31 +94,6 @@ class FeedCollectionBloc
     }
   }
 
-  Future<void> _onFeedCollectionFetchEventDetails(
-    FeedCollectionFetchEventDetails event,
-    Emitter<FeedCollectionState> emit,
-  ) async {
-    try {
-      debugPrint(
-          '_onFeedCollectionFetchEventDetails : Fetching event details for event ID: ${event.collectionId}');
-      final eventDetails =
-          await _postRepository.getEventById(event.collectionId);
-      debugPrint(
-          '_onFeedCollectionFetchEventDetails : Fetched event details: $eventDetails');
-      emit(state.copyWith(
-          event: eventDetails)); // Mettez à jour l'état avec l'Event
-    } catch (_) {
-      debugPrint(
-          '_onFeedCollectionFetchEventDetails : Error loading event details');
-      emit(state.copyWith(
-        status: FeedCollectionStatus.error,
-        failure: Failure(
-            message:
-                '_onFeedCollectionFetchEventDetails : Erreur de chargement des détails de l\'événement'),
-      ));
-    }
-  }
-
   Future<void> _mapFeedCollectionPaginatePostsCollectionsToState(
     FeedCollectionPaginatePostsCollections event,
     Emitter<FeedCollectionState> emit,
@@ -155,12 +127,5 @@ class FeedCollectionBloc
             message: 'Quelque chose s\'est mal passé ! Veuillez réessayer.'),
       ));
     }
-  }
-
-  Future<void> _onFeedCollectionClean(
-    FeedCollectionClean event,
-    Emitter<FeedCollectionState> emit,
-  ) async {
-    emit(FeedCollectionState.initial()); // Remet l'état à son état initial
   }
 }

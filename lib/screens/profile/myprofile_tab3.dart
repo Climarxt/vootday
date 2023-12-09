@@ -56,7 +56,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                 mainAxisSpacing: 6,
                 childAspectRatio: 0.8,
               ),
-              physics: const BouncingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               cacheExtent: 10000,
               itemCount: state.collections.length + 1,
               itemBuilder: (BuildContext context, int index) {

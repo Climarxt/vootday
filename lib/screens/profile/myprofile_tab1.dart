@@ -35,7 +35,7 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
         childAspectRatio: 0.8,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       cacheExtent: 10000,
       itemCount: state.posts.length,
       itemBuilder: (context, index) {

@@ -46,7 +46,7 @@ class ProfileButton extends StatelessWidget {
 
   // Navigates to the 'Edit Profile' screen.
   void navigateToEditProfile(BuildContext context) {
-    GoRouter.of(context).go('/profile/editprofile');
+    GoRouter.of(context).push('/profile/editprofile');
   }
 
   // Builds the 'Follow/Unfollow' button.

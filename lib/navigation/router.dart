@@ -584,6 +584,7 @@ GoRouter createRouter(BuildContext context) {
                   );
                 },
                 routes: <RouteBase>[
+                  // Profile/Post
                   GoRoute(
                     path: 'post/:postId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
@@ -635,24 +636,37 @@ GoRouter createRouter(BuildContext context) {
                       ),
                     ],
                   ),
+                  // profile/editprofile
                   GoRoute(
                     path: 'editprofile',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      return NoAnimationPage(child: const EditProfileScreen());
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: EditProfileScreen(),
+                      );
                     },
                   ),
+                  // profile/settings
                   GoRoute(
                     path: 'settings',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      return NoAnimationPage(child: const SettingsScreen());
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: SettingsScreen(),
+                      );
                     },
                   ),
+                  // profile/notifications
                   GoRoute(
                     path: 'notifications',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      return NoAnimationPage(child: const NotificationScreen());
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: NotificationScreen(),
+                      );
                     },
                   ),
+                  // profile/create
                   GoRoute(
                     path: 'create',
                     builder: (BuildContext context, GoRouterState state) =>
@@ -691,6 +705,7 @@ GoRouter createRouter(BuildContext context) {
                       ),
                     ],
                   ),
+                  // profile/collection
                   GoRoute(
                     path: 'collection/:collectionId',
                     pageBuilder: (BuildContext context, GoRouterState state) {

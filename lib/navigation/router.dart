@@ -9,6 +9,7 @@ import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
+import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 
@@ -693,15 +694,15 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'collection/:collectionId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final eventId = state.pathParameters['collectionId']!;
+                      final collectionId =
+                          state.pathParameters['collectionId']!;
                       final title =
                           state.uri.queryParameters['title'] ?? 'title';
-                      final logoUrl =
-                          state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: FeedEvent(
-                            eventId: eventId, title: title, logoUrl: logoUrl),
+                        child: FeedCollection(
+                            collectionId: collectionId, title: title),
                       );
                     },
                     routes: [

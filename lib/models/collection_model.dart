@@ -7,35 +7,35 @@ class Collection extends Equatable {
   final String id;
   final User author;
   final DateTime date;
-  final String name;
+  final String title;
 
   const Collection({
     required this.id,
     required this.author,
     required this.date,
-    required this.name,
+    required this.title,
   });
 
   static var empty = Collection(
     id: '',
     author: User.empty,
     date: DateTime(0),
-    name: '',
+    title: '',
   );
 
-  List<Object?> get props => [id, author, date, name];
+  List<Object?> get props => [id, author, date, title];
 
   Collection copyWith({
     String? id,
     User? author,
     DateTime? date,
-    String? name,
+    String? title,
   }) {
     return Collection(
       id: id ?? this.id,
       author: author ?? this.author,
       date: date ?? this.date,
-      name: name ?? this.name,
+      title: title ?? this.title,
     );
   }
 
@@ -44,7 +44,7 @@ class Collection extends Equatable {
       'author':
           FirebaseFirestore.instance.collection(Paths.users).doc(author.id),
       'date': date,
-      'name': name,
+      'title': title,
     };
   }
 
@@ -63,7 +63,7 @@ class Collection extends Equatable {
             id: doc.id,
             author: User.fromSnapshot(authorDoc),
             date: (data['date'] as Timestamp).toDate(),
-            name: data['name'] as String,
+            title: data['title'] as String,
           );
         } else {
           print(

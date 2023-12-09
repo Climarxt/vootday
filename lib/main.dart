@@ -13,6 +13,7 @@ import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -197,6 +198,16 @@ class MyApp extends StatelessWidget {
                 authBloc: context.read<AuthBloc>(),
               );
               return myCollectionBloc;
+            },
+          ),
+          BlocProvider(
+            create: (context) {
+              final feedCollectionBloc = FeedCollectionBloc(
+                postRepository: context.read<PostRepository>(),
+                authBloc: context.read<AuthBloc>(),
+                likedPostsCubit: context.read<LikedPostsCubit>(),
+              );
+              return feedCollectionBloc;
             },
           ),
         ],

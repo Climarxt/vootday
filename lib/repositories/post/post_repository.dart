@@ -718,4 +718,74 @@ class PostRepository extends BasePostRepository {
       return [];
     }
   }
+
+  Future<List<Post?>> getFeedCollection({
+    required String collectionId,
+    required String userId,
+    String? lastPostId,
+  }) async {
+    debugPrint(
+        'Method getFeedCollection : called with collectionId: $collectionId, userId: $userId, lastPostId: $lastPostId');
+    QuerySnapshot postsSnap;
+    final collectionDocRef = _firebaseFirestore.collection('collections').doc(collectionId);
+
+    if (lastPostId == null) {
+      debugPrint('Method getFeedCollection : Fetching initial collections...');
+      postsSnap = await collectionDocRef
+          .collection('feed_collection')
+          .orderBy('date', descending: true)
+          .limit(4)
+          .get();
+      debugPrint(
+          'Method getFeedCollection : Fetched ${postsSnap.docs.length} initial collections.');
+    } else {
+      debugPrint(
+          'Method getFeedCollection : Fetching posts after postId: $lastPostId');
+      final lastPostDoc =
+          await collectionDocRef.collection('feed_collection').doc(lastPostId).get();
+
+      if (!lastPostDoc.exists) {
+        debugPrint(
+            'Method getFeedCollection : Last post not found. Returning empty list.');
+        return [];
+      }
+
+      postsSnap = await collectionDocRef
+          .collection('feed_collection')
+          .orderBy('date', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(2)
+          .get();
+      debugPrint(
+          'Method getFeedCollection : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
+    }
+
+    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
+      try {
+        if (doc.exists) {
+          debugPrint(
+              'Method getFeedCollection : Processing post document with ID: ${doc.id}');
+          DocumentReference postRef = doc['post_ref'];
+          DocumentSnapshot postSnap = await postRef.get();
+          if (postSnap.exists) {
+            return Post.fromDocument(postSnap);
+          } else {
+            debugPrint(
+                'Method getFeedCollection : Referenced post document does not exist.');
+          }
+        } else {
+          debugPrint(
+              'Method getFeedCollection : Document does not exist, skipping.');
+        }
+      } catch (e) {
+        debugPrint(
+            'Method getFeedCollection : Error processing post document: ${doc.id}, Error: $e');
+      }
+      return null;
+    }).toList();
+
+    final posts = await Future.wait(postFutures);
+    debugPrint('Method getFeedCollection : Total posts processed: ${posts.length}');
+    return posts;
+  }
 }

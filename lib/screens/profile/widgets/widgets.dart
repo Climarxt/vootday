@@ -1,11 +1,14 @@
 export 'appbar_myprofile.dart';
 export 'appbar_profile.dart';
+export 'appbar_title.dart';
 export 'appbar_title_profile.dart';
 export 'button.dart';
+export 'feed_collection.dart';
 export 'mosaique_like_card.dart';
 export 'mosaique_myprofile_card.dart';
 export 'mosaique_profile_card.dart';
 export 'mosaique_collection_card.dart';
+export 'post_collection_view.dart';
 export 'profile_button.dart';
 export 'profile_stats.dart';
 export 'section_about.dart';

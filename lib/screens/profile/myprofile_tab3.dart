@@ -2,6 +2,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -86,7 +87,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                       }
                       return MosaiqueCollectionCard(
                         imageUrl: snapshot.data!,
-                        name: collection.name,
+                        name: collection.title,
                         collectionId: collection.id,
                       );
                     },

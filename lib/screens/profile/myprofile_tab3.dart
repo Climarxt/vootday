@@ -31,7 +31,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
         ),
         const SizedBox(height: 8.0),
         Expanded(
-          // Ajout du widget Expanded ici
           child: Container(
             color: white,
             child: GridView.builder(
@@ -143,7 +142,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
     );
   }
 
-  // Builds the 'Edit Profile' button.
   TextButton buildValidateButton(BuildContext context) {
     return TextButton(
       onPressed: () {},

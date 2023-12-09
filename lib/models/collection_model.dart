@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Collection extends Equatable {
-  final String? id;
+  final String id;
   final User author;
   final DateTime date;
   final String name;

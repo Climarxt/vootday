@@ -708,13 +708,13 @@ class PostRepository extends BasePostRepository {
       // Here, you might also debugPrint an event for debugging
       if (collections.isNotEmpty) {
         debugPrint(
-            'Method getEventsDone : First event details: ${collections.first}');
+            'Method getMyCollection : First event details: ${collections.first}');
       }
 
       return collections;
     } catch (e) {
       debugPrint(
-          'Method getEventsDone : An error occurred while fetching events: ${e.toString()}');
+          'Method getMyCollection : An error occurred while fetching events: ${e.toString()}');
       return [];
     }
   }

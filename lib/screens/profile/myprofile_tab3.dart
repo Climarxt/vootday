@@ -1,7 +1,11 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileTab3 extends StatefulWidget {
   const MyProfileTab3({super.key});
@@ -11,50 +15,136 @@ class MyProfileTab3 extends StatefulWidget {
 }
 
 class _MyProfileTab3State extends State<MyProfileTab3> {
-  List<String> imageList = [
-    'assets/images/ITG1_1.jpg',
-    'assets/images/ITG1_2.jpg',
-    'assets/images/ITG3_1.jpg',
-    'assets/images/ITG3_2.jpg',
-    'assets/images/postImage.jpg',
-    'assets/images/postImage2.jpg',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 3),
-          child: buildCreatenewcollection(context),
-        ),
-        const SizedBox(height: 8.0),
-        Expanded(
-          child: Container(
-            color: white,
-            child: GridView.builder(
-              padding: EdgeInsets.zero,
-              physics: const ClampingScrollPhysics(),
+    return BlocConsumer<MyCollectionBloc, MyCollectionState>(
+      listener: (context, state) {
+        if (state.status == MyCollectionStatus.initial &&
+            state.collections.isEmpty) {
+          context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: buildCreatenewcollection(context),
+          ),
+          body: _buildBody(state),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(MyCollectionState state) {
+    switch (state.status) {
+      case MyCollectionStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      default:
+        return Stack(
+          children: [
+            GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6,
                 childAspectRatio: 0.8,
               ),
-              itemCount: imageList.length,
-              itemBuilder: (context, index) {
-                return MosaiqueCollectionCard(
-                  context,
-                  title: "Titre",
-                  imageUrl: imageList[index],
-                );
+              physics: const BouncingScrollPhysics(),
+              cacheExtent: 10000,
+              itemCount: state.collections.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == state.collections.length) {
+                  return state.status == MyCollectionStatus.paginating
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                } else {
+                  final collection =
+                      state.collections[index] ?? Collection.empty;
+
+                  return FutureBuilder<String>(
+                    future: getMostRecentPostImageUrl(collection.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.transparent),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        // Handle the error state
+                        return Text('Error: ${snapshot.error}');
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        // Handle the case where there is no image URL
+                        return Text('No image available');
+                      }
+                      return MosaiqueCollectionCard(
+                        imageUrl: snapshot.data!,
+                        name: collection.name,
+                        collectionId: collection.id,
+                      );
+                    },
+                  );
+                }
               },
             ),
-          ),
-        ),
-      ],
-    );
+            if (state.status == MyCollectionStatus.paginating)
+              const Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+    }
+  }
+
+  Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    try {
+      final feedEventRef = FirebaseFirestore.instance
+          .collection('collections')
+          .doc(collectionId)
+          .collection('feed_collection');
+
+      final querySnapshot =
+          await feedEventRef.orderBy('date', descending: true).limit(1).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
+        final DocumentReference? postRef =
+            data?['post_ref'] as DocumentReference?;
+
+        if (postRef != null) {
+          final postDoc = await postRef.get();
+
+          if (postDoc.exists) {
+            final postData = postDoc.data() as Map<String, dynamic>?;
+            debugPrint("Referenced post document exist.");
+            return postData?['imageUrl'] as String? ?? '';
+          } else {
+            debugPrint("Referenced post document does not exist.");
+          }
+        } else {
+          debugPrint("Post reference is null.");
+        }
+      } else {
+        debugPrint("No posts found in the event's feed.");
+      }
+    } catch (e) {
+      debugPrint(
+          "An error occurred while fetching the most liked post image URL: $e");
+    }
+    return '';
   }
 
   void _openCreateCollectionSheet(BuildContext context) {

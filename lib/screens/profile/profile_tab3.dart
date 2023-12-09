@@ -35,8 +35,8 @@ class _ProfileTab3State extends State<ProfileTab3> {
         itemCount: imageList.length,
         itemBuilder: (context, index) {
           return MosaiqueCollectionCard(
-            context,
-            title: "Titre",
+            collectionId: '',
+            name: "Titre",
             imageUrl: imageList[index],
           );
         },

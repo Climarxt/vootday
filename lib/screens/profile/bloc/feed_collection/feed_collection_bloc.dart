@@ -29,6 +29,7 @@ class FeedCollectionBloc
         _mapFeedCollectionFetchPostsCollection);
     on<FeedCollectionPaginatePostsCollections>(
         _mapFeedCollectionPaginatePostsCollectionsToState);
+    on<FeedCollectionClean>(_onFeedCollectionClean);
   }
 
   Future<void> _mapFeedCollectionFetchPostsCollection(
@@ -41,6 +42,7 @@ class FeedCollectionBloc
           '_mapFeedCollectionFetchPostsCollection : Already fetched initial posts for collection ${event.collectionId}.');
       return;
     }
+    _onFeedCollectionClean(FeedCollectionClean(), emit);
     debugPrint(
         '_mapFeedCollectionFetchPostsCollection : Fetching posts for collection ${event.collectionId}.');
 
@@ -81,7 +83,8 @@ class FeedCollectionBloc
         status: FeedCollectionStatus.loaded,
         hasFetchedInitialPosts: true,
       ));
-      debugPrint('_mapFeedCollectionFetchPostsCollection : Posts loaded successfully.');
+      debugPrint(
+          '_mapFeedCollectionFetchPostsCollection : Posts loaded successfully.');
     } catch (err) {
       debugPrint(
           '_mapFeedCollectionFetchPostsCollection : Error fetching posts - ${err.toString()}');
@@ -127,5 +130,12 @@ class FeedCollectionBloc
             message: 'Quelque chose s\'est mal passé ! Veuillez réessayer.'),
       ));
     }
+  }
+
+  Future<void> _onFeedCollectionClean(
+    FeedCollectionClean event,
+    Emitter<FeedCollectionState> emit,
+  ) async {
+    emit(FeedCollectionState.initial()); // Remet l'état à son état initial
   }
 }

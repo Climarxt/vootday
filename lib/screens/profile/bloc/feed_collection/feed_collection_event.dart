@@ -24,3 +24,5 @@ class FeedCollectionPaginatePostsCollections extends FeedCollectionEvent {
   @override
   List<Object> get props => [collectionId];
 }
+
+class FeedCollectionClean extends FeedCollectionEvent {}

@@ -34,22 +34,22 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
-        );
+        return _buildBody(state);
       },
     );
   }
 
   Widget _buildBody(MyCollectionState state) {
-    switch (state.status) {
-      case MyCollectionStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            buildCreatenewcollection(context),
-            GridView.builder(
+    return Column(
+      children: [
+        Container(
+          child: buildCreatenewcollection(context),
+        ),
+        Expanded(
+          child: MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 6,
@@ -95,16 +95,10 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                 }
               },
             ),
-            if (state.status == MyCollectionStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
-    }
+          ),
+        ),
+      ],
+    );
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {

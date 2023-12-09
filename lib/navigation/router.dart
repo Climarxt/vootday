@@ -9,7 +9,7 @@ import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
-import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 

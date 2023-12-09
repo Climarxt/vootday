@@ -3,7 +3,6 @@ export 'appbar_profile.dart';
 export 'appbar_title.dart';
 export 'appbar_title_profile.dart';
 export 'button.dart';
-export 'feed_collection.dart';
 export 'mosaique_like_card.dart';
 export 'mosaique_myprofile_card.dart';
 export 'mosaique_profile_card.dart';

@@ -43,5 +43,10 @@
   "validate": "Valider",
   "searchbrands": "Rechercher des marques",
   "participate": "Participer",
-  "createnewcollection": "Créer une nouvelle collection"
+  "createnewcollection": "Créer une nouvelle collection",
+  "enternamecollection": "Saisis le nom de la collection",
+  "newcollection": "Nouvelle collection",
+  "name": "Nom",
+  "makePublic": "Rendre publique",
+  "makePublicDescription": "Les collections rendues publiques apparaîtront sur ton profil et peuvent être partagées avec tes amis"
 }

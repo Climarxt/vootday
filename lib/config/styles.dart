@@ -6,6 +6,10 @@ class AppTextStyles {
     return Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.black);
   }
 
+  static TextStyle bodyStyleGrey(BuildContext context) {
+    return Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey);
+  }
+
   static TextStyle bodyLinkBold(BuildContext context) {
     return Theme.of(context)
         .textTheme

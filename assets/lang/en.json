@@ -43,5 +43,10 @@
   "validate": "Validate",
   "searchbrands": "Search for brands",
   "participate": "Participate",
-  "createnewcollection": "Create a new collection"
+  "createnewcollection": "Create a new collection",
+  "enternamecollection": "Enter the name of the collection",
+  "newcollection": "New collection",
+  "name": "Name",
+  "makePublic": "Make public",
+  "makePublicDescription": "Collections made public will appear on your profile and can be shared with your friends"
 }

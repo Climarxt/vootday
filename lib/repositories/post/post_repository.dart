@@ -685,27 +685,43 @@ class PostRepository extends BasePostRepository {
   }) async {
     try {
       debugPrint(
-          'Method getMyCollection : Attempting to fetch collection documents from Firestore...');
-      QuerySnapshot collectionSnap;
-      {
-        collectionSnap = await _firebaseFirestore
-            .collection(Paths.collections)
-            .orderBy('date', descending: true)
-            .get();
-      }
+          'Method getMyCollection : Attempting to fetch collection references from Firestore...');
 
-      debugPrint(
-          'Method getMyCollection : Collection documents fetched. Converting to Collection objects...');
-      List<Future<Collection?>> futureCollections = collectionSnap.docs
-          .map((doc) => Collection.fromDocument(doc))
+      // Récupérer les références de la collection de l'utilisateur
+      QuerySnapshot userCollectionSnap = await _firebaseFirestore
+          .collection('users')
+          .doc(userId)
+          .collection('mycollection')
+          .get();
+
+      // Extraire les références de collection
+      List<DocumentReference> collectionRefs = userCollectionSnap.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+            return data != null && data.containsKey('collection_ref')
+                ? data['collection_ref'] as DocumentReference?
+                : null;
+          })
+          .where((ref) => ref != null)
+          .cast<DocumentReference>()
           .toList();
 
-      // Use Future.wait to resolve all events
+      debugPrint(
+          'Method getMyCollection : Collection references fetched. Fetching each collection document...');
+
+      List<Future<Collection?>> futureCollections = collectionRefs.map(
+        (ref) async {
+          DocumentSnapshot collectionDoc = await ref.get();
+          return Collection.fromDocument(collectionDoc);
+        },
+      ).toList();
+
+      // Utiliser Future.wait pour résoudre toutes les collections
       List<Collection?> collections = await Future.wait(futureCollections);
 
       debugPrint(
           'Method getMyCollection : Collection objects created. Total collections: ${collections.length}');
-      // Here, you might also debugPrint an event for debugging
+
       if (collections.isNotEmpty) {
         debugPrint(
             'Method getMyCollection : First collection details: ${collections.first}');
@@ -714,7 +730,7 @@ class PostRepository extends BasePostRepository {
       return collections;
     } catch (e) {
       debugPrint(
-          'Method getMyCollection : An error occurred while fetching events: ${e.toString()}');
+          'Method getMyCollection : An error occurred while fetching collections: ${e.toString()}');
       return [];
     }
   }
@@ -727,7 +743,8 @@ class PostRepository extends BasePostRepository {
     debugPrint(
         'Method getFeedCollection : called with collectionId: $collectionId, userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
-    final collectionDocRef = _firebaseFirestore.collection('collections').doc(collectionId);
+    final collectionDocRef =
+        _firebaseFirestore.collection('collections').doc(collectionId);
 
     if (lastPostId == null) {
       debugPrint('Method getFeedCollection : Fetching initial collections...');
@@ -741,8 +758,10 @@ class PostRepository extends BasePostRepository {
     } else {
       debugPrint(
           'Method getFeedCollection : Fetching posts after postId: $lastPostId');
-      final lastPostDoc =
-          await collectionDocRef.collection('feed_collection').doc(lastPostId).get();
+      final lastPostDoc = await collectionDocRef
+          .collection('feed_collection')
+          .doc(lastPostId)
+          .get();
 
       if (!lastPostDoc.exists) {
         debugPrint(
@@ -785,7 +804,8 @@ class PostRepository extends BasePostRepository {
     }).toList();
 
     final posts = await Future.wait(postFutures);
-    debugPrint('Method getFeedCollection : Total posts processed: ${posts.length}');
+    debugPrint(
+        'Method getFeedCollection : Total posts processed: ${posts.length}');
     return posts;
   }
 }

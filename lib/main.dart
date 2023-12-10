@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) {
               final feedOOTDBloc = FeedOOTDBloc(
-                postRepository: context.read<PostRepository>(),
+                feedRepository: context.read<FeedRepository>(),
                 authBloc: context.read<AuthBloc>(),
                 likedPostsCubit: context.read<LikedPostsCubit>(),
               );

@@ -161,15 +161,30 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: BlocProvider<FeedMonthBloc>(
-                      create: (context) {
-                        final feedMonthBloc = FeedMonthBloc(
-                          feedRepository: context.read<FeedRepository>(),
-                          authBloc: context.read<AuthBloc>(),
-                        );
-                        feedMonthBloc.add(FeedMonthFetchPostsMonth());
-                        return feedMonthBloc;
-                      },
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider<FeedMonthBloc>(
+                          create: (context) {
+                            final feedMonthBloc = FeedMonthBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                            );
+                            feedMonthBloc.add(FeedMonthFetchPostsMonth());
+                            return feedMonthBloc;
+                          },
+                        ),
+                        BlocProvider<FeedOOTDBloc>(
+                          create: (context) {
+                            final feedOOTDBloc = FeedOOTDBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                              likedPostsCubit: context.read<LikedPostsCubit>(),
+                            );
+                            feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
+                            return feedOOTDBloc;
+                          },
+                        ),
+                      ],
                       child: const HomeScreen(),
                     ),
                   );

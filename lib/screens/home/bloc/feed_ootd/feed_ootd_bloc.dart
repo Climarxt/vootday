@@ -13,15 +13,15 @@ part 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_event.dart';
 part 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_state.dart';
 
 class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
-  final PostRepository _postRepository;
+  final FeedRepository _feedRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
 
   FeedOOTDBloc({
-    required PostRepository postRepository,
+    required FeedRepository feedRepository,
     required AuthBloc authBloc,
     required LikedPostsCubit likedPostsCubit,
-  })  : _postRepository = postRepository,
+  })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
         super(FeedOOTDState.initial()) {
@@ -36,16 +36,7 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   ) async {
     try {
       final posts =
-          await _postRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+          await _feedRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
@@ -66,16 +57,7 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   ) async {
     try {
       final posts =
-          await _postRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+          await _feedRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
@@ -97,19 +79,12 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     try {
       final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
 
-      final posts = await _postRepository.getFeedOOTD(
+      final posts = await _feedRepository.getFeedOOTD(
         userId: _authBloc.state.user!.uid,
         lastPostId: lastPostId,
       );
       final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
-
+      
       emit(
         state.copyWith(posts: updatedPosts, status: FeedOOTDStatus.loaded),
       );

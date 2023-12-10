@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/blocs/blocs.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import '/blocs/blocs.dart';
-import '/models/models.dart';
 
 part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_state.dart';
 part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_event.dart';

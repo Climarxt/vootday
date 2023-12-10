@@ -88,28 +88,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) {
-              final feedOOTDBloc = FeedOOTDBloc(
-                feedRepository: context.read<FeedRepository>(),
-                authBloc: context.read<AuthBloc>(),
-                likedPostsCubit: context.read<LikedPostsCubit>(),
-              );
-              feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
-              return feedOOTDBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
-              final feedEventBloc = FeedEventBloc(
-                eventRepository: context.read<EventRepository>(),
-                feedRepository: context.read<FeedRepository>(),
-                authBloc: context.read<AuthBloc>(),
-                likedPostsCubit: context.read<LikedPostsCubit>(),
-              );
-              return feedEventBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
               final homeEventBloc = HomeEventBloc(
                 postRepository: context.read<PostRepository>(),
                 authBloc: context.read<AuthBloc>(),

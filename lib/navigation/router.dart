@@ -163,6 +163,17 @@ GoRouter createRouter(BuildContext context) {
                     key: state.pageKey,
                     child: MultiBlocProvider(
                       providers: [
+                        BlocProvider<FeedOOTDBloc>(
+                          create: (context) {
+                            final feedOOTDBloc = FeedOOTDBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                              likedPostsCubit: context.read<LikedPostsCubit>(),
+                            );
+                            feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
+                            return feedOOTDBloc;
+                          },
+                        ),
                         BlocProvider<FeedMonthBloc>(
                           create: (context) {
                             final feedMonthBloc = FeedMonthBloc(
@@ -173,15 +184,15 @@ GoRouter createRouter(BuildContext context) {
                             return feedMonthBloc;
                           },
                         ),
-                        BlocProvider<FeedOOTDBloc>(
+                        BlocProvider<FeedEventBloc>(
                           create: (context) {
-                            final feedOOTDBloc = FeedOOTDBloc(
+                            final feedEventBloc = FeedEventBloc(
+                              eventRepository: context.read<EventRepository>(),
                               feedRepository: context.read<FeedRepository>(),
                               authBloc: context.read<AuthBloc>(),
                               likedPostsCubit: context.read<LikedPostsCubit>(),
                             );
-                            feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
-                            return feedOOTDBloc;
+                            return feedEventBloc;
                           },
                         ),
                       ],
@@ -270,7 +281,6 @@ GoRouter createRouter(BuildContext context) {
                       );
                     },
                   ),
-
                   // home/event/:event/Id
                   GoRoute(
                     path: 'event/:eventId',

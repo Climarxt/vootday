@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
@@ -8,14 +7,11 @@ part 'event_event.dart';
 part 'event_state.dart';
 
 class EventBloc extends Bloc<EventEvent, EventState> {
-  final PostRepository _postRepository;
   final EventRepository _eventRepository;
 
   EventBloc({
-    required PostRepository postRepository,
     required EventRepository eventRepository,
-  })  : _postRepository = postRepository,
-        _eventRepository = eventRepository,
+  })  : _eventRepository = eventRepository,
         super(EventState.initial()) {
     on<EventFetchEvent>(_mapEventFetchEvent);
   }

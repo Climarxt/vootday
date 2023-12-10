@@ -148,7 +148,6 @@ class MyApp extends StatelessWidget {
             create: (context) {
               final eventBloc = EventBloc(
                 eventRepository: context.read<EventRepository>(),
-                postRepository: context.read<PostRepository>(),
               );
               return eventBloc;
             },

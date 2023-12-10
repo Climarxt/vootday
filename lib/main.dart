@@ -128,16 +128,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) {
-              final followingBloc = FollowingBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-                likedPostsCubit: context.read<LikedPostsCubit>(),
-              );
-              return followingBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
               final explorerBloc = ExplorerBloc(
                 postRepository: context.read<PostRepository>(),
                 authBloc: context.read<AuthBloc>(),

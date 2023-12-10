@@ -1,3 +1,4 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -10,10 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileTab3 extends StatefulWidget {
-  final String userId;
   const MyProfileTab3({
     super.key,
-    required this.userId,
   });
 
   @override
@@ -28,9 +27,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      context
-          .read<MyCollectionBloc>()
-          .add(MyCollectionFetchCollections(userId: widget.userId));
+      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
     });
   }
 
@@ -40,9 +37,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
       listener: (context, state) {
         if (state.status == MyCollectionStatus.initial &&
             state.collections.isEmpty) {
-          context
-              .read<MyCollectionBloc>()
-              .add(MyCollectionFetchCollections(userId: widget.userId));
+          context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
         }
       },
       builder: (context, state) {
@@ -256,9 +251,15 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
       onPressed: () {
         final String collectionName = _collectionNameController.text.trim();
         if (collectionName.isNotEmpty) {
-          context
-              .read<CreateCollectionCubit>()
-              .createCollection(widget.userId, collectionName);
+          final authState = context.read<AuthBloc>().state;
+          final userId = authState.user?.uid;
+          if (userId != null) {
+            context
+                .read<CreateCollectionCubit>()
+                .createCollection(userId, collectionName);
+          } else {
+            print('User ID is null');
+          }
         }
       },
       style: TextButton.styleFrom(

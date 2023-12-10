@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
@@ -12,10 +13,13 @@ part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart'
 
 class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   final PostRepository _postRepository;
+  final AuthBloc _authBloc;
 
   MyCollectionBloc({
     required PostRepository postRepository,
+    required AuthBloc authBloc,
   })  : _postRepository = postRepository,
+        _authBloc = authBloc,
         super(MyCollectionState.initial()) {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
     on<MyCollectionClean>(_onMyCollectionClean);
@@ -27,11 +31,14 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   ) async {
     _onMyCollectionClean(MyCollectionClean(), emit);
     try {
+      final userId = _authBloc.state.user?.uid;
+      if (userId == null) {
+        throw Exception(
+            'User ID is null. User must be logged in to fetch posts.');
+      }
       debugPrint(
           'Method _mapMyCollectionFetchCollections : Fetching collections...');
-      final collections = await _postRepository.getMyCollection(
-        userId: event.userId,
-      );
+      final collections = await _postRepository.getMyCollection(userId: userId);
 
       if (collections.isEmpty) {
         debugPrint(

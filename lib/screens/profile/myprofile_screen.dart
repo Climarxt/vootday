@@ -64,7 +64,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         MyProfileTab1(context: context, state: state),
                         ProfileTab2(context: context, state: state),
-                        MyProfileTab3(userId: widget.userId),
+                        MyProfileTab3(),
                         const MyProfileTab4(),
                       ],
                     ),

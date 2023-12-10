@@ -23,20 +23,20 @@ class _ProfileTab3State extends State<ProfileTab3> {
     super.initState();
     Future.delayed(Duration.zero, () {
       context
-          .read<MyCollectionBloc>()
-          .add(MyCollectionFetchCollections(userId: widget.userId));
+          .read<YourCollectionBloc>()
+          .add(YourCollectionFetchCollections(userId: widget.userId));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MyCollectionBloc, MyCollectionState>(
+    return BlocConsumer<YourCollectionBloc, YourCollectionState>(
       listener: (context, state) {
-        if (state.status == MyCollectionStatus.initial &&
+        if (state.status == YourCollectionStatus.initial &&
             state.collections.isEmpty) {
           context
-              .read<MyCollectionBloc>()
-              .add(MyCollectionFetchCollections(userId: widget.userId));
+              .read<YourCollectionBloc>()
+              .add(YourCollectionFetchCollections(userId: widget.userId));
         }
       },
       builder: (context, state) {
@@ -45,7 +45,7 @@ class _ProfileTab3State extends State<ProfileTab3> {
     );
   }
 
-  Widget _buildBody(MyCollectionState state) {
+  Widget _buildBody(YourCollectionState state) {
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -61,7 +61,7 @@ class _ProfileTab3State extends State<ProfileTab3> {
         itemCount: state.collections.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == state.collections.length) {
-            return state.status == MyCollectionStatus.paginating
+            return state.status == YourCollectionStatus.paginating
                 ? const Center(child: CircularProgressIndicator())
                 : const SizedBox.shrink();
           } else {

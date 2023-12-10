@@ -735,6 +735,62 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+    Future<List<Collection?>> getYourCollection({
+    required String userId,
+  }) async {
+    try {
+      debugPrint(
+          'Method getMyCollection : Attempting to fetch collection references from Firestore...');
+
+      // Récupérer les références de la collection de l'utilisateur
+      QuerySnapshot userCollectionSnap = await _firebaseFirestore
+          .collection('users')
+          .doc(userId)
+          .collection('mycollection')
+          .get();
+
+      // Extraire les références de collection
+      List<DocumentReference> collectionRefs = userCollectionSnap.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+            return data != null && data.containsKey('collection_ref')
+                ? data['collection_ref'] as DocumentReference?
+                : null;
+          })
+          .where((ref) => ref != null)
+          .cast<DocumentReference>()
+          .toList();
+
+      debugPrint(
+          'Method getMyCollection : Collection references fetched. Fetching each collection document...');
+
+      List<Future<Collection?>> futureCollections = collectionRefs.map(
+        (ref) async {
+          DocumentSnapshot collectionDoc = await ref.get();
+          return Collection.fromDocument(collectionDoc);
+        },
+      ).toList();
+
+      // Utiliser Future.wait pour résoudre toutes les collections
+      List<Collection?> collections = await Future.wait(futureCollections);
+
+      debugPrint(
+          'Method getMyCollection : Collection objects created. Total collections: ${collections.length}');
+
+      if (collections.isNotEmpty) {
+        debugPrint(
+            'Method getMyCollection : First collection details: ${collections.first}');
+      }
+
+      return collections;
+    } catch (e) {
+      debugPrint(
+          'Method getMyCollection : An error occurred while fetching collections: ${e.toString()}');
+      return [];
+    }
+  }
+
+
   Future<List<Post?>> getFeedCollection({
     required String collectionId,
     required String userId,

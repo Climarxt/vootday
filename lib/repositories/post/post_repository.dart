@@ -252,76 +252,6 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-  Future<List<Post?>> getFeedEvent({
-    required String eventId,
-    required String userId,
-    String? lastPostId,
-  }) async {
-    debugPrint(
-        'Method getFeedEvent : called with eventId: $eventId, userId: $userId, lastPostId: $lastPostId');
-    QuerySnapshot postsSnap;
-    final eventDocRef = _firebaseFirestore.collection('events').doc(eventId);
-
-    if (lastPostId == null) {
-      debugPrint('Method getFeedEvent : Fetching initial events...');
-      postsSnap = await eventDocRef
-          .collection('feed_event')
-          .orderBy('likes', descending: true)
-          .limit(4)
-          .get();
-      debugPrint(
-          'Method getFeedEvent : Fetched ${postsSnap.docs.length} initial events.');
-    } else {
-      debugPrint(
-          'Method getFeedEvent : Fetching posts after postId: $lastPostId');
-      final lastPostDoc =
-          await eventDocRef.collection('feed_event').doc(lastPostId).get();
-
-      if (!lastPostDoc.exists) {
-        debugPrint(
-            'Method getFeedEvent : Last post not found. Returning empty list.');
-        return [];
-      }
-
-      postsSnap = await eventDocRef
-          .collection('feed_event')
-          .orderBy('likes', descending: true)
-          .startAfterDocument(lastPostDoc)
-          .limit(2)
-          .get();
-      debugPrint(
-          'Method getFeedEvent : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
-    }
-
-    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      try {
-        if (doc.exists) {
-          debugPrint(
-              'Method getFeedEvent : Processing post document with ID: ${doc.id}');
-          DocumentReference postRef = doc['post_ref'];
-          DocumentSnapshot postSnap = await postRef.get();
-          if (postSnap.exists) {
-            return Post.fromDocument(postSnap);
-          } else {
-            debugPrint(
-                'Method getFeedEvent : Referenced post document does not exist.');
-          }
-        } else {
-          debugPrint(
-              'Method getFeedEvent : Document does not exist, skipping.');
-        }
-      } catch (e) {
-        debugPrint(
-            'Method getFeedEvent : Error processing post document: ${doc.id}, Error: $e');
-      }
-      return null;
-    }).toList();
-
-    final posts = await Future.wait(postFutures);
-    debugPrint('Method getFeedEvent : Total posts processed: ${posts.length}');
-    return posts;
-  }
-
   Future<List<Event?>> getEventsDone({
     required String userId,
     String? lastEventId,
@@ -485,26 +415,6 @@ class PostRepository extends BasePostRepository {
           'Method getComingSoonEvents: Error occurred while fetching future events - $e');
     }
     return eventsList;
-  }
-
-  Future<Event?> getEventById(String eventId) async {
-    try {
-      DocumentSnapshot eventSnap =
-          await _firebaseFirestore.collection(Paths.events).doc(eventId).get();
-
-      if (eventSnap.exists) {
-        debugPrint(
-            'Method getEventById : Event document found. Converting to Event object...');
-        return Event.fromDocument(eventSnap);
-      } else {
-        debugPrint("Method getEventById : L'événement n'existe pas.");
-        return null;
-      }
-    } catch (e) {
-      debugPrint(
-          'Method getEventById : Une erreur est survenue lors de la récupération de l\'événement: ${e.toString()}');
-      return null;
-    }
   }
 
   Future<List<Post?>> getExplorer({

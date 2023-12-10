@@ -11,20 +11,20 @@ part 'package:bootdv2/screens/home/bloc/feed_event/feed_event_state.dart';
 part 'package:bootdv2/screens/home/bloc/feed_event/feed_event_event.dart';
 
 class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
-  final PostRepository _postRepository;
+  final FeedRepository _feedRepository;
+  final EventRepository _eventRepository;
   final AuthBloc _authBloc;
-  final LikedPostsCubit _likedPostsCubit;
 
   FeedEventBloc({
-    required PostRepository postRepository,
+    required FeedRepository feedRepository,
+    required EventRepository eventRepository,
     required AuthBloc authBloc,
     required LikedPostsCubit likedPostsCubit,
-  })  : _postRepository = postRepository,
+  })  : _feedRepository = feedRepository,
+        _eventRepository = eventRepository,
         _authBloc = authBloc,
-        _likedPostsCubit = likedPostsCubit,
         super(FeedEventState.initial()) {
     on<FeedEventFetchPostsEvents>(_mapFeedEventFetchPostsEvent);
-    on<FeedEventPaginatePostsEvents>(_mapFeedEventPaginatePostsEventsToState);
     on<FeedEventFetchEventDetails>(_onFeedEventFetchEventDetails);
     on<FeedEventClean>(_onFeedEventClean);
   }
@@ -51,30 +51,18 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
 
       // Retrieve the event details
       final Event? eventDetails =
-          await _postRepository.getEventById(event.eventId);
+          await _eventRepository.getEventById(event.eventId);
       if (eventDetails == null) {
         throw Exception("Event with id ${event.eventId} does not exist.");
       }
       print('FeedEventBloc: Retrieved event details for ${event.eventId}.');
 
       // Continue with fetching posts
-      final posts = await _postRepository.getFeedEvent(
+      final posts = await _feedRepository.getFeedEvent(
         userId: userId,
         eventId: event.eventId,
       );
       print('FeedEventBloc: Fetched ${posts.length} posts.');
-
-      _likedPostsCubit.clearAllLikedPosts();
-      print('FeedEventBloc: Cleared liked posts.');
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: userId,
-        posts: posts,
-      );
-      print('FeedEventBloc: Fetched liked post IDs.');
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
-      print('FeedEventBloc: Updated liked posts.');
 
       // Emit the new state with the posts and event details
       emit(state.copyWith(
@@ -102,7 +90,7 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     try {
       print(
           '_onFeedEventFetchEventDetails : Fetching event details for event ID: ${event.eventId}');
-      final eventDetails = await _postRepository.getEventById(event.eventId);
+      final eventDetails = await _eventRepository.getEventById(event.eventId);
       print(
           '_onFeedEventFetchEventDetails : Fetched event details: $eventDetails');
       emit(state.copyWith(
@@ -114,40 +102,6 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         failure: Failure(
             message:
                 '_onFeedEventFetchEventDetails : Erreur de chargement des détails de l\'événement'),
-      ));
-    }
-  }
-
-  Future<void> _mapFeedEventPaginatePostsEventsToState(
-    FeedEventPaginatePostsEvents event,
-    Emitter<FeedEventState> emit,
-  ) async {
-    emit(state.copyWith(status: FeedEventStatus.paginating));
-    try {
-      final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
-
-      final posts = await _postRepository.getFeedEvent(
-        userId: _authBloc.state.user!.uid,
-        lastPostId: lastPostId,
-        eventId: event.eventId,
-      );
-      final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
-
-      emit(
-        state.copyWith(posts: updatedPosts, status: FeedEventStatus.loaded),
-      );
-    } catch (err) {
-      emit(state.copyWith(
-        status: FeedEventStatus.error,
-        failure: const Failure(
-            message: 'Quelque chose s\'est mal passé ! Veuillez réessayer.'),
       ));
     }
   }

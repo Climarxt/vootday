@@ -9,13 +9,13 @@ part 'event_state.dart';
 
 class EventBloc extends Bloc<EventEvent, EventState> {
   final PostRepository _postRepository;
-  // final AuthBloc _authBloc;
+  final EventRepository _eventRepository;
 
   EventBloc({
     required PostRepository postRepository,
-    required AuthBloc authBloc,
+    required EventRepository eventRepository,
   })  : _postRepository = postRepository,
-        // _authBloc = authBloc,
+        _eventRepository = eventRepository,
         super(EventState.initial()) {
     on<EventFetchEvent>(_mapEventFetchEvent);
   }
@@ -27,7 +27,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     try {
       print('EventBloc: Fetching event ${fetchEvent.eventId}...');
       final Event? eventDetails =
-          await _postRepository.getEventById(fetchEvent.eventId);
+          await _eventRepository.getEventById(fetchEvent.eventId);
       if (eventDetails != null) {
         print('EventBloc: Event ${fetchEvent.eventId} fetched successfully.');
         emit(state.copyWith(event: eventDetails, status: EventStatus.loaded));

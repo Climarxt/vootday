@@ -66,6 +66,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<FeedRepository>(
           create: (context) => FeedRepository(),
         ),
+        RepositoryProvider<EventRepository>(
+          create: (context) => EventRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -97,7 +100,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) {
               final feedEventBloc = FeedEventBloc(
-                postRepository: context.read<PostRepository>(),
+                eventRepository: context.read<EventRepository>(),
+                feedRepository: context.read<FeedRepository>(),
                 authBloc: context.read<AuthBloc>(),
                 likedPostsCubit: context.read<LikedPostsCubit>(),
               );
@@ -143,8 +147,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) {
               final eventBloc = EventBloc(
+                eventRepository: context.read<EventRepository>(),
                 postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
               );
               return eventBloc;
             },

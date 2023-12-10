@@ -483,6 +483,8 @@ GoRouter createRouter(BuildContext context) {
                                 create: (context) => CreatePostCubit(
                                   postRepository:
                                       context.read<PostRepository>(),
+                                  eventRepository:
+                                      context.read<EventRepository>(),
                                   storageRepository:
                                       context.read<StorageRepository>(),
                                   authBloc: context.read<AuthBloc>(),
@@ -768,6 +770,7 @@ GoRouter createRouter(BuildContext context) {
                         print("Creating CreatePostCubit");
                         return CreatePostCubit(
                           postRepository: context.read<PostRepository>(),
+                          eventRepository: context.read<EventRepository>(),
                           storageRepository: context.read<StorageRepository>(),
                           authBloc: context.read<AuthBloc>(),
                         );

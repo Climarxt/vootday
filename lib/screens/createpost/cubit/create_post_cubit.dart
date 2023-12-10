@@ -7,19 +7,21 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-
 part 'create_post_state.dart';
 
 class CreatePostCubit extends Cubit<CreatePostState> {
   final PostRepository _postRepository;
+  final EventRepository _eventRepository;
   final StorageRepository _storageRepository;
   final AuthBloc _authBloc;
 
   CreatePostCubit({
     required PostRepository postRepository,
+    required EventRepository eventRepository,
     required StorageRepository storageRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
+        _eventRepository = eventRepository,
         _storageRepository = storageRepository,
         _authBloc = authBloc,
         super(CreatePostState.initial());
@@ -119,7 +121,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
       // Récupérer l'instance de l'événement à partir de son ID
-      final Event? eventDetails = await _postRepository.getEventById(eventId);
+      final Event? eventDetails = await _eventRepository.getEventById(eventId);
       if (eventDetails == null) {
         emit(
           state.copyWith(

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:bootdv2/config/configs.dart';
 
 import 'package:flutter/material.dart';
@@ -84,11 +82,9 @@ class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
               _buildPost(imageUrl),
               Positioned(
                 bottom: 10,
-                left: 10,
-                right: 10,
-                child: Center(
-                  child: buildTitle(context, title),
-                ),
+                left: 1,
+                right: 0,
+                child: buildTitle(context, title),
               ),
             ],
           ),
@@ -109,14 +105,6 @@ class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget buildTitle(BuildContext context, String title) {
-    return Stack(
-      children: [
-        // Ajout du conteneur avec dégradé
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
@@ -130,17 +118,19 @@ class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
             ),
           ),
         ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              title,
-              style: AppTextStyles.titlePost(context),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
       ],
+    );
+  }
+
+  Widget buildTitle(BuildContext context, String title) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          title,
+          style: AppTextStyles.titlePost(context),
+        ),
+      ),
     );
   }
 }

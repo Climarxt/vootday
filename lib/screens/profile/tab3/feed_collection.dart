@@ -65,9 +65,12 @@ class _FeedCollectionState extends State<FeedCollection>
     return BlocConsumer<FeedCollectionBloc, FeedCollectionState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBarTitle(title: widget.title),
-          body: _buildBody(state),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            appBar: AppBarTitle(title: widget.title),
+            body: _buildBody(state),
+          ),
         );
       },
     );

@@ -66,9 +66,12 @@ class _FeedEventState extends State<FeedEvent>
     return BlocConsumer<FeedEventBloc, FeedEventState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl),
-          body: _buildBody(state),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl),
+            body: _buildBody(state),
+          ),
         );
       },
     );

@@ -5,6 +5,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
@@ -666,14 +667,27 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: BlocProvider<FollowingBloc>(
-                      create: (context) {
-                        final followingBloc = FollowingBloc(
-                          feedRepository: context.read<FeedRepository>(),
-                          authBloc: context.read<AuthBloc>(),
-                        );
-                        return followingBloc;
-                      },
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider<FollowingBloc>(
+                          create: (context) {
+                            final followingBloc = FollowingBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                            );
+                            return followingBloc;
+                          },
+                        ),
+                        BlocProvider<ExplorerBloc>(
+                          create: (context) {
+                            final explorerBloc = ExplorerBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                            );
+                            return explorerBloc;
+                          },
+                        ),
+                      ],
                       child: const SearchScreen(),
                     ),
                   );

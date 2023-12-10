@@ -14,33 +14,16 @@ class ExplorerScreen extends StatefulWidget {
 
 class _ExplorerScreenState extends State<ExplorerScreen>
     with AutomaticKeepAliveClientMixin<ExplorerScreen> {
-  late ScrollController _scrollController;
-  final TextEditingController _textController = TextEditingController();
-  bool _isFetching = false;
+
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_onScroll);
     context.read<ExplorerBloc>().add(ExplorerFetchPosts());
-  }
-
-  void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange &&
-        !_isFetching &&
-        context.read<ExplorerBloc>().state.status !=
-            ExplorerStatus.paginating) {
-      _isFetching = true;
-      context.read<ExplorerBloc>().add(ExplorerPaginatePosts());
-    }
   }
 
   @override
   void dispose() {
-    _textController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -82,7 +65,6 @@ class _ExplorerScreenState extends State<ExplorerScreen>
                 ),
                 physics: const BouncingScrollPhysics(),
                 cacheExtent: 10000,
-                controller: _scrollController,
                 itemCount: state.posts.length + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == state.posts.length) {

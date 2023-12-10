@@ -183,7 +183,7 @@ class FeedRepository {
     return posts;
   }
 
-  Future<List<Post?>> getUserFeed({
+  Future<List<Post?>> getFeedUser({
     required String userId,
     String? lastPostId,
   }) async {
@@ -221,6 +221,48 @@ class FeedRepository {
     final posts = Future.wait(
       postsSnap.docs.map((doc) => Post.fromDocument(doc)).toList(),
     );
+    return posts;
+  }
+
+  Future<List<Post?>> getFeedExplorer({
+    required String userId,
+    String? lastPostId,
+  }) async {
+    QuerySnapshot postsSnap;
+    if (lastPostId == null) {
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedOotd)
+          .orderBy('likes', descending: true)
+          .limit(100)
+          .get();
+    } else {
+      final lastPostDoc = await _firebaseFirestore
+          .collection(Paths.feedOotd)
+          .doc(lastPostId)
+          .get();
+
+      if (!lastPostDoc.exists) {
+        return [];
+      }
+
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedOotd)
+          .orderBy('likes', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(2)
+          .get();
+    }
+
+    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
+      DocumentReference postRef = doc['post_ref'];
+      DocumentSnapshot postSnap = await postRef.get();
+      if (postSnap.exists) {
+        return Post.fromDocument(postSnap);
+      }
+      return null;
+    }).toList();
+
+    final posts = await Future.wait(postFutures);
     return posts;
   }
 }

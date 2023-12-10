@@ -8,5 +8,3 @@ abstract class ExplorerEvent extends Equatable {
 }
 
 class ExplorerFetchPosts extends ExplorerEvent {}
-
-class ExplorerPaginatePosts extends ExplorerEvent {}

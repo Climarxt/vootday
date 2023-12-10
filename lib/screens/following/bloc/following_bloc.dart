@@ -30,7 +30,7 @@ class FollowingBloc extends Bloc<FollowingEvent, FollowingState> {
     try {
       debugPrint('FollowingFetchPosts : Fetching posts for user: ${_authBloc.state.user!.uid}');
       final posts =
-          await _feedRepository.getUserFeed(userId: _authBloc.state.user!.uid);
+          await _feedRepository.getFeedUser(userId: _authBloc.state.user!.uid);
       debugPrint('FollowingFetchPosts : Number of posts fetched: ${posts.length}');
 
       emit(

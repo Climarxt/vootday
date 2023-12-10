@@ -4,6 +4,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
@@ -460,7 +461,22 @@ GoRouter createRouter(BuildContext context) {
                   path: '/calendar',
                   pageBuilder: (BuildContext context, GoRouterState state) {
                     return NoAnimationPage(
-                      child: const CalendarScreen(),
+                      child: MultiBlocProvider(
+                        providers: [
+                          BlocProvider<CalendarLatestBloc>(
+                            create: (context) {
+                              final latestEventBloc = CalendarLatestBloc(
+                                eventRepository:
+                                    context.read<EventRepository>(),
+                                authBloc: context.read<AuthBloc>(),
+                              );
+                              return latestEventBloc;
+                            },
+                          ),
+                          // Ajoutez ici d'autres BlocProviders si nécessaire
+                        ],
+                        child: const CalendarScreen(),
+                      ),
                     );
                   },
                   routes: [

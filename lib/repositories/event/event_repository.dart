@@ -35,7 +35,7 @@ class EventRepository {
   }) async {
     try {
       debugPrint(
-          'Method getEventsDone : Attempting to fetch event documents from Firestore...');
+          'getEventsDone : Attempting to fetch event documents from Firestore...');
       QuerySnapshot eventSnap;
       if (lastEventId == null) {
         // Initial fetch
@@ -54,8 +54,7 @@ class EventRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          debugPrint(
-              'Method getEventsDone : Last event document does not exist.');
+          debugPrint('getEventsDone : Last event document does not exist.');
           return [];
         }
 
@@ -69,7 +68,7 @@ class EventRepository {
       }
 
       debugPrint(
-          'Method getEventsDone : Event documents fetched. Converting to Event objects...');
+          'getEventsDone : Event documents fetched. Converting to Event objects...');
       List<Future<Event?>> futureEvents =
           eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
 
@@ -77,18 +76,47 @@ class EventRepository {
       List<Event?> events = await Future.wait(futureEvents);
 
       debugPrint(
-          'Method getEventsDone : Event objects created. Total events: ${events.length}');
+          'getEventsDone : Event objects created. Total events: ${events.length}');
       // Here, you might also debugPrint an event for debugging
       if (events.isNotEmpty) {
-        debugPrint(
-            'Method getEventsDone : First event details: ${events.first}');
+        debugPrint('getEventsDone : First event details: ${events.first}');
       }
 
       return events;
     } catch (e) {
       debugPrint(
-          'Method getEventsDone : An error occurred while fetching events: ${e.toString()}');
+          'getEventsDone : An error occurred while fetching events: ${e.toString()}');
       return [];
+    }
+  }
+
+  Future<Event?> getLatestEvent() async {
+    try {
+      debugPrint(
+          'getLatestEvent: Attempting to fetch the latest event document from Firestore...');
+      // Fetch the latest event by date
+      QuerySnapshot eventSnap = await _firebaseFirestore
+          .collection(Paths.events)
+          .where('done', isEqualTo: false)
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        debugPrint(
+            'getLatestEvent: Latest event document fetched. Converting to Event object...');
+        DocumentSnapshot doc = eventSnap.docs.first;
+        Event? latestEvent = await Event.fromDocument(doc);
+        debugPrint('getLatestEvent: Event data - ${latestEvent?.toDocument()}');
+        return latestEvent;
+      } else {
+        debugPrint('getLatestEvent: No events found.');
+        return null;
+      }
+    } catch (e) {
+      debugPrint(
+          'getLatestEvent: An error occurred while fetching the latest event: $e');
+      return null;
     }
   }
 }

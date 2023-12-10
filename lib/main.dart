@@ -5,7 +5,6 @@ import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
-import 'package:bootdv2/screens/calendar/bloc/latest/calendar_latest_bloc.dart';
 import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
@@ -82,15 +81,6 @@ class MyApp extends StatelessWidget {
           BlocProvider<DeletePostsCubit>(
             create: (context) =>
                 DeletePostsCubit(context.read<PostRepository>()),
-          ),
-          BlocProvider(
-            create: (context) {
-              final latestEventBloc = CalendarLatestBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-              );
-              return latestEventBloc;
-            },
           ),
           BlocProvider(
             create: (context) {

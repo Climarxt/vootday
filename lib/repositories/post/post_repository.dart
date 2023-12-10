@@ -16,12 +16,12 @@ class PostRepository extends BasePostRepository {
 
   Future<void> deletePost({required String postId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
-    debugPrint('Début de la suppression du post avec ID: $postId');
+    debugPrint('deletePost : Début de la suppression du post avec ID: $postId');
 
     // Suppression du post dans la collection 'posts'
     DocumentReference postRef =
         _firebaseFirestore.collection(Paths.posts).doc(postId);
-    debugPrint('Suppression du post dans la collection posts');
+    debugPrint('deletePost : Suppression du post dans la collection posts');
     batch.delete(postRef);
 
     // Suppression des références du post dans les sous-collections
@@ -32,14 +32,14 @@ class PostRepository extends BasePostRepository {
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
-        'Exécution du batch pour la suppression du post et des références associées');
+        'deletePost : Exécution du batch pour la suppression du post et des références associées');
     await batch.commit();
-    debugPrint('Suppression terminée pour le post avec ID: $postId');
+    debugPrint('deletePost : Suppression terminée pour le post avec ID: $postId');
   }
 
   Future<void> _deletePostReferencesInSubCollections(
       WriteBatch batch, DocumentReference postRef, String subCollection) async {
-    debugPrint('Recherche du post dans les sous-collections $subCollection');
+    debugPrint('_deletePostReferencesInSubCollections : Recherche du post dans les sous-collections $subCollection');
     QuerySnapshot snapshot = await _firebaseFirestore
         .collectionGroup(subCollection)
         .where('post_ref', isEqualTo: postRef)
@@ -47,13 +47,13 @@ class PostRepository extends BasePostRepository {
 
     if (snapshot.docs.isEmpty) {
       debugPrint(
-          'Aucune référence trouvée dans $subCollection pour le post_ref: $postRef');
+          '_deletePostReferencesInSubCollections : Aucune référence trouvée dans $subCollection pour le post_ref: $postRef');
     } else {
       debugPrint(
-          'Nombre de références trouvées dans $subCollection: ${snapshot.docs.length}');
+          '_deletePostReferencesInSubCollections : Nombre de références trouvées dans $subCollection: ${snapshot.docs.length}');
       for (var doc in snapshot.docs) {
         debugPrint(
-            'Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
+            '_deletePostReferencesInSubCollections : Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
         batch.delete(doc.reference);
       }
     }
@@ -210,42 +210,11 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-  Future<Event?> getLatestEvent() async {
-    try {
-      debugPrint(
-          'Method getLatestEvent: Attempting to fetch the latest event document from Firestore...');
-      // Fetch the latest event by date
-      QuerySnapshot eventSnap = await _firebaseFirestore
-          .collection(Paths.events)
-          .where('done', isEqualTo: false)
-          .orderBy('date', descending: true)
-          .limit(1)
-          .get();
-
-      if (eventSnap.docs.isNotEmpty) {
-        debugPrint(
-            'Method getLatestEvent: Latest event document fetched. Converting to Event object...');
-        DocumentSnapshot doc = eventSnap.docs.first;
-        Event? latestEvent = await Event.fromDocument(doc);
-        debugPrint(
-            'Method getLatestEvent: Event data - ${latestEvent?.toDocument()}');
-        return latestEvent;
-      } else {
-        debugPrint('Method getLatestEvent: No events found.');
-        return null;
-      }
-    } catch (e) {
-      debugPrint(
-          'Method getLatestEvent: An error occurred while fetching the latest event: $e');
-      return null;
-    }
-  }
-
   Future<List<Event>> getThisWeekEvents() async {
     List<Event> eventsList = [];
     try {
       debugPrint(
-          'Method getThisWeekEvents: Attempting to fetch events from Firestore for the current week.');
+          'getThisWeekEvents: Attempting to fetch events from Firestore for the current week.');
 
       DateTime now = DateTime.now();
       DateTime oneWeekFromNow = now.add(Duration(days: 7));
@@ -265,14 +234,14 @@ class PostRepository extends BasePostRepository {
             eventsList.add(event);
           }
         }
-        debugPrint('Method getThisWeekEvents: Events fetched successfully.');
+        debugPrint('getThisWeekEvents: Events fetched successfully.');
       } else {
         debugPrint(
-            'Method getThisWeekEvents: No events found for the current week.');
+            'getThisWeekEvents: No events found for the current week.');
       }
     } catch (e) {
       debugPrint(
-          'Method getThisWeekEvents: Error occurred while fetching events - $e');
+          'getThisWeekEvents: Error occurred while fetching events - $e');
     }
     return eventsList;
   }
@@ -281,7 +250,7 @@ class PostRepository extends BasePostRepository {
     List<Event> eventsList = [];
     try {
       debugPrint(
-          'Method getComingSoonEvents: Attempting to fetch future events from Firestore.');
+          'getComingSoonEvents: Attempting to fetch future events from Firestore.');
 
       DateTime now = DateTime.now();
       DateTime oneWeekFromNow = now.add(Duration(days: 7));
@@ -301,13 +270,13 @@ class PostRepository extends BasePostRepository {
           }
         }
         debugPrint(
-            'Method getComingSoonEvents: Future events fetched successfully.');
+            'getComingSoonEvents: Future events fetched successfully.');
       } else {
-        debugPrint('Method getComingSoonEvents: No future events found.');
+        debugPrint('getComingSoonEvents: No future events found.');
       }
     } catch (e) {
       debugPrint(
-          'Method getComingSoonEvents: Error occurred while fetching future events - $e');
+          'getComingSoonEvents: Error occurred while fetching future events - $e');
     }
     return eventsList;
   }
@@ -344,7 +313,7 @@ class PostRepository extends BasePostRepository {
   }) async {
     try {
       debugPrint(
-          'Method getMyCollection : Attempting to fetch collection references from Firestore...');
+          'getMyCollection : Attempting to fetch collection references from Firestore...');
 
       // Récupérer les références de la collection de l'utilisateur
       QuerySnapshot userCollectionSnap = await _firebaseFirestore
@@ -366,7 +335,7 @@ class PostRepository extends BasePostRepository {
           .toList();
 
       debugPrint(
-          'Method getMyCollection : Collection references fetched. Fetching each collection document...');
+          'getMyCollection : Collection references fetched. Fetching each collection document...');
 
       List<Future<Collection?>> futureCollections = collectionRefs.map(
         (ref) async {
@@ -379,17 +348,17 @@ class PostRepository extends BasePostRepository {
       List<Collection?> collections = await Future.wait(futureCollections);
 
       debugPrint(
-          'Method getMyCollection : Collection objects created. Total collections: ${collections.length}');
+          'getMyCollection : Collection objects created. Total collections: ${collections.length}');
 
       if (collections.isNotEmpty) {
         debugPrint(
-            'Method getMyCollection : First collection details: ${collections.first}');
+            'getMyCollection : First collection details: ${collections.first}');
       }
 
       return collections;
     } catch (e) {
       debugPrint(
-          'Method getMyCollection : An error occurred while fetching collections: ${e.toString()}');
+          'getMyCollection : An error occurred while fetching collections: ${e.toString()}');
       return [];
     }
   }
@@ -399,7 +368,7 @@ class PostRepository extends BasePostRepository {
   }) async {
     try {
       debugPrint(
-          'Method getMyCollection : Attempting to fetch collection references from Firestore...');
+          'getMyCollection : Attempting to fetch collection references from Firestore...');
 
       // Récupérer les références de la collection de l'utilisateur
       QuerySnapshot userCollectionSnap = await _firebaseFirestore
@@ -421,7 +390,7 @@ class PostRepository extends BasePostRepository {
           .toList();
 
       debugPrint(
-          'Method getMyCollection : Collection references fetched. Fetching each collection document...');
+          'getMyCollection : Collection references fetched. Fetching each collection document...');
 
       List<Future<Collection?>> futureCollections = collectionRefs.map(
         (ref) async {
@@ -434,17 +403,17 @@ class PostRepository extends BasePostRepository {
       List<Collection?> collections = await Future.wait(futureCollections);
 
       debugPrint(
-          'Method getMyCollection : Collection objects created. Total collections: ${collections.length}');
+          'getMyCollection : Collection objects created. Total collections: ${collections.length}');
 
       if (collections.isNotEmpty) {
         debugPrint(
-            'Method getMyCollection : First collection details: ${collections.first}');
+            'getMyCollection : First collection details: ${collections.first}');
       }
 
       return collections;
     } catch (e) {
       debugPrint(
-          'Method getMyCollection : An error occurred while fetching collections: ${e.toString()}');
+          'getMyCollection : An error occurred while fetching collections: ${e.toString()}');
       return [];
     }
   }
@@ -456,23 +425,23 @@ class PostRepository extends BasePostRepository {
     String? lastPostId,
   }) async {
     debugPrint(
-        'Method getFeedCollection : called with collectionId: $collectionId, userId: $userId, lastPostId: $lastPostId');
+        'getFeedCollection : called with collectionId: $collectionId, userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
     final collectionDocRef =
         _firebaseFirestore.collection('collections').doc(collectionId);
 
     if (lastPostId == null) {
-      debugPrint('Method getFeedCollection : Fetching initial collections...');
+      debugPrint('getFeedCollection : Fetching initial collections...');
       postsSnap = await collectionDocRef
           .collection('feed_collection')
           .orderBy('date', descending: true)
           .limit(4)
           .get();
       debugPrint(
-          'Method getFeedCollection : Fetched ${postsSnap.docs.length} initial collections.');
+          'getFeedCollection : Fetched ${postsSnap.docs.length} initial collections.');
     } else {
       debugPrint(
-          'Method getFeedCollection : Fetching posts after postId: $lastPostId');
+          'getFeedCollection : Fetching posts after postId: $lastPostId');
       final lastPostDoc = await collectionDocRef
           .collection('feed_collection')
           .doc(lastPostId)
@@ -480,7 +449,7 @@ class PostRepository extends BasePostRepository {
 
       if (!lastPostDoc.exists) {
         debugPrint(
-            'Method getFeedCollection : Last post not found. Returning empty list.');
+            'getFeedCollection : Last post not found. Returning empty list.');
         return [];
       }
 
@@ -491,36 +460,36 @@ class PostRepository extends BasePostRepository {
           .limit(2)
           .get();
       debugPrint(
-          'Method getFeedCollection : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
+          'getFeedCollection : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
       try {
         if (doc.exists) {
           debugPrint(
-              'Method getFeedCollection : Processing post document with ID: ${doc.id}');
+              'getFeedCollection : Processing post document with ID: ${doc.id}');
           DocumentReference postRef = doc['post_ref'];
           DocumentSnapshot postSnap = await postRef.get();
           if (postSnap.exists) {
             return Post.fromDocument(postSnap);
           } else {
             debugPrint(
-                'Method getFeedCollection : Referenced post document does not exist.');
+                'getFeedCollection : Referenced post document does not exist.');
           }
         } else {
           debugPrint(
-              'Method getFeedCollection : Document does not exist, skipping.');
+              'getFeedCollection : Document does not exist, skipping.');
         }
       } catch (e) {
         debugPrint(
-            'Method getFeedCollection : Error processing post document: ${doc.id}, Error: $e');
+            'getFeedCollection : Error processing post document: ${doc.id}, Error: $e');
       }
       return null;
     }).toList();
 
     final posts = await Future.wait(postFutures);
     debugPrint(
-        'Method getFeedCollection : Total posts processed: ${posts.length}');
+        'getFeedCollection : Total posts processed: ${posts.length}');
     return posts;
   }
 }

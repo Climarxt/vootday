@@ -163,15 +163,11 @@ GoRouter createRouter(BuildContext context) {
                     key: state.pageKey,
                     child: BlocProvider<FeedMonthBloc>(
                       create: (context) {
-                        print('Creating FeedMonthBloc...');
                         final feedMonthBloc = FeedMonthBloc(
                           feedRepository: context.read<FeedRepository>(),
                           authBloc: context.read<AuthBloc>(),
-                          likedPostsCubit: context.read<LikedPostsCubit>(),
                         );
                         feedMonthBloc.add(FeedMonthFetchPostsMonth());
-                        print(
-                            'FeedMonthBloc created and FeedMonthFetchPostsMonth event added.');
                         return feedMonthBloc;
                       },
                       child: const HomeScreen(),

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +13,12 @@ part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_event.dart';
 class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
   final FeedRepository _feedRepository;
   final AuthBloc _authBloc;
-  final LikedPostsCubit _likedPostsCubit;
 
   FeedMonthBloc({
     required FeedRepository feedRepository,
     required AuthBloc authBloc,
-    required LikedPostsCubit likedPostsCubit,
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
-        _likedPostsCubit = likedPostsCubit,
         super(FeedMonthState.initial()) {
     on<FeedMonthFetchPostsMonth>(_mapFeedMonthFetchPostsMonth);
     on<FeedMonthFetchPosts>(_mapFeedMonthFetchPostsToState);

@@ -23,7 +23,7 @@ class ProfileBrandScreen extends StatefulWidget {
 }
 
 class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
-  late final String userId;
+
 
   @override
   void initState() {
@@ -68,7 +68,7 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
                   children: [
                     ProfileTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
-                    ProfileTab3(userId: userId),
+                    ProfileTab3(userId: widget.userId),
                   ],
                 ),
               ),

@@ -11,7 +11,6 @@ import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
-import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';

@@ -159,13 +159,6 @@ class MyApp extends StatelessWidget {
               return eventBloc;
             },
           ),
-          BlocProvider<ProfileBloc>(
-            create: (context) => ProfileBloc(
-              authBloc: context.read<AuthBloc>(),
-              userRepository: context.read<UserRepository>(),
-              postRepository: context.read<PostRepository>(),
-            ),
-          ),
           BlocProvider<CommentsBloc>(
             create: (context) => CommentsBloc(
               authBloc: context.read<AuthBloc>(),
@@ -196,14 +189,6 @@ class MyApp extends StatelessWidget {
             create: (context) {
               final myCollectionBloc = MyCollectionBloc(
                 authBloc: context.read<AuthBloc>(),
-                postRepository: context.read<PostRepository>(),
-              );
-              return myCollectionBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
-              final myCollectionBloc = YourCollectionBloc(
                 postRepository: context.read<PostRepository>(),
               );
               return myCollectionBloc;

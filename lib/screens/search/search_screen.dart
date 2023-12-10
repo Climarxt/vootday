@@ -37,36 +37,7 @@ class _SearchScreenState extends State<SearchScreen>
       appBar:
           Tabbar2itemsSearch(tabController: _tabController, context: context),
       body: _buildBody(),
-      floatingActionButton: SearchAnchor(
-        searchController: _searchController,
-        builder: (BuildContext context, SearchController controller) {
-          return FloatingActionButton.extended(
-            onPressed: () {
-              controller.openView();
-            },
-            label: Text(AppLocalizations.of(context)!.translate('search'),
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.white)),
-            backgroundColor: couleurBleuClair2,
-          );
-        },
-        suggestionsBuilder:
-            (BuildContext context, SearchController controller) {
-          return List<ListTile>.generate(5, (int index) {
-            final String item = 'item $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          });
-        },
-      ),
+      floatingActionButton: _buildFloatingActionButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -81,6 +52,38 @@ class _SearchScreenState extends State<SearchScreen>
           ExplorerScreen(),
         ],
       ),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return SearchAnchor(
+      searchController: _searchController,
+      builder: (BuildContext context, SearchController controller) {
+        return FloatingActionButton.extended(
+          onPressed: () {
+            controller.openView();
+          },
+          label: Text(AppLocalizations.of(context)!.translate('search'),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(color: Colors.white)),
+          backgroundColor: couleurBleuClair2,
+        );
+      },
+      suggestionsBuilder: (BuildContext context, SearchController controller) {
+        return List<ListTile>.generate(5, (int index) {
+          final String item = 'item $index';
+          return ListTile(
+            title: Text(item),
+            onTap: () {
+              setState(() {
+                controller.closeView(item);
+              });
+            },
+          );
+        });
+      },
     );
   }
 

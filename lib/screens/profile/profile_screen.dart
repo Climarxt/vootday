@@ -22,8 +22,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late final String userId;
-
   @override
   void initState() {
     super.initState();
@@ -67,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     ProfileTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
-                    const ProfileTab3(),
+                    ProfileTab3(userId: widget.userId),
                   ],
                 ),
               ),
@@ -146,7 +144,8 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               child: CircleAvatar(
                 backgroundColor: white,
                 radius: 50,
-                backgroundImage: NetworkImage(widget.state.user.profileImageUrl),
+                backgroundImage:
+                    NetworkImage(widget.state.user.profileImageUrl),
               ),
             ),
             const SizedBox(height: 8),

@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileTab3 extends StatefulWidget {
-  const ProfileTab3({super.key});
+  final String userId;
+  const ProfileTab3({
+    super.key,
+    required this.userId,
+  });
 
   @override
   State<ProfileTab3> createState() => _ProfileTab3State();
@@ -18,7 +22,9 @@ class _ProfileTab3State extends State<ProfileTab3> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+      context
+          .read<MyCollectionBloc>()
+          .add(MyCollectionFetchCollections(userId: widget.userId));
     });
   }
 
@@ -28,7 +34,9 @@ class _ProfileTab3State extends State<ProfileTab3> {
       listener: (context, state) {
         if (state.status == MyCollectionStatus.initial &&
             state.collections.isEmpty) {
-          context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+          context
+              .read<MyCollectionBloc>()
+              .add(MyCollectionFetchCollections(userId: widget.userId));
         }
       },
       builder: (context, state) {
@@ -124,6 +132,6 @@ class _ProfileTab3State extends State<ProfileTab3> {
       debugPrint(
           "An error occurred while fetching the most liked post image URL: $e");
     }
-    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder_logo.svg?alt=media&token=aaeb5635-dd41-4b9e-97c8-ad2718564d23';
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
 }

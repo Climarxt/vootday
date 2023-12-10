@@ -19,8 +19,6 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  late final String userId;
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +64,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         MyProfileTab1(context: context, state: state),
                         ProfileTab2(context: context, state: state),
-                        const MyProfileTab3(),
+                        MyProfileTab3(userId: widget.userId),
                         const MyProfileTab4(),
                       ],
                     ),

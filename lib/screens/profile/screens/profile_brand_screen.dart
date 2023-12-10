@@ -68,7 +68,7 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
                   children: [
                     ProfileTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
-                    const ProfileTab3(),
+                    ProfileTab3(userId: userId),
                   ],
                 ),
               ),

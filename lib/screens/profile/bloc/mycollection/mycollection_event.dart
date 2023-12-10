@@ -7,4 +7,11 @@ abstract class MyCollectionEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class MyCollectionFetchCollections extends MyCollectionEvent {}
+class MyCollectionFetchCollections extends MyCollectionEvent {
+  final String userId;
+
+  const MyCollectionFetchCollections({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}

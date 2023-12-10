@@ -195,7 +195,6 @@ class MyApp extends StatelessWidget {
             create: (context) {
               final myCollectionBloc = MyCollectionBloc(
                 postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
               );
               return myCollectionBloc;
             },

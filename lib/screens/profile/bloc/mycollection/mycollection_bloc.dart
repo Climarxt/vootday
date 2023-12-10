@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
@@ -13,13 +12,10 @@ part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart'
 
 class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   final PostRepository _postRepository;
-  final AuthBloc _authBloc;
 
   MyCollectionBloc({
     required PostRepository postRepository,
-    required AuthBloc authBloc,
   })  : _postRepository = postRepository,
-        _authBloc = authBloc,
         super(MyCollectionState.initial()) {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
   }
@@ -32,7 +28,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       debugPrint(
           'Method _mapMyCollectionFetchCollections : Fetching collections...');
       final collections = await _postRepository.getMyCollection(
-        userId: _authBloc.state.user!.uid,
+        userId: event.userId,
       );
 
       if (collections.isEmpty) {

@@ -20,7 +20,6 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
         _authBloc = authBloc,
         super(HomeEventState.initial()) {
     on<HomeEventFetchEvents>(_mapHomeEventFetchEvents);
-    on<HomeEventPaginateEvents>(_mapHomeEventPaginateEventsToState);
   }
 
   Future<void> _mapHomeEventFetchEvents(
@@ -54,43 +53,6 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
             message:
                 'Method _mapHomeEventFetchEventsToState : Impossible de charger les événements'),
         events: [],
-      ));
-    }
-  }
-
-  Future<void> _mapHomeEventPaginateEventsToState(
-    HomeEventPaginateEvents event,
-    Emitter<HomeEventState> emit,
-  ) async {
-    print('HomeEventPaginateEvents:  Pagination started.');
-    emit(state.copyWith(status: HomeEventStatus.paginating));
-
-    try {
-      final String? lastEventId =
-          state.events.isNotEmpty ? state.events.last!.id : null;
-      print('HomeEventPaginateEvents:  Last event ID is $lastEventId');
-
-      final List<Event?> events = await _postRepository.getEventsDone(
-        userId: _authBloc.state.user!.uid,
-        lastEventId: lastEventId,
-      );
-      print('HomeEventPaginateEvents:  Fetched ${events.length} more events.');
-
-      final List<Event?> updatedEvents = List<Event?>.from(state.events)
-        ..addAll(events);
-      print(
-          'HomeEventPaginateEvents:  Total events after pagination: ${updatedEvents.length}');
-
-      emit(state.copyWith(
-          events: updatedEvents, status: HomeEventStatus.loaded));
-    } catch (err) {
-      print('HomeEventPaginateEvents:  Error during pagination - ${err.toString()}');
-
-      emit(state.copyWith(
-        status: HomeEventStatus.error,
-        failure: const Failure(
-          message: 'Something went wrong! Please try again.',
-        ),
       ));
     }
   }

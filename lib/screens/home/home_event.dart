@@ -16,35 +16,19 @@ class HomeEvent extends StatefulWidget {
 
 class _HomeEventState extends State<HomeEvent>
     with AutomaticKeepAliveClientMixin<HomeEvent> {
-  late ScrollController _scrollController;
-  final TextEditingController _textController = TextEditingController();
-  bool _isFetching = false;
+
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_onScroll);
     Future.delayed(Duration.zero, () {
       context.read<HomeEventBloc>().add(HomeEventFetchEvents());
     });
   }
 
-  void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange &&
-        !_isFetching &&
-        context.read<HomeEventBloc>().state.status !=
-            HomeEventStatus.paginating) {
-      _isFetching = true;
-      context.read<HomeEventBloc>().add(HomeEventPaginateEvents());
-    }
-  }
-
   @override
   void dispose() {
-    _textController.dispose();
-    _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -79,7 +63,6 @@ class _HomeEventState extends State<HomeEvent>
               ),
               physics: const BouncingScrollPhysics(),
               cacheExtent: 10000,
-              controller: _scrollController,
               itemCount: state.events.length + 1,
               itemBuilder: (BuildContext context, int index) {
                 if (index == state.events.length) {

@@ -7,10 +7,5 @@ abstract class HomeEventEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class HomeEventFetchPosts extends HomeEventEvent {}
-
-class HomeEventFetchPostsMonth extends HomeEventEvent {}
-
-class HomeEventPaginateEvents extends HomeEventEvent {}
 
 class HomeEventFetchEvents extends HomeEventEvent {}

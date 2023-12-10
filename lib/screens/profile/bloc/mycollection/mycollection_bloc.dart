@@ -18,12 +18,14 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   })  : _postRepository = postRepository,
         super(MyCollectionState.initial()) {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
+    on<MyCollectionClean>(_onMyCollectionClean);
   }
 
   Future<void> _mapMyCollectionFetchCollections(
     MyCollectionFetchCollections event,
     Emitter<MyCollectionState> emit,
   ) async {
+    _onMyCollectionClean(MyCollectionClean(), emit);
     try {
       debugPrint(
           'Method _mapMyCollectionFetchCollections : Fetching collections...');
@@ -55,5 +57,12 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
         collections: [],
       ));
     }
+  }
+
+  Future<void> _onMyCollectionClean(
+    MyCollectionClean event,
+    Emitter<MyCollectionState> emit,
+  ) async {
+    emit(MyCollectionState.initial()); // Remet l'état à son état initial
   }
 }

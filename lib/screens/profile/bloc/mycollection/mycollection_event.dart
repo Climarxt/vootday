@@ -15,3 +15,5 @@ class MyCollectionFetchCollections extends MyCollectionEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+class MyCollectionClean extends MyCollectionEvent {}

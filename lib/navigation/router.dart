@@ -8,11 +8,13 @@ import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_collection_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -572,13 +574,21 @@ GoRouter createRouter(BuildContext context) {
                 builder: (BuildContext context, GoRouterState state) {
                   final authBloc = context.read<AuthBloc>();
                   final userId = authBloc.state.user!.uid;
-
-                  return BlocProvider<ProfileBloc>(
-                    create: (_) => ProfileBloc(
-                      authBloc: authBloc,
-                      userRepository: context.read<UserRepository>(),
-                      postRepository: context.read<PostRepository>(),
-                    )..add(ProfileLoadUser(userId: userId)),
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider<ProfileBloc>(
+                        create: (_) => ProfileBloc(
+                          authBloc: authBloc,
+                          userRepository: context.read<UserRepository>(),
+                          postRepository: context.read<PostRepository>(),
+                        )..add(ProfileLoadUser(userId: userId)),
+                      ),
+                      BlocProvider<CreateCollectionCubit>(
+                        create: (_) => CreateCollectionCubit(
+                          firebaseFirestore: FirebaseFirestore.instance,
+                        ),
+                      ),
+                    ],
                     child: MyProfileScreen(
                       userId: userId,
                     ),

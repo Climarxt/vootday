@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,9 @@ class MyProfileTab3 extends StatefulWidget {
 }
 
 class _MyProfileTab3State extends State<MyProfileTab3> {
+  final TextEditingController _collectionNameController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -148,29 +152,43 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
   }
 
   void _openCreateCollectionSheet(BuildContext context) {
+    final createCollectionCubit = context.read<CreateCollectionCubit>();
+
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                AppLocalizations.of(context)!.translate('newcollection'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.black),
-              ),
-              const SizedBox(height: 10),
-              _buildCaptionInput(context),
-              // const SizedBox(height: 8),
-              _buildPublicButton(context),
-              const SizedBox(height: 18),
-              buildValidateButton(context),
-            ],
+      builder: (BuildContext bottomSheetContext) {
+        return BlocProvider.value(
+          value: createCollectionCubit,
+          child: BlocConsumer<CreateCollectionCubit, CreateCollectionState>(
+            listener: (context, state) {
+              if (state.status == CreateCollectionStatus.success) {
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              return Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.translate('newcollection'),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: Colors.black),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildCaptionInput(context),
+                    // const SizedBox(height: 8),
+                    _buildPublicButton(context),
+                    const SizedBox(height: 18),
+                    buildValidateButton(context),
+                  ],
+                ),
+              );
+            },
           ),
         );
       },
@@ -189,6 +207,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
         Form(
           // key: _formKey,
           child: TextFormField(
+            controller: _collectionNameController,
             cursorColor: couleurBleuClair2,
             style: AppTextStyles.bodyStyle(context),
             decoration: InputDecoration(
@@ -234,7 +253,14 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
 
   TextButton buildValidateButton(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        final String collectionName = _collectionNameController.text.trim();
+        if (collectionName.isNotEmpty) {
+          context
+              .read<CreateCollectionCubit>()
+              .createCollection(widget.userId, collectionName);
+        }
+      },
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         minimumSize: const Size(60, 20),

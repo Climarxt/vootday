@@ -34,7 +34,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            'User ID is null. User must be logged in to fetch posts.');
+            'Method _mapMyCollectionFetchCollections : User ID is null. User must be logged in to fetch posts.');
       }
       debugPrint(
           'Method _mapMyCollectionFetchCollections : Fetching collections...');

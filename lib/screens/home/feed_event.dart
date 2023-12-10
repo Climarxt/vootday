@@ -24,14 +24,10 @@ class FeedEvent extends StatefulWidget {
 
 class _FeedEventState extends State<FeedEvent>
     with AutomaticKeepAliveClientMixin<FeedEvent> {
-  late ScrollController _scrollController;
-  final TextEditingController _textController = TextEditingController();
-  bool _isFetching = false;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_onScroll);
     final feedEventBloc = context.read<FeedEventBloc>();
     if (!feedEventBloc.state.hasFetchedInitialPosts ||
         feedEventBloc.state.event?.id != widget.eventId) {
@@ -39,24 +35,10 @@ class _FeedEventState extends State<FeedEvent>
     }
   }
 
-  void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange &&
-        !_isFetching &&
-        context.read<FeedEventBloc>().state.status !=
-            FeedEventStatus.paginating) {
-      _isFetching = true;
-      context
-          .read<FeedEventBloc>()
-          .add(FeedEventPaginatePostsEvents(eventId: widget.eventId));
-    }
-  }
 
   @override
   void dispose() {
-    _textController.dispose();
-    _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -84,7 +66,6 @@ class _FeedEventState extends State<FeedEvent>
           key: PageStorageKey<String>('feed-event-list-${widget.eventId}'),
           physics: const BouncingScrollPhysics(),
           cacheExtent: 10000,
-          controller: _scrollController,
           itemCount: state.posts.length + 1,
           separatorBuilder: (BuildContext context, int index) =>
               const SizedBox(height: 10),

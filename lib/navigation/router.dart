@@ -184,15 +184,13 @@ GoRouter createRouter(BuildContext context) {
                             return feedMonthBloc;
                           },
                         ),
-                        BlocProvider<FeedEventBloc>(
+                        BlocProvider(
                           create: (context) {
-                            final feedEventBloc = FeedEventBloc(
+                            final homeEventBloc = HomeEventBloc(
                               eventRepository: context.read<EventRepository>(),
-                              feedRepository: context.read<FeedRepository>(),
                               authBloc: context.read<AuthBloc>(),
-                              likedPostsCubit: context.read<LikedPostsCubit>(),
                             );
-                            return feedEventBloc;
+                            return homeEventBloc;
                           },
                         ),
                       ],
@@ -292,8 +290,20 @@ GoRouter createRouter(BuildContext context) {
                           state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: FeedEvent(
-                            eventId: eventId, title: title, logoUrl: logoUrl),
+                        child: BlocProvider<FeedEventBloc>(
+                          create: (context) {
+                            final feedEventBloc = FeedEventBloc(
+                              eventRepository: context.read<EventRepository>(),
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                              likedPostsCubit: context.read<LikedPostsCubit>(),
+                            );
+                            // Ajoutez ici un événement initial si nécessaire
+                            return feedEventBloc;
+                          },
+                          child: FeedEvent(
+                              eventId: eventId, title: title, logoUrl: logoUrl),
+                        ),
                       );
                     },
                     routes: [
@@ -332,12 +342,33 @@ GoRouter createRouter(BuildContext context) {
                                       'Unknown';
                               final title =
                                   state.uri.queryParameters['title'] ?? 'title';
+
                               return MaterialPage<void>(
                                 key: state.pageKey,
-                                child: ProfileScreen(
+                                child: MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<ProfileBloc>(
+                                      create: (context) => ProfileBloc(
+                                        authBloc: context.read<AuthBloc>(),
+                                        userRepository:
+                                            context.read<UserRepository>(),
+                                        postRepository:
+                                            context.read<PostRepository>(),
+                                      ),
+                                    ),
+                                    BlocProvider<YourCollectionBloc>(
+                                      create: (context) => YourCollectionBloc(
+                                        postRepository:
+                                            context.read<PostRepository>(),
+                                      ),
+                                    ),
+                                  ],
+                                  child: ProfileScreen(
                                     userId: userId,
                                     username: username,
-                                    title: title),
+                                    title: title,
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -363,12 +394,32 @@ GoRouter createRouter(BuildContext context) {
                                   'Unknown';
                           final title =
                               state.uri.queryParameters['title'] ?? 'title';
+
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: ProfileScreen(
-                              userId: userId,
-                              username: username,
-                              title: title,
+                            child: MultiBlocProvider(
+                              providers: [
+                                BlocProvider<ProfileBloc>(
+                                  create: (context) => ProfileBloc(
+                                    authBloc: context.read<AuthBloc>(),
+                                    userRepository:
+                                        context.read<UserRepository>(),
+                                    postRepository:
+                                        context.read<PostRepository>(),
+                                  ),
+                                ),
+                                BlocProvider<YourCollectionBloc>(
+                                  create: (context) => YourCollectionBloc(
+                                    postRepository:
+                                        context.read<PostRepository>(),
+                                  ),
+                                ),
+                              ],
+                              child: ProfileScreen(
+                                userId: userId,
+                                username: username,
+                                title: title,
+                              ),
                             ),
                           );
                         },

@@ -88,15 +88,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) {
-              final homeEventBloc = HomeEventBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-              );
-              return homeEventBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
               final latestEventBloc = CalendarLatestBloc(
                 postRepository: context.read<PostRepository>(),
                 authBloc: context.read<AuthBloc>(),

@@ -4,8 +4,6 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/calendar/bloc/coming_soon/calendar_coming_soon_bloc.dart';
-import 'package:bootdv2/screens/calendar/bloc/this_week/calendar_this_week_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';

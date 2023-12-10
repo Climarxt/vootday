@@ -2,25 +2,25 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
-import '/repositories/repositories.dart';
 
 part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_state.dart';
 part 'package:bootdv2/screens/home/bloc/feed_month/feed_month_event.dart';
 
 class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
-  final PostRepository _postRepository;
+  final FeedRepository _feedRepository;
   final AuthBloc _authBloc;
   final LikedPostsCubit _likedPostsCubit;
 
   FeedMonthBloc({
-    required PostRepository postRepository,
+    required FeedRepository feedRepository,
     required AuthBloc authBloc,
     required LikedPostsCubit likedPostsCubit,
-  })  : _postRepository = postRepository,
+  })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         _likedPostsCubit = likedPostsCubit,
         super(FeedMonthState.initial()) {
@@ -33,37 +33,34 @@ class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
     FeedMonthFetchPostsMonth event,
     Emitter<FeedMonthState> emit,
   ) async {
-    debugPrint('_mapFeedMonthFetchPostsMonth : Début de _mapFeedMonthFetchPostsMonth');
+    debugPrint(
+        '_mapFeedMonthFetchPostsMonth : Début de _mapFeedMonthFetchPostsMonth');
     try {
       final userId = _authBloc.state.user!.uid;
-      debugPrint('_mapFeedMonthFetchPostsMonth : Récupération des posts pour l\'utilisateur : $userId');
+      debugPrint(
+          '_mapFeedMonthFetchPostsMonth : Récupération des posts pour l\'utilisateur : $userId');
 
-      final posts = await _postRepository.getFeedMonth(userId: userId);
-      debugPrint('_mapFeedMonthFetchPostsMonth : Posts récupérés : ${posts.length}');
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: userId,
-        posts: posts,
-      );
-      debugPrint('_mapFeedMonthFetchPostsMonth : IDs des posts aimés récupérés : ${likedPostIds.length}');
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+      final posts = await _feedRepository.getFeedMonth(userId: userId);
+      debugPrint(
+          '_mapFeedMonthFetchPostsMonth : Posts récupérés : ${posts.length}');
 
       emit(
         state.copyWith(posts: posts, status: FeedMonthStatus.loaded),
       );
-      debugPrint('_mapFeedMonthFetchPostsMonth : État mis à jour avec les nouveaux posts');
+      debugPrint(
+          '_mapFeedMonthFetchPostsMonth : État mis à jour avec les nouveaux posts');
     } catch (err) {
-      debugPrint('_mapFeedMonthFetchPostsMonth : Erreur lors de la récupération des posts : $err');
+      debugPrint(
+          '_mapFeedMonthFetchPostsMonth : Erreur lors de la récupération des posts : $err');
       emit(state.copyWith(
         status: FeedMonthStatus.error,
-        failure:
-            const Failure(message: '_mapFeedMonthFetchPostsMonth : Nous n\'avons pas pu charger votre flux'),
+        failure: const Failure(
+            message:
+                '_mapFeedMonthFetchPostsMonth : Nous n\'avons pas pu charger votre flux'),
       ));
     }
-    debugPrint('_mapFeedMonthFetchPostsMonth : Fin de _mapFeedMonthFetchPostsMonth');
+    debugPrint(
+        '_mapFeedMonthFetchPostsMonth : Fin de _mapFeedMonthFetchPostsMonth');
   }
 
   Future<void> _mapFeedMonthFetchPostsToState(
@@ -72,16 +69,7 @@ class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
   ) async {
     try {
       final posts =
-          await _postRepository.getFeedMonth(userId: _authBloc.state.user!.uid);
-
-      _likedPostsCubit.clearAllLikedPosts();
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
+          await _feedRepository.getFeedMonth(userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedMonthStatus.loaded),
@@ -103,18 +91,11 @@ class FeedMonthBloc extends Bloc<FeedMonthEvent, FeedMonthState> {
     try {
       final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
 
-      final posts = await _postRepository.getFeedMonth(
+      final posts = await _feedRepository.getFeedMonth(
         userId: _authBloc.state.user!.uid,
         lastPostId: lastPostId,
       );
       final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
-
-      final likedPostIds = await _postRepository.getLikedPostIds(
-        userId: _authBloc.state.user!.uid,
-        posts: posts,
-      );
-
-      _likedPostsCubit.updateLikedPosts(postIds: likedPostIds);
 
       emit(
         state.copyWith(posts: updatedPosts, status: FeedMonthStatus.loaded),

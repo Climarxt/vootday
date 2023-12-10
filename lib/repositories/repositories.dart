@@ -2,6 +2,7 @@ export 'auth/auth_repository.dart';
 export 'auth/base_auth_repository.dart';
 export 'brand/brand_repository.dart';
 export 'comment/base_comment_repository.dart';
+export 'feed/feed_repository.dart';
 export 'notification/base_notification_repository.dart';
 export 'notification/notification_repository.dart';
 export 'post/base_post_repository.dart';

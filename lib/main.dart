@@ -63,6 +63,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<BrandRepository>(
           create: (context) => BrandRepository(),
         ),
+        RepositoryProvider<FeedRepository>(
+          create: (context) => FeedRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -89,17 +92,6 @@ class MyApp extends StatelessWidget {
               );
               feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
               return feedOOTDBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
-              final feedMonthBloc = FeedMonthBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-                likedPostsCubit: context.read<LikedPostsCubit>(),
-              );
-              feedMonthBloc.add(FeedMonthFetchPostsMonth());
-              return feedMonthBloc;
             },
           ),
           BlocProvider(

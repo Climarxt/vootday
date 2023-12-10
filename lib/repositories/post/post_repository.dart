@@ -275,68 +275,6 @@ class PostRepository extends BasePostRepository {
     return posts;
   }
 
-  Future<List<Post?>> getFeedMonth({
-    required String userId,
-    String? lastPostId,
-  }) async {
-    debugPrint(
-        'getFeedMonth :  appelé pour userId: $userId, lastPostId: $lastPostId');
-    QuerySnapshot postsSnap;
-
-    if (lastPostId == null) {
-      debugPrint(
-          'getFeedMonth :  Aucun lastPostId fourni, récupération des premiers posts');
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
-          .orderBy('likes', descending: true)
-          .limit(100)
-          .get();
-      debugPrint(
-          'getFeedMonth :  Nombre de posts récupérés: ${postsSnap.docs.length}');
-    } else {
-      debugPrint(
-          'getFeedMonth :  lastPostId fourni: $lastPostId, récupération des posts suivants');
-      final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feedMonth)
-          .doc(lastPostId)
-          .get();
-
-      if (!lastPostDoc.exists) {
-        debugPrint(
-            'getFeedMonth :  Le document lastPostDoc n\'existe pas, retour d\'une liste vide');
-        return [];
-      }
-
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
-          .orderBy('likes', descending: true)
-          .startAfterDocument(lastPostDoc)
-          .limit(2)
-          .get();
-      debugPrint(
-          'getFeedMonth :  Nombre de posts récupérés après le lastPostId: ${postsSnap.docs.length}');
-    }
-
-    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      DocumentReference postRef = doc['post_ref'];
-      DocumentSnapshot postSnap = await postRef.get();
-
-      if (postSnap.exists) {
-        debugPrint('getFeedMonth :  Post trouvé pour ref: ${postRef.path}');
-        return Post.fromDocument(postSnap);
-      } else {
-        debugPrint(
-            'getFeedMonth :  Aucun post trouvé pour ref: ${postRef.path}');
-        return null;
-      }
-    }).toList();
-
-    final posts = await Future.wait(postFutures);
-    debugPrint(
-        'getFeedMonth :  Nombre total de posts construits: ${posts.length}');
-    return posts;
-  }
-
   Future<Post?> getPostById(String postId) async {
     try {
       DocumentSnapshot postSnap =

@@ -5,6 +5,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_collection_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -160,7 +161,21 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: const HomeScreen(),
+                    child: BlocProvider<FeedMonthBloc>(
+                      create: (context) {
+                        print('Creating FeedMonthBloc...');
+                        final feedMonthBloc = FeedMonthBloc(
+                          feedRepository: context.read<FeedRepository>(),
+                          authBloc: context.read<AuthBloc>(),
+                          likedPostsCubit: context.read<LikedPostsCubit>(),
+                        );
+                        feedMonthBloc.add(FeedMonthFetchPostsMonth());
+                        print(
+                            'FeedMonthBloc created and FeedMonthFetchPostsMonth event added.');
+                        return feedMonthBloc;
+                      },
+                      child: const HomeScreen(),
+                    ),
                   );
                 },
                 routes: [

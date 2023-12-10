@@ -21,11 +21,10 @@ class _ProfileTab3State extends State<ProfileTab3> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      context
-          .read<YourCollectionBloc>()
-          .add(YourCollectionFetchCollections(userId: widget.userId));
-    });
+    context.read<YourCollectionBloc>().add(YourCollectionClean());
+    context
+        .read<YourCollectionBloc>()
+        .add(YourCollectionFetchCollections(userId: widget.userId));
   }
 
   @override

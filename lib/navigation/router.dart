@@ -473,7 +473,27 @@ GoRouter createRouter(BuildContext context) {
                               return latestEventBloc;
                             },
                           ),
-                          // Ajoutez ici d'autres BlocProviders si nécessaire
+                          BlocProvider(
+                            create: (context) {
+                              final thisWeekEventsBloc = CalendarThisWeekBloc(
+                                eventRepository:
+                                    context.read<EventRepository>(),
+                                authBloc: context.read<AuthBloc>(),
+                              );
+                              return thisWeekEventsBloc;
+                            },
+                          ),
+                          BlocProvider(
+                            create: (context) {
+                              final thisComignSoonEventsBloc =
+                                  CalendarComingSoonBloc(
+                                eventRepository:
+                                    context.read<EventRepository>(),
+                                authBloc: context.read<AuthBloc>(),
+                              );
+                              return thisComignSoonEventsBloc;
+                            },
+                          ),
                         ],
                         child: const CalendarScreen(),
                       ),

@@ -3,18 +3,19 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 part 'calendar_coming_soon_event.dart';
 part 'calendar_coming_soon_state.dart';
 
 class CalendarComingSoonBloc
     extends Bloc<CalendarComingSoonEvent, CalendarComingSoonState> {
-  final PostRepository _postRepository;
+  final EventRepository _eventRepository;
 
   CalendarComingSoonBloc({
-    required PostRepository postRepository,
+    required EventRepository eventRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _eventRepository = eventRepository,
         super(CalendarComingSoonState.initial()) {
     on<CalendarComingSoonFetchEvent>(_mapCalendarComingSoonFetchEvent);
   }
@@ -24,30 +25,27 @@ class CalendarComingSoonBloc
     Emitter<CalendarComingSoonState> emit,
   ) async {
     try {
-      print(
-          'Method _mapCalendarComingSoonFetchEvent: Fetching this week events...');
-      final thisComingSoonEvents = await _postRepository
-          .getComingSoonEvents(); // This should return List<Event>
+      debugPrint('CalendarComingSoonFetchEvent : Fetching this week events...');
+      final thisComingSoonEvents = await _eventRepository.getComingSoonEvents();
 
       if (thisComingSoonEvents.isNotEmpty) {
-        print(
-            'Method _mapCalendarComingSoonFetchEvent: This week events fetched successfully.');
+        debugPrint(
+            'CalendarComingSoonFetchEvent : This week events fetched successfully.');
         emit(state.copyWith(
-            thisComingSoonEvents: thisComingSoonEvents, // Update the state with the list
+            thisComingSoonEvents: thisComingSoonEvents,
             status: CalendarComingSoonStatus.loaded));
       } else {
-        print(
-            'Method _mapCalendarComingSoonFetchEvent: No events found for this week.');
+        debugPrint(
+            'CalendarComingSoonFetchEvent : No events found for this week.');
         emit(state.copyWith(
-            thisComingSoonEvents: [], // Empty list indicates no events found
+            thisComingSoonEvents: [],
             status: CalendarComingSoonStatus.noEvents));
       }
     } catch (err) {
-      print(
-          'Method _mapCalendarComingSoonFetchEvent: Error fetching events - $err');
+      debugPrint('CalendarComingSoonFetchEvent : Error fetching events - $err');
       emit(state.copyWith(
         status: CalendarComingSoonStatus.error,
-        failure: Failure(message: 'Unable to load the events'),
+        failure: const Failure(message: 'Unable to load the events'),
         thisComingSoonEvents: [],
       ));
     }

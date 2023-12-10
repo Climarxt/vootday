@@ -29,6 +29,36 @@ class EventRepository {
     }
   }
 
+  Future<Event?> getLatestEvent() async {
+    try {
+      debugPrint(
+          'getLatestEvent: Attempting to fetch the latest event document from Firestore...');
+      // Fetch the latest event by date
+      QuerySnapshot eventSnap = await _firebaseFirestore
+          .collection(Paths.events)
+          .where('done', isEqualTo: false)
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        debugPrint(
+            'getLatestEvent: Latest event document fetched. Converting to Event object...');
+        DocumentSnapshot doc = eventSnap.docs.first;
+        Event? latestEvent = await Event.fromDocument(doc);
+        debugPrint('getLatestEvent: Event data - ${latestEvent?.toDocument()}');
+        return latestEvent;
+      } else {
+        debugPrint('getLatestEvent: No events found.');
+        return null;
+      }
+    } catch (e) {
+      debugPrint(
+          'getLatestEvent: An error occurred while fetching the latest event: $e');
+      return null;
+    }
+  }
+
   Future<List<Event?>> getEventsDone({
     required String userId,
     String? lastEventId,
@@ -90,33 +120,72 @@ class EventRepository {
     }
   }
 
-  Future<Event?> getLatestEvent() async {
+  Future<List<Event>> getThisWeekEvents() async {
+    List<Event> eventsList = [];
     try {
       debugPrint(
-          'getLatestEvent: Attempting to fetch the latest event document from Firestore...');
-      // Fetch the latest event by date
-      QuerySnapshot eventSnap = await _firebaseFirestore
-          .collection(Paths.events)
+          'getThisWeekEvents: Attempting to fetch events from Firestore for the current week.');
+
+      DateTime now = DateTime.now();
+      DateTime oneWeekFromNow = now.add(Duration(days: 7));
+
+      QuerySnapshot eventSnap = await FirebaseFirestore.instance
+          .collection('events')
           .where('done', isEqualTo: false)
-          .orderBy('date', descending: true)
-          .limit(1)
+          .where('dateEvent', isGreaterThan: now)
+          .where('dateEvent', isLessThan: oneWeekFromNow)
+          .orderBy('dateEvent', descending: true)
           .get();
 
       if (eventSnap.docs.isNotEmpty) {
-        debugPrint(
-            'getLatestEvent: Latest event document fetched. Converting to Event object...');
-        DocumentSnapshot doc = eventSnap.docs.first;
-        Event? latestEvent = await Event.fromDocument(doc);
-        debugPrint('getLatestEvent: Event data - ${latestEvent?.toDocument()}');
-        return latestEvent;
+        for (var doc in eventSnap.docs) {
+          Event? event = await Event.fromDocument(doc);
+          if (event != null) {
+            eventsList.add(event);
+          }
+        }
+        debugPrint('getThisWeekEvents: Events fetched successfully.');
       } else {
-        debugPrint('getLatestEvent: No events found.');
-        return null;
+        debugPrint('getThisWeekEvents: No events found for the current week.');
       }
     } catch (e) {
       debugPrint(
-          'getLatestEvent: An error occurred while fetching the latest event: $e');
-      return null;
+          'getThisWeekEvents: Error occurred while fetching events - $e');
     }
+    return eventsList;
+  }
+
+  Future<List<Event>> getComingSoonEvents() async {
+    List<Event> eventsList = [];
+    try {
+      debugPrint(
+          'getComingSoonEvents: Attempting to fetch future events from Firestore.');
+
+      DateTime now = DateTime.now();
+      DateTime oneWeekFromNow = now.add(Duration(days: 7));
+
+      QuerySnapshot eventSnap = await FirebaseFirestore.instance
+          .collection('events')
+          .where('done', isEqualTo: false)
+          .where('dateEvent', isGreaterThanOrEqualTo: oneWeekFromNow)
+          .orderBy('dateEvent', descending: false)
+          .get();
+
+      if (eventSnap.docs.isNotEmpty) {
+        for (var doc in eventSnap.docs) {
+          Event? event = await Event.fromDocument(doc);
+          if (event != null) {
+            eventsList.add(event);
+          }
+        }
+        debugPrint('getComingSoonEvents: Future events fetched successfully.');
+      } else {
+        debugPrint('getComingSoonEvents: No future events found.');
+      }
+    } catch (e) {
+      debugPrint(
+          'getComingSoonEvents: Error occurred while fetching future events - $e');
+    }
+    return eventsList;
   }
 }

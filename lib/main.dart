@@ -84,24 +84,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) {
-              final thisWeekEventsBloc = CalendarThisWeekBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-              );
-              return thisWeekEventsBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
-              final thisComignSoonEventsBloc = CalendarComingSoonBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-              );
-              return thisComignSoonEventsBloc;
-            },
-          ),
-          BlocProvider(
-            create: (context) {
               final eventBloc = EventBloc(
                 eventRepository: context.read<EventRepository>(),
               );

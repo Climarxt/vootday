@@ -9,12 +9,12 @@ part 'calendar_this_week_state.dart';
 
 class CalendarThisWeekBloc
     extends Bloc<CalendarThisWeekEvent, CalendarThisWeekState> {
-  final PostRepository _postRepository;
+  final EventRepository _eventRepository;
 
   CalendarThisWeekBloc({
-    required PostRepository postRepository,
+    required EventRepository eventRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _eventRepository = eventRepository,
         super(CalendarThisWeekState.initial()) {
     on<CalendarThisWeekFetchEvent>(_mapCalendarThisWeekFetchEvent);
   }
@@ -24,30 +24,25 @@ class CalendarThisWeekBloc
     Emitter<CalendarThisWeekState> emit,
   ) async {
     try {
-      print(
-          'Method _mapCalendarThisWeekFetchEvent: Fetching this week events...');
-      final thisWeekEvents = await _postRepository
-          .getThisWeekEvents(); // This should return List<Event>
+      print('CalendarThisWeekFetchEvent : Fetching this week events...');
+      final thisWeekEvents = await _eventRepository.getThisWeekEvents();
 
       if (thisWeekEvents.isNotEmpty) {
         print(
-            'Method _mapCalendarThisWeekFetchEvent: This week events fetched successfully.');
+            'CalendarThisWeekFetchEvent : This week events fetched successfully.');
         emit(state.copyWith(
-            thisWeekEvents: thisWeekEvents, // Update the state with the list
+            thisWeekEvents: thisWeekEvents,
             status: CalendarThisWeekStatus.loaded));
       } else {
-        print(
-            'Method _mapCalendarThisWeekFetchEvent: No events found for this week.');
+        print('CalendarThisWeekFetchEvent : No events found for this week.');
         emit(state.copyWith(
-            thisWeekEvents: [], // Empty list indicates no events found
-            status: CalendarThisWeekStatus.noEvents));
+            thisWeekEvents: [], status: CalendarThisWeekStatus.noEvents));
       }
     } catch (err) {
-      print(
-          'Method _mapCalendarThisWeekFetchEvent: Error fetching events - $err');
+      print('CalendarThisWeekFetchEvent : Error fetching events - $err');
       emit(state.copyWith(
         status: CalendarThisWeekStatus.error,
-        failure: Failure(message: 'Unable to load the events'),
+        failure: const Failure(message: 'Unable to load the events'),
         thisWeekEvents: [],
       ));
     }

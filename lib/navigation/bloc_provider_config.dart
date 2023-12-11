@@ -1,3 +1,5 @@
+import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
+import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
@@ -90,6 +92,58 @@ class BlocProviderConfig {
           authBloc: context.read<AuthBloc>(),
         );
         return feedEventBloc;
+      },
+      child: child,
+    );
+  }
+
+  static MultiBlocProvider getCalendarMultiBlocProvider(
+      BuildContext context, Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CalendarLatestBloc>(
+          create: (context) {
+            final latestEventBloc = CalendarLatestBloc(
+              eventRepository: context.read<EventRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return latestEventBloc;
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            final thisWeekEventsBloc = CalendarThisWeekBloc(
+              eventRepository: context.read<EventRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return thisWeekEventsBloc;
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            final thisComignSoonEventsBloc = CalendarComingSoonBloc(
+              eventRepository: context.read<EventRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return thisComignSoonEventsBloc;
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  static BlocProvider getCreatePostBlocProvider(
+      BuildContext context, Widget child) {
+    return BlocProvider<CreatePostCubit>(
+      create: (context) {
+        final createPostBloc = CreatePostCubit(
+          postRepository: context.read<PostRepository>(),
+          eventRepository: context.read<EventRepository>(),
+          storageRepository: context.read<StorageRepository>(),
+          authBloc: context.read<AuthBloc>(),
+        );
+        return createPostBloc;
       },
       child: child,
     );

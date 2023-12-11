@@ -6,11 +6,9 @@ import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
-import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_collection_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -228,8 +226,8 @@ GoRouter createRouter(BuildContext context) {
                           final title = RouteConfig.getTitle(state);
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child:
-                                BlocProviderConfig.getFeedCollectionBlocProvider(
+                            child: BlocProviderConfig
+                                .getFeedCollectionBlocProvider(
                               context,
                               FeedCollection(
                                 collectionId: collectionId,
@@ -241,7 +239,7 @@ GoRouter createRouter(BuildContext context) {
                       ),
                     ],
                   ),
-                  // home/event/:event/Id
+                  // home/event/:eventId
                   GoRoute(
                     path: 'event/:eventId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
@@ -258,19 +256,17 @@ GoRouter createRouter(BuildContext context) {
                       );
                     },
                     routes: [
+                      // home/event/:eventId/post/:postId
                       GoRoute(
                         path: 'post/:postId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final postId = state.pathParameters['postId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
-                          final eventId = state.pathParameters['eventId']!;
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-                          final logoUrl =
-                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                          final postId = RouteConfig.getPostId(state);
+                          final username = RouteConfig.getUsername(state);
+                          final eventId = RouteConfig.getEventId(state);
+                          final title = RouteConfig.getTitle(state);
+                          final logoUrl = RouteConfig.getLogoUrl(state);
+
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: PostEventScreen(
@@ -283,38 +279,21 @@ GoRouter createRouter(BuildContext context) {
                           );
                         },
                         routes: [
+                          // home/event/:eventId/post/:postId/user/:userId
                           GoRoute(
                             path: 'user/:userId',
                             pageBuilder:
                                 (BuildContext context, GoRouterState state) {
-                              final userId = state.pathParameters['userId']!;
-                              final username =
-                                  state.uri.queryParameters['username'] ??
-                                      'Unknown';
-                              final title =
-                                  state.uri.queryParameters['title'] ?? 'title';
+                              final userId = RouteConfig.getUserId(state);
+                              final username = RouteConfig.getUsername(state);
+                              final title = RouteConfig.getTitle(state);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
-                                child: MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider<ProfileBloc>(
-                                      create: (context) => ProfileBloc(
-                                        authBloc: context.read<AuthBloc>(),
-                                        userRepository:
-                                            context.read<UserRepository>(),
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                    BlocProvider<YourCollectionBloc>(
-                                      create: (context) => YourCollectionBloc(
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                  ],
-                                  child: ProfileScreen(
+                                child: BlocProviderConfig
+                                    .getProfileMultiBlocProvider(
+                                  context,
+                                  ProfileScreen(
                                     userId: userId,
                                     username: username,
                                     title: title,
@@ -323,6 +302,7 @@ GoRouter createRouter(BuildContext context) {
                               );
                             },
                           ),
+                          // home/event/:eventId/post/:postId/comment
                           GoRoute(
                             path: 'comment',
                             pageBuilder:
@@ -335,38 +315,21 @@ GoRouter createRouter(BuildContext context) {
                           ),
                         ],
                       ),
+                      // home/event/:eventId/user/:userId
                       GoRoute(
                         path: 'user/:userId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final userId = state.pathParameters['userId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
+                          final userId = RouteConfig.getUserId(state);
+                          final username = RouteConfig.getUsername(state);
+                          final title = RouteConfig.getTitle(state);
 
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: MultiBlocProvider(
-                              providers: [
-                                BlocProvider<ProfileBloc>(
-                                  create: (context) => ProfileBloc(
-                                    authBloc: context.read<AuthBloc>(),
-                                    userRepository:
-                                        context.read<UserRepository>(),
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                                BlocProvider<YourCollectionBloc>(
-                                  create: (context) => YourCollectionBloc(
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                              ],
-                              child: ProfileScreen(
+                            child:
+                                BlocProviderConfig.getProfileMultiBlocProvider(
+                              context,
+                              ProfileScreen(
                                 userId: userId,
                                 username: username,
                                 title: title,
@@ -387,57 +350,23 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                   path: '/calendar',
                   pageBuilder: (BuildContext context, GoRouterState state) {
-                    return NoAnimationPage(
-                      child: MultiBlocProvider(
-                        providers: [
-                          BlocProvider<CalendarLatestBloc>(
-                            create: (context) {
-                              final latestEventBloc = CalendarLatestBloc(
-                                eventRepository:
-                                    context.read<EventRepository>(),
-                                authBloc: context.read<AuthBloc>(),
-                              );
-                              return latestEventBloc;
-                            },
-                          ),
-                          BlocProvider(
-                            create: (context) {
-                              final thisWeekEventsBloc = CalendarThisWeekBloc(
-                                eventRepository:
-                                    context.read<EventRepository>(),
-                                authBloc: context.read<AuthBloc>(),
-                              );
-                              return thisWeekEventsBloc;
-                            },
-                          ),
-                          BlocProvider(
-                            create: (context) {
-                              final thisComignSoonEventsBloc =
-                                  CalendarComingSoonBloc(
-                                eventRepository:
-                                    context.read<EventRepository>(),
-                                authBloc: context.read<AuthBloc>(),
-                              );
-                              return thisComignSoonEventsBloc;
-                            },
-                          ),
-                        ],
-                        child: const CalendarScreen(),
-                      ),
+                    return MaterialPage<void>(
+                      key: state.pageKey,
+                      child: BlocProviderConfig.getCalendarMultiBlocProvider(
+                          context, const CalendarScreen()),
                     );
                   },
                   routes: [
+                    // calendar/event/:eventId
                     GoRoute(
                         path: 'event/:eventId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final eventId = state.pathParameters['eventId']!;
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-                          final logoUrl =
-                              state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
-                          final author =
-                              state.uri.queryParameters['author'] ?? 'author';
+                          final eventId = RouteConfig.getEventId(state);
+                          final title = RouteConfig.getTitle(state);
+                          final logoUrl = RouteConfig.getLogoUrl(state);
+                          final author = RouteConfig.getAuthor(state);
+
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: EventScreen(
@@ -449,38 +378,21 @@ GoRouter createRouter(BuildContext context) {
                           );
                         },
                         routes: [
+                          // calendar/event/:eventId/user/:userId
                           GoRoute(
                             path: 'user/:userId',
                             pageBuilder:
                                 (BuildContext context, GoRouterState state) {
-                              final userId = state.pathParameters['userId']!;
-                              final username =
-                                  state.uri.queryParameters['username'] ??
-                                      'Unknown';
-                              final title =
-                                  state.uri.queryParameters['title'] ?? 'title';
+                              final userId = RouteConfig.getUserId(state);
+                              final username = RouteConfig.getUsername(state);
+                              final title = RouteConfig.getTitle(state);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
-                                child: MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider<ProfileBloc>(
-                                      create: (context) => ProfileBloc(
-                                        authBloc: context.read<AuthBloc>(),
-                                        userRepository:
-                                            context.read<UserRepository>(),
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                    BlocProvider<YourCollectionBloc>(
-                                      create: (context) => YourCollectionBloc(
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                  ],
-                                  child: ProfileBrandScreen(
+                                child: BlocProviderConfig
+                                    .getProfileMultiBlocProvider(
+                                  context,
+                                  ProfileBrandScreen(
                                     userId: userId,
                                     username: username,
                                     title: title,
@@ -489,6 +401,7 @@ GoRouter createRouter(BuildContext context) {
                               );
                             },
                           ),
+                          // calendar/event/:eventId/comment
                           GoRoute(
                             path: 'comment',
                             pageBuilder:
@@ -499,17 +412,14 @@ GoRouter createRouter(BuildContext context) {
                               );
                             },
                           ),
+                          // calendar/event/:eventId/post/postId
                           GoRoute(
                             path: 'post/:postId',
                             pageBuilder:
                                 (BuildContext context, GoRouterState state) {
-                              final postId = state.pathParameters['postId']!;
-                              final username =
-                                  state.uri.queryParameters['username'] ??
-                                      'Unknown';
-                              final eventId =
-                                  state.uri.queryParameters['eventId'] ??
-                                      'Unknown';
+                              final postId = RouteConfig.getPostId(state);
+                              final username = RouteConfig.getUsername(state);
+                              final eventId = RouteConfig.getEventId(state);
                               return MaterialPage<void>(
                                 key: state.pageKey,
                                 child: PostCalendarScreen(
@@ -518,71 +428,21 @@ GoRouter createRouter(BuildContext context) {
                                     eventId: eventId),
                               );
                             },
-                            routes: [
-                              GoRoute(
-                                path: 'user/:userId',
-                                pageBuilder: (BuildContext context,
-                                    GoRouterState state) {
-                                  final userId =
-                                      state.pathParameters['userId']!;
-                                  final username =
-                                      state.uri.queryParameters['username'] ??
-                                          'Unknown';
-                                  final title =
-                                      state.uri.queryParameters['title'] ??
-                                          'title';
-
-                                  return MaterialPage<void>(
-                                    key: state.pageKey,
-                                    child: MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider<ProfileBloc>(
-                                          create: (context) => ProfileBloc(
-                                            authBloc: context.read<AuthBloc>(),
-                                            userRepository:
-                                                context.read<UserRepository>(),
-                                            postRepository:
-                                                context.read<PostRepository>(),
-                                          ),
-                                        ),
-                                        BlocProvider<YourCollectionBloc>(
-                                          create: (context) =>
-                                              YourCollectionBloc(
-                                            postRepository:
-                                                context.read<PostRepository>(),
-                                          ),
-                                        ),
-                                      ],
-                                      child: ProfileScreen(
-                                        userId: userId,
-                                        username: username,
-                                        title: title,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
                           ),
+                          // calendar/event/:eventId/create
                           GoRoute(
                             path: 'create',
                             builder:
                                 (BuildContext context, GoRouterState state) {
-                              final eventId = state.pathParameters['eventId']!;
-                              return BlocProvider<CreatePostCubit>(
-                                create: (context) => CreatePostCubit(
-                                  postRepository:
-                                      context.read<PostRepository>(),
-                                  eventRepository:
-                                      context.read<EventRepository>(),
-                                  storageRepository:
-                                      context.read<StorageRepository>(),
-                                  authBloc: context.read<AuthBloc>(),
-                                ),
-                                child: CreatePostEventScreen(eventId: eventId),
+                              final eventId = RouteConfig.getEventId(state);
+                              return BlocProviderConfig
+                                  .getCreatePostBlocProvider(
+                                context,
+                                CreatePostEventScreen(eventId: eventId),
                               );
                             },
                             routes: [
+                              // calendar/event/:eventId/create/brand
                               GoRoute(
                                 path: 'brand',
                                 builder: (BuildContext context,

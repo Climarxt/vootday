@@ -28,4 +28,8 @@ class RouteConfig {
   static String getLogoUrl(GoRouterState state) {
     return state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
   }
+
+  static String getAuthor(GoRouterState state) {
+    return state.uri.queryParameters['author'] ?? 'author';
+  }
 }

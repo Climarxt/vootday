@@ -112,8 +112,8 @@ class _PostViewState extends State<PostView>
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            context.go(
-                '/search/user/${widget.post.author.id}?username=${widget.post.author.username}');
+            context.push(
+                '/user/${widget.post.author.id}?username=${widget.post.author.username}');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
@@ -168,6 +168,6 @@ class _PostViewState extends State<PostView>
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
     GoRouter.of(context)
-        .push('/search/post/${widget.post.id}?username=$username');
+        .push('/post/${widget.post.id}?username=$username');
   }
 }

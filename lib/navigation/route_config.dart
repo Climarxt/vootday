@@ -32,4 +32,8 @@ class RouteConfig {
   static String getAuthor(GoRouterState state) {
     return state.uri.queryParameters['author'] ?? 'author';
   }
+
+    static String getCurrentLocation(GoRouterState state) {
+    return state.uri.queryParameters['author'] ?? 'author';
+  }
 }

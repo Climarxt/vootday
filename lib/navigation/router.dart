@@ -17,7 +17,6 @@ import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -200,6 +199,7 @@ GoRouter createRouter(BuildContext context) {
                       final userId = RouteConfig.getUserId(state);
                       final username = RouteConfig.getUsername(state);
                       final title = RouteConfig.getTitle(state);
+                      final GoRouter goRouter = GoRouter.of(context);
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: BlocProviderConfig.getProfileMultiBlocProvider(
@@ -208,6 +208,7 @@ GoRouter createRouter(BuildContext context) {
                             userId: userId,
                             username: username,
                             title: title,
+                            currentLocation: goRouter,
                           ),
                         ),
                       );
@@ -284,6 +285,7 @@ GoRouter createRouter(BuildContext context) {
                               final userId = RouteConfig.getUserId(state);
                               final username = RouteConfig.getUsername(state);
                               final title = RouteConfig.getTitle(state);
+                              final GoRouter goRouter = GoRouter.of(context);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
@@ -294,6 +296,7 @@ GoRouter createRouter(BuildContext context) {
                                     userId: userId,
                                     username: username,
                                     title: title,
+                                    currentLocation: goRouter,
                                   ),
                                 ),
                               );
@@ -320,6 +323,7 @@ GoRouter createRouter(BuildContext context) {
                           final userId = RouteConfig.getUserId(state);
                           final username = RouteConfig.getUsername(state);
                           final title = RouteConfig.getTitle(state);
+                          final GoRouter goRouter = GoRouter.of(context);
 
                           return MaterialPage<void>(
                             key: state.pageKey,
@@ -330,6 +334,7 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title,
+                                currentLocation: goRouter,
                               ),
                             ),
                           );
@@ -383,6 +388,7 @@ GoRouter createRouter(BuildContext context) {
                               final userId = RouteConfig.getUserId(state);
                               final username = RouteConfig.getUsername(state);
                               final title = RouteConfig.getTitle(state);
+                              final GoRouter goRouter = GoRouter.of(context);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
@@ -393,6 +399,7 @@ GoRouter createRouter(BuildContext context) {
                                     userId: userId,
                                     username: username,
                                     title: title,
+                                    currentLocation: goRouter,
                                   ),
                                 ),
                               );
@@ -516,6 +523,8 @@ GoRouter createRouter(BuildContext context) {
                           final userId = RouteConfig.getUserId(state);
                           final username = RouteConfig.getUsername(state);
                           final title = RouteConfig.getTitle(state);
+                          final GoRouter goRouter = GoRouter.of(context);
+
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child:
@@ -525,6 +534,7 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title,
+                                currentLocation: goRouter,
                               ),
                             ),
                           );
@@ -573,6 +583,8 @@ GoRouter createRouter(BuildContext context) {
                       final userId = RouteConfig.getUserId(state);
                       final username = RouteConfig.getUsername(state);
                       final title = RouteConfig.getTitle(state);
+                      final GoRouter goRouter = GoRouter.of(context);
+
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: BlocProviderConfig.getProfileMultiBlocProvider(
@@ -581,6 +593,7 @@ GoRouter createRouter(BuildContext context) {
                             userId: userId,
                             username: username,
                             title: title,
+                            currentLocation: goRouter,
                           ),
                         ),
                       );
@@ -622,7 +635,7 @@ GoRouter createRouter(BuildContext context) {
                   final userId = authBloc.state.user!.uid;
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: BlocProviderConfig.getProfileMultiBlocProvider(
+                    child: BlocProviderConfig.getMyProfileMultiBlocProvider(
                       context,
                       MyProfileScreen(
                         userId: userId,
@@ -635,13 +648,10 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'post/:postId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final postId = state.pathParameters['postId']!;
-                      final username =
-                          state.uri.queryParameters['username'] ?? 'Unknown';
-                      final eventId =
-                          state.uri.queryParameters['eventId'] ?? 'Unknown';
-                      final title =
-                          state.uri.queryParameters['title'] ?? 'Unknown';
+                      final postId = RouteConfig.getPostId(state);
+                      final username = RouteConfig.getUsername(state);
+                      final eventId = RouteConfig.getEventId(state);
+                      final title = RouteConfig.getTitle(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: PostProfileScreen(
@@ -660,6 +670,8 @@ GoRouter createRouter(BuildContext context) {
                           final userId = RouteConfig.getUserId(state);
                           final username = RouteConfig.getUsername(state);
                           final title = RouteConfig.getTitle(state);
+                          final GoRouter goRouter = GoRouter.of(context);
+
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child:
@@ -669,6 +681,7 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title,
+                                currentLocation: goRouter,
                               ),
                             ),
                           );
@@ -819,6 +832,8 @@ GoRouter createRouter(BuildContext context) {
                               final userId = RouteConfig.getUserId(state);
                               final username = RouteConfig.getUsername(state);
                               final title = RouteConfig.getTitle(state);
+                              final GoRouter goRouter = GoRouter.of(context);
+
                               return MaterialPage<void>(
                                 key: state.pageKey,
                                 child: BlocProviderConfig
@@ -828,6 +843,7 @@ GoRouter createRouter(BuildContext context) {
                                     userId: userId,
                                     username: username,
                                     title: title,
+                                    currentLocation: goRouter,
                                   ),
                                 ),
                               );

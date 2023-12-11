@@ -5,12 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileTab3 extends StatefulWidget {
   final String userId;
+  final GoRouter currentLocation;
+
   const ProfileTab3({
     super.key,
     required this.userId,
+    required this.currentLocation,
   });
 
   @override
@@ -25,6 +29,15 @@ class _ProfileTab3State extends State<ProfileTab3> {
     context
         .read<YourCollectionBloc>()
         .add(YourCollectionFetchCollections(userId: widget.userId));
+
+    final RouteMatch lastMatch =
+        widget.currentLocation.routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches
+        : widget.currentLocation.routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+
+    print('TEST location: $location');
   }
 
   @override

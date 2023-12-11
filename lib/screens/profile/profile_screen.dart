@@ -5,16 +5,20 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String userId;
   final String username;
   final String title;
+  final GoRouter currentLocation;
+
   const ProfileScreen({
     super.key,
     required this.userId,
     required this.title,
     required this.username,
+    required this.currentLocation,
   });
 
   @override
@@ -26,6 +30,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     context.read<ProfileBloc>().add(ProfileLoadUser(userId: widget.userId));
+
+    final RouteMatch lastMatch =
+        widget.currentLocation.routerDelegate.currentConfiguration.last;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches
+        : widget.currentLocation.routerDelegate.currentConfiguration;
+    final String location = matchList.uri.toString();
+
+    print('TEST location: $location');
   }
 
   @override
@@ -65,7 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     ProfileTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
-                    ProfileTab3(userId: widget.userId),
+                    ProfileTab3(
+                        userId: widget.userId,
+                        currentLocation: widget.currentLocation),
                   ],
                 ),
               ),

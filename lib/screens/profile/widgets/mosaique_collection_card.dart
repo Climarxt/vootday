@@ -63,7 +63,7 @@ class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
     final encodedName = Uri.encodeComponent(widget.name);
 
     GoRouter.of(context).push(
-      '/profile/collection/${widget.collectionId}?title=$encodedName',
+      '/collection/${widget.collectionId}?title=$encodedName',
     );
   }
 

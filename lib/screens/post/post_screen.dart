@@ -40,7 +40,7 @@ class _PostScreenState extends State<PostScreen>
     if (userId != null) {
       _checkIfUserIsAuthor(userId);
     } else {
-      print('User ID is null');
+      debugPrint('User ID is null');
     }
   }
 
@@ -61,7 +61,7 @@ class _PostScreenState extends State<PostScreen>
         }
       }
     } catch (e) {
-      print('Erreur lors de la récupération du post: $e');
+      debugPrint('Erreur lors de la récupération du post: $e');
     }
   }
 
@@ -179,13 +179,11 @@ class _PostScreenState extends State<PostScreen>
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {
-    context.go(
-        '/home/post/${widget.postId}/user/${user.id}?username=${widget.username}');
+    context.push('/user/${user.id}?username=${widget.username}');
   }
 
   void _navigateToCommentScreen(BuildContext context) {
-    context.go(
-        '/home/post/${widget.postId}/comment?username=${widget.username}');
+    context.push('/post/${widget.postId}/comment?username=${widget.username}');
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -194,27 +192,24 @@ class _PostScreenState extends State<PostScreen>
       builder: (BuildContext context) {
         return Wrap(
           children: <Widget>[
-            if (_isUserTheAuthor) // Affiche cette option seulement si l'utilisateur est l'auteur
+            if (_isUserTheAuthor)
               ListTile(
                 leading: const Icon(Icons.delete),
                 title: const Text('Delete'),
                 onTap: () {
                   final postCubit = context.read<DeletePostsCubit>();
-                  postCubit.deletePosts(widget.postId); // Assurez-vous d'avoir l'userId correct
+                  postCubit.deletePosts(widget.postId);
                   GoRouter.of(context).go('/profile');
                   SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
                 },
               ),
-
             ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),
               onTap: () {
-                // Implémentez votre logique de signalement ici
                 Navigator.pop(context);
               },
             ),
-            // Ajoutez d'autres options si nécessaire
           ],
         );
       },

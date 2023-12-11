@@ -23,6 +23,7 @@ class PostView extends StatefulWidget {
   }) : super(key: key ?? ValueKey(post.id));
 
   @override
+  // ignore: library_private_types_in_public_api
   _PostViewState createState() => _PostViewState();
 }
 
@@ -112,8 +113,8 @@ class _PostViewState extends State<PostView>
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            context.go(
-                '/home/user/${widget.post.author.id}?username=${widget.post.author.username}');
+            context.push(
+                '/user/${widget.post.author.id}?username=${widget.post.author.username}');
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
@@ -168,6 +169,6 @@ class _PostViewState extends State<PostView>
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
     GoRouter.of(context)
-        .push('/home/post/${widget.post.id}?username=$username');
+        .push('/post/${widget.post.id}?username=$username');
   }
 }

@@ -79,6 +79,92 @@ GoRouter createRouter(BuildContext context) {
           child: SignupScreen(),
         ),
       ),
+      // FeedEvent
+      GoRoute(
+        path: '/event/:eventId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final eventId = RouteConfig.getEventId(state);
+          final title = RouteConfig.getTitle(state);
+          final logoUrl = RouteConfig.getLogoUrl(state);
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProviderConfig.getFeedEventBlocProvider(
+              context,
+              FeedEvent(eventId: eventId, title: title, logoUrl: logoUrl),
+            ),
+          );
+        },
+      ),
+      // FeedCollection
+      GoRoute(
+        path: '/collection/:collectionId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final collectionId = RouteConfig.getCollectionId(state);
+          final title = RouteConfig.getTitle(state);
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProviderConfig.getFeedCollectionBlocProvider(
+              context,
+              FeedCollection(
+                collectionId: collectionId,
+                title: title,
+              ),
+            ),
+          );
+        },
+      ),
+      // Event
+      GoRoute(
+        path: '/event/:eventId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final eventId = RouteConfig.getEventId(state);
+          final title = RouteConfig.getTitle(state);
+          final logoUrl = RouteConfig.getLogoUrl(state);
+          final author = RouteConfig.getAuthor(state);
+
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: EventScreen(
+              eventId: eventId,
+              title: title,
+              logoUrl: logoUrl,
+              author: author,
+            ),
+          );
+        },
+      ),
+      // User Profile
+      GoRoute(
+        path: '/user/:userId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final userId = RouteConfig.getUserId(state);
+          final username = RouteConfig.getUsername(state);
+          final title = RouteConfig.getTitle(state);
+
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProviderConfig.getProfileMultiBlocProvider(
+              context,
+              ProfileScreen(
+                userId: userId,
+                username: username,
+                title: title,
+              ),
+            ),
+          );
+        },
+      ),
+      // Post
+      GoRoute(
+          path: '/post/:postId',
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final postId = RouteConfig.getPostId(state);
+            final username = RouteConfig.getUsername(state);
+            return MaterialPage<void>(
+              key: state.pageKey,
+              child: PostScreen(postId: postId, username: username),
+            );
+          }),
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
@@ -165,184 +251,6 @@ GoRouter createRouter(BuildContext context) {
                         context, const HomeScreen()),
                   );
                 },
-                routes: [
-                  // home/post/:postId
-                  GoRoute(
-                    path: 'post/:postId',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      final postId = RouteConfig.getPostId(state);
-                      final username = RouteConfig.getUsername(state);
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        child:
-                            PostHomeScreen(postId: postId, username: username),
-                      );
-                    },
-                    routes: [
-                      // home/post/:postId/comment
-                      GoRoute(
-                        path: 'comment',
-                        pageBuilder:
-                            (BuildContext context, GoRouterState state) {
-                          return MaterialPage<void>(
-                            key: state.pageKey,
-                            child: const CommentWIPScreen(),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  // home/user/:userId
-                  GoRoute(
-                    path: 'user/:userId',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      final userId = RouteConfig.getUserId(state);
-                      final username = RouteConfig.getUsername(state);
-                      final title = RouteConfig.getTitle(state);
-                      final GoRouter goRouter = GoRouter.of(context);
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        child: BlocProviderConfig.getProfileMultiBlocProvider(
-                          context,
-                          ProfileScreen(
-                            userId: userId,
-                            username: username,
-                            title: title,
-                            currentLocation: goRouter,
-                          ),
-                        ),
-                      );
-                    },
-                    routes: [
-                      // home/user/:userId/collection/:collectionId
-                      GoRoute(
-                        path: 'collection/:collectionId',
-                        pageBuilder:
-                            (BuildContext context, GoRouterState state) {
-                          final collectionId =
-                              RouteConfig.getCollectionId(state);
-                          final title = RouteConfig.getTitle(state);
-                          return MaterialPage<void>(
-                            key: state.pageKey,
-                            child: BlocProviderConfig
-                                .getFeedCollectionBlocProvider(
-                              context,
-                              FeedCollection(
-                                collectionId: collectionId,
-                                title: title,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  // home/event/:eventId
-                  GoRoute(
-                    path: 'event/:eventId',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      final eventId = RouteConfig.getEventId(state);
-                      final title = RouteConfig.getTitle(state);
-                      final logoUrl = RouteConfig.getLogoUrl(state);
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        child: BlocProviderConfig.getFeedEventBlocProvider(
-                          context,
-                          FeedEvent(
-                              eventId: eventId, title: title, logoUrl: logoUrl),
-                        ),
-                      );
-                    },
-                    routes: [
-                      // home/event/:eventId/post/:postId
-                      GoRoute(
-                        path: 'post/:postId',
-                        pageBuilder:
-                            (BuildContext context, GoRouterState state) {
-                          final postId = RouteConfig.getPostId(state);
-                          final username = RouteConfig.getUsername(state);
-                          final eventId = RouteConfig.getEventId(state);
-                          final title = RouteConfig.getTitle(state);
-                          final logoUrl = RouteConfig.getLogoUrl(state);
-
-                          return MaterialPage<void>(
-                            key: state.pageKey,
-                            child: PostEventScreen(
-                              title: title,
-                              postId: postId,
-                              username: username,
-                              eventId: eventId,
-                              logoUrl: logoUrl,
-                            ),
-                          );
-                        },
-                        routes: [
-                          // home/event/:eventId/post/:postId/user/:userId
-                          GoRoute(
-                            path: 'user/:userId',
-                            pageBuilder:
-                                (BuildContext context, GoRouterState state) {
-                              final userId = RouteConfig.getUserId(state);
-                              final username = RouteConfig.getUsername(state);
-                              final title = RouteConfig.getTitle(state);
-                              final GoRouter goRouter = GoRouter.of(context);
-
-                              return MaterialPage<void>(
-                                key: state.pageKey,
-                                child: BlocProviderConfig
-                                    .getProfileMultiBlocProvider(
-                                  context,
-                                  ProfileScreen(
-                                    userId: userId,
-                                    username: username,
-                                    title: title,
-                                    currentLocation: goRouter,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          // home/event/:eventId/post/:postId/comment
-                          GoRoute(
-                            path: 'comment',
-                            pageBuilder:
-                                (BuildContext context, GoRouterState state) {
-                              return MaterialPage<void>(
-                                key: state.pageKey,
-                                child: const CommentWIPScreen(),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      // home/event/:eventId/user/:userId
-                      GoRoute(
-                        path: 'user/:userId',
-                        pageBuilder:
-                            (BuildContext context, GoRouterState state) {
-                          final userId = RouteConfig.getUserId(state);
-                          final username = RouteConfig.getUsername(state);
-                          final title = RouteConfig.getTitle(state);
-                          final GoRouter goRouter = GoRouter.of(context);
-
-                          return MaterialPage<void>(
-                            key: state.pageKey,
-                            child:
-                                BlocProviderConfig.getProfileMultiBlocProvider(
-                              context,
-                              ProfileScreen(
-                                userId: userId,
-                                username: username,
-                                title: title,
-                                currentLocation: goRouter,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ],
           ),
@@ -388,7 +296,6 @@ GoRouter createRouter(BuildContext context) {
                               final userId = RouteConfig.getUserId(state);
                               final username = RouteConfig.getUsername(state);
                               final title = RouteConfig.getTitle(state);
-                              final GoRouter goRouter = GoRouter.of(context);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
@@ -399,7 +306,6 @@ GoRouter createRouter(BuildContext context) {
                                     userId: userId,
                                     username: username,
                                     title: title,
-                                    currentLocation: goRouter,
                                   ),
                                 ),
                               );
@@ -523,7 +429,6 @@ GoRouter createRouter(BuildContext context) {
                           final userId = RouteConfig.getUserId(state);
                           final username = RouteConfig.getUsername(state);
                           final title = RouteConfig.getTitle(state);
-                          final GoRouter goRouter = GoRouter.of(context);
 
                           return MaterialPage<void>(
                             key: state.pageKey,
@@ -534,7 +439,6 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title,
-                                currentLocation: goRouter,
                               ),
                             ),
                           );
@@ -583,7 +487,6 @@ GoRouter createRouter(BuildContext context) {
                       final userId = RouteConfig.getUserId(state);
                       final username = RouteConfig.getUsername(state);
                       final title = RouteConfig.getTitle(state);
-                      final GoRouter goRouter = GoRouter.of(context);
 
                       return MaterialPage<void>(
                         key: state.pageKey,
@@ -593,7 +496,6 @@ GoRouter createRouter(BuildContext context) {
                             userId: userId,
                             username: username,
                             title: title,
-                            currentLocation: goRouter,
                           ),
                         ),
                       );
@@ -670,7 +572,6 @@ GoRouter createRouter(BuildContext context) {
                           final userId = RouteConfig.getUserId(state);
                           final username = RouteConfig.getUsername(state);
                           final title = RouteConfig.getTitle(state);
-                          final GoRouter goRouter = GoRouter.of(context);
 
                           return MaterialPage<void>(
                             key: state.pageKey,
@@ -681,7 +582,6 @@ GoRouter createRouter(BuildContext context) {
                                 userId: userId,
                                 username: username,
                                 title: title,
-                                currentLocation: goRouter,
                               ),
                             ),
                           );
@@ -832,7 +732,6 @@ GoRouter createRouter(BuildContext context) {
                               final userId = RouteConfig.getUserId(state);
                               final username = RouteConfig.getUsername(state);
                               final title = RouteConfig.getTitle(state);
-                              final GoRouter goRouter = GoRouter.of(context);
 
                               return MaterialPage<void>(
                                 key: state.pageKey,
@@ -843,7 +742,6 @@ GoRouter createRouter(BuildContext context) {
                                     userId: userId,
                                     username: username,
                                     title: title,
-                                    currentLocation: goRouter,
                                   ),
                                 ),
                               );

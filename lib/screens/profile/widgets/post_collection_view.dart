@@ -82,7 +82,7 @@ class _PostCollectionViewState extends State<PostCollectionView>
     final String encodedTitle = Uri.encodeComponent(widget.title);
 
     GoRouter.of(context)
-        .push('/profile/collection/${widget.collectionId}/post/${widget.post.id}'
+        .push('/post/${widget.post.id}'
             '?username=$encodedUsername'
             '&title=$encodedTitle');
   }

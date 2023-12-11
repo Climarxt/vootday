@@ -16,11 +16,6 @@ class FeedOOTD extends StatefulWidget {
 class _FeedOOTDState extends State<FeedOOTD>
     with AutomaticKeepAliveClientMixin<FeedOOTD> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
   }

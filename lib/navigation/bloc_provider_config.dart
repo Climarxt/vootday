@@ -1,5 +1,7 @@
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
+import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
@@ -145,6 +147,33 @@ class BlocProviderConfig {
         );
         return createPostBloc;
       },
+      child: child,
+    );
+  }
+
+  static MultiBlocProvider getFollowingExplorerMultiBlocProvider(
+      BuildContext context, Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FollowingBloc>(
+          create: (context) {
+            final followingBloc = FollowingBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return followingBloc;
+          },
+        ),
+        BlocProvider<ExplorerBloc>(
+          create: (context) {
+            final explorerBloc = ExplorerBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return explorerBloc;
+          },
+        ),
+      ],
       child: child,
     );
   }

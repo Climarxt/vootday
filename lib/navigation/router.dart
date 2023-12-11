@@ -490,28 +490,10 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: MultiBlocProvider(
-                      providers: [
-                        BlocProvider<FollowingBloc>(
-                          create: (context) {
-                            final followingBloc = FollowingBloc(
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                            );
-                            return followingBloc;
-                          },
-                        ),
-                        BlocProvider<ExplorerBloc>(
-                          create: (context) {
-                            final explorerBloc = ExplorerBloc(
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                            );
-                            return explorerBloc;
-                          },
-                        ),
-                      ],
-                      child: const SearchScreen(),
+                    child: BlocProviderConfig
+                        .getFollowingExplorerMultiBlocProvider(
+                      context,
+                      const SearchScreen(),
                     ),
                   );
                 },
@@ -520,9 +502,8 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'post/:postId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final postId = state.pathParameters['postId']!;
-                      final username =
-                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      final postId = RouteConfig.getPostId(state);
+                      final username = RouteConfig.getUsername(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: PostSearchScreen(
@@ -530,38 +511,20 @@ GoRouter createRouter(BuildContext context) {
                       );
                     },
                     routes: [
+                      // search/post/:postId/user/:userId
                       GoRoute(
                         path: 'user/:userId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final userId = state.pathParameters['userId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-
+                          final userId = RouteConfig.getUserId(state);
+                          final username = RouteConfig.getUsername(state);
+                          final title = RouteConfig.getTitle(state);
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: MultiBlocProvider(
-                              providers: [
-                                BlocProvider<ProfileBloc>(
-                                  create: (context) => ProfileBloc(
-                                    authBloc: context.read<AuthBloc>(),
-                                    userRepository:
-                                        context.read<UserRepository>(),
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                                BlocProvider<YourCollectionBloc>(
-                                  create: (context) => YourCollectionBloc(
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                              ],
-                              child: ProfileScreen(
+                            child:
+                                BlocProviderConfig.getProfileMultiBlocProvider(
+                              context,
+                              ProfileScreen(
                                 userId: userId,
                                 username: username,
                                 title: title,
@@ -569,7 +532,31 @@ GoRouter createRouter(BuildContext context) {
                             ),
                           );
                         },
+                        routes: [
+                          // search/post/:postId/user/:userId/collection/:collectionId
+                          GoRoute(
+                            path: 'collection/:collectionId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final collectionId =
+                                  RouteConfig.getCollectionId(state);
+                              final title = RouteConfig.getTitle(state);
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: BlocProviderConfig
+                                    .getFeedCollectionBlocProvider(
+                                  context,
+                                  FeedCollection(
+                                    collectionId: collectionId,
+                                    title: title,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
+                      // search/post/:postId/comment
                       GoRoute(
                         path: 'comment',
                         pageBuilder:
@@ -586,30 +573,14 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'user/:userId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final userId = state.pathParameters['userId']!;
-                      final username =
-                          state.uri.queryParameters['username'] ?? 'Unknown';
-                      final title =
-                          state.uri.queryParameters['title'] ?? 'title';
-
+                      final userId = RouteConfig.getUserId(state);
+                      final username = RouteConfig.getUsername(state);
+                      final title = RouteConfig.getTitle(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: MultiBlocProvider(
-                          providers: [
-                            BlocProvider<ProfileBloc>(
-                              create: (context) => ProfileBloc(
-                                authBloc: context.read<AuthBloc>(),
-                                userRepository: context.read<UserRepository>(),
-                                postRepository: context.read<PostRepository>(),
-                              ),
-                            ),
-                            BlocProvider<YourCollectionBloc>(
-                              create: (context) => YourCollectionBloc(
-                                postRepository: context.read<PostRepository>(),
-                              ),
-                            ),
-                          ],
-                          child: ProfileScreen(
+                        child: BlocProviderConfig.getProfileMultiBlocProvider(
+                          context,
+                          ProfileScreen(
                             userId: userId,
                             username: username,
                             title: title,
@@ -617,6 +588,29 @@ GoRouter createRouter(BuildContext context) {
                         ),
                       );
                     },
+                    routes: [
+                      // search/user/:userId/collection/:collectionId
+                      GoRoute(
+                        path: 'collection/:collectionId',
+                        pageBuilder:
+                            (BuildContext context, GoRouterState state) {
+                          final collectionId =
+                              RouteConfig.getCollectionId(state);
+                          final title = RouteConfig.getTitle(state);
+                          return MaterialPage<void>(
+                            key: state.pageKey,
+                            child: BlocProviderConfig
+                                .getFeedCollectionBlocProvider(
+                              context,
+                              FeedCollection(
+                                collectionId: collectionId,
+                                title: title,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

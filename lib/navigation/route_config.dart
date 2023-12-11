@@ -8,4 +8,16 @@ class RouteConfig {
   static String getUsername(GoRouterState state) {
     return state.uri.queryParameters['username'] ?? 'Unknown';
   }
+
+  static String getUserId(GoRouterState state) {
+    return state.pathParameters['userId']!;
+  }
+
+  static String getTitle(GoRouterState state) {
+    return state.uri.queryParameters['title'] ?? 'title';
+  }
+
+  static String getCollectionId(GoRouterState state) {
+    return state.pathParameters['collectionId']!;
+  }
 }

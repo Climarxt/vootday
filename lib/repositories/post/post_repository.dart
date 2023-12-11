@@ -34,12 +34,14 @@ class PostRepository extends BasePostRepository {
     debugPrint(
         'deletePost : Exécution du batch pour la suppression du post et des références associées');
     await batch.commit();
-    debugPrint('deletePost : Suppression terminée pour le post avec ID: $postId');
+    debugPrint(
+        'deletePost : Suppression terminée pour le post avec ID: $postId');
   }
 
   Future<void> _deletePostReferencesInSubCollections(
       WriteBatch batch, DocumentReference postRef, String subCollection) async {
-    debugPrint('_deletePostReferencesInSubCollections : Recherche du post dans les sous-collections $subCollection');
+    debugPrint(
+        '_deletePostReferencesInSubCollections : Recherche du post dans les sous-collections $subCollection');
     QuerySnapshot snapshot = await _firebaseFirestore
         .collectionGroup(subCollection)
         .where('post_ref', isEqualTo: postRef)
@@ -292,7 +294,7 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-    Future<List<Collection?>> getYourCollection({
+  Future<List<Collection?>> getYourCollection({
     required String userId,
   }) async {
     try {
@@ -345,80 +347,5 @@ class PostRepository extends BasePostRepository {
           'getMyCollection : An error occurred while fetching collections: ${e.toString()}');
       return [];
     }
-  }
-
-
-  Future<List<Post?>> getFeedCollection({
-    required String collectionId,
-    required String userId,
-    String? lastPostId,
-  }) async {
-    debugPrint(
-        'getFeedCollection : called with collectionId: $collectionId, userId: $userId, lastPostId: $lastPostId');
-    QuerySnapshot postsSnap;
-    final collectionDocRef =
-        _firebaseFirestore.collection('collections').doc(collectionId);
-
-    if (lastPostId == null) {
-      debugPrint('getFeedCollection : Fetching initial collections...');
-      postsSnap = await collectionDocRef
-          .collection('feed_collection')
-          .orderBy('date', descending: true)
-          .limit(4)
-          .get();
-      debugPrint(
-          'getFeedCollection : Fetched ${postsSnap.docs.length} initial collections.');
-    } else {
-      debugPrint(
-          'getFeedCollection : Fetching posts after postId: $lastPostId');
-      final lastPostDoc = await collectionDocRef
-          .collection('feed_collection')
-          .doc(lastPostId)
-          .get();
-
-      if (!lastPostDoc.exists) {
-        debugPrint(
-            'getFeedCollection : Last post not found. Returning empty list.');
-        return [];
-      }
-
-      postsSnap = await collectionDocRef
-          .collection('feed_collection')
-          .orderBy('date', descending: true)
-          .startAfterDocument(lastPostDoc)
-          .limit(2)
-          .get();
-      debugPrint(
-          'getFeedCollection : Fetched ${postsSnap.docs.length} posts after postId: $lastPostId');
-    }
-
-    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      try {
-        if (doc.exists) {
-          debugPrint(
-              'getFeedCollection : Processing post document with ID: ${doc.id}');
-          DocumentReference postRef = doc['post_ref'];
-          DocumentSnapshot postSnap = await postRef.get();
-          if (postSnap.exists) {
-            return Post.fromDocument(postSnap);
-          } else {
-            debugPrint(
-                'getFeedCollection : Referenced post document does not exist.');
-          }
-        } else {
-          debugPrint(
-              'getFeedCollection : Document does not exist, skipping.');
-        }
-      } catch (e) {
-        debugPrint(
-            'getFeedCollection : Error processing post document: ${doc.id}, Error: $e');
-      }
-      return null;
-    }).toList();
-
-    final posts = await Future.wait(postFutures);
-    debugPrint(
-        'getFeedCollection : Total posts processed: ${posts.length}');
-    return posts;
   }
 }

@@ -103,16 +103,6 @@ class MyApp extends StatelessWidget {
               return myCollectionBloc;
             },
           ),
-          BlocProvider(
-            create: (context) {
-              final feedCollectionBloc = FeedCollectionBloc(
-                postRepository: context.read<PostRepository>(),
-                authBloc: context.read<AuthBloc>(),
-                likedPostsCubit: context.read<LikedPostsCubit>(),
-              );
-              return feedCollectionBloc;
-            },
-          ),
         ],
         child: Builder(
           builder: (context) => MaterialApp.router(

@@ -12,6 +12,7 @@ import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_collection_screen.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
@@ -943,7 +944,7 @@ GoRouter createRouter(BuildContext context) {
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: EditProfileScreen(),
+                        child: const EditProfileScreen(),
                       );
                     },
                   ),
@@ -953,7 +954,7 @@ GoRouter createRouter(BuildContext context) {
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: SettingsScreen(),
+                        child: const SettingsScreen(),
                       );
                     },
                   ),
@@ -963,7 +964,7 @@ GoRouter createRouter(BuildContext context) {
                     pageBuilder: (BuildContext context, GoRouterState state) {
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: NotificationScreen(),
+                        child: const NotificationScreen(),
                       );
                     },
                   ),
@@ -1018,8 +1019,17 @@ GoRouter createRouter(BuildContext context) {
 
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: FeedCollection(
-                            collectionId: collectionId, title: title),
+                        child: BlocProvider<FeedCollectionBloc>(
+                          create: (context) {
+                            final feedCollectionBloc = FeedCollectionBloc(
+                              feedRepository: context.read<FeedRepository>(),
+                              authBloc: context.read<AuthBloc>(),
+                            );
+                            return feedCollectionBloc;
+                          },
+                          child: FeedCollection(
+                              collectionId: collectionId, title: title),
+                        ),
                       );
                     },
                     routes: [

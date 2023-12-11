@@ -16,13 +16,4 @@ class FeedCollectionFetchPostsCollections extends FeedCollectionEvent {
   List<Object> get props => [collectionId];
 }
 
-class FeedCollectionPaginatePostsCollections extends FeedCollectionEvent {
-  final String collectionId;
-
-  const FeedCollectionPaginatePostsCollections({required this.collectionId});
-
-  @override
-  List<Object> get props => [collectionId];
-}
-
 class FeedCollectionClean extends FeedCollectionEvent {}

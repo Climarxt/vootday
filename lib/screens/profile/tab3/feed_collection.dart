@@ -22,14 +22,11 @@ class FeedCollection extends StatefulWidget {
 
 class _FeedCollectionState extends State<FeedCollection>
     with AutomaticKeepAliveClientMixin<FeedCollection> {
-  late ScrollController _scrollController;
-  final TextEditingController _textController = TextEditingController();
-  bool _isFetching = false;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_onScroll);
+
     final feedCollectionBloc = context.read<FeedCollectionBloc>();
     if (!feedCollectionBloc.state.hasFetchedInitialPosts ||
         feedCollectionBloc.state.collection?.id != widget.collectionId) {
@@ -38,24 +35,9 @@ class _FeedCollectionState extends State<FeedCollection>
     }
   }
 
-  void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange &&
-        !_isFetching &&
-        context.read<FeedCollectionBloc>().state.status !=
-            FeedCollectionStatus.paginating) {
-      _isFetching = true;
-      context.read<FeedCollectionBloc>().add(
-          FeedCollectionPaginatePostsCollections(
-              collectionId: widget.collectionId));
-    }
-  }
 
   @override
   void dispose() {
-    _textController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -88,7 +70,6 @@ class _FeedCollectionState extends State<FeedCollection>
           ),
           physics: const BouncingScrollPhysics(),
           cacheExtent: 10000,
-          controller: _scrollController,
           itemCount: state.posts.length + 1,
           itemBuilder: (BuildContext context, int index) {
             if (index == state.posts.length) {

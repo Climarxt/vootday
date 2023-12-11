@@ -223,12 +223,13 @@ GoRouter createRouter(BuildContext context) {
                         path: 'collection/:collectionId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final collectionId = RouteConfig.getCollectionId(state);
+                          final collectionId =
+                              RouteConfig.getCollectionId(state);
                           final title = RouteConfig.getTitle(state);
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child:
-                                BlocProviderConfig.getProfileMultiBlocProvider(
+                                BlocProviderConfig.getFeedCollectionBlocProvider(
                               context,
                               FeedCollection(
                                 collectionId: collectionId,
@@ -244,25 +245,14 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'event/:eventId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final eventId = state.pathParameters['eventId']!;
-                      final title =
-                          state.uri.queryParameters['title'] ?? 'title';
-                      final logoUrl =
-                          state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+                      final eventId = RouteConfig.getEventId(state);
+                      final title = RouteConfig.getTitle(state);
+                      final logoUrl = RouteConfig.getLogoUrl(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: BlocProvider<FeedEventBloc>(
-                          create: (context) {
-                            final feedEventBloc = FeedEventBloc(
-                              eventRepository: context.read<EventRepository>(),
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                              likedPostsCubit: context.read<LikedPostsCubit>(),
-                            );
-                            // Ajoutez ici un événement initial si nécessaire
-                            return feedEventBloc;
-                          },
-                          child: FeedEvent(
+                        child: BlocProviderConfig.getFeedEventBlocProvider(
+                          context,
+                          FeedEvent(
                               eventId: eventId, title: title, logoUrl: logoUrl),
                         ),
                       );

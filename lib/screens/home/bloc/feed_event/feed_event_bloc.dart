@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
@@ -19,7 +18,6 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     required FeedRepository feedRepository,
     required EventRepository eventRepository,
     required AuthBloc authBloc,
-    required LikedPostsCubit likedPostsCubit,
   })  : _feedRepository = feedRepository,
         _eventRepository = eventRepository,
         _authBloc = authBloc,

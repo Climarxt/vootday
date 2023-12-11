@@ -79,4 +79,19 @@ class BlocProviderConfig {
       child: child,
     );
   }
+
+  static BlocProvider getFeedEventBlocProvider(
+      BuildContext context, Widget child) {
+    return BlocProvider<FeedEventBloc>(
+      create: (context) {
+        final feedEventBloc = FeedEventBloc(
+          eventRepository: context.read<EventRepository>(),
+          feedRepository: context.read<FeedRepository>(),
+          authBloc: context.read<AuthBloc>(),
+        );
+        return feedEventBloc;
+      },
+      child: child,
+    );
+  }
 }

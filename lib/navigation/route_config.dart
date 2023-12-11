@@ -20,4 +20,12 @@ class RouteConfig {
   static String getCollectionId(GoRouterState state) {
     return state.pathParameters['collectionId']!;
   }
+
+  static String getEventId(GoRouterState state) {
+    return state.pathParameters['eventId']!;
+  }
+
+  static String getLogoUrl(GoRouterState state) {
+    return state.uri.queryParameters['logoUrl'] ?? 'logoUrl';
+  }
 }

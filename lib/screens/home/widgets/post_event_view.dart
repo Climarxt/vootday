@@ -69,7 +69,7 @@ class _PostEventViewState extends State<PostEventView>
     final String encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
     GoRouter.of(context).push(
-      '/home/event/${widget.eventId}/post/${widget.post.id}'
+      '/post/${widget.post.id}'
       '?username=$encodedUsername'
       '&title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl',
@@ -78,7 +78,7 @@ class _PostEventViewState extends State<PostEventView>
 
   void _navigateToUserScreen(BuildContext context) {
     GoRouter.of(context).push(
-      '/home/event/${widget.eventId}/user/${widget.post.author.id}'
+      '/user/${widget.post.author.id}'
       '?username=${Uri.encodeComponent(widget.post.author.username)}'
       '&title=${Uri.encodeComponent(widget.title)}'
       '&logoUrl=${Uri.encodeComponent(widget.logoUrl)}',

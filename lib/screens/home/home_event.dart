@@ -16,8 +16,6 @@ class HomeEvent extends StatefulWidget {
 
 class _HomeEventState extends State<HomeEvent>
     with AutomaticKeepAliveClientMixin<HomeEvent> {
-
-
   @override
   void initState() {
     super.initState();
@@ -28,7 +26,6 @@ class _HomeEventState extends State<HomeEvent>
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -87,7 +84,7 @@ class _HomeEventState extends State<HomeEvent>
                       }
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         // Handle the case where there is no image URL
-                        return Text('No image available');
+                        return const Text('No image available');
                       }
                       return MosaiqueEventLongCard(
                         imageUrl: snapshot.data!,
@@ -123,8 +120,7 @@ class _HomeEventState extends State<HomeEvent>
           await feedEventRef.orderBy('likes', descending: true).limit(1).get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        final data = querySnapshot.docs.first.data()
-            as Map<String, dynamic>?; // Cast as a map
+        final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
         final DocumentReference? postRef =
             data?['post_ref'] as DocumentReference?;
 
@@ -136,16 +132,16 @@ class _HomeEventState extends State<HomeEvent>
                 postDoc.data() as Map<String, dynamic>?; // Cast as a map
             return postData?['imageUrl'] as String? ?? ''; // Use the map
           } else {
-            print("Referenced post document does not exist.");
+            debugPrint("Referenced post document does not exist.");
           }
         } else {
-          print("Post reference is null.");
+          debugPrint("Post reference is null.");
         }
       } else {
-        print("No posts found in the event's feed.");
+        debugPrint("No posts found in the event's feed.");
       }
     } catch (e) {
-      print(
+      debugPrint(
           "An error occurred while fetching the most liked post image URL: $e");
     }
     return '';

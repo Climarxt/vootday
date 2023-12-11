@@ -208,7 +208,7 @@ class _EventScreenState extends State<EventScreen>
   void _navigateToUserScreen(BuildContext context) {
     final author = widget.author;
     context.push(
-        '/calendar/event/${widget.eventId}/user/$_userRefId?username=$author');
+        '/user/$_userRefId?username=$author');
   }
 
   Widget _buildListView(BuildContext context, Event event) {
@@ -250,18 +250,18 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToCreatePostScreen(BuildContext context) {
-    GoRouter.of(context).push('/calendar/event/${widget.eventId}/create');
+    GoRouter.of(context).push('/event/${widget.eventId}/create');
   }
 
     void _navigateToCommentScreen(BuildContext context) {
     context.push(
-        '/calendar/event/${widget.eventId}/comment');
+        '/event/${widget.eventId}/comment');
   }
 
   void _navigateToPostScreen(BuildContext context) {
     final title = widget.title;
     GoRouter.of(context).push(
-        '/calendar/event/${widget.eventId}/post/$_postRef?username=$title');
+        '/post/$_postRef?username=$title');
   }
 
   @override

@@ -95,7 +95,7 @@ class _EventNewCardState extends State<EventNewCard> {
     final String encodedAuthor = Uri.encodeComponent(widget.author);
 
     GoRouter.of(context).push(
-      '/calendar/event/${widget.eventId}'
+      '/event/${widget.eventId}'
       '?title=$encodedTitle'
       '&logoUrl=$encodedLogoUrl'
       '&author=$encodedAuthor',

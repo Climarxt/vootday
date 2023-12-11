@@ -5,6 +5,8 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
+import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
@@ -172,6 +174,33 @@ class BlocProviderConfig {
             );
             return explorerBloc;
           },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  static MultiBlocProvider getMyProfileMultiBlocProvider(
+      BuildContext context, Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(
+            authBloc: context.read<AuthBloc>(),
+            userRepository: context.read<UserRepository>(),
+            postRepository: context.read<PostRepository>(),
+          ),
+        ),
+        BlocProvider<MyCollectionBloc>(
+          create: (context) => MyCollectionBloc(
+            authBloc: context.read<AuthBloc>(),
+            postRepository: context.read<PostRepository>(),
+          ),
+        ),
+        BlocProvider<CreateCollectionCubit>(
+          create: (_) => CreateCollectionCubit(
+            firebaseFirestore: FirebaseFirestore.instance,
+          ),
         ),
       ],
       child: child,

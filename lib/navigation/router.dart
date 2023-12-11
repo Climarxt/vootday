@@ -621,31 +621,20 @@ GoRouter createRouter(BuildContext context) {
             routes: <RouteBase>[
               GoRoute(
                 path: '/profile',
-                builder: (BuildContext context, GoRouterState state) {
-                  final authBloc = context.read<AuthBloc>();
+                pageBuilder: (BuildContext context, GoRouterState state) {
                   final userId = authBloc.state.user!.uid;
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider<ProfileBloc>(
-                        create: (_) => ProfileBloc(
-                          authBloc: authBloc,
-                          userRepository: context.read<UserRepository>(),
-                          postRepository: context.read<PostRepository>(),
-                        )..add(ProfileLoadUser(userId: userId)),
+                  return MaterialPage<void>(
+                    key: state.pageKey,
+                    child: BlocProviderConfig.getProfileMultiBlocProvider(
+                      context,
+                      MyProfileScreen(
+                        userId: userId,
                       ),
-                      BlocProvider<CreateCollectionCubit>(
-                        create: (_) => CreateCollectionCubit(
-                          firebaseFirestore: FirebaseFirestore.instance,
-                        ),
-                      ),
-                    ],
-                    child: MyProfileScreen(
-                      userId: userId,
                     ),
                   );
                 },
                 routes: <RouteBase>[
-                  // Profile/Post
+                  // profile/post/:postId
                   GoRoute(
                     path: 'post/:postId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
@@ -666,38 +655,20 @@ GoRouter createRouter(BuildContext context) {
                       );
                     },
                     routes: [
+                      // profile/post/:postId/user/:userId
                       GoRoute(
                         path: 'user/:userId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final userId = state.pathParameters['userId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-
+                          final userId = RouteConfig.getUserId(state);
+                          final username = RouteConfig.getUsername(state);
+                          final title = RouteConfig.getTitle(state);
                           return MaterialPage<void>(
                             key: state.pageKey,
-                            child: MultiBlocProvider(
-                              providers: [
-                                BlocProvider<ProfileBloc>(
-                                  create: (context) => ProfileBloc(
-                                    authBloc: context.read<AuthBloc>(),
-                                    userRepository:
-                                        context.read<UserRepository>(),
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                                BlocProvider<YourCollectionBloc>(
-                                  create: (context) => YourCollectionBloc(
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                              ],
-                              child: ProfileScreen(
+                            child:
+                                BlocProviderConfig.getProfileMultiBlocProvider(
+                              context,
+                              ProfileScreen(
                                 userId: userId,
                                 username: username,
                                 title: title,
@@ -705,7 +676,31 @@ GoRouter createRouter(BuildContext context) {
                             ),
                           );
                         },
+                        routes: [
+                          // profile/post/:postId/:userId/collection/:collectionId
+                          GoRoute(
+                            path: 'collection/:collectionId',
+                            pageBuilder:
+                                (BuildContext context, GoRouterState state) {
+                              final collectionId =
+                                  RouteConfig.getCollectionId(state);
+                              final title = RouteConfig.getTitle(state);
+                              return MaterialPage<void>(
+                                key: state.pageKey,
+                                child: BlocProviderConfig
+                                    .getFeedCollectionBlocProvider(
+                                  context,
+                                  FeedCollection(
+                                    collectionId: collectionId,
+                                    title: title,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
+                      // profile/post/:postId/comment
                       GoRoute(
                         path: 'comment',
                         pageBuilder:
@@ -751,20 +746,14 @@ GoRouter createRouter(BuildContext context) {
                   // profile/create
                   GoRoute(
                     path: 'create',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        BlocProvider<CreatePostCubit>(
-                      create: (context) {
-                        print("Creating CreatePostCubit");
-                        return CreatePostCubit(
-                          postRepository: context.read<PostRepository>(),
-                          eventRepository: context.read<EventRepository>(),
-                          storageRepository: context.read<StorageRepository>(),
-                          authBloc: context.read<AuthBloc>(),
-                        );
-                      },
-                      child: const CreatePostScreen(),
-                    ),
+                    builder: (BuildContext context, GoRouterState state) {
+                      return BlocProviderConfig.getCreatePostBlocProvider(
+                        context,
+                        const CreatePostScreen(),
+                      );
+                    },
                     routes: [
+                      // calendar/event/:eventId/create/brand
                       GoRoute(
                         path: 'brand',
                         builder: (BuildContext context, GoRouterState state) {
@@ -792,79 +781,53 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'collection/:collectionId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final collectionId =
-                          state.pathParameters['collectionId']!;
-                      final title =
-                          state.uri.queryParameters['title'] ?? 'title';
-
+                      final collectionId = RouteConfig.getCollectionId(state);
+                      final title = RouteConfig.getTitle(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: BlocProvider<FeedCollectionBloc>(
-                          create: (context) {
-                            final feedCollectionBloc = FeedCollectionBloc(
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                            );
-                            return feedCollectionBloc;
-                          },
-                          child: FeedCollection(
-                              collectionId: collectionId, title: title),
+                        child: BlocProviderConfig.getFeedCollectionBlocProvider(
+                          context,
+                          FeedCollection(
+                            collectionId: collectionId,
+                            title: title,
+                          ),
                         ),
                       );
                     },
                     routes: [
+                      // profile/collection/post/:postId
                       GoRoute(
                         path: 'post/:postId',
                         pageBuilder:
                             (BuildContext context, GoRouterState state) {
-                          final postId = state.pathParameters['postId']!;
+                          final postId = RouteConfig.getPostId(state);
+                          final username = RouteConfig.getUsername(state);
                           final collectionId =
-                              state.pathParameters['collectionId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
+                              RouteConfig.getCollectionId(state);
                           return MaterialPage<void>(
                             key: state.pageKey,
                             child: PostCollectionScreen(
                               postId: postId,
-                              collectionId: collectionId,
                               username: username,
+                              collectionId: collectionId,
                             ),
                           );
                         },
                         routes: [
+                          // profile/collection/post/:postId/user/:userId
                           GoRoute(
                             path: 'user/:userId',
                             pageBuilder:
                                 (BuildContext context, GoRouterState state) {
-                              final userId = state.pathParameters['userId']!;
-                              final username =
-                                  state.uri.queryParameters['username'] ??
-                                      'Unknown';
-                              final title =
-                                  state.uri.queryParameters['title'] ?? 'title';
-
+                              final userId = RouteConfig.getUserId(state);
+                              final username = RouteConfig.getUsername(state);
+                              final title = RouteConfig.getTitle(state);
                               return MaterialPage<void>(
                                 key: state.pageKey,
-                                child: MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider<ProfileBloc>(
-                                      create: (context) => ProfileBloc(
-                                        authBloc: context.read<AuthBloc>(),
-                                        userRepository:
-                                            context.read<UserRepository>(),
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                    BlocProvider<YourCollectionBloc>(
-                                      create: (context) => YourCollectionBloc(
-                                        postRepository:
-                                            context.read<PostRepository>(),
-                                      ),
-                                    ),
-                                  ],
-                                  child: ProfileScreen(
+                                child: BlocProviderConfig
+                                    .getProfileMultiBlocProvider(
+                                  context,
+                                  ProfileScreen(
                                     userId: userId,
                                     username: username,
                                     title: title,
@@ -873,6 +836,7 @@ GoRouter createRouter(BuildContext context) {
                               );
                             },
                           ),
+                          // profile/collection/post/:postId/comment
                           GoRoute(
                             path: 'comment',
                             pageBuilder:
@@ -884,46 +848,6 @@ GoRouter createRouter(BuildContext context) {
                             },
                           ),
                         ],
-                      ),
-                      GoRoute(
-                        path: 'user/:userId',
-                        pageBuilder:
-                            (BuildContext context, GoRouterState state) {
-                          final userId = state.pathParameters['userId']!;
-                          final username =
-                              state.uri.queryParameters['username'] ??
-                                  'Unknown';
-                          final title =
-                              state.uri.queryParameters['title'] ?? 'title';
-
-                          return MaterialPage<void>(
-                            key: state.pageKey,
-                            child: MultiBlocProvider(
-                              providers: [
-                                BlocProvider<ProfileBloc>(
-                                  create: (context) => ProfileBloc(
-                                    authBloc: context.read<AuthBloc>(),
-                                    userRepository:
-                                        context.read<UserRepository>(),
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                                BlocProvider<YourCollectionBloc>(
-                                  create: (context) => YourCollectionBloc(
-                                    postRepository:
-                                        context.read<PostRepository>(),
-                                  ),
-                                ),
-                              ],
-                              child: ProfileScreen(
-                                userId: userId,
-                                username: username,
-                                title: title,
-                              ),
-                            ),
-                          );
-                        },
                       ),
                     ],
                   ),

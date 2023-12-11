@@ -3,6 +3,7 @@ import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/bloc_provider_config.dart';
+import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
@@ -166,7 +167,7 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: MultiBlocProviderHome.getHomeMultiBlocProvider(
+                    child: BlocProviderConfig.getHomeMultiBlocProvider(
                         context, const HomeScreen()),
                   );
                 },
@@ -175,15 +176,16 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'post/:postId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final postId = state.pathParameters['postId']!;
-                      final username =
-                          state.uri.queryParameters['username'] ?? 'Unknown';
+                      final postId = RouteConfig.getPostId(state);
+                      final username = RouteConfig.getUsername(state);
+
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: PostScreen(postId: postId, username: username),
                       );
                     },
                     routes: [
+                      // home/post/:postId/user/:userId
                       GoRoute(
                         path: 'user/:userId',
                         pageBuilder:

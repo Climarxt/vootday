@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 
-class MultiBlocProviderHome {
+class BlocProviderConfig {
   static MultiBlocProvider getHomeMultiBlocProvider(
       BuildContext context, Widget child) {
     return MultiBlocProvider(
@@ -43,5 +43,4 @@ class MultiBlocProviderHome {
     );
   }
 
-  // Vous pouvez ajouter d'autres méthodes pour d'autres écrans ou configurations
 }

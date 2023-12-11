@@ -7,19 +7,16 @@ import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
-import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
-import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
+
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/post/post_collection_screen.dart';
-import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
-import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
+
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';

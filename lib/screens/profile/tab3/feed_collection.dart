@@ -50,7 +50,7 @@ class _FeedCollectionState extends State<FeedCollection>
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
-            appBar: AppBarTitle(title: widget.title),
+            appBar: AppBarTitleOption(title: widget.title),
             body: _buildBody(state),
           ),
         );

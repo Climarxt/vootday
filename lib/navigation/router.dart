@@ -2,6 +2,7 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
@@ -165,41 +166,8 @@ GoRouter createRouter(BuildContext context) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return MaterialPage<void>(
                     key: state.pageKey,
-                    child: MultiBlocProvider(
-                      providers: [
-                        BlocProvider<FeedOOTDBloc>(
-                          create: (context) {
-                            final feedOOTDBloc = FeedOOTDBloc(
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                              likedPostsCubit: context.read<LikedPostsCubit>(),
-                            );
-                            feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
-                            return feedOOTDBloc;
-                          },
-                        ),
-                        BlocProvider<FeedMonthBloc>(
-                          create: (context) {
-                            final feedMonthBloc = FeedMonthBloc(
-                              feedRepository: context.read<FeedRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                            );
-                            feedMonthBloc.add(FeedMonthFetchPostsMonth());
-                            return feedMonthBloc;
-                          },
-                        ),
-                        BlocProvider(
-                          create: (context) {
-                            final homeEventBloc = HomeEventBloc(
-                              eventRepository: context.read<EventRepository>(),
-                              authBloc: context.read<AuthBloc>(),
-                            );
-                            return homeEventBloc;
-                          },
-                        ),
-                      ],
-                      child: const HomeScreen(),
-                    ),
+                    child: MultiBlocProviderHome.getHomeMultiBlocProvider(
+                        context, const HomeScreen()),
                   );
                 },
                 routes: [

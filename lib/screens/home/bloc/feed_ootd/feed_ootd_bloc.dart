@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bootdv2/cubits/liked_posts/liked_posts_cubit.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
@@ -19,7 +18,6 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   FeedOOTDBloc({
     required FeedRepository feedRepository,
     required AuthBloc authBloc,
-    required LikedPostsCubit likedPostsCubit,
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         super(FeedOOTDState.initial()) {

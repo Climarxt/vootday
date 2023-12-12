@@ -18,5 +18,6 @@ export 'section_socialnet.dart';
 export 'stats.dart';
 export 'snackbar_util.dart';
 export 'tabbar_profile.dart';
+export 'tabbar_profile_brand.dart';
 export 'tabbar_myprofile.dart';
 export 'user_profile_image.dart';

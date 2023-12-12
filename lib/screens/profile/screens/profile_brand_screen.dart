@@ -46,7 +46,7 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
         return Container(
           color: Colors.white,
           child: DefaultTabController(
-            length: 3,
+            length: 2,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: NestedScrollView(
@@ -58,7 +58,7 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
                     delegate: ProfileTabbar(
                       child: Container(
                         color: Colors.white,
-                        child: const TabbarProfile(),
+                        child: const TabbarProfileBrand(),
                       ),
                     ),
                   ),
@@ -67,9 +67,6 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
                   children: [
                     ProfileTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
-                    ProfileTab3(
-                      userId: widget.userId,
-                    ),
                   ],
                 ),
               ),

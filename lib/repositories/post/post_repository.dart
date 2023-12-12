@@ -65,7 +65,6 @@ class PostRepository extends BasePostRepository {
     WriteBatch batch = _firebaseFirestore.batch();
     debugPrint('deleteCollection : Début de la suppression de la collection avec ID: $collectionId');
 
-    // Suppression du post dans la collection 'posts'
     DocumentReference collectionRef =
         _firebaseFirestore.collection(Paths.collections).doc(collectionId);
     debugPrint('deleteCollection : Suppression de la collection dans la collection collections');

@@ -24,7 +24,6 @@ class FeedEvent extends StatefulWidget {
 
 class _FeedEventState extends State<FeedEvent>
     with AutomaticKeepAliveClientMixin<FeedEvent> {
-
   @override
   void initState() {
     super.initState();
@@ -35,10 +34,8 @@ class _FeedEventState extends State<FeedEvent>
     }
   }
 
-
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -51,7 +48,8 @@ class _FeedEventState extends State<FeedEvent>
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
-            appBar: AppBarTitleLogo(title: widget.title, logoUrl: widget.logoUrl),
+            appBar: AppBarTitleLogoOption(
+                title: widget.title, logoUrl: widget.logoUrl),
             body: _buildBody(state),
           ),
         );

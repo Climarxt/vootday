@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AppBarTitleLogo extends StatelessWidget implements PreferredSizeWidget {
+class AppBarTitleLogoOption extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final String logoUrl; // URL du fichier SVG
 
-  const AppBarTitleLogo(
+  const AppBarTitleLogoOption(
       {super.key, required this.title, required this.logoUrl});
 
   @override
@@ -37,9 +38,43 @@ class AppBarTitleLogo extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
+      actions: [
+        IconButton(
+          onPressed: () => _showBottomSheet(context),
+          icon: const Icon(
+            Icons.view_headline,
+            color: Colors.black,
+          ),
+        ),
+      ],
       toolbarHeight: 62,
       backgroundColor: Colors.white,
       elevation: 0,
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.event),
+              title: const Text('Event'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: const Text('Report'),
+              onTap: () {
+                // Implémentez votre logique de signalement ici
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

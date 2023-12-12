@@ -178,6 +178,27 @@ GoRouter createRouter(BuildContext context) {
           ),
         ],
       ),
+      // Brand Profile
+      GoRoute(
+        path: '/brand/:userId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final userId = RouteConfig.getUserId(state);
+          final username = RouteConfig.getUsername(state);
+          final title = RouteConfig.getTitle(state);
+
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProviderConfig.getProfileMultiBlocProvider(
+              context,
+              ProfileBrandScreen(
+                userId: userId,
+                username: username,
+                title: title,
+              ),
+            ),
+          );
+        },
+      ),
       // User Profile
       GoRoute(
         path: '/user/:userId',

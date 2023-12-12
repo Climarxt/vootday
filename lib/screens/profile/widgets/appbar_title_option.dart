@@ -1,9 +1,15 @@
+import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
+import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final String collectionId;
 
-  const AppBarTitleOption({super.key, required this.title});
+  const AppBarTitleOption(
+      {super.key, required this.title, required this.collectionId});
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
@@ -25,13 +31,43 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () => _showBottomSheet(context),
           icon: const Icon(
             Icons.view_headline,
             color: Colors.black,
           ),
         ),
       ],
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: const Text('Report'),
+              onTap: () {
+                // Implémentez votre logique de signalement ici
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text('Delete'),
+              onTap: () {
+                final postCubit = context.read<DeleteCollectionsCubit>();
+                postCubit.deleteCollections(collectionId);
+                GoRouter.of(context).go('/profile');
+                SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

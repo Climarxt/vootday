@@ -61,6 +61,50 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+  Future<void> deleteCollection({required String collectionId}) async {
+    WriteBatch batch = _firebaseFirestore.batch();
+    debugPrint('deleteCollection : Début de la suppression de la collection avec ID: $collectionId');
+
+    // Suppression du post dans la collection 'posts'
+    DocumentReference collectionRef =
+        _firebaseFirestore.collection(Paths.collections).doc(collectionId);
+    debugPrint('deleteCollection : Suppression de la collection dans la collection collections');
+    batch.delete(collectionRef);
+
+    // Suppression des références du post dans les sous-collections
+    await _deleteCollectionReferencesInSubCollections(batch, collectionRef, 'mycollection');
+
+    // Exécution du batch pour effectuer toutes les suppressions
+    debugPrint(
+        'deleteCollection : Exécution du batch pour la suppression de la collection et des références associées');
+    await batch.commit();
+    debugPrint(
+        'deleteCollection : Suppression terminée pour la collection avec ID: $collectionId');
+  }
+
+  Future<void> _deleteCollectionReferencesInSubCollections(
+      WriteBatch batch, DocumentReference collectionRef, String subCollection) async {
+    debugPrint(
+        '_deleteCollectionReferencesInSubCollections : Recherche de la collection dans les sous-collections $subCollection');
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collectionGroup(subCollection)
+        .where('collection_ref', isEqualTo: collectionRef)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      debugPrint(
+          '_deleteCollectionReferencesInSubCollections : Aucune référence trouvée dans $subCollection pour le post_ref: $collectionRef');
+    } else {
+      debugPrint(
+          '_deleteCollectionReferencesInSubCollections : Nombre de références trouvées dans $subCollection: ${snapshot.docs.length}');
+      for (var doc in snapshot.docs) {
+        debugPrint(
+            '_deleteCollectionReferencesInSubCollections : Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
+        batch.delete(doc.reference);
+      }
+    }
+  }
+
   @override
   Future<void> createPost({required Post post}) async {
     await _firebaseFirestore.collection(Paths.posts).add(post.toDocument());

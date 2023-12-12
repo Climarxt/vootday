@@ -22,7 +22,6 @@ class FeedCollection extends StatefulWidget {
 
 class _FeedCollectionState extends State<FeedCollection>
     with AutomaticKeepAliveClientMixin<FeedCollection> {
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +33,6 @@ class _FeedCollectionState extends State<FeedCollection>
           collectionId: widget.collectionId));
     }
   }
-
 
   @override
   void dispose() {
@@ -50,7 +48,8 @@ class _FeedCollectionState extends State<FeedCollection>
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
-            appBar: AppBarTitleOption(title: widget.title),
+            appBar: AppBarTitleOption(
+                title: widget.title, collectionId: widget.collectionId),
             body: _buildBody(state),
           ),
         );

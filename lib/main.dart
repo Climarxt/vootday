@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/repositories.dart';
@@ -78,6 +79,10 @@ class MyApp extends StatelessWidget {
           BlocProvider<DeletePostsCubit>(
             create: (context) =>
                 DeletePostsCubit(context.read<PostRepository>()),
+          ),
+          BlocProvider<DeleteCollectionsCubit>(
+            create: (context) =>
+                DeleteCollectionsCubit(context.read<PostRepository>()),
           ),
           BlocProvider(
             create: (context) {

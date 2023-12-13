@@ -2,6 +2,7 @@ export 'appbar_myprofile.dart';
 export 'appbar_profile.dart';
 export 'appbar_title.dart';
 export 'appbar_title_option.dart';
+export 'appbar_title_myoption.dart';
 export 'appbar_title_profile.dart';
 export 'button.dart';
 export 'mosaique_like_card.dart';

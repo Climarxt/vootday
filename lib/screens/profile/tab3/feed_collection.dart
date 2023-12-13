@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
+import 'package:bootdv2/blocs/blocs.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +25,8 @@ class FeedCollection extends StatefulWidget {
 
 class _FeedCollectionState extends State<FeedCollection>
     with AutomaticKeepAliveClientMixin<FeedCollection> {
+  bool _isUserTheAuthor = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +36,36 @@ class _FeedCollectionState extends State<FeedCollection>
         feedCollectionBloc.state.collection?.id != widget.collectionId) {
       feedCollectionBloc.add(FeedCollectionFetchPostsCollections(
           collectionId: widget.collectionId));
+
+      final authState = context.read<AuthBloc>().state;
+      final userId = authState.user?.uid;
+
+      if (userId != null) {
+        _checkIfUserIsAuthor(userId);
+      } else {
+        print('User ID is null');
+      }
+    }
+  }
+
+  void _checkIfUserIsAuthor(String userId) async {
+    try {
+      DocumentSnapshot postDoc = await FirebaseFirestore.instance
+          .collection(Paths.collections)
+          .doc(widget.collectionId)
+          .get();
+
+      if (postDoc.exists) {
+        var data = postDoc.data() as Map<String, dynamic>;
+        DocumentReference authorRef = data['author'];
+        if (authorRef.id == userId) {
+          setState(() {
+            _isUserTheAuthor = true;
+          });
+        }
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération du post: $e');
     }
   }
 
@@ -49,7 +84,9 @@ class _FeedCollectionState extends State<FeedCollection>
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
             appBar: AppBarTitleOption(
-                title: widget.title, collectionId: widget.collectionId),
+                title: widget.title,
+                collectionId: widget.collectionId,
+                isUserTheAuthor: _isUserTheAuthor),
             body: _buildBody(state),
           ),
         );

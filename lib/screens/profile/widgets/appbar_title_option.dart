@@ -7,15 +7,19 @@ import 'package:go_router/go_router.dart';
 class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String collectionId;
+  final bool isUserTheAuthor;
 
   const AppBarTitleOption(
-      {super.key, required this.title, required this.collectionId});
+      {super.key,
+      required this.title,
+      required this.collectionId,
+      required this.isUserTheAuthor});
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget build(BuildContext context) {
     return AppBar(
       iconTheme: const IconThemeData(color: Colors.black),
       centerTitle: true,
@@ -55,16 +59,17 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: const Text('Delete'),
-              onTap: () {
-                final postCubit = context.read<DeleteCollectionsCubit>();
-                postCubit.deleteCollections(collectionId);
-                GoRouter.of(context).go('/profile');
-                SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
-              },
-            ),
+            if (isUserTheAuthor) // Condition pour afficher l'option de suppression
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
+                onTap: () {
+                  final postCubit = context.read<DeleteCollectionsCubit>();
+                  postCubit.deleteCollections(collectionId);
+                  GoRouter.of(context).go('/profile');
+                  SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+                },
+              ),
           ],
         );
       },

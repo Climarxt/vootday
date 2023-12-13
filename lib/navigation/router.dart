@@ -222,15 +222,27 @@ GoRouter createRouter(BuildContext context) {
       ),
       // Post
       GoRoute(
-          path: '/post/:postId',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            final postId = RouteConfig.getPostId(state);
-            final username = RouteConfig.getUsername(state);
-            return MaterialPage<void>(
-              key: state.pageKey,
-              child: PostScreen(postId: postId, username: username),
-            );
-          }),
+        path: '/post/:postId',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final postId = RouteConfig.getPostId(state);
+          final username = RouteConfig.getUsername(state);
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: PostScreen(postId: postId, username: username),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: 'comment',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return MaterialPage<void>(
+                key: state.pageKey,
+                child: const CommentWIPScreen(),
+              );
+            },
+          ),
+        ],
+      ),
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,

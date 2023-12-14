@@ -69,7 +69,7 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
                     final postCubit = context.read<DeleteCollectionsCubit>();
                     postCubit.deleteCollections(collectionId);
                     GoRouter.of(context).replace('/profile');
-                    SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+                    SnackbarUtil.showSuccessSnackbar(context, 'Collection Deleted !');
                   });
                 },
               ),

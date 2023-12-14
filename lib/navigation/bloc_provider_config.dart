@@ -72,16 +72,20 @@ class BlocProviderConfig {
     );
   }
 
-  static BlocProvider getFeedCollectionBlocProvider(
+  static MultiBlocProvider getFeedCollectionBlocProvider(
       BuildContext context, Widget child) {
-    return BlocProvider<FeedCollectionBloc>(
-      create: (context) {
-        final feedCollectionBloc = FeedCollectionBloc(
-          feedRepository: context.read<FeedRepository>(),
-          authBloc: context.read<AuthBloc>(),
-        );
-        return feedCollectionBloc;
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FeedCollectionBloc>(
+          create: (context) {
+            final feedCollectionBloc = FeedCollectionBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return feedCollectionBloc;
+          },
+        ),
+      ],
       child: child,
     );
   }

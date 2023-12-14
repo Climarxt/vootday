@@ -1,5 +1,8 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/cubit/update_public_status_cubit.dart';
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,31 +52,71 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.report),
-              title: const Text('Report'),
-              onTap: () {
-                // Implémentez votre logique de signalement ici
-                Navigator.pop(context);
-              },
-            ),
-            if (isUserTheAuthor) // Condition pour afficher l'option de suppression
-              ListTile(
-                leading: const Icon(Icons.delete),
-                title: const Text('Delete'),
-                onTap: () {
-                  Navigator.pop(context); // Ferme la bottomSheet d'abord
-                  Future.delayed(Duration.zero, () {
-                    final postCubit = context.read<DeleteCollectionsCubit>();
-                    postCubit.deleteCollections(collectionId);
-                    GoRouter.of(context).replace('/profile');
-                    SnackbarUtil.showSuccessSnackbar(context, 'Collection Deleted !');
-                  });
-                },
-              ),
-          ],
+        return FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection(Paths.collections)
+              .doc(collectionId)
+              .get(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Center(child: Text('No data available'));
+            }
+
+            Map<String, dynamic> data =
+                snapshot.data!.data() as Map<String, dynamic>;
+            bool currentStatus = data['public'] as bool;
+
+            return Wrap(
+              children: <Widget>[
+                if (isUserTheAuthor)
+                  ListTile(
+                    leading: const Icon(Icons.public),
+                    title: const Text('Public'),
+                    trailing: Switch(
+                      value: currentStatus,
+                      onChanged: (value) {
+                        Navigator.pop(context);
+                        context
+                            .read<UpdatePublicStatusCubit>()
+                            .updatePublicStatus(collectionId, value);
+                      },
+                    ),
+                  ),
+                ListTile(
+                  leading: const Icon(Icons.report),
+                  title: const Text('Report'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                if (isUserTheAuthor)
+                  ListTile(
+                    leading: const Icon(Icons.delete),
+                    title: const Text('Delete'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Future.delayed(Duration.zero, () {
+                        final postCubit =
+                            context.read<DeleteCollectionsCubit>();
+                        postCubit.deleteCollections(collectionId);
+                        GoRouter.of(context).replace('/profile');
+                        SnackbarUtil.showSuccessSnackbar(
+                            context, 'Collection Deleted !');
+                      });
+                    },
+                  ),
+              ],
+            );
+          },
         );
       },
     );

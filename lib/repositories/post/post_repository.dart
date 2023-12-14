@@ -400,4 +400,11 @@ class PostRepository extends BasePostRepository {
       return [];
     }
   }
+
+  Future<void> updateCollectionPublicStatus(
+      {required String collectionId, required bool newStatus}) async {
+    DocumentReference collectionRef =
+        _firebaseFirestore.collection(Paths.collections).doc(collectionId);
+    await collectionRef.update({'public': newStatus});
+  }
 }

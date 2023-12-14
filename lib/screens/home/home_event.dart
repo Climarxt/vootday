@@ -39,74 +39,57 @@ class _HomeEventState extends State<HomeEvent>
         }
       },
       builder: (context, state) {
-        return Scaffold(body: _buildBody(state));
+        return _buildBody(state);
       },
     );
   }
 
   Widget _buildBody(HomeEventState state) {
-    switch (state.status) {
-      case HomeEventStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.5,
-              ),
-              physics: const BouncingScrollPhysics(),
-              cacheExtent: 10000,
-              itemCount: state.events.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                if (index == state.events.length) {
-                  return state.status == HomeEventStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final event = state.events[index] ?? Event.empty;
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.5,
+      ),
+      physics: const BouncingScrollPhysics(),
+      cacheExtent: 10000,
+      itemCount: state.events.length + 1,
+      itemBuilder: (BuildContext context, int index) {
+        if (index == state.events.length) {
+          return state.status == HomeEventStatus.paginating
+              ? const Center(child: CircularProgressIndicator())
+              : const SizedBox.shrink();
+        } else {
+          final event = state.events[index] ?? Event.empty;
 
-                  return FutureBuilder<String>(
-                    future: getMostLikedPostImageUrl(event.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.transparent),
-                        );
-                      }
-                      if (snapshot.hasError) {
-                        // Handle the error state
-                        return Text('Error: ${snapshot.error}');
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        // Handle the case where there is no image URL
-                        return const Text('No image available');
-                      }
-                      return MosaiqueEventLongCard(
-                        imageUrl: snapshot.data!,
-                        title: event.title,
-                        logoUrl: event.author.logoUrl,
-                        eventId: event.id,
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-            if (state.status == HomeEventStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
-    }
+          return FutureBuilder<String>(
+            future: getMostLikedPostImageUrl(event.id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+                );
+              }
+              if (snapshot.hasError) {
+                // Handle the error state
+                return Text('Error: ${snapshot.error}');
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                // Handle the case where there is no image URL
+                return const Text('No image available');
+              }
+              return MosaiqueEventLongCard(
+                imageUrl: snapshot.data!,
+                title: event.title,
+                logoUrl: event.author.logoUrl,
+                eventId: event.id,
+              );
+            },
+          );
+        }
+      },
+    );
   }
 
   Future<String> getMostLikedPostImageUrl(String eventId) async {

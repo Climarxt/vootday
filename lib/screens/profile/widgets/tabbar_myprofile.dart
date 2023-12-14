@@ -4,9 +4,12 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 // ignore: must_be_immutable
 class TabbarMyProfile extends StatelessWidget {
+  final TabController? tabController;
+
   const TabbarMyProfile({
-    super.key,
-  });
+    Key? key,
+    required this.tabController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +20,7 @@ class TabbarMyProfile extends StatelessWidget {
       Tab(icon: Icon(Icons.favorite)),
     ];
     return TabBar(
+      controller: tabController,
       indicatorSize: TabBarIndicatorSize.tab,
       indicator: RectangularIndicator(
         color: couleurBleuClair2,

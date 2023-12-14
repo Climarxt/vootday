@@ -11,12 +11,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileTab3 extends StatefulWidget {
+  final TabController tabController;
+
   const MyProfileTab3({
     super.key,
+    required this.tabController,
   });
 
+  // ignore: library_private_types_in_public_api
+  static final GlobalKey<_MyProfileTab3State> myProfileTab3Key =
+      GlobalKey<_MyProfileTab3State>();
+
   @override
-  State<MyProfileTab3> createState() => _MyProfileTab3State();
+  // ignore: library_private_types_in_public_api
+  _MyProfileTab3State createState() => _MyProfileTab3State();
 }
 
 class _MyProfileTab3State extends State<MyProfileTab3> {
@@ -90,7 +98,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                       }
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         // Handle the case where there is no image URL
-                        return Text('No image available');
+                        return const Text('No image available');
                       }
                       return MosaiqueCollectionCard(
                         imageUrl: snapshot.data!,
@@ -254,11 +262,15 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
           final authState = context.read<AuthBloc>().state;
           final userId = authState.user?.uid;
           if (userId != null) {
+            widget.tabController.animateTo(0);
             context
                 .read<CreateCollectionCubit>()
                 .createCollection(userId, collectionName);
+
+            MyProfileTab3.myProfileTab3Key.currentState?.setState(() {});
+            SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
           } else {
-            print('User ID is null');
+            debugPrint('User ID is null');
           }
         }
       },
@@ -282,17 +294,17 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
     return TextButton(
       onPressed: () => _openCreateCollectionSheet(context),
       style: TextButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         backgroundColor: white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: Colors.grey),
+          side: const BorderSide(color: Colors.grey),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(Icons.add, color: black),
+          const Icon(Icons.add, color: black),
           Expanded(
             child: Text(
               AppLocalizations.of(context)!.translate('createnewcollection'),
@@ -303,7 +315,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                   .copyWith(color: black),
             ),
           ),
-          Icon(Icons.arrow_forward, color: black),
+          const Icon(Icons.arrow_forward, color: black),
         ],
       ),
     );

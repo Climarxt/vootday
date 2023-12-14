@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 
 class PostView extends StatefulWidget {
   final Post post;
@@ -23,110 +23,130 @@ class PostView extends StatefulWidget {
   }) : super(key: key ?? ValueKey(post.id));
 
   @override
+  // ignore: library_private_types_in_public_api
   _PostViewState createState() => _PostViewState();
 }
 
 class _PostViewState extends State<PostView>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  bool isImageVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    );
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          isImageVisible = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: GestureDetector(
-        onTap: () => _navigateToPostScreen(context),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height / 1.5,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(18)),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: widget.post.imageProvider,
-              ),
-            ),
-          ),
-        ),
+    return AnimatedOpacity(
+      opacity: isImageVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: isImageVisible
+          ? GestureDetector(
+              onTap: () => _navigateToPostScreen(context),
+              child: _buildPost(context),
+            )
+          : Container(color: white),
+    );
+  }
+
+  Widget _buildPost(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 1.5,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          _buildImage(widget.post.imageProvider),
+        //  buildText(context),
+        ],
       ),
     );
   }
 
-  Stack buildBody(BuildContext context) {
+  Widget _buildImage(CachedNetworkImageProvider imageUrl) {
     return Stack(
       children: [
-        Positioned(
-          bottom: 10,
-          left: 12,
-          child: buildTitle(context),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            image: DecorationImage(
+              image: imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.center,
+              colors: [
+                Colors.black.withOpacity(0.6),
+                Colors.transparent,
+              ],
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Column buildTitle(BuildContext context) {
-    return Column(
+  Widget buildText(BuildContext context) {
+    return Stack(
       children: [
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            context.go(
-                '/user/${widget.post.author.id}?username=${widget.post.author.username}');
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Row(
-                  children: [
-                    UserProfileImage(
-                      radius: 22.0,
-                      outerCircleRadius: 23,
-                      profileImageUrl: widget.post.author.profileImageUrl,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      widget.post.author.username,
-                      style: AppTextStyles.titlePost(context),
-                    ),
-                  ],
-                ),
+        Positioned(
+          top: 32,
+          right: -1,
+          child: Container(
+            width: 74,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: couleurBleuClair2,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                bottomLeft: Radius.circular(4),
               ),
             ),
+            child: Center(child: buildLikeCount(context)),
           ),
         ),
+        Positioned(
+          bottom: 10,
+          left: 12,
+          child: buildUsername(context),
+        ),
       ],
+    );
+  }
+
+  Widget buildUsername(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.push(
+            '/user/${widget.post.author.id}?username=${widget.post.author.username}');
+      },
+      child: Row(
+        children: [
+          UserProfileImage(
+            radius: 27,
+            outerCircleRadius: 28,
+            profileImageUrl: widget.post.author.profileImageUrl,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.post.author.username,
+            style: AppTextStyles.titlePost(context),
+          ),
+        ],
+      ),
     );
   }
 
@@ -150,7 +170,6 @@ class _PostViewState extends State<PostView>
 
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
-    GoRouter.of(context)
-        .push('/post/${widget.post.id}?username=$username');
+    GoRouter.of(context).push('/post/${widget.post.id}?username=$username');
   }
 }

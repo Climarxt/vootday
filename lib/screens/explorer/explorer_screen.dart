@@ -14,8 +14,6 @@ class ExplorerScreen extends StatefulWidget {
 
 class _ExplorerScreenState extends State<ExplorerScreen>
     with AutomaticKeepAliveClientMixin<ExplorerScreen> {
-
-
   @override
   void initState() {
     super.initState();
@@ -37,8 +35,11 @@ class _ExplorerScreenState extends State<ExplorerScreen>
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            body: _buildBody(state),
+          ),
         );
       },
     );
@@ -59,8 +60,8 @@ class _ExplorerScreenState extends State<ExplorerScreen>
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                   childAspectRatio: 0.5,
                 ),
                 physics: const BouncingScrollPhysics(),

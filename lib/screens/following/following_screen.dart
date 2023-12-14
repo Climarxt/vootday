@@ -54,8 +54,11 @@ class _FollowingScreenState extends State<FollowingScreen>
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            body: _buildBody(state),
+          ),
         );
       },
     );
@@ -81,8 +84,6 @@ class _FollowingScreenState extends State<FollowingScreen>
                 separatorBuilder: (BuildContext context, int index) =>
                     const SizedBox(height: 10),
                 itemBuilder: (BuildContext context, int index) {
-                  // Si l'index est égal à la longueur des éléments, affichez un CircularProgressIndicator
-                  // ou un SizedBox vide si la pagination n'est pas en cours
                   if (index == state.posts.length) {
                     return state.status == FollowingStatus.paginating
                         ? const Center(child: CircularProgressIndicator())

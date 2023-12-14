@@ -78,7 +78,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           MyProfileTab1(context: context, state: state),
                           ProfileTab2(context: context, state: state),
                           MyProfileTab3(
-                            key: MyProfileTab3.myProfileTab3Key,
                             tabController: _tabController,
                           ),
                           const MyProfileTab4(),

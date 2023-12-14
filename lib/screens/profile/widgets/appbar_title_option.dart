@@ -1,4 +1,5 @@
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,10 +65,13 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
                 leading: const Icon(Icons.delete),
                 title: const Text('Delete'),
                 onTap: () {
-                  final postCubit = context.read<DeleteCollectionsCubit>();
-                  postCubit.deleteCollections(collectionId);
-                  GoRouter.of(context).go('/profile');
-                  SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+                  Navigator.pop(context); // Ferme la bottomSheet d'abord
+                  Future.delayed(Duration.zero, () {
+                    final postCubit = context.read<DeleteCollectionsCubit>();
+                    postCubit.deleteCollections(collectionId);
+                    GoRouter.of(context).replace('/profile');
+                    SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
+                  });
                 },
               ),
           ],

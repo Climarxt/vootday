@@ -18,10 +18,6 @@ class MyProfileTab3 extends StatefulWidget {
     required this.tabController,
   });
 
-  // ignore: library_private_types_in_public_api
-  static final GlobalKey<_MyProfileTab3State> myProfileTab3Key =
-      GlobalKey<_MyProfileTab3State>();
-
   @override
   // ignore: library_private_types_in_public_api
   _MyProfileTab3State createState() => _MyProfileTab3State();
@@ -267,7 +263,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                 .read<CreateCollectionCubit>()
                 .createCollection(userId, collectionName);
 
-            MyProfileTab3.myProfileTab3Key.currentState?.setState(() {});
             SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
           } else {
             debugPrint('User ID is null');

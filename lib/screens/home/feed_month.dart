@@ -55,8 +55,11 @@ class _FeedMonthState extends State<FeedMonth>
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: _buildBody(state),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            body: _buildBody(state),
+          ),
         );
       },
     );

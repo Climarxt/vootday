@@ -45,50 +45,54 @@ class _HomeEventState extends State<HomeEvent>
   }
 
   Widget _buildBody(HomeEventState state) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 0.5,
-      ),
-      physics: const BouncingScrollPhysics(),
-      cacheExtent: 10000,
-      itemCount: state.events.length + 1,
-      itemBuilder: (BuildContext context, int index) {
-        if (index == state.events.length) {
-          return state.status == HomeEventStatus.paginating
-              ? const Center(child: CircularProgressIndicator())
-              : const SizedBox.shrink();
-        } else {
-          final event = state.events[index] ?? Event.empty;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 0.5,
+        ),
+        physics: const BouncingScrollPhysics(),
+        cacheExtent: 10000,
+        itemCount: state.events.length + 1,
+        itemBuilder: (BuildContext context, int index) {
+          if (index == state.events.length) {
+            return state.status == HomeEventStatus.paginating
+                ? const Center(child: CircularProgressIndicator())
+                : const SizedBox.shrink();
+          } else {
+            final event = state.events[index] ?? Event.empty;
 
-          return FutureBuilder<String>(
-            future: getMostLikedPostImageUrl(event.id),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+            return FutureBuilder<String>(
+              future: getMostLikedPostImageUrl(event.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.transparent),
+                  );
+                }
+                if (snapshot.hasError) {
+                  // Handle the error state
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  // Handle the case where there is no image URL
+                  return const Text('No image available');
+                }
+                return MosaiqueEventLongCard(
+                  imageUrl: snapshot.data!,
+                  title: event.title,
+                  logoUrl: event.author.logoUrl,
+                  eventId: event.id,
                 );
-              }
-              if (snapshot.hasError) {
-                // Handle the error state
-                return Text('Error: ${snapshot.error}');
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                // Handle the case where there is no image URL
-                return const Text('No image available');
-              }
-              return MosaiqueEventLongCard(
-                imageUrl: snapshot.data!,
-                title: event.title,
-                logoUrl: event.author.logoUrl,
-                eventId: event.id,
-              );
-            },
-          );
-        }
-      },
+              },
+            );
+          }
+        },
+      ),
     );
   }
 

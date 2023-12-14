@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -38,25 +39,26 @@ class _MosaiqueMyProfileCardState extends State<MosaiqueMyProfileCard> {
       child: isImageVisible
           ? GestureDetector(
               onTap: () => _navigateToPostScreen(context),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.post.thumbnailUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            )
-          : Container(color: Colors.white),
+              child: _buildPost(widget.post.thumbnailUrl)
+              )
+          : Container(color: white),
+    );
+  }
+
+  Widget _buildPost(String imageUrl) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        image: DecorationImage(
+          image: NetworkImage(widget.post.thumbnailUrl),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
-    GoRouter.of(context)
-        .push('/post/${widget.post.id}?username=$username');
+    GoRouter.of(context).push('/post/${widget.post.id}?username=$username');
   }
 }

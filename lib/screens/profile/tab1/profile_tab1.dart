@@ -39,12 +39,9 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
       itemCount: state.posts.length,
       itemBuilder: (context, index) {
         final post = state.posts[index];
-        // Check if post is not null before creating the card
         if (post != null) {
-          // Pass the entire post object to the MosaiqueProfileCard
           return MosaiqueProfileCard(post: post);
         } else {
-          // If the post is null, return an empty placeholder widget
           return SizedBox.shrink();
         }
       },

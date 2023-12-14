@@ -21,79 +21,49 @@ class MosaiqueCollectionCard extends StatefulWidget {
 
 class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  bool isImageVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    );
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          isImageVisible = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: GestureDetector(
-        onTap: () => _navigateToEventFeed(context),
-        child: Stack(
-          children: [
-            _buildCard(context, widget.imageUrl, widget.name),
-          ],
+    return AnimatedOpacity(
+      opacity: isImageVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: isImageVisible
+          ? GestureDetector(
+              onTap: () => _navigateToEventFeed(context),
+              child: _buildPost(context, widget.imageUrl, widget.name),
+            )
+          : Container(color: white),
+    );
+  }
+
+  Widget _buildPost(BuildContext context, String imageUrl, String title) {
+    return Stack(
+      children: [
+        _buildImage(imageUrl),
+        Positioned(
+          bottom: 10,
+          left: 1,
+          right: 0,
+          child: buildTitle(context, title),
         ),
-      ),
+      ],
     );
   }
 
-  void _navigateToEventFeed(BuildContext context) {
-    final encodedName = Uri.encodeComponent(widget.name);
-
-    GoRouter.of(context).push(
-      '/collection/${widget.collectionId}?title=$encodedName',
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String imageUrl, String title) {
-    return GestureDetector(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
-        width: MediaQuery.of(context).size.width,
-        child: Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            children: [
-              _buildPost(imageUrl),
-              Positioned(
-                bottom: 10,
-                left: 1,
-                right: 0,
-                child: buildTitle(context, title),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPost(String imageUrl) {
+  Widget _buildImage(String imageUrl) {
     return Stack(
       children: [
         Container(
@@ -131,6 +101,14 @@ class _MosaiqueCollectionCardState extends State<MosaiqueCollectionCard>
           style: AppTextStyles.titlePost(context),
         ),
       ),
+    );
+  }
+
+  void _navigateToEventFeed(BuildContext context) {
+    final encodedName = Uri.encodeComponent(widget.name);
+
+    GoRouter.of(context).push(
+      '/collection/${widget.collectionId}?title=$encodedName',
     );
   }
 }

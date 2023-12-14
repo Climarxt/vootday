@@ -16,7 +16,7 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
     debugPrint('CreateCollectionCubit created');
   }
 
-  Future<void> createCollection(String userId, String collectionTitle) async {
+  Future<void> createCollection(String userId, String collectionTitle, bool public) async {
     emit(state.copyWith(status: CreateCollectionStatus.loading));
 
     try {
@@ -26,11 +26,12 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
 
       // Création de la nouvelle collection
       final newCollection = Collection(
-        id: '', // Firestore générera un ID unique
+        id: '', 
         author: User.empty
-            .copyWith(id: userId), // Mettre à jour avec l'utilisateur actuel
-        date: now, // Utilisation de la date actuelle
+            .copyWith(id: userId), 
+        date: now,
         title: collectionTitle,
+        public: public,
       );
 
       DocumentReference collectionRef = await _firebaseFirestore

@@ -26,6 +26,7 @@ class MyProfileTab3 extends StatefulWidget {
 class _MyProfileTab3State extends State<MyProfileTab3> {
   final TextEditingController _collectionNameController =
       TextEditingController();
+  ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
 
   @override
   void initState() {
@@ -180,10 +181,14 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
                     ),
                     const SizedBox(height: 10),
                     _buildCaptionInput(context),
-                    // const SizedBox(height: 8),
-                    _buildPublicButton(context),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isPublicNotifier,
+                      builder: (context, isPublic, _) {
+                        return _buildPublicButton(context, isPublic);
+                      },
+                    ),
                     const SizedBox(height: 18),
-                    buildValidateButton(context),
+                    buildValidateButton(context, isPublicNotifier.value),
                   ],
                 ),
               );
@@ -204,7 +209,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
           style: AppTextStyles.titleLargeBlackBold(context),
         ),
         Form(
-          // key: _formKey,
           child: TextFormField(
             controller: _collectionNameController,
             cursorColor: couleurBleuClair2,
@@ -215,7 +219,6 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
               hintText: AppLocalizations.of(context)!
                   .translate('enternamecollection'),
             ),
-            // onChanged: (value) => context.read<CreatePostCubit>().captionChanged(value),
             validator: (value) => value!.trim().isEmpty
                 ? AppLocalizations.of(context)!.translate('captionnotempty')
                 : null,
@@ -225,7 +228,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
     );
   }
 
-  Widget _buildPublicButton(BuildContext context) {
+  Widget _buildPublicButton(BuildContext context, bool isPublic) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -236,7 +239,13 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
               AppLocalizations.of(context)!.translate('makePublic'),
               style: AppTextStyles.titleLargeBlackBold(context),
             ),
-            Switch(value: false, onChanged: (bool value) {}),
+            Switch(
+              value: isPublic,
+              onChanged: (bool value) {
+                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
+                isPublicNotifier.value = value;
+              },
+            ),
           ],
         ),
         Padding(
@@ -250,10 +259,14 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
     );
   }
 
-  TextButton buildValidateButton(BuildContext context) {
+  TextButton buildValidateButton(BuildContext context, bool isPublic) {
     return TextButton(
       onPressed: () {
         final String collectionName = _collectionNameController.text.trim();
+        final bool isPublic = isPublicNotifier.value;
+        debugPrint("Collection Name: $collectionName"); // Ajout de debugPrint
+        debugPrint("Is Public: $isPublic"); // Ajout de debugPrint
+
         if (collectionName.isNotEmpty) {
           final authState = context.read<AuthBloc>().state;
           final userId = authState.user?.uid;
@@ -261,7 +274,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
             widget.tabController.animateTo(0);
             context
                 .read<CreateCollectionCubit>()
-                .createCollection(userId, collectionName);
+                .createCollection(userId, collectionName, isPublic);
 
             SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
           } else {

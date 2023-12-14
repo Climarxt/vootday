@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 
 class PostEventView extends StatefulWidget {
   final Post post;
@@ -28,37 +28,139 @@ class PostEventView extends StatefulWidget {
 
 class _PostEventViewState extends State<PostEventView>
     with SingleTickerProviderStateMixin {
+  bool isImageVisible = false;
+
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          isImageVisible = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _navigateToPostScreen(context),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+    return AnimatedOpacity(
+      opacity: isImageVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: isImageVisible
+          ? GestureDetector(
+              onTap: () => _navigateToPostScreen(context),
+              child: _buildPost(context),
+            )
+          : Container(color: white),
+    );
+  }
+
+  Widget _buildPost(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 1.5,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          _buildImage(widget.post.imageProvider),
+          buildText(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImage(CachedNetworkImageProvider imageUrl) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            image: DecorationImage(
+              image: imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 1.5,
-            child: Stack(
-              children: [
-                ImageLoaderPostEvent(
-                  imageProvider: widget.post.imageProvider,
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height / 1.5,
-                ),
-                buildBody(context),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.center,
+              colors: [
+                Colors.black.withOpacity(0.6),
+                Colors.transparent,
               ],
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget buildText(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          top: 32,
+          right: -1,
+          child: Container(
+            width: 74,
+            height: 24,
+            decoration: const BoxDecoration(
+              color: couleurBleuClair2,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                bottomLeft: Radius.circular(4),
+              ),
+            ),
+            child: Center(child: buildLikeCount(context)),
+          ),
+        ),
+        Positioned(
+          bottom: 10,
+          left: 12,
+          child: buildUsername(context),
+        ),
+      ],
+    );
+  }
+
+  Widget buildUsername(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigateToUserScreen(context),
+      child: Row(
+        children: [
+          UserProfileImage(
+            radius: 27,
+            outerCircleRadius: 28,
+            profileImageUrl: widget.post.author.profileImageUrl,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.post.author.username,
+            style: AppTextStyles.titlePost(context),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget buildLikeCount(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '${widget.post.likes}',
+          style: AppTextStyles.titlePost(context),
+        ),
+        const SizedBox(width: 2),
+        const Icon(
+          Icons.emoji_events,
+          color: white,
+          size: 14,
+        ),
+      ],
     );
   }
 
@@ -82,90 +184,6 @@ class _PostEventViewState extends State<PostEventView>
       '?username=${Uri.encodeComponent(widget.post.author.username)}'
       '&title=${Uri.encodeComponent(widget.title)}'
       '&logoUrl=${Uri.encodeComponent(widget.logoUrl)}',
-    );
-  }
-
-  Stack buildBody(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: 32,
-          right: -1,
-          child: Container(
-            width: 74,
-            height: 24,
-            decoration: const BoxDecoration(
-              color: couleurBleuClair2,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4),
-                bottomLeft: Radius.circular(4),
-              ),
-            ),
-            child: Center(child: buildLikeCount(context)),
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          left: 12,
-          child: buildTitle(context),
-        ),
-      ],
-    );
-  }
-
-  Column buildTitle(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () => _navigateToUserScreen(context),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Row(
-                  children: [
-                    UserProfileImage(
-                      radius: 22.0,
-                      outerCircleRadius: 23,
-                      profileImageUrl: widget.post.author.profileImageUrl,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      widget.post.author.username,
-                      style: AppTextStyles.titlePost(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildLikeCount(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          '${widget.post.likes}',
-          style: AppTextStyles.titlePost(context),
-        ),
-        const SizedBox(width: 2),
-        const Icon(
-          Icons.emoji_events,
-          color: white,
-          size: 14,
-        ),
-      ],
     );
   }
 }

@@ -294,6 +294,7 @@ class PostRepository extends BasePostRepository {
           .collection('users')
           .doc(userId)
           .collection('mycollection')
+          .orderBy('date', descending: true)
           .get();
 
       // Extraire les références de collection
@@ -349,6 +350,7 @@ class PostRepository extends BasePostRepository {
           .collection('users')
           .doc(userId)
           .collection('mycollection')
+          .orderBy('date', descending: true)
           .get();
 
       // Extraire les références de collection

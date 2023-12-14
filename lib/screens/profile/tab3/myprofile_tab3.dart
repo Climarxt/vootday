@@ -64,8 +64,8 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
                 childAspectRatio: 0.8,
               ),
               physics: const ClampingScrollPhysics(),

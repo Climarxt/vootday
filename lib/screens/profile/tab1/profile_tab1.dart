@@ -32,8 +32,8 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
       physics: const ClampingScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 6,
-        mainAxisSpacing: 6,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
         childAspectRatio: 0.8,
       ),
       itemCount: state.posts.length,

@@ -63,15 +63,18 @@ class PostRepository extends BasePostRepository {
 
   Future<void> deleteCollection({required String collectionId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
-    debugPrint('deleteCollection : Début de la suppression de la collection avec ID: $collectionId');
+    debugPrint(
+        'deleteCollection : Début de la suppression de la collection avec ID: $collectionId');
 
     DocumentReference collectionRef =
         _firebaseFirestore.collection(Paths.collections).doc(collectionId);
-    debugPrint('deleteCollection : Suppression de la collection dans la collection collections');
+    debugPrint(
+        'deleteCollection : Suppression de la collection dans la collection collections');
     batch.delete(collectionRef);
 
     // Suppression des références du post dans les sous-collections
-    await _deleteCollectionReferencesInSubCollections(batch, collectionRef, 'mycollection');
+    await _deleteCollectionReferencesInSubCollections(
+        batch, collectionRef, 'mycollection');
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
@@ -81,8 +84,8 @@ class PostRepository extends BasePostRepository {
         'deleteCollection : Suppression terminée pour la collection avec ID: $collectionId');
   }
 
-  Future<void> _deleteCollectionReferencesInSubCollections(
-      WriteBatch batch, DocumentReference collectionRef, String subCollection) async {
+  Future<void> _deleteCollectionReferencesInSubCollections(WriteBatch batch,
+      DocumentReference collectionRef, String subCollection) async {
     debugPrint(
         '_deleteCollectionReferencesInSubCollections : Recherche de la collection dans les sous-collections $subCollection');
     QuerySnapshot snapshot = await _firebaseFirestore
@@ -343,7 +346,7 @@ class PostRepository extends BasePostRepository {
   }) async {
     try {
       debugPrint(
-          'getMyCollection : Attempting to fetch collection references from Firestore...');
+          'getYourCollection : Attempting to fetch public collection references from Firestore...');
 
       // Récupérer les références de la collection de l'utilisateur
       QuerySnapshot userCollectionSnap = await _firebaseFirestore
@@ -353,7 +356,6 @@ class PostRepository extends BasePostRepository {
           .orderBy('date', descending: true)
           .get();
 
-      // Extraire les références de collection
       List<DocumentReference> collectionRefs = userCollectionSnap.docs
           .map((doc) {
             final data = doc.data() as Map<String, dynamic>?;
@@ -366,30 +368,35 @@ class PostRepository extends BasePostRepository {
           .toList();
 
       debugPrint(
-          'getMyCollection : Collection references fetched. Fetching each collection document...');
+          'getYourCollection : Collection references fetched. Fetching each collection document...');
 
       List<Future<Collection?>> futureCollections = collectionRefs.map(
         (ref) async {
           DocumentSnapshot collectionDoc = await ref.get();
-          return Collection.fromDocument(collectionDoc);
+          Collection? collection = await Collection.fromDocument(
+              collectionDoc); // Ajout de 'await' ici
+          if (collection != null && collection.public) {
+            return collection; // Filtrer pour garder seulement les collections publiques
+          }
+          return null;
         },
       ).toList();
 
-      // Utiliser Future.wait pour résoudre toutes les collections
       List<Collection?> collections = await Future.wait(futureCollections);
+      collections.removeWhere((collection) => collection == null);
 
       debugPrint(
-          'getMyCollection : Collection objects created. Total collections: ${collections.length}');
+          'getYourCollection : Public collection objects created. Total collections: ${collections.length}');
 
       if (collections.isNotEmpty) {
         debugPrint(
-            'getMyCollection : First collection details: ${collections.first}');
+            'getYourCollection : First public collection details: ${collections.first}');
       }
 
       return collections;
     } catch (e) {
       debugPrint(
-          'getMyCollection : An error occurred while fetching collections: ${e.toString()}');
+          'getYourCollection : An error occurred while fetching public collections: ${e.toString()}');
       return [];
     }
   }

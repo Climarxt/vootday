@@ -60,7 +60,9 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+              );
             }
 
             if (snapshot.hasError) {

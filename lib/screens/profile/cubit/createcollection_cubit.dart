@@ -22,12 +22,14 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
     try {
       debugPrint('Method createCollection : Creating new collection...');
 
+      DateTime now = DateTime.now(); // Capture de la date actuelle
+
       // Création de la nouvelle collection
       final newCollection = Collection(
         id: '', // Firestore générera un ID unique
         author: User.empty
             .copyWith(id: userId), // Mettre à jour avec l'utilisateur actuel
-        date: DateTime.now(),
+        date: now, // Utilisation de la date actuelle
         title: collectionTitle,
       );
 
@@ -35,12 +37,15 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
           .collection('collections')
           .add(newCollection.toDocument());
 
-      // Ajout de la référence de la collection à la sous-collection de l'utilisateur
+      // Ajout de la référence de la collection et de la date à la sous-collection de l'utilisateur
       await _firebaseFirestore
           .collection('users')
           .doc(userId)
           .collection('mycollection')
-          .add({'collection_ref': collectionRef});
+          .add({
+        'collection_ref': collectionRef,
+        'date': now // Ajout de la date ici
+      });
 
       debugPrint('Method createCollection : Collection created successfully.');
 

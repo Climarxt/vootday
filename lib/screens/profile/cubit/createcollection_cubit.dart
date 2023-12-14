@@ -56,7 +56,7 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
       emit(state.copyWith(
         status: CreateCollectionStatus.error,
         failure:
-            Failure(message: 'Erreur lors de la création de la collection'),
+            const Failure(message: 'Erreur lors de la création de la collection'),
       ));
     }
   }

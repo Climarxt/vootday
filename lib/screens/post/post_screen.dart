@@ -30,6 +30,7 @@ class _PostScreenState extends State<PostScreen>
   User? _user;
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
+  
 
   @override
   void initState() {
@@ -43,6 +44,8 @@ class _PostScreenState extends State<PostScreen>
       debugPrint('User ID is null');
     }
   }
+
+  
 
   void _checkIfUserIsAuthor(String userId) async {
     try {

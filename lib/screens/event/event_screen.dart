@@ -46,7 +46,7 @@ class _EventScreenState extends State<EventScreen>
     if (userId != null) {
       _checkIfUserIsAParticipant(userId);
     } else {
-      print('User ID is null');
+      debugPrint('User ID is null');
     }
   }
 
@@ -103,6 +103,7 @@ class _EventScreenState extends State<EventScreen>
                       likes: 4,
                       description: event.caption,
                       tags: event.tags,
+                      profileImage: event.logoUrl,
                       onTitleTap: () => _navigateToUserScreen(context),
                     ),
                     const Spacer(),

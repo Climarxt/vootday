@@ -1,10 +1,12 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ProfileImageEvent extends StatelessWidget {
   final String title;
   final int likes;
   final String description;
+  final String profileImage;
   final List<String> tags;
   final VoidCallback? onTitleTap;
 
@@ -13,6 +15,7 @@ class ProfileImageEvent extends StatelessWidget {
     required this.title,
     required this.likes,
     required this.description,
+    required this.profileImage,
     required this.tags,
     this.onTitleTap,
   });
@@ -25,7 +28,7 @@ class ProfileImageEvent extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            /* GestureDetector(
+            GestureDetector(
               onTap: onTitleTap,
               child: CircleAvatar(
                 radius: 40,
@@ -37,7 +40,7 @@ class ProfileImageEvent extends StatelessWidget {
                   ),
                 ),
               ),
-            ), */
+            ),
             const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -103,6 +103,10 @@ class Event {
     return CachedNetworkImageProvider(imageUrl);
   }
 
+    CachedNetworkImageProvider get logoProvider {
+    return CachedNetworkImageProvider(logoUrl);
+  }
+
   Map<String, dynamic> toDocument() {
     return {
       'author': FirebaseFirestore.instance.collection('brands').doc(author.id),
@@ -116,6 +120,7 @@ class Event {
       'tags': tags,
       'reward': reward,
       'done': done,
+      'Url': imageUrl,
     };
   }
 

@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/event/widgets/widgets.dart';
 
@@ -11,16 +12,10 @@ import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatefulWidget {
   final String eventId;
-  final String title;
-  final String logoUrl;
-  final String author;
 
   const EventScreen({
     super.key,
     required this.eventId,
-    required this.title,
-    required this.logoUrl,
-    required this.author,
   });
 
   @override
@@ -33,18 +28,38 @@ class _EventScreenState extends State<EventScreen>
   String? _postRef;
   String? _userRefId;
 
+  EventRepository eventRepository = EventRepository();
+
+  String title = '';
+  String logoUrl = '';
+  String author = '';
+  Event? eventDetails;
+
   @override
   void initState() {
     super.initState();
+    _fetchEventDetails();
     BlocProvider.of<EventBloc>(context)
         .add(EventFetchEvent(eventId: widget.eventId));
-    _fetchUserRefFromAuthor(widget.author);
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
     if (userId != null) {
       _checkIfUserIsAParticipant(userId);
     } else {
       print('User ID is null');
+    }
+  }
+
+  void _fetchEventDetails() async {
+    Event? event = await eventRepository.getEventById(widget.eventId);
+    if (event != null) {
+      setState(() {
+        title = event.title;
+        logoUrl = event.logoUrl;
+        author = event.author.author;
+        eventDetails = event;
+      });
+      _fetchUserRefFromAuthor(author); // Déplacez cet appel ici
     }
   }
 
@@ -67,7 +82,7 @@ class _EventScreenState extends State<EventScreen>
 
   Widget _buildEvent(BuildContext context, event, size) {
     return Scaffold(
-      appBar: AppBarTitle(title: widget.title),
+      appBar: AppBarTitle(title: title),
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: size.height),
@@ -84,9 +99,8 @@ class _EventScreenState extends State<EventScreen>
                 child: Row(
                   children: [
                     ProfileImageEvent(
-                      title: widget.author,
+                      title: author,
                       likes: 4,
-                      profileImage: widget.logoUrl,
                       description: event.caption,
                       tags: event.tags,
                       onTitleTap: () => _navigateToUserScreen(context),
@@ -199,7 +213,7 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToCreatePostScreen(BuildContext context) {
-    GoRouter.of(context).push('/event/${widget.eventId}/create');
+    GoRouter.of(context).go('/calendar/event/${widget.eventId}/create');
   }
 
   void _navigateToCommentScreen(BuildContext context) {
@@ -207,12 +221,12 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    final title = widget.title;
+    // final title = title;
     GoRouter.of(context).push('/post/$_postRef?username=$title');
   }
 
   void _navigateToUserScreen(BuildContext context) {
-    final author = widget.author;
+    // final author = widget.author;
     context.push('/brand/$_userRefId?username=$author');
   }
 

@@ -90,16 +90,12 @@ class _EventNewCardState extends State<EventNewCard> {
   }
 
   void _navigateToEventScreen(BuildContext context) {
-    final String encodedTitle = Uri.encodeComponent(widget.title);
-    final String encodedLogoUrl = Uri.encodeComponent(widget.imageUrl);
-    final String encodedAuthor = Uri.encodeComponent(widget.author);
+    // final String encodedTitle = Uri.encodeComponent(widget.title);
+    // final String encodedLogoUrl = Uri.encodeComponent(widget.imageUrl);
+    // final String encodedAuthor = Uri.encodeComponent(widget.author);
 
-    GoRouter.of(context).push(
-      '/event/${widget.eventId}'
-      '?title=$encodedTitle'
-      '&logoUrl=$encodedLogoUrl'
-      '&author=$encodedAuthor',
-    );
+    GoRouter.of(context)
+        .go('/calendar/event/${widget.eventId}', extra: widget.eventId);
   }
 
   Widget _buildPost(String imageUrl) {

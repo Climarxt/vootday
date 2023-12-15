@@ -112,72 +112,6 @@ GoRouter createRouter(BuildContext context) {
           );
         },
       ),
-      // Event
-      GoRoute(
-        path: '/event/:eventId',
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          final eventId = RouteConfig.getEventId(state);
-          final title = RouteConfig.getTitle(state);
-          final logoUrl = RouteConfig.getLogoUrl(state);
-          final author = RouteConfig.getAuthor(state);
-
-          return MaterialPage<void>(
-            key: state.pageKey,
-            child: EventScreen(
-              eventId: eventId,
-              title: title,
-              logoUrl: logoUrl,
-              author: author,
-            ),
-          );
-        },
-        routes: [
-          // calendar/event/:eventId/comment
-          GoRoute(
-            path: 'comment',
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return MaterialPage<void>(
-                key: state.pageKey,
-                child: const CommentWIPScreen(),
-              );
-            },
-          ),
-          // calendar/event/:eventId/create
-          GoRoute(
-            path: 'create',
-            builder: (BuildContext context, GoRouterState state) {
-              final eventId = RouteConfig.getEventId(state);
-              return BlocProviderConfig.getCreatePostBlocProvider(
-                context,
-                CreatePostEventScreen(eventId: eventId),
-              );
-            },
-            routes: [
-              // calendar/event/:eventId/create/brand
-              GoRoute(
-                path: 'brand',
-                builder: (BuildContext context, GoRouterState state) {
-                  print('State extra value: ${state.extra}');
-
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider.value(
-                        value: state.extra! as CreatePostCubit,
-                      ),
-                      BlocProvider<BrandCubit>(
-                        create: (context) => BrandCubit(
-                          brandRepository: context.read<BrandRepository>(),
-                        ),
-                      ),
-                    ],
-                    child: const BrandSearchScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
       // Brand Profile
       GoRoute(
         path: '/brand/:userId',
@@ -336,15 +270,59 @@ GoRouter createRouter(BuildContext context) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/calendar',
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return MaterialPage<void>(
-                    key: state.pageKey,
-                    child: BlocProviderConfig.getCalendarMultiBlocProvider(
-                        context, const CalendarScreen()),
-                  );
-                },
-              ),
+                  path: '/calendar',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return MaterialPage<void>(
+                      key: state.pageKey,
+                      child: BlocProviderConfig.getCalendarMultiBlocProvider(
+                          context, const CalendarScreen()),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'event/:eventId',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        final eventId = RouteConfig.getEventId(state);
+                        // final title = RouteConfig.getTitle(state);
+                        // final logoUrl = RouteConfig.getLogoUrl(state);
+                        // final author = RouteConfig.getAuthor(state);
+
+                        return MaterialPage<void>(
+                          key: state.pageKey,
+                          child: EventScreen(
+                            eventId: eventId,
+                            // title: title,
+                            // logoUrl: logoUrl,
+                            // author: author,
+                          ),
+                        );
+                      },
+                      routes: [
+                        // calendar/event/:eventId/comment
+                        GoRoute(
+                          path: 'comment',
+                          pageBuilder:
+                              (BuildContext context, GoRouterState state) {
+                            return MaterialPage<void>(
+                              key: state.pageKey,
+                              child: const CommentWIPScreen(),
+                            );
+                          },
+                        ),
+                        // calendar/event/:eventId/create
+                        GoRoute(
+                          path: 'create',
+                          builder: (BuildContext context, GoRouterState state) {
+                            final eventId = RouteConfig.getEventId(state);
+                            return BlocProviderConfig.getCreatePostBlocProvider(
+                              context,
+                              CreatePostEventScreen(eventId: eventId),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ]),
             ],
           ),
           // Swipe

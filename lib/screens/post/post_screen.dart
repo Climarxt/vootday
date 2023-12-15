@@ -32,6 +32,7 @@ class _PostScreenState extends State<PostScreen>
   User? _user;
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
+  List<String> _imageUrls = [];
 
   @override
   void initState() {
@@ -75,9 +76,17 @@ class _PostScreenState extends State<PostScreen>
 
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
       listener: (context, state) {
-        if (state.status == MyCollectionStatus.initial &&
-            state.collections.isEmpty) {
-          context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+        if (state.status == MyCollectionStatus.loaded &&
+            state.collections.isNotEmpty) {
+          // Ensure this block of code is executed only once by checking if _imageUrls is empty
+          if (_imageUrls.isEmpty) {
+            // Filter out any null collections before passing to _fetchImageUrls
+            final nonNullCollections = state.collections
+                .where((collection) => collection != null)
+                .cast<Collection>()
+                .toList();
+            _fetchImageUrls(nonNullCollections);
+          }
         }
       },
       builder: (context, state) {
@@ -100,6 +109,22 @@ class _PostScreenState extends State<PostScreen>
         );
       },
     );
+  }
+
+  Future<void> _fetchImageUrls(List<Collection> collections) async {
+    // Fetch all image URLs
+    List<String> urls = [];
+    for (var collection in collections) {
+      String imageUrl = await getMostRecentPostImageUrl(collection.id);
+      urls.add(imageUrl);
+    }
+
+    // Check if the state is still mounted before updating
+    if (mounted) {
+      setState(() {
+        _imageUrls = urls;
+      });
+    }
   }
 
   Future<void> _showBottomSheetCollection(
@@ -141,9 +166,12 @@ class _PostScreenState extends State<PostScreen>
         separatorBuilder: (context, index) => Divider(color: greyDark),
         itemBuilder: (BuildContext context, int index) {
           final collection = state.collections[index] ?? Collection.empty;
+          final imageUrl = index < _imageUrls.length
+              ? _imageUrls[index]
+              : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
 
           return ListTile(
-            leading: _buildLeadingImage(collection),
+            leading: _buildLeadingImage(imageUrl),
             title: Text(
               collection.title,
               style: AppTextStyles.titleHeadlineMidBlackBold(context),
@@ -160,45 +188,25 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _buildLeadingImage(Collection collection) {
-    if (collection == Collection.empty) {
-      return const SizedBox(
-        width: 60,
-        height: 60,
-        child: Placeholder(),
-      );
-    }
-
-    return FutureBuilder<String>(
-      future: getMostRecentPostImageUrl(collection.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
-          );
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text('No image available');
-        }
-        return Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), // Rounded corners
-            image: DecorationImage(
-              image: NetworkImage(snapshot.data!),
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      },
+  Widget _buildLeadingImage(String imageUrl) {
+    // Now this function can directly use imageUrl without FutureBuilder
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    // Add a debug print to confirm the method is called with a valid ID
+    debugPrint("Fetching image URL for collection ID: $collectionId");
+
     try {
       final feedEventRef = FirebaseFirestore.instance
           .collection('collections')
@@ -208,6 +216,7 @@ class _PostScreenState extends State<PostScreen>
       final querySnapshot =
           await feedEventRef.orderBy('date', descending: true).limit(1).get();
 
+      // Check if there are documents returned
       if (querySnapshot.docs.isNotEmpty) {
         final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
         final DocumentReference? postRef =
@@ -218,8 +227,10 @@ class _PostScreenState extends State<PostScreen>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint("Referenced post document exist.");
-            return postData?['imageUrl'] as String? ?? '';
+            final imageUrl = postData?['imageUrl'] as String? ?? '';
+            // Print the image URL to verify it's the correct one
+            debugPrint("Found image URL: $imageUrl");
+            return imageUrl;
           } else {
             debugPrint("Referenced post document does not exist.");
           }
@@ -227,13 +238,14 @@ class _PostScreenState extends State<PostScreen>
           debugPrint("Post reference is null.");
         }
       } else {
-        debugPrint("No posts found in the event's feed.");
+        debugPrint("No posts found in the collection's feed.");
       }
     } catch (e) {
-      debugPrint(
-          "An error occurred while fetching the most liked post image URL: $e");
+      // Print any exceptions that occur
+      debugPrint("An error occurred while fetching the post image URL: $e");
     }
-    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
+    // Return a default image URL if no image is found or an error occurs
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fred_placeholder_logo.png?alt=media&token=508d670e-1435-4397-855b-9f3f3b17e100';
   }
 
   Future<void> _loadPost() async {

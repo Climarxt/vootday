@@ -160,9 +160,11 @@ GoRouter createRouter(BuildContext context) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           final postId = RouteConfig.getPostId(state);
           final username = RouteConfig.getUsername(state);
+          final fromPath = state.extra as String? ?? 'defaultFromPath';
           return MaterialPage<void>(
             key: state.pageKey,
-            child: PostScreen(postId: postId, username: username),
+            child: PostScreen(
+                postId: postId, username: username, fromPath: fromPath),
           );
         },
         routes: [
@@ -283,17 +285,12 @@ GoRouter createRouter(BuildContext context) {
                       path: 'event/:eventId',
                       pageBuilder: (BuildContext context, GoRouterState state) {
                         final eventId = RouteConfig.getEventId(state);
-                        // final title = RouteConfig.getTitle(state);
-                        // final logoUrl = RouteConfig.getLogoUrl(state);
-                        // final author = RouteConfig.getAuthor(state);
-
+                        String currentPath = RouteConfig.getCurrentPath(state);
                         return MaterialPage<void>(
                           key: state.pageKey,
                           child: EventScreen(
+                            fromPath: currentPath,
                             eventId: eventId,
-                            // title: title,
-                            // logoUrl: logoUrl,
-                            // author: author,
                           ),
                         );
                       },

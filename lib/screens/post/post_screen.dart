@@ -13,11 +13,13 @@ import 'package:go_router/go_router.dart';
 class PostScreen extends StatefulWidget {
   final String postId;
   final String username;
+  final String fromPath;
 
   const PostScreen({
     super.key,
     required this.postId,
     required this.username,
+    required this.fromPath,
   });
 
   @override
@@ -30,10 +32,10 @@ class _PostScreenState extends State<PostScreen>
   User? _user;
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
-  
 
   @override
   void initState() {
+    debugPrint("DEBUG : fromPath = ${widget.fromPath}");
     super.initState();
     _loadPost();
     final authState = context.read<AuthBloc>().state;
@@ -44,8 +46,6 @@ class _PostScreenState extends State<PostScreen>
       debugPrint('User ID is null');
     }
   }
-
-  
 
   void _checkIfUserIsAuthor(String userId) async {
     try {
@@ -202,7 +202,12 @@ class _PostScreenState extends State<PostScreen>
                 onTap: () {
                   final postCubit = context.read<DeletePostsCubit>();
                   postCubit.deletePosts(widget.postId);
-                  GoRouter.of(context).go('/profile');
+                  if (widget.fromPath.contains("/calendar")) {
+                    GoRouter.of(context).go('/calendar');
+                  } else {
+                    GoRouter.of(context).go('/profile');
+                  }
+
                   SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
                 },
               ),

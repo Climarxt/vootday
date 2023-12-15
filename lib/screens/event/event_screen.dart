@@ -12,10 +12,12 @@ import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatefulWidget {
   final String eventId;
+  final String fromPath;
 
   const EventScreen({
     super.key,
     required this.eventId,
+    required this.fromPath,
   });
 
   @override
@@ -37,6 +39,8 @@ class _EventScreenState extends State<EventScreen>
 
   @override
   void initState() {
+    debugPrint("DEBUG : fromPath = ${widget.fromPath}");
+
     super.initState();
     _fetchEventDetails();
     BlocProvider.of<EventBloc>(context)
@@ -48,6 +52,10 @@ class _EventScreenState extends State<EventScreen>
     } else {
       debugPrint('User ID is null');
     }
+  }
+
+  void _navigateToPostScreen(BuildContext context) {
+    GoRouter.of(context).push('/post/$_postRef', extra: widget.fromPath);
   }
 
   void _fetchEventDetails() async {
@@ -219,11 +227,6 @@ class _EventScreenState extends State<EventScreen>
 
   void _navigateToCommentScreen(BuildContext context) {
     context.push('/event/${widget.eventId}/comment');
-  }
-
-  void _navigateToPostScreen(BuildContext context) {
-    // final title = title;
-    GoRouter.of(context).push('/post/$_postRef?username=$title');
   }
 
   void _navigateToUserScreen(BuildContext context) {

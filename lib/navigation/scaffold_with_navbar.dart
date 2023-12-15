@@ -18,7 +18,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("DEBUG : $currentLocation");
     return Scaffold(
       appBar: appBar,
       body: navigationShell,

@@ -4,6 +4,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,9 @@ class _PostScreenState extends State<PostScreen>
     debugPrint("DEBUG : fromPath = ${widget.fromPath}");
     super.initState();
     _loadPost();
+    Future.delayed(Duration.zero, () {
+      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+    });
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
     if (userId != null) {
@@ -69,23 +73,167 @@ class _PostScreenState extends State<PostScreen>
       );
     }
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBarTitle(title: _user!.username),
-        body: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: size.height),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPostImage(size),
-                _buildPostDetails(),
-              ],
+    return BlocConsumer<MyCollectionBloc, MyCollectionState>(
+      listener: (context, state) {
+        if (state.status == MyCollectionStatus.initial &&
+            state.collections.isEmpty) {
+          context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+        }
+      },
+      builder: (context, state) {
+        return SafeArea(
+          child: Scaffold(
+            appBar: AppBarTitle(title: _user!.username),
+            body: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: size.height),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildPostImage(size),
+                    _buildPostDetails(state),
+                  ],
+                ),
+              ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showBottomSheetCollection(
+      BuildContext context, MyCollectionState state) async {
+    final Size size = MediaQuery.of(context).size;
+
+    int? result = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.2,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => SafeArea(
+          child: Column(
+            children: [
+              _buildTopBar(context, size),
+              _buildListView(scrollController, state),
+            ],
           ),
         ),
       ),
     );
+
+    print(result);
+  }
+
+  Widget _buildListView(
+      ScrollController scrollController, MyCollectionState state) {
+    return Expanded(
+      child: ListView.separated(
+        controller: scrollController,
+        itemCount: state.collections.length,
+        separatorBuilder: (context, index) => Divider(color: greyDark),
+        itemBuilder: (BuildContext context, int index) {
+          final collection = state.collections[index] ?? Collection.empty;
+
+          return ListTile(
+            leading: _buildLeadingImage(collection),
+            title: Text(
+              collection.title,
+              style: AppTextStyles.titleHeadlineMidBlackBold(context),
+            ),
+            subtitle: Text(
+              collection.public ? 'Public' : 'Privé',
+              style: AppTextStyles.subtitleLargeGrey(context),
+            ),
+            trailing: const Icon(Icons.add, color: greyDark),
+            onTap: () {},
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLeadingImage(Collection collection) {
+    if (collection == Collection.empty) {
+      return const SizedBox(
+        width: 60,
+        height: 60,
+        child: Placeholder(),
+      );
+    }
+
+    return FutureBuilder<String>(
+      future: getMostRecentPostImageUrl(collection.id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+          );
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('No image available');
+        }
+        return Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), // Rounded corners
+            image: DecorationImage(
+              image: NetworkImage(snapshot.data!),
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    try {
+      final feedEventRef = FirebaseFirestore.instance
+          .collection('collections')
+          .doc(collectionId)
+          .collection('feed_collection');
+
+      final querySnapshot =
+          await feedEventRef.orderBy('date', descending: true).limit(1).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
+        final DocumentReference? postRef =
+            data?['post_ref'] as DocumentReference?;
+
+        if (postRef != null) {
+          final postDoc = await postRef.get();
+
+          if (postDoc.exists) {
+            final postData = postDoc.data() as Map<String, dynamic>?;
+            debugPrint("Referenced post document exist.");
+            return postData?['imageUrl'] as String? ?? '';
+          } else {
+            debugPrint("Referenced post document does not exist.");
+          }
+        } else {
+          debugPrint("Post reference is null.");
+        }
+      } else {
+        debugPrint("No posts found in the event's feed.");
+      }
+    } catch (e) {
+      debugPrint(
+          "An error occurred while fetching the most liked post image URL: $e");
+    }
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
 
   Future<void> _loadPost() async {
@@ -122,14 +270,14 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _buildPostDetails() {
+  Widget _buildPostDetails(MyCollectionState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         children: [
           _buildUserProfile(),
           const Spacer(),
-          _buildActionIcons(),
+          _buildActionIcons(state),
         ],
       ),
     );
@@ -146,15 +294,15 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _buildActionIcons() {
+  Widget _buildActionIcons(MyCollectionState state) {
     return Column(
       children: [
         _buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
         _buildIconButton(
             Icons.comment, () => _navigateToCommentScreen(context)),
         _buildIconButton(Icons.share, () => _showBottomSheet(context)),
-        _buildIconButton(
-            Icons.add_to_photos, () => _showBottomSheetCollection(context)),
+        _buildIconButton(Icons.add_to_photos,
+            () => _showBottomSheetCollection(context, state)),
       ],
     );
   }
@@ -230,35 +378,6 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Future<void> _showBottomSheetCollection(BuildContext context) async {
-    final Size size = MediaQuery.of(context).size;
-
-    int? result = await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        minChildSize: 0.2,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) => SafeArea(
-          child: Column(
-            children: [
-              _buildTopBar(context, size),
-              _buildListView(scrollController),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    print(result); // Consider using debugPrint instead of print in Flutter.
-  }
-
   Widget _buildTopBar(BuildContext context, Size size) {
     return Container(
       decoration: const BoxDecoration(
@@ -319,19 +438,6 @@ class _PostScreenState extends State<PostScreen>
   Icon _buildBookmarkIcon() {
     const black = Colors.black; // Example color
     return const Icon(Icons.bookmark, color: black, size: 32);
-  }
-
-  Widget _buildListView(ScrollController scrollController) {
-    return Expanded(
-      child: ListView.builder(
-        controller: scrollController,
-        itemCount: 100, // Or the number of your items
-        itemBuilder: (context, index) => ListTile(
-          title: Text(index.toString()),
-          onTap: () => Navigator.of(context).pop(index),
-        ),
-      ),
-    );
   }
 
   @override

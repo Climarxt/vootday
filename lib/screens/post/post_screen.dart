@@ -47,25 +47,46 @@ class _PostScreenState extends State<PostScreen>
     }
   }
 
-  void _checkIfUserIsAuthor(String userId) async {
-    try {
-      DocumentSnapshot postDoc = await FirebaseFirestore.instance
-          .collection(Paths.posts)
-          .doc(widget.postId)
-          .get();
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final Size size = MediaQuery.of(context).size;
 
-      if (postDoc.exists) {
-        var data = postDoc.data() as Map<String, dynamic>;
-        DocumentReference authorRef = data['author'];
-        if (authorRef.id == userId) {
-          setState(() {
-            _isUserTheAuthor = true;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint('Erreur lors de la récupération du post: $e');
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: Opacity(
+            opacity: 0.0,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
     }
+
+    if (_post == null || _user == null) {
+      return Scaffold(
+        appBar: AppBarTitle(title: _user!.username),
+        body: const Center(child: Text('Post or user not found')),
+      );
+    }
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBarTitle(title: _user!.username),
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: size.height),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPostImage(size),
+                _buildPostDetails(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _loadPost() async {
@@ -94,91 +115,76 @@ class _PostScreenState extends State<PostScreen>
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    final Size size = MediaQuery.of(context).size;
+  Widget _buildPostImage(Size size) {
+    return ImageLoader(
+      imageProvider: _post!.imageProvider,
+      width: size.width,
+      height: size.height / 1.5,
+    );
+  }
 
-    if (_isLoading) {
-      return Scaffold(
-        appBar: AppBarTitle(title: widget.username),
-        body: const Center(
-          child: Opacity(
-            opacity: 0.0,
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      );
-    }
-
-    if (_post == null || _user == null) {
-      return Scaffold(
-        appBar: AppBarTitle(title: widget.username),
-        body: const Center(child: Text('Post or user not found')),
-      );
-    }
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBarTitle(title: widget.username),
-        body: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: size.height),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ImageLoader(
-                  imageProvider: _post!.imageProvider,
-                  width: size.width,
-                  height: size.height / 1.5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, right: 18),
-                  child: Row(
-                    children: [
-                      ProfileImagePost(
-                        title: '${_user!.firstName} ${_user!.lastName}',
-                        likes: _post!.likes,
-                        profileImageProvider: _user!.profileImageProvider,
-                        description: _post!.caption,
-                        tags: _post!.tags,
-                        onTitleTap: () =>
-                            _navigateToUserScreen(context, _user!),
-                      ),
-                      const Spacer(),
-                      Column(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.comment,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _navigateToCommentScreen(context),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.share,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add_to_photos,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+  Widget _buildPostDetails() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Row(
+        children: [
+          _buildUserProfile(),
+          const Spacer(),
+          _buildActionIcons(),
+        ],
       ),
     );
+  }
+
+  Widget _buildUserProfile() {
+    return ProfileImagePost(
+      title: '${_user!.firstName} ${_user!.lastName}',
+      likes: _post!.likes,
+      profileImageProvider: _user!.profileImageProvider,
+      description: _post!.caption,
+      tags: _post!.tags,
+      onTitleTap: () => _navigateToUserScreen(context, _user!),
+    );
+  }
+
+  Widget _buildActionIcons() {
+    return Column(
+      children: [
+        _buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
+        _buildIconButton(
+            Icons.comment, () => _navigateToCommentScreen(context)),
+        _buildIconButton(Icons.share, () => _showBottomSheet(context)),
+        _buildIconButton(Icons.add_to_photos, () => _showBottomSheet(context)),
+      ],
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+    return IconButton(
+      icon: Icon(icon, color: Colors.black, size: 24),
+      onPressed: onPressed,
+    );
+  }
+
+  void _checkIfUserIsAuthor(String userId) async {
+    try {
+      DocumentSnapshot postDoc = await FirebaseFirestore.instance
+          .collection(Paths.posts)
+          .doc(widget.postId)
+          .get();
+
+      if (postDoc.exists) {
+        var data = postDoc.data() as Map<String, dynamic>;
+        DocumentReference authorRef = data['author'];
+        if (authorRef.id == userId) {
+          setState(() {
+            _isUserTheAuthor = true;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur lors de la récupération du post: $e');
+    }
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {

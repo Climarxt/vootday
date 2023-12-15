@@ -55,6 +55,7 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToPostScreen(BuildContext context) {
+
     GoRouter.of(context).push('/post/$_postRef', extra: widget.fromPath);
   }
 

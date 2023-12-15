@@ -11,8 +11,6 @@ import 'package:image_cropper/image_cropper.dart';
 
 
 class CreatePostScreen extends StatefulWidget {
-  static const String routeName = '/createPost';
-
   const CreatePostScreen({super.key});
 
   @override
@@ -20,18 +18,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  final List<String> predefinedTags = [
-    'Tag1',
-    'Tag2',
-    'Tag3',
-    'Tag4',
-    'Tag5',
-    'Tag6',
-    'Tag7',
-    'Tag8',
-    'Tag9',
-    'Tag10',
-  ];
 
   @override
   void initState() {

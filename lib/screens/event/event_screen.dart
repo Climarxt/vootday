@@ -48,7 +48,174 @@ class _EventScreenState extends State<EventScreen>
     }
   }
 
-  // Vérifie si userId est un participant de l'événement
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    super.build(context);
+    return BlocBuilder<EventBloc, EventState>(
+      builder: (context, state) {
+        if (state.status == EventStatus.loading) {
+          return _buildLoadingIndicator();
+        } else if (state.status == EventStatus.loaded) {
+          return _buildEvent(context, state.event ?? Event.empty, size);
+        } else {
+          return _buildLoadingIndicator();
+        }
+      },
+    );
+  }
+
+  Widget _buildEvent(BuildContext context, event, size) {
+    return Scaffold(
+      appBar: AppBarTitle(title: widget.title),
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: size.height),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ImageLoader(
+                imageProvider: event.imageProvider,
+                width: size.width,
+                height: size.height / 1.5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18, right: 18),
+                child: Row(
+                  children: [
+                    ProfileImageEvent(
+                      title: widget.author,
+                      likes: 4,
+                      profileImage: widget.logoUrl,
+                      description: event.caption,
+                      tags: event.tags,
+                      onTitleTap: () => _navigateToUserScreen(context),
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.more_vert,
+                              color: Colors.black, size: 24),
+                          onPressed: () => _showBottomSheet(context),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.comment,
+                              color: Colors.black, size: 24),
+                          onPressed: () => _navigateToCommentScreen(context),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.share,
+                              color: Colors.black, size: 24),
+                          onPressed: () => _showBottomSheet(context),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildListView(context, event),
+              const SizedBox(height: 80),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: _buildFloatingActionButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    if (_isUserAParticipant) {
+      return _buildFloatingActionButtonMyPost(context);
+    } else {
+      return FloatingActionButton.extended(
+        backgroundColor: couleurBleuClair2,
+        onPressed: () => _navigateToCreatePostScreen(context),
+        label: Text(AppLocalizations.of(context)!.translate('participate'),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: Colors.white)),
+      );
+    }
+  }
+
+  Widget _buildFloatingActionButtonMyPost(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () => _navigateToPostScreen(context),
+      label: Text('Mon Post',
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium!
+              .copyWith(color: Colors.white)),
+    );
+  }
+
+  Widget _buildListView(BuildContext context, Event event) {
+    return Container(
+      color: white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonsSectionEvent(
+            participants: event.participants,
+            reward: event.reward,
+            dateEnd: event.dateEnd,
+            dateEvent: event.dateEvent,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Center(
+        child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)));
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: const Text('Report'),
+              onTap: () {
+                // Implémentez votre logique de signalement ici
+                Navigator.pop(context);
+              },
+            ),
+            // Ajoutez d'autres options si nécessaire
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToCreatePostScreen(BuildContext context) {
+    GoRouter.of(context).push('/event/${widget.eventId}/create');
+  }
+
+  void _navigateToCommentScreen(BuildContext context) {
+    context.push('/event/${widget.eventId}/comment');
+  }
+
+  void _navigateToPostScreen(BuildContext context) {
+    final title = widget.title;
+    GoRouter.of(context).push('/post/$_postRef?username=$title');
+  }
+
+  void _navigateToUserScreen(BuildContext context) {
+    final author = widget.author;
+    context.push('/brand/$_userRefId?username=$author');
+  }
+
   void _checkIfUserIsAParticipant(String userId) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Paths.events)
@@ -87,178 +254,6 @@ class _EventScreenState extends State<EventScreen>
       print(
           'Une erreur s\'est produite lors de la récupération de user_ref: $e');
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    super.build(context);
-    return BlocBuilder<EventBloc, EventState>(
-      builder: (context, state) {
-        if (state.status == EventStatus.loading) {
-          return _buildLoadingIndicator();
-        } else if (state.status == EventStatus.loaded) {
-          return _buildEvent(context, state.event ?? Event.empty, size);
-        } else {
-          return _buildLoadingIndicator();
-        }
-      },
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return const Center(
-        child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)));
-  }
-
-  Widget _buildEvent(BuildContext context, event, size) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBarTitle(title: widget.title),
-        body: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: size.height),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ImageLoader(
-                  imageProvider: event.imageProvider,
-                  width: size.width,
-                  height: size.height / 1.5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, right: 18),
-                  child: Row(
-                    children: [
-                      ProfileImageEvent(
-                        title: widget.author,
-                        likes: 4,
-                        profileImage: widget.logoUrl,
-                        description: event.caption,
-                        tags: event.tags,
-                        onTitleTap: () => _navigateToUserScreen(context),
-                      ),
-                      const Spacer(),
-                      Column(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.comment,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _navigateToCommentScreen(context),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.share,
-                                color: Colors.black, size: 24),
-                            onPressed: () => _showBottomSheet(context),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _buildListView(context, event),
-                const SizedBox(height: 80),
-              ],
-            ),
-          ),
-        ),
-        floatingActionButton: _buildFloatingActionButton(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
-    );
-  }
-
-  // Builds the post button
-  Widget _buildFloatingActionButton(BuildContext context) {
-    if (_isUserAParticipant) {
-      return _buildFloatingActionButtonMyPost(context);
-    } else {
-      return FloatingActionButton.extended(
-        backgroundColor: couleurBleuClair2,
-        onPressed: () => _navigateToCreatePostScreen(context),
-        label: Text(AppLocalizations.of(context)!.translate('participate'),
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: Colors.white)),
-      );
-    }
-  }
-
-  // Construit le bouton pour naviguer vers le post de l'utilisateur
-  Widget _buildFloatingActionButtonMyPost(BuildContext context) {
-    return FloatingActionButton.extended(
-      backgroundColor: couleurBleuClair2,
-      onPressed: () => _navigateToPostScreen(context),
-      label: Text('Mon Post',
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(color: Colors.white)),
-    );
-  }
-
-  void _navigateToUserScreen(BuildContext context) {
-    final author = widget.author;
-    context.push('/brand/$_userRefId?username=$author');
-  }
-
-  Widget _buildListView(BuildContext context, Event event) {
-    return Container(
-      color: white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ButtonsSectionEvent(
-            participants: event.participants,
-            reward: event.reward,
-            dateEnd: event.dateEnd,
-            dateEvent: event.dateEvent,
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.report),
-              title: const Text('Report'),
-              onTap: () {
-                // Implémentez votre logique de signalement ici
-                Navigator.pop(context);
-              },
-            ),
-            // Ajoutez d'autres options si nécessaire
-          ],
-        );
-      },
-    );
-  }
-
-  void _navigateToCreatePostScreen(BuildContext context) {
-    GoRouter.of(context).push('/event/${widget.eventId}/create');
-  }
-
-  void _navigateToCommentScreen(BuildContext context) {
-    context.push('/event/${widget.eventId}/comment');
-  }
-
-  void _navigateToPostScreen(BuildContext context) {
-    final title = widget.title;
-    GoRouter.of(context).push('/post/$_postRef?username=$title');
   }
 
   @override

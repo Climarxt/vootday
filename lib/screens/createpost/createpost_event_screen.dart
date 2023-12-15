@@ -27,9 +27,7 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
   // Image file to be posted
   late File _postImage;
 
-  // Helper for image operations
   final imageHelper = ImageHelperPost();
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -63,7 +61,7 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
           if (state.status == CreatePostStatus.submitting)
             const LinearProgressIndicator(),
           _buildCaptionInput(context),
-          _buildBrandInput(context),
+          // _buildBrandInput(context),
         ],
       ),
     );

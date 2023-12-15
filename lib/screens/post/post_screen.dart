@@ -245,7 +245,7 @@ class _PostScreenState extends State<PostScreen>
       debugPrint("An error occurred while fetching the post image URL: $e");
     }
     // Return a default image URL if no image is found or an error occurs
-    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fred_placeholder_logo.png?alt=media&token=508d670e-1435-4397-855b-9f3f3b17e100';
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
 
   Future<void> _loadPost() async {

@@ -240,6 +240,7 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
               style: AppTextStyles.titleLargeBlackBold(context),
             ),
             Switch(
+              activeColor: couleurBleuClair2,
               value: isPublic,
               onChanged: (bool value) {
                 debugPrint("Switch Changed: $value"); // Ajout de debugPrint

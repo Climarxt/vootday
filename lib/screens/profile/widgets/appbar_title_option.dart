@@ -84,6 +84,7 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
                     leading: const Icon(Icons.public),
                     title: const Text('Public'),
                     trailing: Switch(
+                      activeColor: couleurBleuClair2,
                       value: currentStatus,
                       onChanged: (value) {
                         Navigator.pop(context);

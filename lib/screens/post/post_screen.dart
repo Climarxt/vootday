@@ -153,7 +153,8 @@ class _PostScreenState extends State<PostScreen>
         _buildIconButton(
             Icons.comment, () => _navigateToCommentScreen(context)),
         _buildIconButton(Icons.share, () => _showBottomSheet(context)),
-        _buildIconButton(Icons.add_to_photos, () => _showBottomSheet(context)),
+        _buildIconButton(
+            Icons.add_to_photos, () => _showBottomSheetCollection(context)),
       ],
     );
   }
@@ -226,6 +227,110 @@ class _PostScreenState extends State<PostScreen>
           ],
         );
       },
+    );
+  }
+
+  Future<void> _showBottomSheetCollection(BuildContext context) async {
+    final Size size = MediaQuery.of(context).size;
+
+    int? result = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.2,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => SafeArea(
+          child: Column(
+            children: [
+              _buildTopBar(context, size),
+              _buildListView(scrollController),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    print(result); // Consider using debugPrint instead of print in Flutter.
+  }
+
+  Widget _buildTopBar(BuildContext context, Size size) {
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      child: _buildTopRow(context, size),
+    );
+  }
+
+  Row _buildTopRow(BuildContext context, Size size) {
+    return Row(
+      children: [
+        _buildImageContainer(size),
+        const SizedBox(width: 14),
+        _buildTextColumn(context),
+        const Spacer(),
+        _buildBookmarkIcon(),
+      ],
+    );
+  }
+
+  Container _buildImageContainer(Size size) {
+    const double imageContainerFractionWidth = 0.2;
+    const double imageContainerFractionHeight = 0.15;
+
+    return Container(
+      width: size.width * imageContainerFractionWidth,
+      height: size.height * imageContainerFractionHeight,
+      decoration: BoxDecoration(
+        color: greyDark,
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          image: _post!.imageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Column _buildTextColumn(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Enregistré',
+          style: AppTextStyles.titleHeadlineMidBlackBold(context),
+        ),
+        Text(
+          'Privé',
+          style: AppTextStyles.subtitleLargeGrey(context),
+        ),
+      ],
+    );
+  }
+
+  Icon _buildBookmarkIcon() {
+    const black = Colors.black; // Example color
+    return const Icon(Icons.bookmark, color: black, size: 32);
+  }
+
+  Widget _buildListView(ScrollController scrollController) {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        itemCount: 100, // Or the number of your items
+        itemBuilder: (context, index) => ListTile(
+          title: Text(index.toString()),
+          onTap: () => Navigator.of(context).pop(index),
+        ),
+      ),
     );
   }
 

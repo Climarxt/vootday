@@ -12,13 +12,12 @@ import 'package:go_router/go_router.dart';
 
 class PostScreen extends StatefulWidget {
   final String postId;
-  final String username;
+
   final String fromPath;
 
   const PostScreen({
     super.key,
     required this.postId,
-    required this.username,
     required this.fromPath,
   });
 
@@ -188,11 +187,11 @@ class _PostScreenState extends State<PostScreen>
   }
 
   void _navigateToUserScreen(BuildContext context, User user) {
-    context.push('/user/${user.id}?username=${widget.username}');
+    context.push('/user/${user.id}');
   }
 
   void _navigateToCommentScreen(BuildContext context) {
-    context.push('/post/${widget.postId}/comment?username=${widget.username}');
+    context.push('/post/${widget.postId}/comment');
   }
 
   void _showBottomSheet(BuildContext context) {

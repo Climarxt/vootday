@@ -23,6 +23,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
         super(MyCollectionState.initial()) {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
     on<MyCollectionClean>(_onMyCollectionClean);
+    on<MyCollectionCheckPostInCollection>(_onCheckPostInCollection);
   }
 
   Future<void> _mapMyCollectionFetchCollections(
@@ -36,13 +37,11 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
         throw Exception(
             '_mapMyCollectionFetchCollections : User ID is null. User must be logged in to fetch posts.');
       }
-      debugPrint(
-          '_mapMyCollectionFetchCollections : Fetching collections...');
+      debugPrint('_mapMyCollectionFetchCollections : Fetching collections...');
       final collections = await _postRepository.getMyCollection(userId: userId);
 
       if (collections.isEmpty) {
-        debugPrint(
-            '_mapMyCollectionFetchCollections : No collections found.');
+        debugPrint('_mapMyCollectionFetchCollections : No collections found.');
       } else {
         debugPrint(
             '_mapMyCollectionFetchCollections : Collections fetched successfully. Total collections: ${collections.length}');
@@ -50,7 +49,9 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
 
       emit(
         state.copyWith(
-            collections: collections, status: MyCollectionStatus.loaded),
+            collections: collections,
+            status: MyCollectionStatus.loaded,
+            isPostInCollection: true),
       );
     } catch (err) {
       debugPrint(
@@ -62,6 +63,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
             message:
                 '_mapMyCollectionFetchCollections : Impossible de charger les collections'),
         collections: [],
+        isPostInCollection: true,
       ));
     }
   }
@@ -71,5 +73,24 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     Emitter<MyCollectionState> emit,
   ) async {
     emit(MyCollectionState.initial()); // Remet l'état à son état initial
+  }
+
+  Future<void> _onCheckPostInCollection(
+    MyCollectionCheckPostInCollection event,
+    Emitter<MyCollectionState> emit,
+  ) async {
+    try {
+      final isPostInCollection = await _postRepository.isPostInCollection(
+        postId: event.postId,
+        collectionId: event.collectionId,
+      );
+
+      emit(state.copyWith(
+        isPostInCollection: isPostInCollection,
+      ));
+    } catch (e) {
+      debugPrint('Error checking post in collection: ${e.toString()}');
+      // Vous pouvez également émettre un état d'erreur ici si nécessaire
+    }
   }
 }

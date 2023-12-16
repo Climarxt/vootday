@@ -24,11 +24,11 @@ class MyCollectionState extends Equatable {
   @override
   List<Object?> get props => [collections, status, failure];
 
-  MyCollectionState copyWith({
-    List<Collection?>? collections,
-    MyCollectionStatus? status,
-    Failure? failure
-  }) {
+  MyCollectionState copyWith(
+      {List<Collection?>? collections,
+      MyCollectionStatus? status,
+      Failure? failure,
+      required bool isPostInCollection}) {
     return MyCollectionState(
       collections: collections ?? this.collections,
       status: status ?? this.status,

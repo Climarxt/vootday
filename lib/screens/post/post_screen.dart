@@ -34,6 +34,7 @@ class _PostScreenState extends State<PostScreen>
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
   List<String> _imageUrls = [];
+  Map<String, bool> _postInCollectionMap = {};
 
   @override
   void initState() {
@@ -173,17 +174,41 @@ class _PostScreenState extends State<PostScreen>
               collection.public ? 'Public' : 'Privé',
               style: AppTextStyles.subtitleLargeGrey(context),
             ),
-            trailing: const Icon(Icons.add, color: greyDark),
+            trailing: FutureBuilder<Widget>(
+              future: _buildTrailingIcon(collection.id),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                return snapshot.data ?? SizedBox.shrink();
+              },
+            ),
             onTap: () {
-              context
-                  .read<AddPostToCollectionCubit>()
-                  .addPostToCollection(widget.postId, collection.id);
-              Navigator.pop(context);
+              bool isPostInCollection =
+                  _postInCollectionMap[collection.id] ?? false;
+              if (!isPostInCollection) {
+                context
+                    .read<AddPostToCollectionCubit>()
+                    .addPostToCollection(widget.postId, collection.id);
+                Navigator.pop(context);
+              }
             },
           );
         },
       ),
     );
+  }
+
+  Future<Widget> _buildTrailingIcon(String collectionId) async {
+    final postRepository = context.read<PostRepository>();
+    bool isPostInCollection = await postRepository.isPostInCollection(
+        postId: widget.postId, collectionId: collectionId);
+
+    setState(() {
+      _postInCollectionMap[collectionId] = isPostInCollection;
+    });
+
+    return Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark);
   }
 
   Widget _buildLeadingImage(String imageUrl) {

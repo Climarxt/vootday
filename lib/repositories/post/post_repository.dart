@@ -407,4 +407,31 @@ class PostRepository extends BasePostRepository {
         _firebaseFirestore.collection(Paths.collections).doc(collectionId);
     await collectionRef.update({'public': newStatus});
   }
+
+  Future<bool> isPostInCollection(
+      {required String postId, required String collectionId}) async {
+    try {
+      debugPrint(
+          'isPostInCollection : Attempting to check post in collection from Firestore...');
+
+      DocumentReference postRef =
+          _firebaseFirestore.collection(Paths.posts).doc(postId);
+
+      // Requête pour trouver le post dans la sous-collection spécifique de la collection
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection(Paths.collections)
+          .doc(collectionId)
+          .collection(
+              'feed_collection') // Assurez-vous que c'est le bon nom de sous-collection
+          .where('post_ref', isEqualTo: postRef)
+          .get();
+
+      // Vérifier si le post existe dans la sous-collection
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      debugPrint(
+          'isPostInCollection : Erreur lors de la vérification du post dans la collection: ${e.toString()}');
+      return false; // Retourne false en cas d'erreur
+    }
+  }
 }

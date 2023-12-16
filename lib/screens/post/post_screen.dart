@@ -183,16 +183,6 @@ class _PostScreenState extends State<PostScreen>
                 return snapshot.data ?? SizedBox.shrink();
               },
             ),
-            onTap: () {
-              bool isPostInCollection =
-                  _postInCollectionMap[collection.id] ?? false;
-              if (!isPostInCollection) {
-                context
-                    .read<AddPostToCollectionCubit>()
-                    .addPostToCollection(widget.postId, collection.id);
-                Navigator.pop(context);
-              }
-            },
           );
         },
       ),
@@ -204,11 +194,25 @@ class _PostScreenState extends State<PostScreen>
     bool isPostInCollection = await postRepository.isPostInCollection(
         postId: widget.postId, collectionId: collectionId);
 
-    setState(() {
-      _postInCollectionMap[collectionId] = isPostInCollection;
-    });
+    // Mise à jour de l'état
+    _postInCollectionMap[collectionId] = isPostInCollection;
 
-    return Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark);
+    return IconButton(
+      icon: Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark),
+      onPressed: () {
+        if (isPostInCollection) {
+          // Supprimer le post de la collection
+          context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
+              postId: widget.postId, collectionId: collectionId));
+        } else {
+          // Ajouter le post à la collection
+          context
+              .read<AddPostToCollectionCubit>()
+              .addPostToCollection(widget.postId, collectionId);
+        }
+        Navigator.pop(context);
+      },
+    );
   }
 
   Widget _buildLeadingImage(String imageUrl) {

@@ -23,3 +23,16 @@ class MyCollectionCheckPostInCollection extends MyCollectionEvent {
   @override
   List<Object> get props => [postId, collectionId];
 }
+
+class MyCollectionDeletePostRef extends MyCollectionEvent {
+  final String postId;
+  final String collectionId;
+
+  MyCollectionDeletePostRef({
+    required this.postId,
+    required this.collectionId,
+  });
+
+  @override
+  List<Object> get props => [postId, collectionId];
+}

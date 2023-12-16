@@ -434,4 +434,38 @@ class PostRepository extends BasePostRepository {
       return false; // Retourne false en cas d'erreur
     }
   }
+
+  Future<void> deletePostRefFromCollection(
+      {required String postId, required String collectionId}) async {
+    try {
+      debugPrint(
+          'deletePostRefFromCollection : Suppression du post_ref de la collection...');
+
+      DocumentReference postRef =
+          _firebaseFirestore.collection(Paths.posts).doc(postId);
+
+      // Recherchez la référence spécifique du post dans la sous-collection 'feed_collection' de la collection spécifiée
+      QuerySnapshot snapshot = await _firebaseFirestore
+          .collection(Paths.collections)
+          .doc(collectionId)
+          .collection('feed_collection') // Nom de la sous-collection
+          .where('post_ref', isEqualTo: postRef)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // Supprimez uniquement la première référence trouvée, car elle doit être unique
+        await snapshot.docs.first.reference.delete();
+        debugPrint(
+            'deletePostRefFromCollection : Post_ref supprimé de la collection avec succès.');
+      } else {
+        debugPrint(
+            'deletePostRefFromCollection : Aucun post_ref trouvé dans la collection.');
+      }
+    } catch (e) {
+      debugPrint(
+          'deletePostRefFromCollection : Erreur lors de la suppression du post_ref de la collection: ${e.toString()}');
+      throw Exception(
+          'Erreur lors de la suppression du post_ref de la collection');
+    }
+  }
 }

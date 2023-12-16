@@ -24,6 +24,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
     on<MyCollectionClean>(_onMyCollectionClean);
     on<MyCollectionCheckPostInCollection>(_onCheckPostInCollection);
+    on<MyCollectionDeletePostRef>(_onDeletePostRefFromCollection);
   }
 
   Future<void> _mapMyCollectionFetchCollections(
@@ -89,8 +90,28 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
         isPostInCollection: isPostInCollection,
       ));
     } catch (e) {
-      debugPrint('Error checking post in collection: ${e.toString()}');
+      debugPrint(
+          '_onCheckPostInCollection : Error checking post in collection: ${e.toString()}');
       // Vous pouvez également émettre un état d'erreur ici si nécessaire
+    }
+  }
+
+  Future<void> _onDeletePostRefFromCollection(
+    MyCollectionDeletePostRef event,
+    Emitter<MyCollectionState> emit,
+  ) async {
+    try {
+      await _postRepository.deletePostRefFromCollection(
+          postId: event.postId, collectionId: event.collectionId);
+      debugPrint(
+          '_onDeletePostRefFromCollection : Post référence supprimée de la collection avec succès.');
+
+      // Vous pouvez émettre un nouvel état ici si nécessaire
+      // Par exemple, recharger les collections pour refléter la suppression
+    } catch (e) {
+      debugPrint(
+          '_onDeletePostRefFromCollection : Erreur lors de la suppression de la post référence de la collection: ${e.toString()}');
+      // Gérer l'état d'erreur comme vous le souhaitez
     }
   }
 }

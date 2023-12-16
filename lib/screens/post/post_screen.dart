@@ -128,6 +128,7 @@ class _PostScreenState extends State<PostScreen>
         expand: false,
         builder: (context, scrollController) => SafeArea(
           child: Column(
+            mainAxisSize: MainAxisSize.min, // Ajoutez cette ligne
             children: [
               _buildTopRow(context, size),
               _buildListView(scrollController, state),
@@ -142,7 +143,7 @@ class _PostScreenState extends State<PostScreen>
 
   Widget _buildTopRow(BuildContext context, Size size) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 7),
       child: Column(
         children: [
           Row(
@@ -154,7 +155,7 @@ class _PostScreenState extends State<PostScreen>
               _buildBookmarkIcon(),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 16),
           Container(
             child: buildCreatenewcollection(context),
           ),
@@ -167,6 +168,7 @@ class _PostScreenState extends State<PostScreen>
       ScrollController scrollController, MyCollectionState state) {
     return Expanded(
       child: ListView.separated(
+        padding: EdgeInsets.zero,
         controller: scrollController,
         itemCount: state.collections.length,
         separatorBuilder: (context, index) => Divider(color: greyDark),

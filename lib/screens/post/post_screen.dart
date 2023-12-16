@@ -215,11 +215,15 @@ class _PostScreenState extends State<PostScreen>
           // Supprimer le post de la collection
           context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
               postId: widget.postId, collectionId: collectionId));
+                SnackbarUtil.showSuccessSnackbar(
+                  context, 'Post removed from collection !');
         } else {
           // Ajouter le post à la collection
           context
               .read<AddPostToCollectionCubit>()
               .addPostToCollection(widget.postId, collectionId);
+        SnackbarUtil.showSuccessSnackbar(
+                  context, 'Post Added to collection !');
         }
         Navigator.pop(context);
       },
@@ -634,22 +638,34 @@ class _PostScreenState extends State<PostScreen>
 
   TextButton buildValidateButton(BuildContext context, bool isPublic) {
     return TextButton(
-      onPressed: () {
+      onPressed: () async {
         final String collectionName = _collectionNameController.text.trim();
         final bool isPublic = isPublicNotifier.value;
-        debugPrint("Collection Name: $collectionName"); // Ajout de debugPrint
-        debugPrint("Is Public: $isPublic"); // Ajout de debugPrint
 
         if (collectionName.isNotEmpty) {
           final authState = context.read<AuthBloc>().state;
           final userId = authState.user?.uid;
           if (userId != null) {
-            // widget.tabController.animateTo(0);
-            context
+            // Création de la collection et récupération de son ID
+            String newCollectionId = await context
                 .read<CreateCollectionCubit>()
-                .createCollection(userId, collectionName, isPublic);
+                .createCollectionReturnCollectionId(
+                    userId, collectionName, isPublic);
 
-            SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
+            if (newCollectionId.isNotEmpty) {
+              // Ajout du post à la nouvelle collection
+              // ignore: use_build_context_synchronously
+              await context
+                  .read<AddPostToCollectionCubit>()
+                  .addPostToCollection(widget.postId, newCollectionId);
+
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
+              SnackbarUtil.showSuccessSnackbar(
+                  context, 'Collection Created & Post Added !');
+            } else {
+              debugPrint('Error: Collection creation failed');
+            }
           } else {
             debugPrint('User ID is null');
           }

@@ -1,16 +1,12 @@
-import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyProfileTab4 extends StatefulWidget {
-  final BuildContext context;
-  final ProfileState state;
-
   const MyProfileTab4({
     super.key,
-    required this.state,
-    required this.context,
   });
 
   @override
@@ -19,12 +15,25 @@ class MyProfileTab4 extends StatefulWidget {
 
 class _MyProfileTab4State extends State<MyProfileTab4> {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _buildGridView(widget.context, widget.state);
+    return BlocConsumer<FeedMyLikesBloc, FeedMyLikesState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return _buildGridView(state);
+      },
+    );
   }
 }
 
-Widget _buildGridView(BuildContext context, ProfileState state) {
+Widget _buildGridView(FeedMyLikesState state) {
   return Container(
     color: Colors.white,
     child: GridView.builder(

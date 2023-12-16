@@ -5,6 +5,7 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
@@ -198,6 +199,16 @@ class BlocProviderConfig {
             authBloc: context.read<AuthBloc>(),
             postRepository: context.read<PostRepository>(),
           ),
+        ),
+        BlocProvider<FeedMyLikesBloc>(
+          create: (context) {
+            final feedMyLikesBloc = FeedMyLikesBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            feedMyLikesBloc.add(FeedMyLikesFetchPosts());
+            return feedMyLikesBloc;
+          },
         ),
       ],
       child: child,

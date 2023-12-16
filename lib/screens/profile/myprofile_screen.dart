@@ -80,7 +80,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           MyProfileTab3(
                             tabController: _tabController,
                           ),
-                          MyProfileTab4(context: context, state: state),
+                          MyProfileTab4(),
                         ],
                       )),
                 ),

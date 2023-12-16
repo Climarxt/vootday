@@ -7,6 +7,6 @@ abstract class FeedMyLikesEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FeedMyLikesFetchPostsCollections extends FeedMyLikesEvent {}
+class FeedMyLikesFetchPosts extends FeedMyLikesEvent {}
 
 class FeedMyLikesClean extends FeedMyLikesEvent {}

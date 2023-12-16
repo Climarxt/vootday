@@ -20,31 +20,31 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         super(FeedMyLikesState.initial()) {
-    on<FeedMyLikesFetchPostsCollections>(_mapFeedMyLikesFetchPostsCollection);
+    on<FeedMyLikesFetchPosts>(_mapFeedMyLikesFetchPostsCollection);
     on<FeedMyLikesClean>(_onFeedMyLikesClean);
   }
 
   Future<void> _mapFeedMyLikesFetchPostsCollection(
-    FeedMyLikesFetchPostsCollections event,
+    FeedMyLikesFetchPosts event,
     Emitter<FeedMyLikesState> emit,
   ) async {
     _onFeedMyLikesClean(FeedMyLikesClean(), emit);
-    debugPrint('FeedMyLikesFetchPostsCollections : Fetching posts for MyLikes');
+    debugPrint('FeedMyLikesFetchPosts : Fetching posts for MyLikes');
 
     try {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            'FeedMyLikesFetchPostsCollections : User ID is null. User must be logged in to fetch posts.');
+            'FeedMyLikesFetchPosts : User ID is null. User must be logged in to fetch posts.');
       }
       debugPrint(
-          'FeedMyLikesFetchPostsCollections : Fetching posts for user $userId.');
+          'FeedMyLikesFetchPosts : Fetching posts for user $userId.');
 
       final posts = await _feedRepository.getFeedMyLikes(
         userId: userId,
       );
       debugPrint(
-          'FeedMyLikesFetchPostsCollections : Fetched ${posts.length} posts.');
+          'FeedMyLikesFetchPosts : Fetched ${posts.length} posts.');
 
       emit(state.copyWith(
         posts: posts,
@@ -52,15 +52,15 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         hasFetchedInitialPosts: true,
       ));
       debugPrint(
-          'FeedMyLikesFetchPostsCollections : Posts loaded successfully.');
+          'FeedMyLikesFetchPosts : Posts loaded successfully.');
     } catch (err) {
       debugPrint(
-          'FeedMyLikesFetchPostsCollections : Error fetching posts - ${err.toString()}');
+          'FeedMyLikesFetchPosts : Error fetching posts - ${err.toString()}');
       emit(state.copyWith(
         status: FeedMyLikesStatus.error,
         failure: Failure(
             message:
-                'FeedMyLikesFetchPostsCollections : Unable to load the feed - ${err.toString()}'),
+                'FeedMyLikesFetchPosts : Unable to load the feed - ${err.toString()}'),
       ));
     }
   }

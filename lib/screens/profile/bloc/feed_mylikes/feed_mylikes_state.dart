@@ -8,6 +8,7 @@ class FeedMyLikesState extends Equatable {
   final FeedMyLikesStatus status;
   final Failure failure;
   final bool hasFetchedInitialPosts;
+  final bool isPostInLikes; // Ajoutez ce champ
 
   const FeedMyLikesState({
     required this.posts,
@@ -15,6 +16,7 @@ class FeedMyLikesState extends Equatable {
     required this.status,
     required this.failure,
     this.hasFetchedInitialPosts = false,
+    this.isPostInLikes = false,
   });
 
   factory FeedMyLikesState.initial() {
@@ -23,11 +25,9 @@ class FeedMyLikesState extends Equatable {
       status: FeedMyLikesStatus.initial,
       failure: Failure(),
       collection: null,
+      isPostInLikes: false,
     );
   }
-
-  @override
-  List<Object?> get props => [posts, status, failure, hasFetchedInitialPosts];
 
   FeedMyLikesState copyWith({
     List<Post?>? posts,
@@ -35,7 +35,7 @@ class FeedMyLikesState extends Equatable {
     Failure? failure,
     Event? event,
     bool? hasFetchedInitialPosts,
-    required bool isPostInLikes,
+    bool? isPostInLikes,
   }) {
     return FeedMyLikesState(
       posts: posts ?? this.posts,
@@ -44,6 +44,11 @@ class FeedMyLikesState extends Equatable {
       failure: failure ?? this.failure,
       hasFetchedInitialPosts:
           hasFetchedInitialPosts ?? this.hasFetchedInitialPosts,
+      isPostInLikes: isPostInLikes ?? this.isPostInLikes,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      [posts, status, failure, hasFetchedInitialPosts, isPostInLikes];
 }

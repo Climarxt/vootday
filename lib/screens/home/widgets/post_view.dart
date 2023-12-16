@@ -123,6 +123,11 @@ class _PostViewState extends State<PostView>
           left: 12,
           child: buildUsername(context),
         ),
+        Positioned(
+          bottom: 24,
+          right: 20,
+          child: buildIcon(context),
+        ),
       ],
     );
   }
@@ -148,6 +153,12 @@ class _PostViewState extends State<PostView>
         ],
       ),
     );
+  }
+
+  Widget buildIcon(BuildContext context) {
+    return GestureDetector(
+        onTap: () {},
+        child: const Icon(Icons.bookmark_border, color: white, size: 32));
   }
 
   Widget buildLikeCount(BuildContext context) {

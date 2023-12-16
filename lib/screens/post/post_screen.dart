@@ -49,6 +49,13 @@ class _PostScreenState extends State<PostScreen>
     } else {
       debugPrint('User ID is null');
     }
+
+    final state = context.read<MyCollectionBloc>().state;
+    final nonNullCollections = state.collections
+        .where((collection) => collection != null)
+        .cast<Collection>()
+        .toList();
+    _fetchImageUrls(nonNullCollections);
   }
 
   @override
@@ -75,20 +82,7 @@ class _PostScreenState extends State<PostScreen>
     }
 
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
-      listener: (context, state) {
-        if (state.status == MyCollectionStatus.loaded &&
-            state.collections.isNotEmpty) {
-          // Ensure this block of code is executed only once by checking if _imageUrls is empty
-          if (_imageUrls.isEmpty) {
-            // Filter out any null collections before passing to _fetchImageUrls
-            final nonNullCollections = state.collections
-                .where((collection) => collection != null)
-                .cast<Collection>()
-                .toList();
-            _fetchImageUrls(nonNullCollections);
-          }
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return SafeArea(
           child: Scaffold(

@@ -408,6 +408,8 @@ class _PostScreenState extends State<PostScreen>
   }
 
   Widget _buildActionIcons(MyCollectionState state) {
+    final authState = context.read<AuthBloc>().state;
+    final _userId = authState.user?.uid;
     return Column(
       children: [
         _buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
@@ -416,6 +418,7 @@ class _PostScreenState extends State<PostScreen>
         _buildIconButton(Icons.share, () => _showBottomSheet(context)),
         _buildIconButton(
             Icons.add_to_photos, () => _addToLikesThenShowCollections(state)),
+        _buildFavoriteButton(context, widget.postId, _userId!),
       ],
     );
   }
@@ -424,6 +427,41 @@ class _PostScreenState extends State<PostScreen>
     return IconButton(
       icon: Icon(icon, color: Colors.black, size: 24),
       onPressed: onPressed,
+    );
+  }
+
+  Widget _buildFavoriteButton(
+      BuildContext context, String postId, String userId) {
+    return BlocBuilder<AddPostToLikesCubit, AddPostToLikesState>(
+      builder: (context, state) {
+        // Initialisation du cubit
+        final cubit = context.read<AddPostToLikesCubit>();
+
+        return FutureBuilder<bool>(
+          future: cubit.isPostLiked(postId, userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+              );
+            }
+
+            bool isLiked = snapshot.data ?? false;
+            return IconButton(
+              icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.black, size: 24),
+              onPressed: () async {
+                if (isLiked) {
+                  await cubit.deletePostRefFromLikes(
+                      postId: postId, userId: userId);
+                } else {
+                  await cubit.addPostToLikes(postId, userId);
+                }
+              },
+            );
+          },
+        );
+      },
     );
   }
 

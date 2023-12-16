@@ -131,6 +131,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<AddPostToLikesCubit>(
             create: (context) => AddPostToLikesCubit(
               firebaseFirestore: FirebaseFirestore.instance,
+              postRepository: context.read<PostRepository>(),
             ),
           ),
           BlocProvider<FeedMyLikesBloc>(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
@@ -138,6 +140,7 @@ class _PostScreenState extends State<PostScreen>
       ),
     );
 
+    // ignore: avoid_print
     print(result);
   }
 
@@ -171,7 +174,7 @@ class _PostScreenState extends State<PostScreen>
         padding: EdgeInsets.zero,
         controller: scrollController,
         itemCount: state.collections.length,
-        separatorBuilder: (context, index) => Divider(color: greyDark),
+        separatorBuilder: (context, index) => const Divider(color: greyDark),
         itemBuilder: (BuildContext context, int index) {
           final collection = state.collections[index] ?? Collection.empty;
           final imageUrl = index < _imageUrls.length
@@ -191,7 +194,7 @@ class _PostScreenState extends State<PostScreen>
             trailing: FutureBuilder<Widget>(
               future: _buildTrailingIcon(collection.id),
               builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                return snapshot.data ?? SizedBox.shrink();
+                return snapshot.data ?? const SizedBox.shrink();
               },
             ),
           );
@@ -215,15 +218,15 @@ class _PostScreenState extends State<PostScreen>
           // Supprimer le post de la collection
           context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
               postId: widget.postId, collectionId: collectionId));
-                SnackbarUtil.showSuccessSnackbar(
-                  context, 'Post removed from collection !');
+          SnackbarUtil.showSuccessSnackbar(
+              context, 'Post removed from collection !');
         } else {
           // Ajouter le post à la collection
           context
               .read<AddPostToCollectionCubit>()
               .addPostToCollection(widget.postId, collectionId);
-        SnackbarUtil.showSuccessSnackbar(
-                  context, 'Post Added to collection !');
+          SnackbarUtil.showSuccessSnackbar(
+              context, 'Post Added to collection !');
         }
         Navigator.pop(context);
       },
@@ -261,9 +264,9 @@ class _PostScreenState extends State<PostScreen>
 
       // Check if there are documents returned
       if (querySnapshot.docs.isNotEmpty) {
-        final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
+        final data = querySnapshot.docs.first.data();
         final DocumentReference? postRef =
-            data?['post_ref'] as DocumentReference?;
+            data['post_ref'] as DocumentReference?;
 
         if (postRef != null) {
           final postDoc = await postRef.get();
@@ -543,7 +546,7 @@ class _PostScreenState extends State<PostScreen>
             },
             builder: (context, state) {
               return Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -654,12 +657,10 @@ class _PostScreenState extends State<PostScreen>
 
             if (newCollectionId.isNotEmpty) {
               // Ajout du post à la nouvelle collection
-              // ignore: use_build_context_synchronously
               await context
                   .read<AddPostToCollectionCubit>()
                   .addPostToCollection(widget.postId, newCollectionId);
 
-              // ignore: use_build_context_synchronously
               Navigator.pop(context);
               SnackbarUtil.showSuccessSnackbar(
                   context, 'Collection Created & Post Added !');

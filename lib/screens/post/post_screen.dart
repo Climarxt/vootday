@@ -35,7 +35,7 @@ class _PostScreenState extends State<PostScreen>
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
   List<String> _imageUrls = [];
-  Map<String, bool> _postInCollectionMap = {};
+  final Map<String, bool> _postInCollectionMap = {};
   ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
   final TextEditingController _collectionNameController =
       TextEditingController();

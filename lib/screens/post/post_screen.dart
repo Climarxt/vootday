@@ -516,11 +516,6 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Icon _buildBookmarkIcon1() {
-    const black = Colors.black;
-    return const Icon(Icons.bookmark, color: black, size: 32);
-  }
-
   Widget _buildBookmarkIcon() {
     final authState = context.read<AuthBloc>().state;
     final _userId = authState.user?.uid;

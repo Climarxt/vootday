@@ -189,9 +189,6 @@ class _PostScreenState extends State<PostScreen>
             trailing: FutureBuilder<Widget>(
               future: _buildTrailingIcon(collection.id),
               builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
                 return snapshot.data ?? SizedBox.shrink();
               },
             ),

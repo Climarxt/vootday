@@ -36,7 +36,6 @@ class _PostScreenState extends State<PostScreen>
 
   @override
   void initState() {
-    debugPrint("DEBUG : fromPath = ${widget.fromPath}");
     super.initState();
     _loadPost();
     Future.delayed(Duration.zero, () {
@@ -187,7 +186,7 @@ class _PostScreenState extends State<PostScreen>
       width: 60,
       height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         image: DecorationImage(
           image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
@@ -198,7 +197,7 @@ class _PostScreenState extends State<PostScreen>
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {
     // Add a debug print to confirm the method is called with a valid ID
-    debugPrint("Fetching image URL for collection ID: $collectionId");
+    debugPrint("getMostRecentPostImageUrl : Fetching image URL for collection ID: $collectionId");
 
     try {
       final feedEventRef = FirebaseFirestore.instance
@@ -222,20 +221,20 @@ class _PostScreenState extends State<PostScreen>
             final postData = postDoc.data() as Map<String, dynamic>?;
             final imageUrl = postData?['imageUrl'] as String? ?? '';
             // Print the image URL to verify it's the correct one
-            debugPrint("Found image URL: $imageUrl");
+            debugPrint("getMostRecentPostImageUrl : Found image URL: $imageUrl");
             return imageUrl;
           } else {
-            debugPrint("Referenced post document does not exist.");
+            debugPrint("getMostRecentPostImageUrl : Referenced post document does not exist.");
           }
         } else {
-          debugPrint("Post reference is null.");
+          debugPrint("getMostRecentPostImageUrl : Post reference is null.");
         }
       } else {
-        debugPrint("No posts found in the collection's feed.");
+        debugPrint("getMostRecentPostImageUrl : No posts found in the collection's feed.");
       }
     } catch (e) {
       // Print any exceptions that occur
-      debugPrint("An error occurred while fetching the post image URL: $e");
+      debugPrint("getMostRecentPostImageUrl : An error occurred while fetching the post image URL: $e");
     }
     // Return a default image URL if no image is found or an error occurs
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';

@@ -34,18 +34,18 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            'Method _mapMyCollectionFetchCollections : User ID is null. User must be logged in to fetch posts.');
+            '_mapMyCollectionFetchCollections : User ID is null. User must be logged in to fetch posts.');
       }
       debugPrint(
-          'Method _mapMyCollectionFetchCollections : Fetching collections...');
+          '_mapMyCollectionFetchCollections : Fetching collections...');
       final collections = await _postRepository.getMyCollection(userId: userId);
 
       if (collections.isEmpty) {
         debugPrint(
-            'Method _mapMyCollectionFetchCollections : No collections found.');
+            '_mapMyCollectionFetchCollections : No collections found.');
       } else {
         debugPrint(
-            'Method _mapMyCollectionFetchCollections : Collections fetched successfully. Total collections: ${collections.length}');
+            '_mapMyCollectionFetchCollections : Collections fetched successfully. Total collections: ${collections.length}');
       }
 
       emit(
@@ -54,13 +54,13 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       );
     } catch (err) {
       debugPrint(
-          'Method _mapMyCollectionFetchCollections : Error fetching collections: ${err.toString()}');
+          '_mapMyCollectionFetchCollections : Error fetching collections: ${err.toString()}');
 
       emit(state.copyWith(
         status: MyCollectionStatus.error,
         failure: const Failure(
             message:
-                'Method _mapMyCollectionFetchCollections : Impossible de charger les collections'),
+                '_mapMyCollectionFetchCollections : Impossible de charger les collections'),
         collections: [],
       ));
     }

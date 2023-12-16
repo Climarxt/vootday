@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/update_public_status/update_public_status_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,6 +113,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<UpdatePublicStatusCubit>(
             create: (context) => UpdatePublicStatusCubit(
               postRepository: context.read<PostRepository>(),
+            ),
+          ),
+          BlocProvider<AddPostToCollectionCubit>(
+            create: (context) => AddPostToCollectionCubit(
+              firebaseFirestore: FirebaseFirestore.instance,
             ),
           ),
         ],

@@ -113,6 +113,86 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
+  Future<Widget> _buildTrailingIcon(String collectionId) async {
+    final postRepository = context.read<PostRepository>();
+    bool isPostInCollection = await postRepository.isPostInCollection(
+        postId: widget.postId, collectionId: collectionId);
+
+    // Mise à jour de l'état
+    _postInCollectionMap[collectionId] = isPostInCollection;
+
+    return IconButton(
+      icon: Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark),
+      onPressed: () {
+        if (isPostInCollection) {
+          // Supprimer le post de la collection
+          context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
+              postId: widget.postId, collectionId: collectionId));
+          SnackbarUtil.showSuccessSnackbar(
+              context, 'Post removed from collection !');
+        } else {
+          // Ajouter le post à la collection
+          context
+              .read<AddPostToCollectionCubit>()
+              .addPostToCollection(widget.postId, collectionId);
+          SnackbarUtil.showSuccessSnackbar(
+              context, 'Post Added to collection !');
+        }
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    // Add a debug print to confirm the method is called with a valid ID
+    debugPrint(
+        "getMostRecentPostImageUrl : Fetching image URL for collection ID: $collectionId");
+
+    try {
+      final feedEventRef = FirebaseFirestore.instance
+          .collection('collections')
+          .doc(collectionId)
+          .collection('feed_collection');
+
+      final querySnapshot =
+          await feedEventRef.orderBy('date', descending: true).limit(1).get();
+
+      // Check if there are documents returned
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data();
+        final DocumentReference? postRef =
+            data['post_ref'] as DocumentReference?;
+
+        if (postRef != null) {
+          final postDoc = await postRef.get();
+
+          if (postDoc.exists) {
+            final postData = postDoc.data() as Map<String, dynamic>?;
+            final imageUrl = postData?['imageUrl'] as String? ?? '';
+            // Print the image URL to verify it's the correct one
+            debugPrint(
+                "getMostRecentPostImageUrl : Found image URL: $imageUrl");
+            return imageUrl;
+          } else {
+            debugPrint(
+                "getMostRecentPostImageUrl : Referenced post document does not exist.");
+          }
+        } else {
+          debugPrint("getMostRecentPostImageUrl : Post reference is null.");
+        }
+      } else {
+        debugPrint(
+            "getMostRecentPostImageUrl : No posts found in the collection's feed.");
+      }
+    } catch (e) {
+      // Print any exceptions that occur
+      debugPrint(
+          "getMostRecentPostImageUrl : An error occurred while fetching the post image URL: $e");
+    }
+    // Return a default image URL if no image is found or an error occurs
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
+  }
+
   Future<void> _showBottomSheetCollection(
       BuildContext context, MyCollectionState state) async {
     final Size size = MediaQuery.of(context).size;
@@ -143,6 +223,82 @@ class _PostScreenState extends State<PostScreen>
 
     // ignore: avoid_print
     print(result);
+  }
+
+  Future<void> _fetchImageUrls(List<Collection> collections) async {
+    // Fetch all image URLs
+    List<String> urls = [];
+    for (var collection in collections) {
+      String imageUrl = await getMostRecentPostImageUrl(collection.id);
+      urls.add(imageUrl);
+    }
+
+    // Check if the state is still mounted before updating
+    if (mounted) {
+      setState(() {
+        _imageUrls = urls;
+      });
+    }
+  }
+
+  Future<void> _loadPost() async {
+    try {
+      final post =
+          await context.read<PostRepository>().getPostById(widget.postId);
+      if (post != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection(Paths.users)
+            .doc(post.author.id)
+            .get();
+        if (userDoc.exists) {
+          setState(() {
+            _post = post;
+            _user = User.fromDocument(userDoc);
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Container _buildImageContainer(Size size) {
+    const double imageContainerFractionWidth = 0.2;
+    const double imageContainerFractionHeight = 0.15;
+
+    return Container(
+      width: size.width * imageContainerFractionWidth,
+      height: size.height * imageContainerFractionHeight,
+      decoration: BoxDecoration(
+        color: greyDark,
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          image: _post!.imageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Column _buildTextColumn(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Enregistré dans mes Likes',
+          style: AppTextStyles.titleHeadlineMidBlackBold(context),
+        ),
+        Text(
+          'Privé',
+          style: AppTextStyles.subtitleLargeGrey(context),
+        ),
+      ],
+    );
   }
 
   Widget _buildTopRow(BuildContext context, Size size) {
@@ -204,36 +360,6 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Future<Widget> _buildTrailingIcon(String collectionId) async {
-    final postRepository = context.read<PostRepository>();
-    bool isPostInCollection = await postRepository.isPostInCollection(
-        postId: widget.postId, collectionId: collectionId);
-
-    // Mise à jour de l'état
-    _postInCollectionMap[collectionId] = isPostInCollection;
-
-    return IconButton(
-      icon: Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark),
-      onPressed: () {
-        if (isPostInCollection) {
-          // Supprimer le post de la collection
-          context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
-              postId: widget.postId, collectionId: collectionId));
-          SnackbarUtil.showSuccessSnackbar(
-              context, 'Post removed from collection !');
-        } else {
-          // Ajouter le post à la collection
-          context
-              .read<AddPostToCollectionCubit>()
-              .addPostToCollection(widget.postId, collectionId);
-          SnackbarUtil.showSuccessSnackbar(
-              context, 'Post Added to collection !');
-        }
-        Navigator.pop(context);
-      },
-    );
-  }
-
   Widget _buildLeadingImage(String imageUrl) {
     // Now this function can directly use imageUrl without FutureBuilder
     return Container(
@@ -247,98 +373,6 @@ class _PostScreenState extends State<PostScreen>
         ),
       ),
     );
-  }
-
-  Future<String> getMostRecentPostImageUrl(String collectionId) async {
-    // Add a debug print to confirm the method is called with a valid ID
-    debugPrint(
-        "getMostRecentPostImageUrl : Fetching image URL for collection ID: $collectionId");
-
-    try {
-      final feedEventRef = FirebaseFirestore.instance
-          .collection('collections')
-          .doc(collectionId)
-          .collection('feed_collection');
-
-      final querySnapshot =
-          await feedEventRef.orderBy('date', descending: true).limit(1).get();
-
-      // Check if there are documents returned
-      if (querySnapshot.docs.isNotEmpty) {
-        final data = querySnapshot.docs.first.data();
-        final DocumentReference? postRef =
-            data['post_ref'] as DocumentReference?;
-
-        if (postRef != null) {
-          final postDoc = await postRef.get();
-
-          if (postDoc.exists) {
-            final postData = postDoc.data() as Map<String, dynamic>?;
-            final imageUrl = postData?['imageUrl'] as String? ?? '';
-            // Print the image URL to verify it's the correct one
-            debugPrint(
-                "getMostRecentPostImageUrl : Found image URL: $imageUrl");
-            return imageUrl;
-          } else {
-            debugPrint(
-                "getMostRecentPostImageUrl : Referenced post document does not exist.");
-          }
-        } else {
-          debugPrint("getMostRecentPostImageUrl : Post reference is null.");
-        }
-      } else {
-        debugPrint(
-            "getMostRecentPostImageUrl : No posts found in the collection's feed.");
-      }
-    } catch (e) {
-      // Print any exceptions that occur
-      debugPrint(
-          "getMostRecentPostImageUrl : An error occurred while fetching the post image URL: $e");
-    }
-    // Return a default image URL if no image is found or an error occurs
-    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
-  }
-
-  Future<void> _fetchImageUrls(List<Collection> collections) async {
-    // Fetch all image URLs
-    List<String> urls = [];
-    for (var collection in collections) {
-      String imageUrl = await getMostRecentPostImageUrl(collection.id);
-      urls.add(imageUrl);
-    }
-
-    // Check if the state is still mounted before updating
-    if (mounted) {
-      setState(() {
-        _imageUrls = urls;
-      });
-    }
-  }
-
-  Future<void> _loadPost() async {
-    try {
-      final post =
-          await context.read<PostRepository>().getPostById(widget.postId);
-      if (post != null) {
-        final userDoc = await FirebaseFirestore.instance
-            .collection(Paths.users)
-            .doc(post.author.id)
-            .get();
-        if (userDoc.exists) {
-          setState(() {
-            _post = post;
-            _user = User.fromDocument(userDoc);
-            _isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
   }
 
   Widget _buildPostImage(Size size) {
@@ -390,6 +424,215 @@ class _PostScreenState extends State<PostScreen>
     return IconButton(
       icon: Icon(icon, color: Colors.black, size: 24),
       onPressed: onPressed,
+    );
+  }
+
+  Widget _buildBookmarkIcon() {
+    final authState = context.read<AuthBloc>().state;
+    final _userId = authState.user?.uid;
+
+    return IconButton(
+      icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
+      onPressed: () {
+        context.read<FeedMyLikesBloc>().add(
+            FeedMyLikesDeletePostRef(postId: widget.postId, userId: _userId!));
+        SnackbarUtil.showSuccessSnackbar(context, 'Post removed from Likes!');
+
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  Widget _buildCaptionInput(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          AppLocalizations.of(context)!.translate('name'),
+          style: AppTextStyles.titleLargeBlackBold(context),
+        ),
+        Form(
+          child: TextFormField(
+            controller: _collectionNameController,
+            cursorColor: couleurBleuClair2,
+            style: AppTextStyles.bodyStyle(context),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintStyle: AppTextStyles.subtitleLargeGrey(context),
+              hintText: AppLocalizations.of(context)!
+                  .translate('enternamecollection'),
+            ),
+            validator: (value) => value!.trim().isEmpty
+                ? AppLocalizations.of(context)!.translate('captionnotempty')
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPublicButton(BuildContext context, bool isPublic) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.translate('makePublic'),
+              style: AppTextStyles.titleLargeBlackBold(context),
+            ),
+            Switch(
+              activeColor: couleurBleuClair2,
+              value: isPublic,
+              onChanged: (bool value) {
+                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
+                isPublicNotifier.value = value;
+              },
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            AppLocalizations.of(context)!.translate('makePublicDescription'),
+            style: AppTextStyles.bodyStyleGrey(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  TextButton buildCreatenewcollection(BuildContext context) {
+    return TextButton(
+      onPressed: () => _openCreateCollectionSheet(context),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        backgroundColor: white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: Colors.grey),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Icon(Icons.add, color: black),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.translate('createnewcollection'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: black),
+            ),
+          ),
+          const Icon(Icons.arrow_forward, color: black),
+        ],
+      ),
+    );
+  }
+
+  TextButton buildValidateButton(BuildContext context, bool isPublic) {
+    return TextButton(
+      onPressed: () async {
+        final String collectionName = _collectionNameController.text.trim();
+        final bool isPublic = isPublicNotifier.value;
+
+        if (collectionName.isNotEmpty) {
+          final authState = context.read<AuthBloc>().state;
+          final userId = authState.user?.uid;
+          if (userId != null) {
+            // Création de la collection et récupération de son ID
+            String newCollectionId = await context
+                .read<CreateCollectionCubit>()
+                .createCollectionReturnCollectionId(
+                    userId, collectionName, isPublic);
+
+            if (newCollectionId.isNotEmpty) {
+              // Ajout du post à la nouvelle collection
+              await context
+                  .read<AddPostToCollectionCubit>()
+                  .addPostToCollection(widget.postId, newCollectionId);
+
+              Navigator.pop(context);
+              SnackbarUtil.showSuccessSnackbar(
+                  context, 'Collection Created & Post Added !');
+            } else {
+              debugPrint('Error: Collection creation failed');
+            }
+          } else {
+            debugPrint('User ID is null');
+          }
+        }
+      },
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        minimumSize: const Size(60, 20),
+        backgroundColor: couleurBleuClair2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      child: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style:
+            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
+      ),
+    );
+  }
+
+  void _openCreateCollectionSheet(BuildContext context) {
+    final createCollectionCubit = context.read<CreateCollectionCubit>();
+
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return BlocProvider.value(
+          value: createCollectionCubit,
+          child: BlocConsumer<CreateCollectionCubit, CreateCollectionState>(
+            listener: (context, state) {
+              if (state.status == CreateCollectionStatus.success) {
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.translate('newcollection'),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: Colors.black),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildCaptionInput(context),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isPublicNotifier,
+                      builder: (context, isPublic, _) {
+                        return _buildPublicButton(context, isPublic);
+                      },
+                    ),
+                    const SizedBox(height: 18),
+                    buildValidateButton(context, isPublicNotifier.value),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -479,249 +722,6 @@ class _PostScreenState extends State<PostScreen>
           ],
         );
       },
-    );
-  }
-
-  Container _buildImageContainer(Size size) {
-    const double imageContainerFractionWidth = 0.2;
-    const double imageContainerFractionHeight = 0.15;
-
-    return Container(
-      width: size.width * imageContainerFractionWidth,
-      height: size.height * imageContainerFractionHeight,
-      decoration: BoxDecoration(
-        color: greyDark,
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          image: _post!.imageProvider,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Column _buildTextColumn(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Enregistré dans mes Likes',
-          style: AppTextStyles.titleHeadlineMidBlackBold(context),
-        ),
-        Text(
-          'Privé',
-          style: AppTextStyles.subtitleLargeGrey(context),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBookmarkIcon() {
-    final authState = context.read<AuthBloc>().state;
-    final _userId = authState.user?.uid;
-
-    return IconButton(
-      icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
-      onPressed: () {
-        context.read<FeedMyLikesBloc>().add(
-            FeedMyLikesDeletePostRef(postId: widget.postId, userId: _userId!));
-        SnackbarUtil.showSuccessSnackbar(context, 'Post removed from Likes!');
-
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  TextButton buildCreatenewcollection(BuildContext context) {
-    return TextButton(
-      onPressed: () => _openCreateCollectionSheet(context),
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        backgroundColor: white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: Colors.grey),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Icon(Icons.add, color: black),
-          Expanded(
-            child: Text(
-              AppLocalizations.of(context)!.translate('createnewcollection'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(color: black),
-            ),
-          ),
-          const Icon(Icons.arrow_forward, color: black),
-        ],
-      ),
-    );
-  }
-
-  void _openCreateCollectionSheet(BuildContext context) {
-    final createCollectionCubit = context.read<CreateCollectionCubit>();
-
-    showModalBottomSheet(
-      isDismissible: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      context: context,
-      builder: (BuildContext bottomSheetContext) {
-        return BlocProvider.value(
-          value: createCollectionCubit,
-          child: BlocConsumer<CreateCollectionCubit, CreateCollectionState>(
-            listener: (context, state) {
-              if (state.status == CreateCollectionStatus.success) {
-                Navigator.pop(context);
-              }
-            },
-            builder: (context, state) {
-              return Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of(context)!.translate('newcollection'),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(color: Colors.black),
-                    ),
-                    const SizedBox(height: 10),
-                    _buildCaptionInput(context),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: isPublicNotifier,
-                      builder: (context, isPublic, _) {
-                        return _buildPublicButton(context, isPublic);
-                      },
-                    ),
-                    const SizedBox(height: 18),
-                    buildValidateButton(context, isPublicNotifier.value),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCaptionInput(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        Text(
-          AppLocalizations.of(context)!.translate('name'),
-          style: AppTextStyles.titleLargeBlackBold(context),
-        ),
-        Form(
-          child: TextFormField(
-            controller: _collectionNameController,
-            cursorColor: couleurBleuClair2,
-            style: AppTextStyles.bodyStyle(context),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintStyle: AppTextStyles.subtitleLargeGrey(context),
-              hintText: AppLocalizations.of(context)!
-                  .translate('enternamecollection'),
-            ),
-            validator: (value) => value!.trim().isEmpty
-                ? AppLocalizations.of(context)!.translate('captionnotempty')
-                : null,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPublicButton(BuildContext context, bool isPublic) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.translate('makePublic'),
-              style: AppTextStyles.titleLargeBlackBold(context),
-            ),
-            Switch(
-              activeColor: couleurBleuClair2,
-              value: isPublic,
-              onChanged: (bool value) {
-                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
-                isPublicNotifier.value = value;
-              },
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Text(
-            AppLocalizations.of(context)!.translate('makePublicDescription'),
-            style: AppTextStyles.bodyStyleGrey(context),
-          ),
-        ),
-      ],
-    );
-  }
-
-  TextButton buildValidateButton(BuildContext context, bool isPublic) {
-    return TextButton(
-      onPressed: () async {
-        final String collectionName = _collectionNameController.text.trim();
-        final bool isPublic = isPublicNotifier.value;
-
-        if (collectionName.isNotEmpty) {
-          final authState = context.read<AuthBloc>().state;
-          final userId = authState.user?.uid;
-          if (userId != null) {
-            // Création de la collection et récupération de son ID
-            String newCollectionId = await context
-                .read<CreateCollectionCubit>()
-                .createCollectionReturnCollectionId(
-                    userId, collectionName, isPublic);
-
-            if (newCollectionId.isNotEmpty) {
-              // Ajout du post à la nouvelle collection
-              await context
-                  .read<AddPostToCollectionCubit>()
-                  .addPostToCollection(widget.postId, newCollectionId);
-
-              Navigator.pop(context);
-              SnackbarUtil.showSuccessSnackbar(
-                  context, 'Collection Created & Post Added !');
-            } else {
-              debugPrint('Error: Collection creation failed');
-            }
-          } else {
-            debugPrint('User ID is null');
-          }
-        }
-      },
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        minimumSize: const Size(60, 20),
-        backgroundColor: couleurBleuClair2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text(
-        AppLocalizations.of(context)!.translate('validate'),
-        style:
-            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
-      ),
     );
   }
 

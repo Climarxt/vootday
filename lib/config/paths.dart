@@ -1,5 +1,4 @@
 class Paths {
-  // Top level collections.
   static const String users = 'users';
   static const String posts = 'posts';
   static const String likes = 'likes';
@@ -13,8 +12,6 @@ class Paths {
   static const String feedMonth = 'feed_month';
   static const String feedEvents = 'feed_event';
   static const String events = 'events';
-
-  // Subcollections
   static const String postLikes = 'postLikes';
   static const String postComments = 'postComments';
   static const String userFollowers = 'userFollowers';

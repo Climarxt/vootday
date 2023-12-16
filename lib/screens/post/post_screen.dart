@@ -1,13 +1,15 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
+import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +19,6 @@ import 'package:go_router/go_router.dart';
 
 class PostScreen extends StatefulWidget {
   final String postId;
-
   final String fromPath;
 
   const PostScreen({
@@ -50,9 +51,9 @@ class _PostScreenState extends State<PostScreen>
       context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
     });
     final authState = context.read<AuthBloc>().state;
-    final userId = authState.user?.uid;
-    if (userId != null) {
-      _checkIfUserIsAuthor(userId);
+    final _userId = authState.user?.uid;
+    if (_userId != null) {
+      _checkIfUserIsAuthor(_userId);
     } else {
       debugPrint('User ID is null');
     }
@@ -379,8 +380,8 @@ class _PostScreenState extends State<PostScreen>
         _buildIconButton(
             Icons.comment, () => _navigateToCommentScreen(context)),
         _buildIconButton(Icons.share, () => _showBottomSheet(context)),
-        _buildIconButton(Icons.add_to_photos,
-            () => _showBottomSheetCollection(context, state)),
+        _buildIconButton(
+            Icons.add_to_photos, () => _addToLikesThenShowCollections(state)),
       ],
     );
   }
@@ -390,6 +391,31 @@ class _PostScreenState extends State<PostScreen>
       icon: Icon(icon, color: Colors.black, size: 24),
       onPressed: onPressed,
     );
+  }
+
+  void _addToLikesThenShowCollections(MyCollectionState state) async {
+    final authState = context.read<AuthBloc>().state;
+    final _userId = authState.user?.uid;
+
+    if (_userId != null) {
+      // Vérifier si le post est déjà dans les likes
+      final isPostLiked = await context
+          .read<PostRepository>()
+          .isPostInLikes(postId: widget.postId, userId: _userId);
+
+      if (isPostLiked) {
+        _showBottomSheetCollection(context, state);
+      } else {
+        // Ajouter le post aux likes
+        context
+            .read<AddPostToLikesCubit>()
+            .addPostToLikes(widget.postId, _userId);
+        // Puis afficher le bottom sheet
+        _showBottomSheetCollection(context, state);
+      }
+    } else {
+      debugPrint('User ID is null');
+    }
   }
 
   void _checkIfUserIsAuthor(String userId) async {
@@ -479,7 +505,7 @@ class _PostScreenState extends State<PostScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Enregistré',
+          'Enregistré dans mes Likes',
           style: AppTextStyles.titleHeadlineMidBlackBold(context),
         ),
         Text(
@@ -490,9 +516,25 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Icon _buildBookmarkIcon() {
-    const black = Colors.black; // Example color
+  Icon _buildBookmarkIcon1() {
+    const black = Colors.black;
     return const Icon(Icons.bookmark, color: black, size: 32);
+  }
+
+  Widget _buildBookmarkIcon() {
+    final authState = context.read<AuthBloc>().state;
+    final _userId = authState.user?.uid;
+
+    return IconButton(
+      icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
+      onPressed: () {
+        context.read<FeedMyLikesBloc>().add(
+            FeedMyLikesDeletePostRef(postId: widget.postId, userId: _userId!));
+        SnackbarUtil.showSuccessSnackbar(context, 'Post removed from Likes!');
+
+        Navigator.pop(context);
+      },
+    );
   }
 
   TextButton buildCreatenewcollection(BuildContext context) {

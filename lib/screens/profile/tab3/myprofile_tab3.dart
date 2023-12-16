@@ -155,6 +155,10 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
     final createCollectionCubit = context.read<CreateCollectionCubit>();
 
     showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
       context: context,
       builder: (BuildContext bottomSheetContext) {
         return BlocProvider.value(

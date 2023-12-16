@@ -10,6 +10,7 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<DeleteCollectionsCubit>(
             create: (context) =>
                 DeleteCollectionsCubit(context.read<PostRepository>()),
+          ),
+          BlocProvider<CreateCollectionCubit>(
+            create: (context) => CreateCollectionCubit(
+              firebaseFirestore: FirebaseFirestore.instance,
+            ),
           ),
           BlocProvider(
             create: (context) {

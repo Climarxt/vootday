@@ -6,6 +6,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ class _PostScreenState extends State<PostScreen>
   bool _isUserTheAuthor = false;
   List<String> _imageUrls = [];
   Map<String, bool> _postInCollectionMap = {};
+  ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
+  final TextEditingController _collectionNameController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -139,13 +143,21 @@ class _PostScreenState extends State<PostScreen>
   Widget _buildTopRow(BuildContext context, Size size) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
+      child: Column(
         children: [
-          _buildImageContainer(size),
-          const SizedBox(width: 14),
-          _buildTextColumn(context),
-          const Spacer(),
-          _buildBookmarkIcon(),
+          Row(
+            children: [
+              _buildImageContainer(size),
+              const SizedBox(width: 14),
+              _buildTextColumn(context),
+              const Spacer(),
+              _buildBookmarkIcon(),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Container(
+            child: buildCreatenewcollection(context),
+          ),
         ],
       ),
     );
@@ -475,6 +487,189 @@ class _PostScreenState extends State<PostScreen>
   Icon _buildBookmarkIcon() {
     const black = Colors.black; // Example color
     return const Icon(Icons.bookmark, color: black, size: 32);
+  }
+
+  TextButton buildCreatenewcollection(BuildContext context) {
+    return TextButton(
+      onPressed: () => _openCreateCollectionSheet(context),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        backgroundColor: white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: Colors.grey),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Icon(Icons.add, color: black),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.translate('createnewcollection'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: black),
+            ),
+          ),
+          const Icon(Icons.arrow_forward, color: black),
+        ],
+      ),
+    );
+  }
+
+  void _openCreateCollectionSheet(BuildContext context) {
+    final createCollectionCubit = context.read<CreateCollectionCubit>();
+
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return BlocProvider.value(
+          value: createCollectionCubit,
+          child: BlocConsumer<CreateCollectionCubit, CreateCollectionState>(
+            listener: (context, state) {
+              if (state.status == CreateCollectionStatus.success) {
+                Navigator.pop(context);
+              }
+            },
+            builder: (context, state) {
+              return Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.translate('newcollection'),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium!
+                          .copyWith(color: Colors.black),
+                    ),
+                    const SizedBox(height: 10),
+                    _buildCaptionInput(context),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: isPublicNotifier,
+                      builder: (context, isPublic, _) {
+                        return _buildPublicButton(context, isPublic);
+                      },
+                    ),
+                    const SizedBox(height: 18),
+                    buildValidateButton(context, isPublicNotifier.value),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCaptionInput(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          AppLocalizations.of(context)!.translate('name'),
+          style: AppTextStyles.titleLargeBlackBold(context),
+        ),
+        Form(
+          child: TextFormField(
+            controller: _collectionNameController,
+            cursorColor: couleurBleuClair2,
+            style: AppTextStyles.bodyStyle(context),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintStyle: AppTextStyles.subtitleLargeGrey(context),
+              hintText: AppLocalizations.of(context)!
+                  .translate('enternamecollection'),
+            ),
+            validator: (value) => value!.trim().isEmpty
+                ? AppLocalizations.of(context)!.translate('captionnotempty')
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPublicButton(BuildContext context, bool isPublic) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.translate('makePublic'),
+              style: AppTextStyles.titleLargeBlackBold(context),
+            ),
+            Switch(
+              activeColor: couleurBleuClair2,
+              value: isPublic,
+              onChanged: (bool value) {
+                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
+                isPublicNotifier.value = value;
+              },
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            AppLocalizations.of(context)!.translate('makePublicDescription'),
+            style: AppTextStyles.bodyStyleGrey(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  TextButton buildValidateButton(BuildContext context, bool isPublic) {
+    return TextButton(
+      onPressed: () {
+        final String collectionName = _collectionNameController.text.trim();
+        final bool isPublic = isPublicNotifier.value;
+        debugPrint("Collection Name: $collectionName"); // Ajout de debugPrint
+        debugPrint("Is Public: $isPublic"); // Ajout de debugPrint
+
+        if (collectionName.isNotEmpty) {
+          final authState = context.read<AuthBloc>().state;
+          final userId = authState.user?.uid;
+          if (userId != null) {
+            // widget.tabController.animateTo(0);
+            context
+                .read<CreateCollectionCubit>()
+                .createCollection(userId, collectionName, isPublic);
+
+            SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
+          } else {
+            debugPrint('User ID is null');
+          }
+        }
+      },
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        minimumSize: const Size(60, 20),
+        backgroundColor: couleurBleuClair2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      child: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style:
+            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
+      ),
+    );
   }
 
   @override

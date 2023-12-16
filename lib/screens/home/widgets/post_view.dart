@@ -1,11 +1,15 @@
 import 'dart:ui';
 
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/home/widgets/snackbar_util.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class PostView extends StatefulWidget {
@@ -30,10 +34,14 @@ class PostView extends StatefulWidget {
 class _PostViewState extends State<PostView>
     with SingleTickerProviderStateMixin {
   bool isImageVisible = false;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
+    final authState = context.read<AuthBloc>().state;
+    userId = authState.user?.uid;
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         setState(() {
@@ -157,8 +165,19 @@ class _PostViewState extends State<PostView>
 
   Widget buildIcon(BuildContext context) {
     return GestureDetector(
-        onTap: () {},
-        child: const Icon(Icons.bookmark_border, color: white, size: 32));
+      onTap: () {
+        if (widget.post.id != null && userId != null) {
+          context
+              .read<AddPostToLikesCubit>()
+              .addPostToLikes(widget.post.id!, userId!);
+          SnackbarUtil.showSuccessSnackbar(context, 'Post Added to Likes!');
+        } else {
+          SnackbarUtil.showErrorSnackbar(
+              context, 'Error: Post ID or User ID is null.');
+        }
+      },
+      child: const Icon(Icons.bookmark_border, color: white, size: 32),
+    );
   }
 
   Widget buildLikeCount(BuildContext context) {

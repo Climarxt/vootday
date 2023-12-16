@@ -105,22 +105,6 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Future<void> _fetchImageUrls(List<Collection> collections) async {
-    // Fetch all image URLs
-    List<String> urls = [];
-    for (var collection in collections) {
-      String imageUrl = await getMostRecentPostImageUrl(collection.id);
-      urls.add(imageUrl);
-    }
-
-    // Check if the state is still mounted before updating
-    if (mounted) {
-      setState(() {
-        _imageUrls = urls;
-      });
-    }
-  }
-
   Future<void> _showBottomSheetCollection(
       BuildContext context, MyCollectionState state) async {
     final Size size = MediaQuery.of(context).size;
@@ -140,7 +124,7 @@ class _PostScreenState extends State<PostScreen>
         builder: (context, scrollController) => SafeArea(
           child: Column(
             children: [
-              _buildTopBar(context, size),
+              _buildTopRow(context, size),
               _buildListView(scrollController, state),
             ],
           ),
@@ -149,6 +133,21 @@ class _PostScreenState extends State<PostScreen>
     );
 
     print(result);
+  }
+
+  Widget _buildTopRow(BuildContext context, Size size) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          _buildImageContainer(size),
+          const SizedBox(width: 14),
+          _buildTextColumn(context),
+          const Spacer(),
+          _buildBookmarkIcon(),
+        ],
+      ),
+    );
   }
 
   Widget _buildListView(
@@ -240,6 +239,22 @@ class _PostScreenState extends State<PostScreen>
     }
     // Return a default image URL if no image is found or an error occurs
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
+  }
+
+  Future<void> _fetchImageUrls(List<Collection> collections) async {
+    // Fetch all image URLs
+    List<String> urls = [];
+    for (var collection in collections) {
+      String imageUrl = await getMostRecentPostImageUrl(collection.id);
+      urls.add(imageUrl);
+    }
+
+    // Check if the state is still mounted before updating
+    if (mounted) {
+      setState(() {
+        _imageUrls = urls;
+      });
+    }
   }
 
   Future<void> _loadPost() async {
@@ -381,29 +396,6 @@ class _PostScreenState extends State<PostScreen>
           ],
         );
       },
-    );
-  }
-
-  Widget _buildTopBar(BuildContext context, Size size) {
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: _buildTopRow(context, size),
-    );
-  }
-
-  Row _buildTopRow(BuildContext context, Size size) {
-    return Row(
-      children: [
-        _buildImageContainer(size),
-        const SizedBox(width: 14),
-        _buildTextColumn(context),
-        const Spacer(),
-        _buildBookmarkIcon(),
-      ],
     );
   }
 

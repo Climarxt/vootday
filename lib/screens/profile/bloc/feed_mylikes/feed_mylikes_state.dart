@@ -35,6 +35,7 @@ class FeedMyLikesState extends Equatable {
     Failure? failure,
     Event? event,
     bool? hasFetchedInitialPosts,
+    required bool isPostInLikes,
   }) {
     return FeedMyLikesState(
       posts: posts ?? this.posts,

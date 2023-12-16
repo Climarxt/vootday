@@ -4,8 +4,10 @@ import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/home/widgets/snackbar_util.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
+import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
@@ -134,9 +136,53 @@ class _PostViewState extends State<PostView>
         Positioned(
           bottom: 24,
           right: 20,
-          child: buildIcon(context),
+          child: buildLikeIcon(),
         ),
       ],
+    );
+  }
+
+  Widget buildLikeIcon() {
+    if (widget.post.id == null || userId == null) {
+      return const Icon(Icons.bookmark_border, color: greyDark);
+    }
+
+    return FutureBuilder<bool>(
+      future: context
+          .read<PostRepository>()
+          .isPostInLikes(postId: widget.post.id!, userId: userId!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          // Gérer l'erreur ou l'absence de données
+          return const Icon(Icons.bookmark_border, color: greyDark);
+        }
+
+        final isPostLiked = snapshot.data!;
+
+        return IconButton(
+          icon: Icon(isPostLiked ? Icons.bookmark : Icons.bookmark_border,
+              color: white),
+          onPressed: () {
+            if (isPostLiked) {
+              context.read<FeedMyLikesBloc>().add(FeedMyLikesDeletePostRef(
+                  postId: widget.post.id!, userId: userId!));
+              SnackbarUtil.showSuccessSnackbar(
+                  context, 'Post removed from Likes!');
+            } else {
+              context
+                  .read<AddPostToLikesCubit>()
+                  .addPostToLikes(widget.post.id!, userId!);
+              SnackbarUtil.showSuccessSnackbar(context, 'Post Added to Likes!');
+            }
+          },
+        );
+      },
     );
   }
 
@@ -160,23 +206,6 @@ class _PostViewState extends State<PostView>
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildIcon(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (widget.post.id != null && userId != null) {
-          context
-              .read<AddPostToLikesCubit>()
-              .addPostToLikes(widget.post.id!, userId!);
-          SnackbarUtil.showSuccessSnackbar(context, 'Post Added to Likes!');
-        } else {
-          SnackbarUtil.showErrorSnackbar(
-              context, 'Error: Post ID or User ID is null.');
-        }
-      },
-      child: const Icon(Icons.bookmark_border, color: white, size: 32),
     );
   }
 

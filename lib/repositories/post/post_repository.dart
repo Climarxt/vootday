@@ -468,4 +468,62 @@ class PostRepository extends BasePostRepository {
           'Erreur lors de la suppression du post_ref de la collection');
     }
   }
+
+  Future<bool> isPostInLikes(
+      {required String postId, required String userId}) async {
+    try {
+      debugPrint(
+          'isPostInLikes : Checking if post $postId is in likes for user $userId...');
+
+      DocumentReference postRef =
+          _firebaseFirestore.collection(Paths.posts).doc(postId);
+
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection('likes')
+          .where('post_ref', isEqualTo: postRef)
+          .get();
+
+      bool result = querySnapshot.docs.isNotEmpty;
+      debugPrint('isPostInLikes : Post $postId is in likes - $result');
+
+      return result;
+    } catch (e) {
+      debugPrint(
+          'isPostInLikes : Error checking post $postId in likes for user $userId: ${e.toString()}');
+      return false; // Retourne false en cas d'erreur
+    }
+  }
+
+  Future<void> deletePostRefFromLikes(
+      {required String postId, required String userId}) async {
+    try {
+      debugPrint(
+          'deletePostRefFromLikes : Suppression du post_ref des likes...');
+
+      DocumentReference postRef =
+          _firebaseFirestore.collection(Paths.posts).doc(postId);
+
+      QuerySnapshot snapshot = await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection('likes')
+          .where('post_ref', isEqualTo: postRef)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        await snapshot.docs.first.reference.delete();
+        debugPrint(
+            'deletePostRefFromLikes : Post_ref supprimé des likes avec succès.');
+      } else {
+        debugPrint(
+            'deletePostRefFromLikes : Aucun post_ref trouvé dans la collection.');
+      }
+    } catch (e) {
+      debugPrint(
+          'deletePostRefFromLikes : Erreur lors de la suppression du post_ref des likes: ${e.toString()}');
+      throw Exception('Erreur lors de la suppression du post_ref des likes');
+    }
+  }
 }

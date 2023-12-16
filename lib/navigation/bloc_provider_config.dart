@@ -200,16 +200,6 @@ class BlocProviderConfig {
             postRepository: context.read<PostRepository>(),
           ),
         ),
-        BlocProvider<FeedMyLikesBloc>(
-          create: (context) {
-            final feedMyLikesBloc = FeedMyLikesBloc(
-              feedRepository: context.read<FeedRepository>(),
-              authBloc: context.read<AuthBloc>(),
-            );
-            feedMyLikesBloc.add(FeedMyLikesFetchPosts());
-            return feedMyLikesBloc;
-          },
-        ),
       ],
       child: child,
     );

@@ -7,6 +7,7 @@ import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/post/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
@@ -123,7 +124,7 @@ class _PostScreenState extends State<PostScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildPostImage(size),
-                    _buildPostDetails(state),
+                    _buildPostDetails(state, context),
                   ],
                 ),
               ),
@@ -154,7 +155,6 @@ class _PostScreenState extends State<PostScreen>
           context
               .read<AddPostToCollectionCubit>()
               .addPostToCollection(widget.postId, collectionId);
-
         }
         Navigator.pop(context);
       },
@@ -330,12 +330,12 @@ class _PostScreenState extends State<PostScreen>
               const SizedBox(width: 14),
               _buildTextColumn(context),
               const Spacer(),
-              _buildBookmarkIcon(),
+              buildBookmarkIcon(context, widget.postId),
             ],
           ),
           const SizedBox(height: 16),
           Container(
-            child: buildCreatenewcollection(context),
+            child: buildCreatenewcollection(context, openCreateCollectionSheet),
           ),
         ],
       ),
@@ -401,14 +401,22 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _buildPostDetails(MyCollectionState state) {
+  Widget _buildPostDetails(MyCollectionState state, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         children: [
           _buildUserProfile(),
           const Spacer(),
-          _buildActionIcons(state),
+          buildActionIcons(
+              state,
+              context,
+              _showBottomSheet,
+              _navigateToCommentScreen,
+              _addToLikesThenShowCollections,
+              widget.postId,
+              _animation,
+              _controller),
         ],
       ),
     );
@@ -430,219 +438,18 @@ class _PostScreenState extends State<PostScreen>
     final _userId = authState.user?.uid;
     return Column(
       children: [
-        _buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
-        _buildIconButton(
-            Icons.comment, () => _navigateToCommentScreen(context)),
-        _buildIconButton(Icons.share, () => _showBottomSheet(context)),
-        _buildIconButton(
+        buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
+        buildIconButton(Icons.comment, () => _navigateToCommentScreen(context)),
+        buildIconButton(Icons.share, () => _showBottomSheet(context)),
+        buildIconButton(
             Icons.add_to_photos, () => _addToLikesThenShowCollections(state)),
-        _buildFavoriteButton(context, widget.postId, _userId!),
+        buildFavoriteButton(
+            context, widget.postId, _userId!, _animation, _controller),
       ],
     );
   }
 
-  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
-    return IconButton(
-      icon: Icon(icon, color: Colors.black, size: 24),
-      onPressed: onPressed,
-    );
-  }
-
-  Widget _buildFavoriteButton(
-      BuildContext context, String postId, String userId) {
-    return BlocBuilder<AddPostToLikesCubit, AddPostToLikesState>(
-      builder: (context, state) {
-        final cubit = context.read<AddPostToLikesCubit>();
-
-        return FutureBuilder<bool>(
-          future: cubit.isPostLiked(postId, userId),
-          builder: (context, snapshot) {
-            bool isLiked = snapshot.data ?? false;
-
-            return ScaleTransition(
-              scale: _animation,
-              child: IconButton(
-                icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.black, size: 24),
-                onPressed: () async {
-                  _controller.forward(from: 0.0);
-                  if (isLiked) {
-                    await cubit.deletePostRefFromLikes(
-                        postId: postId, userId: userId);
-                  } else {
-                    await cubit.addPostToLikes(postId, userId);
-                  }
-                },
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildBookmarkIcon() {
-    final authState = context.read<AuthBloc>().state;
-    final _userId = authState.user?.uid;
-    final cubit = context.read<AddPostToLikesCubit>();
-
-    return IconButton(
-      icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
-      onPressed: () async {
-        // Vérifier si le post est liké
-        bool isLiked = await cubit.isPostLiked(widget.postId, _userId!);
-
-        if (isLiked) {
-          // Si liké, alors supprimer le like
-          await cubit.deletePostRefFromLikes(
-              postId: widget.postId, userId: _userId);
-        }
-
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  Widget _buildCaptionInput(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        Text(
-          AppLocalizations.of(context)!.translate('name'),
-          style: AppTextStyles.titleLargeBlackBold(context),
-        ),
-        Form(
-          child: TextFormField(
-            controller: _collectionNameController,
-            cursorColor: couleurBleuClair2,
-            style: AppTextStyles.bodyStyle(context),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintStyle: AppTextStyles.subtitleLargeGrey(context),
-              hintText: AppLocalizations.of(context)!
-                  .translate('enternamecollection'),
-            ),
-            validator: (value) => value!.trim().isEmpty
-                ? AppLocalizations.of(context)!.translate('captionnotempty')
-                : null,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPublicButton(BuildContext context, bool isPublic) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.translate('makePublic'),
-              style: AppTextStyles.titleLargeBlackBold(context),
-            ),
-            Switch(
-              activeColor: couleurBleuClair2,
-              value: isPublic,
-              onChanged: (bool value) {
-                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
-                isPublicNotifier.value = value;
-              },
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Text(
-            AppLocalizations.of(context)!.translate('makePublicDescription'),
-            style: AppTextStyles.bodyStyleGrey(context),
-          ),
-        ),
-      ],
-    );
-  }
-
-  TextButton buildCreatenewcollection(BuildContext context) {
-    return TextButton(
-      onPressed: () => _openCreateCollectionSheet(context),
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        backgroundColor: white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: Colors.grey),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Icon(Icons.add, color: black),
-          Expanded(
-            child: Text(
-              AppLocalizations.of(context)!.translate('createnewcollection'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(color: black),
-            ),
-          ),
-          const Icon(Icons.arrow_forward, color: black),
-        ],
-      ),
-    );
-  }
-
-  TextButton buildValidateButton(BuildContext context, bool isPublic) {
-    return TextButton(
-      onPressed: () async {
-        final String collectionName = _collectionNameController.text.trim();
-        final bool isPublic = isPublicNotifier.value;
-
-        if (collectionName.isNotEmpty) {
-          final authState = context.read<AuthBloc>().state;
-          final userId = authState.user?.uid;
-          if (userId != null) {
-            // Création de la collection et récupération de son ID
-            String newCollectionId = await context
-                .read<CreateCollectionCubit>()
-                .createCollectionReturnCollectionId(
-                    userId, collectionName, isPublic);
-
-            if (newCollectionId.isNotEmpty) {
-              // Ajout du post à la nouvelle collection
-              await context
-                  .read<AddPostToCollectionCubit>()
-                  .addPostToCollection(widget.postId, newCollectionId);
-
-              Navigator.pop(context);
-            } else {
-              debugPrint('Error: Collection creation failed');
-            }
-          } else {
-            debugPrint('User ID is null');
-          }
-        }
-      },
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        minimumSize: const Size(60, 20),
-        backgroundColor: couleurBleuClair2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text(
-        AppLocalizations.of(context)!.translate('validate'),
-        style:
-            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
-      ),
-    );
-  }
-
-  void _openCreateCollectionSheet(BuildContext context) {
+  void openCreateCollectionSheet(BuildContext context) {
     final createCollectionCubit = context.read<CreateCollectionCubit>();
 
     showModalBottomSheet(
@@ -675,15 +482,21 @@ class _PostScreenState extends State<PostScreen>
                           .copyWith(color: Colors.black),
                     ),
                     const SizedBox(height: 10),
-                    _buildCaptionInput(context),
+                    buildCaptionInput(context, _collectionNameController),
                     ValueListenableBuilder<bool>(
                       valueListenable: isPublicNotifier,
                       builder: (context, isPublic, _) {
-                        return _buildPublicButton(context, isPublic);
+                        return buildPublicButton(
+                            context, isPublic, isPublicNotifier);
                       },
                     ),
                     const SizedBox(height: 18),
-                    buildValidateButton(context, isPublicNotifier.value),
+                    buildValidateButton(
+                      context,
+                      _collectionNameController,
+                      isPublicNotifier,
+                      widget.postId,
+                    ),
                   ],
                 ),
               );

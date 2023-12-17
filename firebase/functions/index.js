@@ -42,9 +42,16 @@ exports.onFollowUser = functions.firestore
     const followedUserPostsSnapshot = await followedUserPostsRef.get();
     followedUserPostsSnapshot.forEach((doc) => {
       if (doc.exists) {
-        userFeedRef.doc(doc.id).set(doc.data());
+        const postRef = admin.firestore().doc(`posts/${doc.id}`); // Crée une référence au post
+    
+        const postData = {
+          post_ref: postRef, // DocumentReference vers le post
+          date: doc.data().date // Utilisation de la date du post original
+        };
+    
+        userFeedRef.doc(doc.id).set(postData);
       }
-    });
+    });     
   });
 
 exports.onUnfollowUser = functions.firestore

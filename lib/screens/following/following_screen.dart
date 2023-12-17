@@ -1,4 +1,5 @@
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/following/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -89,27 +90,17 @@ class _FollowingScreenState extends State<FollowingScreen>
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   } else {
-                    final post = state.posts[index];
-                    final likedPostsState =
-                        context.watch<LikedPostsCubit>().state;
-                    final isLiked =
-                        likedPostsState.likedPostIds.contains(post!.id);
-                    final recentlyLiked =
-                        likedPostsState.recentlyLikedPostIds.contains(post.id);
-                    return PostView(
-                      post: post,
-                      isLiked: isLiked,
-                      recentlyLiked: recentlyLiked,
-                      onLike: () {
-                        if (isLiked) {
-                          context
-                              .read<LikedPostsCubit>()
-                              .unlikePost(post: post);
-                        } else {
-                          context.read<LikedPostsCubit>().likePost(post: post);
-                        }
-                      },
-                    );
+                    final Post? post = state.posts[index];
+
+                    // Vérifier si post est null
+                    if (post != null) {
+                      return PostView(
+                        post: post,
+                      );
+                    } else {
+                      // Retourner un widget de remplacement ou rien si post est null
+                      return const SizedBox.shrink();
+                    }
                   }
                 },
               ),

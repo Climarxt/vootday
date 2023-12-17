@@ -369,7 +369,7 @@ class _PostScreenState extends State<PostScreen>
               : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
 
           return ListTile(
-            leading: _buildLeadingImage(imageUrl),
+            leading: buildLeadingImage(imageUrl),
             title: Text(
               collection.title,
               style: AppTextStyles.titleHeadlineMidBlackBold(context),
@@ -387,29 +387,6 @@ class _PostScreenState extends State<PostScreen>
           );
         },
       ),
-    );
-  }
-
-  Widget _buildLeadingImage(String imageUrl) {
-    // Now this function can directly use imageUrl without FutureBuilder
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPostImage(Size size) {
-    return ImageLoader(
-      imageProvider: _post!.imageProvider,
-      width: size.width,
-      height: size.height / 1.5,
     );
   }
 

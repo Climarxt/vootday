@@ -304,3 +304,18 @@ Widget buildPostImage(
     height: size.height / 1.5,
   );
 }
+
+Widget buildLeadingImage(String imageUrl) {
+  // Now this function can directly use imageUrl without FutureBuilder
+  return Container(
+    width: 60,
+    height: 60,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      image: DecorationImage(
+        image: NetworkImage(imageUrl),
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+}

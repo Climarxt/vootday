@@ -5,6 +5,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
@@ -317,5 +318,32 @@ Widget buildLeadingImage(String imageUrl) {
         fit: BoxFit.cover,
       ),
     ),
+  );
+}
+
+Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
+    String postId, Map<String, bool> postInCollectionMap) async {
+  final postRepository = context.read<PostRepository>();
+  bool isPostInCollection = await postRepository.isPostInCollection(
+      postId: postId, collectionId: collectionId);
+
+  // Mise à jour de l'état
+  postInCollectionMap[collectionId] = isPostInCollection;
+
+  return IconButton(
+    icon: Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark),
+    onPressed: () {
+      if (isPostInCollection) {
+        // Supprimer le post de la collection
+        context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
+            postId: postId, collectionId: collectionId));
+      } else {
+        // Ajouter le post à la collection
+        context
+            .read<AddPostToCollectionCubit>()
+            .addPostToCollection(postId, collectionId);
+      }
+      Navigator.pop(context);
+    },
   );
 }

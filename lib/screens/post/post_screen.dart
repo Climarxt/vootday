@@ -2,7 +2,6 @@
 
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
@@ -143,32 +142,6 @@ class _PostScreenState extends State<PostScreen>
             ),
           ),
         );
-      },
-    );
-  }
-
-  Future<Widget> _buildTrailingIcon(String collectionId) async {
-    final postRepository = context.read<PostRepository>();
-    bool isPostInCollection = await postRepository.isPostInCollection(
-        postId: widget.postId, collectionId: collectionId);
-
-    // Mise à jour de l'état
-    _postInCollectionMap[collectionId] = isPostInCollection;
-
-    return IconButton(
-      icon: Icon(isPostInCollection ? Icons.check : Icons.add, color: greyDark),
-      onPressed: () {
-        if (isPostInCollection) {
-          // Supprimer le post de la collection
-          context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
-              postId: widget.postId, collectionId: collectionId));
-        } else {
-          // Ajouter le post à la collection
-          context
-              .read<AddPostToCollectionCubit>()
-              .addPostToCollection(widget.postId, collectionId);
-        }
-        Navigator.pop(context);
       },
     );
   }
@@ -379,7 +352,12 @@ class _PostScreenState extends State<PostScreen>
               style: AppTextStyles.subtitleLargeGrey(context),
             ),
             trailing: FutureBuilder<Widget>(
-              future: _buildTrailingIcon(collection.id),
+              future: buildTrailingIcon(
+                collection.id,
+                context,
+                widget.postId,
+                _postInCollectionMap,
+              ),
               builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                 return snapshot.data ?? const SizedBox.shrink();
               },

@@ -276,24 +276,6 @@ class _PostScreenState extends State<PostScreen>
     }
   }
 
-  Container _buildImageContainer(Size size) {
-    const double imageContainerFractionWidth = 0.2;
-    const double imageContainerFractionHeight = 0.15;
-
-    return Container(
-      width: size.width * imageContainerFractionWidth,
-      height: size.height * imageContainerFractionHeight,
-      decoration: BoxDecoration(
-        color: greyDark,
-        borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          image: _post!.imageProvider,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
   Column _buildTextColumn(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +299,7 @@ class _PostScreenState extends State<PostScreen>
         children: [
           Row(
             children: [
-              _buildImageContainer(size),
+              buildImageContainer(size, _post!),
               const SizedBox(width: 14),
               _buildTextColumn(context),
               const Spacer(),

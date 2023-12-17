@@ -393,3 +393,24 @@ Widget buildListView(
     ),
   );
 }
+
+Container buildImageContainer(
+  Size size,
+  Post post,
+) {
+  const double imageContainerFractionWidth = 0.2;
+  const double imageContainerFractionHeight = 0.15;
+
+  return Container(
+    width: size.width * imageContainerFractionWidth,
+    height: size.height * imageContainerFractionHeight,
+    decoration: BoxDecoration(
+      color: greyDark,
+      borderRadius: BorderRadius.circular(10),
+      image: DecorationImage(
+        image: post.imageProvider,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+}

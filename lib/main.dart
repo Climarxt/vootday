@@ -2,6 +2,7 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
+import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/cubits/update_public_status/update_public_status_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
@@ -144,6 +145,9 @@ class MyApp extends StatelessWidget {
               feedMyLikesBloc.add(FeedMyLikesFetchPosts());
               return feedMyLikesBloc;
             },
+          ),
+          BlocProvider<RecentPostImageUrlCubit>(
+            create: (context) => RecentPostImageUrlCubit(),
           ),
         ],
         child: Builder(

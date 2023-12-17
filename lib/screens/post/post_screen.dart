@@ -4,6 +4,7 @@ import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/custom_widgets.dart';
@@ -102,7 +103,6 @@ class _PostScreenState extends State<PostScreen>
         ),
       );
     }
-
     if (_post == null || _user == null) {
       return Scaffold(
         appBar: AppBarTitle(title: _user!.username),
@@ -113,30 +113,33 @@ class _PostScreenState extends State<PostScreen>
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBarTitle(title: _user!.username),
-            body: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: size.height),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildPostImage(size, _post!),
-                    buildPostDetails(
-                      state,
-                      context,
-                      _user!,
-                      _post!,
-                      () => _navigateToUserScreen(context, _user!),
-                      _showBottomSheet,
-                      _navigateToCommentScreen,
-                      _addToLikesThenShowCollections,
-                      widget.postId,
-                      _animation,
-                      _controller,
-                    )
-                  ],
+        return BlocProvider(
+          create: (context) => RecentPostImageUrlCubit(),
+          child: SafeArea(
+            child: Scaffold(
+              appBar: AppBarTitle(title: _user!.username),
+              body: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: size.height),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildPostImage(size, _post!),
+                      buildPostDetails(
+                        state,
+                        context,
+                        _user!,
+                        _post!,
+                        () => _navigateToUserScreen(context, _user!),
+                        _showBottomSheet,
+                        _navigateToCommentScreen,
+                        _addToLikesThenShowCollections,
+                        widget.postId,
+                        _animation,
+                        _controller,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -196,14 +199,18 @@ class _PostScreenState extends State<PostScreen>
   }
 
   Future<void> _fetchImageUrls(List<Collection> collections) async {
-    // Fetch all image URLs
     List<String> urls = [];
     for (var collection in collections) {
-      String imageUrl = await getMostRecentPostImageUrl(collection.id);
-      urls.add(imageUrl);
+      final imageUrl = await context
+          .read<RecentPostImageUrlCubit>()
+          .getMostRecentPostImageUrl(collection.id);
+
+      // Ajoutez un log ici pour vérifier l'URL reçue
+      debugPrint("URL récupérée pour ${collection.id}: $imageUrl");
+
+      urls.add(imageUrl ?? 'URL par défaut');
     }
 
-    // Check if the state is still mounted before updating
     if (mounted) {
       setState(() {
         _imageUrls = urls;
@@ -300,6 +307,7 @@ class _PostScreenState extends State<PostScreen>
     final _userId = authState.user?.uid;
 
     if (_userId != null) {
+      debugPrint("DEBUG : $_imageUrls");
       // Vérifier si le post est déjà dans les likes
       final isPostLiked = await context
           .read<PostRepository>()

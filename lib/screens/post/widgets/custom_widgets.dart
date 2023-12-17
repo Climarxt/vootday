@@ -9,7 +9,6 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -307,21 +306,6 @@ Widget buildPostImage(
   );
 }
 
-Widget buildLeadingImage(String imageUrl) {
-  // Now this function can directly use imageUrl without FutureBuilder
-  return Container(
-    width: 60,
-    height: 60,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      image: DecorationImage(
-        image: NetworkImage(imageUrl),
-        fit: BoxFit.cover,
-      ),
-    ),
-  );
-}
-
 Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
     String postId, Map<String, bool> postInCollectionMap) async {
   final postRepository = context.read<PostRepository>();
@@ -395,6 +379,20 @@ Widget buildListView(
   );
 }
 
+Widget buildLeadingImage(String imageUrl) {
+  return Container(
+    width: 60,
+    height: 60,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      image: DecorationImage(
+        image: NetworkImage(imageUrl),
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+}
+
 Container buildImageContainer(
   Size size,
   Post post,
@@ -454,52 +452,4 @@ Widget buildTopRow(BuildContext context, Size size, Post post,
       ],
     ),
   );
-}
-
-Future<String> getMostRecentPostImageUrl(String collectionId) async {
-  // Add a debug print to confirm the method is called with a valid ID
-  debugPrint(
-      "getMostRecentPostImageUrl : Fetching image URL for collection ID: $collectionId");
-
-  try {
-    final feedEventRef = FirebaseFirestore.instance
-        .collection('collections')
-        .doc(collectionId)
-        .collection('feed_collection');
-
-    final querySnapshot =
-        await feedEventRef.orderBy('date', descending: true).limit(1).get();
-
-    // Check if there are documents returned
-    if (querySnapshot.docs.isNotEmpty) {
-      final data = querySnapshot.docs.first.data();
-      final DocumentReference? postRef = data['post_ref'] as DocumentReference?;
-
-      if (postRef != null) {
-        final postDoc = await postRef.get();
-
-        if (postDoc.exists) {
-          final postData = postDoc.data() as Map<String, dynamic>?;
-          final imageUrl = postData?['imageUrl'] as String? ?? '';
-          // Print the image URL to verify it's the correct one
-          debugPrint("getMostRecentPostImageUrl : Found image URL: $imageUrl");
-          return imageUrl;
-        } else {
-          debugPrint(
-              "getMostRecentPostImageUrl : Referenced post document does not exist.");
-        }
-      } else {
-        debugPrint("getMostRecentPostImageUrl : Post reference is null.");
-      }
-    } else {
-      debugPrint(
-          "getMostRecentPostImageUrl : No posts found in the collection's feed.");
-    }
-  } catch (e) {
-    // Print any exceptions that occur
-    debugPrint(
-        "getMostRecentPostImageUrl : An error occurred while fetching the post image URL: $e");
-  }
-  // Return a default image URL if no image is found or an error occurs
-  return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
 }

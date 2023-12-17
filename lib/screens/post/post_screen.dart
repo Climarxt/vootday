@@ -433,22 +433,6 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Widget _buildActionIcons(MyCollectionState state) {
-    final authState = context.read<AuthBloc>().state;
-    final _userId = authState.user?.uid;
-    return Column(
-      children: [
-        buildIconButton(Icons.more_vert, () => _showBottomSheet(context)),
-        buildIconButton(Icons.comment, () => _navigateToCommentScreen(context)),
-        buildIconButton(Icons.share, () => _showBottomSheet(context)),
-        buildIconButton(
-            Icons.add_to_photos, () => _addToLikesThenShowCollections(state)),
-        buildFavoriteButton(
-            context, widget.postId, _userId!, _animation, _controller),
-      ],
-    );
-  }
-
   void openCreateCollectionSheet(BuildContext context) {
     final createCollectionCubit = context.read<CreateCollectionCubit>();
 

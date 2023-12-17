@@ -36,6 +36,16 @@ class PostRepository extends BasePostRepository {
     await batch.commit();
     debugPrint(
         'deletePost : Suppression terminée pour le post avec ID: $postId');
+
+// Suppression des références du post dans les collections userFeed
+    await _deletePostReferencesInUserFeeds(batch, postRef);
+
+// Exécution du batch pour effectuer toutes les suppressions
+    debugPrint(
+        'deletePost : Exécution du batch pour la suppression du post et des références associées');
+    await batch.commit();
+    debugPrint(
+        'deletePost : Suppression terminée pour le post avec ID: $postId');
   }
 
   Future<void> _deletePostReferencesInSubCollections(
@@ -56,6 +66,30 @@ class PostRepository extends BasePostRepository {
       for (var doc in snapshot.docs) {
         debugPrint(
             '_deletePostReferencesInSubCollections : Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
+        batch.delete(doc.reference);
+      }
+    }
+  }
+
+  Future<void> _deletePostReferencesInUserFeeds(
+      WriteBatch batch, DocumentReference postRef) async {
+    debugPrint(
+        '_deletePostReferencesInUserFeeds : Recherche du post dans userFeed');
+
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collectionGroup(Paths.userFeed)
+        .where('post_ref', isEqualTo: postRef)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      debugPrint(
+          '_deletePostReferencesInUserFeeds : Aucune référence trouvée dans userFeed pour le post_ref: $postRef');
+    } else {
+      debugPrint(
+          '_deletePostReferencesInUserFeeds : Nombre de références trouvées dans userFeed: ${snapshot.docs.length}');
+      for (var doc in snapshot.docs) {
+        debugPrint(
+            '_deletePostReferencesInUserFeeds : Suppression de la référence: ${doc.id} dans userFeed dans le batch');
         batch.delete(doc.reference);
       }
     }

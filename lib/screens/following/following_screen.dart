@@ -1,4 +1,3 @@
-import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/following/widgets/widgets.dart';
@@ -27,13 +26,17 @@ class _FollowingScreenState extends State<FollowingScreen>
   }
 
   void _onScroll() {
+    if (!mounted) return;
+
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange &&
         !_isFetching &&
         context.read<FollowingBloc>().state.status !=
             FollowingStatus.paginating) {
-      _isFetching = true;
+      setState(() {
+        _isFetching = true;
+      });
       context.read<FollowingBloc>().add(FollowingPaginatePosts());
     }
   }
@@ -75,7 +78,6 @@ class _FollowingScreenState extends State<FollowingScreen>
             RefreshIndicator(
               onRefresh: () async {
                 context.read<FollowingBloc>().add(FollowingFetchPosts());
-                context.read<LikedPostsCubit>().clearAllLikedPosts();
               },
               child: ListView.separated(
                 physics: const BouncingScrollPhysics(),

@@ -183,7 +183,7 @@ class FeedRepository {
     return posts;
   }
 
-  Future<List<Post?>> getFeedUser({
+  Future<List<Post?>> getFeedFollowing({
     required String userId,
     String? lastPostId,
   }) async {
@@ -194,7 +194,7 @@ class FeedRepository {
           .doc(userId)
           .collection(Paths.userFeed)
           .orderBy('date', descending: true)
-          .limit(5)
+          .limit(100)
           .get();
     } else {
       final lastPostDoc = await _firebaseFirestore
@@ -214,13 +214,20 @@ class FeedRepository {
           .collection(Paths.userFeed)
           .orderBy('date', descending: true)
           .startAfterDocument(lastPostDoc)
-          .limit(3)
+          .limit(2)
           .get();
     }
 
-    final posts = Future.wait(
-      postsSnap.docs.map((doc) => Post.fromDocument(doc)).toList(),
-    );
+    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
+      DocumentReference postRef = doc['post_ref'];
+      DocumentSnapshot postSnap = await postRef.get();
+      if (postSnap.exists) {
+        return Post.fromDocument(postSnap);
+      }
+      return null;
+    }).toList();
+
+    final posts = await Future.wait(postFutures);
     return posts;
   }
 

@@ -259,3 +259,37 @@ Widget buildUserProfile(
     onTitleTap: onTitleTap,
   );
 }
+
+Widget buildPostDetails(
+  MyCollectionState state,
+  BuildContext context,
+  User user,
+  Post post,
+  VoidCallback onUserTitleTap,
+  Function(BuildContext) onShowBottomSheet,
+  Function(BuildContext) onNavigateToCommentScreen,
+  Function(MyCollectionState) onAddToLikesThenShowCollections,
+  String postId,
+  Animation<double> animation,
+  AnimationController controller,
+) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 18),
+    child: Row(
+      children: [
+        buildUserProfile(user, post, onUserTitleTap),
+        const Spacer(),
+        buildActionIcons(
+          state,
+          context,
+          onShowBottomSheet,
+          onNavigateToCommentScreen,
+          onAddToLikesThenShowCollections,
+          postId,
+          animation,
+          controller,
+        ),
+      ],
+    ),
+  );
+}

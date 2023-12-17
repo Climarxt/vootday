@@ -124,7 +124,19 @@ class _PostScreenState extends State<PostScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildPostImage(size),
-                    _buildPostDetails(state, context),
+                    buildPostDetails(
+                      state,
+                      context,
+                      _user!,
+                      _post!,
+                      () => _navigateToUserScreen(context, _user!),
+                      _showBottomSheet,
+                      _navigateToCommentScreen,
+                      _addToLikesThenShowCollections,
+                      widget.postId,
+                      _animation,
+                      _controller,
+                    )
                   ],
                 ),
               ),
@@ -398,31 +410,6 @@ class _PostScreenState extends State<PostScreen>
       imageProvider: _post!.imageProvider,
       width: size.width,
       height: size.height / 1.5,
-    );
-  }
-
-  Widget _buildPostDetails(MyCollectionState state, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Row(
-        children: [
-          buildUserProfile(
-            _user!,
-            _post!,
-            () => _navigateToUserScreen(context, _user!),
-          ),
-          const Spacer(),
-          buildActionIcons(
-              state,
-              context,
-              _showBottomSheet,
-              _navigateToCommentScreen,
-              _addToLikesThenShowCollections,
-              widget.postId,
-              _animation,
-              _controller),
-        ],
-      ),
     );
   }
 

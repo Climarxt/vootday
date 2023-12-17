@@ -414,3 +414,43 @@ Container buildImageContainer(
     ),
   );
 }
+
+Column buildTextColumn(BuildContext context) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Enregistré dans mes Likes',
+        style: AppTextStyles.titleHeadlineMidBlackBold(context),
+      ),
+      Text(
+        'Privé',
+        style: AppTextStyles.subtitleLargeGrey(context),
+      ),
+    ],
+  );
+}
+
+Widget buildTopRow(BuildContext context, Size size, Post post,
+    void Function(BuildContext) openCreateCollectionSheet) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 7),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            buildImageContainer(size, post),
+            const SizedBox(width: 14),
+            buildTextColumn(context),
+            const Spacer(),
+            buildBookmarkIcon(context, post.id!),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          child: buildCreatenewcollection(context, openCreateCollectionSheet),
+        ),
+      ],
+    ),
+  );
+}

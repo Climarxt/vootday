@@ -216,7 +216,7 @@ class _PostScreenState extends State<PostScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min, // Ajoutez cette ligne
             children: [
-              _buildTopRow(context, size),
+              buildTopRow(context, size, _post!, openCreateCollectionSheet),
               buildListView(
                 scrollController,
                 state,
@@ -274,45 +274,6 @@ class _PostScreenState extends State<PostScreen>
         });
       }
     }
-  }
-
-  Column _buildTextColumn(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Enregistré dans mes Likes',
-          style: AppTextStyles.titleHeadlineMidBlackBold(context),
-        ),
-        Text(
-          'Privé',
-          style: AppTextStyles.subtitleLargeGrey(context),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTopRow(BuildContext context, Size size) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 7),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              buildImageContainer(size, _post!),
-              const SizedBox(width: 14),
-              _buildTextColumn(context),
-              const Spacer(),
-              buildBookmarkIcon(context, widget.postId),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            child: buildCreatenewcollection(context, openCreateCollectionSheet),
-          ),
-        ],
-      ),
-    );
   }
 
   void openCreateCollectionSheet(BuildContext context) {

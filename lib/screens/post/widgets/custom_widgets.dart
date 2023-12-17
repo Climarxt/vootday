@@ -4,6 +4,8 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:flutter/material.dart';
@@ -240,5 +242,20 @@ Widget buildFavoriteButton(BuildContext context, String postId, String userId,
         },
       );
     },
+  );
+}
+
+Widget buildUserProfile(
+  User user,
+  Post post,
+  VoidCallback onTitleTap,
+) {
+  return ProfileImagePost(
+    title: '${user.firstName} ${user.lastName}',
+    likes: post.likes,
+    profileImageProvider: user.profileImageProvider,
+    description: post.caption,
+    tags: post.tags,
+    onTitleTap: onTitleTap,
   );
 }

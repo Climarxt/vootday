@@ -406,7 +406,11 @@ class _PostScreenState extends State<PostScreen>
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         children: [
-          _buildUserProfile(),
+          buildUserProfile(
+            _user!,
+            _post!,
+            () => _navigateToUserScreen(context, _user!),
+          ),
           const Spacer(),
           buildActionIcons(
               state,
@@ -419,17 +423,6 @@ class _PostScreenState extends State<PostScreen>
               _controller),
         ],
       ),
-    );
-  }
-
-  Widget _buildUserProfile() {
-    return ProfileImagePost(
-      title: '${_user!.firstName} ${_user!.lastName}',
-      likes: _post!.likes,
-      profileImageProvider: _user!.profileImageProvider,
-      description: _post!.caption,
-      tags: _post!.tags,
-      onTitleTap: () => _navigateToUserScreen(context, _user!),
     );
   }
 

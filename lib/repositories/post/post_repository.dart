@@ -102,13 +102,18 @@ class PostRepository extends BasePostRepository {
 
     DocumentReference collectionRef =
         _firebaseFirestore.collection(Paths.collections).doc(collectionId);
+
+    // Suppression des documents dans la sous-collection 'mycollection'
+    await _deleteDocumentsInSubCollections(
+        batch, collectionRef, 'mycollection');
+
+    // Suppression des documents dans la sous-collection directe 'feed_collection'
+    await _deleteDirectSubCollectionDocuments(
+        batch, collectionRef, 'feed_collection');
+
     debugPrint(
         'deleteCollection : Suppression de la collection dans la collection collections');
     batch.delete(collectionRef);
-
-    // Suppression des références du post dans les sous-collections
-    await _deleteCollectionReferencesInSubCollections(
-        batch, collectionRef, 'mycollection');
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
@@ -118,24 +123,45 @@ class PostRepository extends BasePostRepository {
         'deleteCollection : Suppression terminée pour la collection avec ID: $collectionId');
   }
 
-  Future<void> _deleteCollectionReferencesInSubCollections(WriteBatch batch,
-      DocumentReference collectionRef, String subCollection) async {
+  Future<void> _deleteDirectSubCollectionDocuments(WriteBatch batch,
+      DocumentReference parentDocRef, String subCollectionName) async {
     debugPrint(
-        '_deleteCollectionReferencesInSubCollections : Recherche de la collection dans les sous-collections $subCollection');
+        '_deleteDirectSubCollectionDocuments : Recherche de documents dans la sous-collection $subCollectionName');
+    QuerySnapshot snapshot =
+        await parentDocRef.collection(subCollectionName).get();
+
+    if (snapshot.docs.isEmpty) {
+      debugPrint(
+          '_deleteDirectSubCollectionDocuments : Aucun document trouvé dans $subCollectionName');
+    } else {
+      debugPrint(
+          '_deleteDirectSubCollectionDocuments : Nombre de documents trouvés dans $subCollectionName: ${snapshot.docs.length}');
+      for (var doc in snapshot.docs) {
+        debugPrint(
+            '_deleteDirectSubCollectionDocuments : Suppression du document: ${doc.id} dans $subCollectionName dans le batch');
+        batch.delete(doc.reference);
+      }
+    }
+  }
+
+  Future<void> _deleteDocumentsInSubCollections(WriteBatch batch,
+      DocumentReference parentDocRef, String subCollectionName) async {
+    debugPrint(
+        '_deleteDocumentsInSubCollections : Recherche de documents dans la sous-collection $subCollectionName avec collection_ref');
     QuerySnapshot snapshot = await _firebaseFirestore
-        .collectionGroup(subCollection)
-        .where('collection_ref', isEqualTo: collectionRef)
+        .collectionGroup(subCollectionName)
+        .where('collection_ref', isEqualTo: parentDocRef)
         .get();
 
     if (snapshot.docs.isEmpty) {
       debugPrint(
-          '_deleteCollectionReferencesInSubCollections : Aucune référence trouvée dans $subCollection pour le post_ref: $collectionRef');
+          '_deleteDocumentsInSubCollections : Aucun document trouvé dans $subCollectionName avec collection_ref');
     } else {
       debugPrint(
-          '_deleteCollectionReferencesInSubCollections : Nombre de références trouvées dans $subCollection: ${snapshot.docs.length}');
+          '_deleteDocumentsInSubCollections : Nombre de documents trouvés dans $subCollectionName avec collection_ref: ${snapshot.docs.length}');
       for (var doc in snapshot.docs) {
         debugPrint(
-            '_deleteCollectionReferencesInSubCollections : Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
+            '_deleteDocumentsInSubCollections : Suppression du document: ${doc.id} dans $subCollectionName avec collection_ref dans le batch');
         batch.delete(doc.reference);
       }
     }

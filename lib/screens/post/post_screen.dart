@@ -146,61 +146,16 @@ class _PostScreenState extends State<PostScreen>
     );
   }
 
-  Future<String> getMostRecentPostImageUrl(String collectionId) async {
-    // Add a debug print to confirm the method is called with a valid ID
-    debugPrint(
-        "getMostRecentPostImageUrl : Fetching image URL for collection ID: $collectionId");
-
-    try {
-      final feedEventRef = FirebaseFirestore.instance
-          .collection('collections')
-          .doc(collectionId)
-          .collection('feed_collection');
-
-      final querySnapshot =
-          await feedEventRef.orderBy('date', descending: true).limit(1).get();
-
-      // Check if there are documents returned
-      if (querySnapshot.docs.isNotEmpty) {
-        final data = querySnapshot.docs.first.data();
-        final DocumentReference? postRef =
-            data['post_ref'] as DocumentReference?;
-
-        if (postRef != null) {
-          final postDoc = await postRef.get();
-
-          if (postDoc.exists) {
-            final postData = postDoc.data() as Map<String, dynamic>?;
-            final imageUrl = postData?['imageUrl'] as String? ?? '';
-            // Print the image URL to verify it's the correct one
-            debugPrint(
-                "getMostRecentPostImageUrl : Found image URL: $imageUrl");
-            return imageUrl;
-          } else {
-            debugPrint(
-                "getMostRecentPostImageUrl : Referenced post document does not exist.");
-          }
-        } else {
-          debugPrint("getMostRecentPostImageUrl : Post reference is null.");
-        }
-      } else {
-        debugPrint(
-            "getMostRecentPostImageUrl : No posts found in the collection's feed.");
-      }
-    } catch (e) {
-      // Print any exceptions that occur
-      debugPrint(
-          "getMostRecentPostImageUrl : An error occurred while fetching the post image URL: $e");
-    }
-    // Return a default image URL if no image is found or an error occurs
-    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
-  }
-
-  Future<void> _showBottomSheetCollection(
-      BuildContext context, MyCollectionState state) async {
+  Future<void> showBottomSheetCollection(
+      BuildContext context,
+      MyCollectionState state,
+      Post post,
+      void Function(BuildContext) openCreateCollectionSheet,
+      List<String> imageUrls,
+      Map<String, bool> postInCollectionMap) async {
     final Size size = MediaQuery.of(context).size;
 
-    int? result = await showModalBottomSheet(
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
@@ -214,15 +169,15 @@ class _PostScreenState extends State<PostScreen>
         expand: false,
         builder: (context, scrollController) => SafeArea(
           child: Column(
-            mainAxisSize: MainAxisSize.min, // Ajoutez cette ligne
+            mainAxisSize: MainAxisSize.min,
             children: [
-              buildTopRow(context, size, _post!, openCreateCollectionSheet),
+              buildTopRow(context, size, post, openCreateCollectionSheet),
               buildListView(
                 scrollController,
                 state,
-                _imageUrls,
-                widget.postId,
-                _postInCollectionMap,
+                imageUrls,
+                post.id!,
+                postInCollectionMap,
               ),
             ],
           ),
@@ -230,8 +185,14 @@ class _PostScreenState extends State<PostScreen>
       ),
     );
 
-    // ignore: avoid_print
-    print(result);
+    // Re-fetch image URLs after the bottom sheet is closed
+    if (mounted) {
+      final updatedCollections = state.collections
+          .where((collection) => collection != null)
+          .cast<Collection>()
+          .toList();
+      await _fetchImageUrls(updatedCollections);
+    }
   }
 
   Future<void> _fetchImageUrls(List<Collection> collections) async {

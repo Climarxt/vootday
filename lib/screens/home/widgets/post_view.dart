@@ -37,7 +37,6 @@ class _PostViewState extends State<PostView>
   bool isImageVisible = false;
   late AnimationController _controller;
   late Animation<double> _animation;
-  List<String> _imageUrls = [];
 
   @override
   void initState() {
@@ -153,18 +152,16 @@ class _PostViewState extends State<PostView>
           child: buildUsername(context),
         ),
         Positioned(
-          bottom: 14,
-          right: 16,
+          bottom: 6,
+          right: 10,
           child: widget.post.id != null
               ? buildFavoriteButton(
                   context,
-                  widget.post
-                      .id!, // Utilisation de l'opérateur '!' pour indiquer que la valeur n'est pas 'null'
-                  _animation, // Assurez-vous que ces paramètres sont disponibles
+                  widget.post.id!,
+                  _animation,
                   _controller,
                 )
-              : SizedBox
-                  .shrink(), // Ou un autre widget de remplacement si 'id' est 'null'
+              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -185,10 +182,8 @@ class _PostViewState extends State<PostView>
 
             return ScaleTransition(
               scale: animation,
-              child: IconButton(
-                icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: white, size: 30),
-                onPressed: () async {
+              child: GestureDetector(
+                onTap: () async {
                   controller.forward(from: 0.0);
                   if (isLiked) {
                     await cubit.deletePostRefFromLikes(
@@ -197,6 +192,15 @@ class _PostViewState extends State<PostView>
                     await cubit.addPostToLikes(postId, userId);
                   }
                 },
+                child: Container(
+                  color: Colors.red,
+                  padding: const EdgeInsets.all(16),
+                  child: Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: white,
+                    size: 30,
+                  ),
+                ),
               ),
             );
           },
@@ -261,9 +265,7 @@ class _PostViewState extends State<PostView>
 
     // Check if the state is still mounted before updating
     if (mounted) {
-      setState(() {
-        _imageUrls = urls;
-      });
+      setState(() {});
     }
   }
 

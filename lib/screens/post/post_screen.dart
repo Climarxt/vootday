@@ -217,7 +217,13 @@ class _PostScreenState extends State<PostScreen>
             mainAxisSize: MainAxisSize.min, // Ajoutez cette ligne
             children: [
               _buildTopRow(context, size),
-              _buildListView(scrollController, state),
+              buildListView(
+                scrollController,
+                state,
+                _imageUrls,
+                widget.postId,
+                _postInCollectionMap,
+              ),
             ],
           ),
         ),
@@ -323,47 +329,6 @@ class _PostScreenState extends State<PostScreen>
             child: buildCreatenewcollection(context, openCreateCollectionSheet),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildListView(
-      ScrollController scrollController, MyCollectionState state) {
-    return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        controller: scrollController,
-        itemCount: state.collections.length,
-        separatorBuilder: (context, index) => const Divider(color: greyDark),
-        itemBuilder: (BuildContext context, int index) {
-          final collection = state.collections[index] ?? Collection.empty;
-          final imageUrl = index < _imageUrls.length
-              ? _imageUrls[index]
-              : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
-
-          return ListTile(
-            leading: buildLeadingImage(imageUrl),
-            title: Text(
-              collection.title,
-              style: AppTextStyles.titleHeadlineMidBlackBold(context),
-            ),
-            subtitle: Text(
-              collection.public ? 'Public' : 'Privé',
-              style: AppTextStyles.subtitleLargeGrey(context),
-            ),
-            trailing: FutureBuilder<Widget>(
-              future: buildTrailingIcon(
-                collection.id,
-                context,
-                widget.postId,
-                _postInCollectionMap,
-              ),
-              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                return snapshot.data ?? const SizedBox.shrink();
-              },
-            ),
-          );
-        },
       ),
     );
   }

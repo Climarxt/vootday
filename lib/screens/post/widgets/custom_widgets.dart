@@ -347,3 +347,49 @@ Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
     },
   );
 }
+
+Widget buildListView(
+  ScrollController scrollController,
+  MyCollectionState state,
+  List<String> imageUrls,
+  String postId,
+  Map<String, bool> postInCollectionMap,
+) {
+  return Expanded(
+    child: ListView.separated(
+      padding: EdgeInsets.zero,
+      controller: scrollController,
+      itemCount: state.collections.length,
+      separatorBuilder: (context, index) => const Divider(color: greyDark),
+      itemBuilder: (BuildContext context, int index) {
+        final collection = state.collections[index] ?? Collection.empty;
+        final imageUrl = index < imageUrls.length
+            ? imageUrls[index]
+            : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
+
+        return ListTile(
+          leading: buildLeadingImage(imageUrl),
+          title: Text(
+            collection.title,
+            style: AppTextStyles.titleHeadlineMidBlackBold(context),
+          ),
+          subtitle: Text(
+            collection.public ? 'Public' : 'Privé',
+            style: AppTextStyles.subtitleLargeGrey(context),
+          ),
+          trailing: FutureBuilder<Widget>(
+            future: buildTrailingIcon(
+              collection.id,
+              context,
+              postId,
+              postInCollectionMap,
+            ),
+            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              return snapshot.data ?? const SizedBox.shrink();
+            },
+          ),
+        );
+      },
+    ),
+  );
+}

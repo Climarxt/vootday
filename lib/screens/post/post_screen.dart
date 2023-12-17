@@ -123,7 +123,7 @@ class _PostScreenState extends State<PostScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildPostImage(size),
+                    buildPostImage(size, _post!),
                     buildPostDetails(
                       state,
                       context,

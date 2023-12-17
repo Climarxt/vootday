@@ -293,3 +293,14 @@ Widget buildPostDetails(
     ),
   );
 }
+
+Widget buildPostImage(
+  Size size,
+  Post post,
+) {
+  return ImageLoader(
+    imageProvider: post.imageProvider,
+    width: size.width,
+    height: size.height / 1.5,
+  );
+}

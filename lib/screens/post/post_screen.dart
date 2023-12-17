@@ -9,7 +9,6 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,7 +31,7 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen>
-    with AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin {
   Post? _post;
   User? _user;
   bool _isLoading = true;
@@ -42,6 +41,9 @@ class _PostScreenState extends State<PostScreen>
   ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
   final TextEditingController _collectionNameController =
       TextEditingController();
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -64,11 +66,30 @@ class _PostScreenState extends State<PostScreen>
         .cast<Collection>()
         .toList();
     _fetchImageUrls(nonNullCollections);
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 1, end: 1.5)
+        .chain(CurveTween(curve: Curves.elasticOut))
+        .animate(_controller);
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final Size size = MediaQuery.of(context).size;
 
     if (_isLoading) {
@@ -128,15 +149,12 @@ class _PostScreenState extends State<PostScreen>
           // Supprimer le post de la collection
           context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
               postId: widget.postId, collectionId: collectionId));
-          SnackbarUtil.showSuccessSnackbar(
-              context, 'Post removed from collection !');
         } else {
           // Ajouter le post à la collection
           context
               .read<AddPostToCollectionCubit>()
               .addPostToCollection(widget.postId, collectionId);
-          SnackbarUtil.showSuccessSnackbar(
-              context, 'Post Added to collection !');
+
         }
         Navigator.pop(context);
       },
@@ -434,30 +452,28 @@ class _PostScreenState extends State<PostScreen>
       BuildContext context, String postId, String userId) {
     return BlocBuilder<AddPostToLikesCubit, AddPostToLikesState>(
       builder: (context, state) {
-        // Initialisation du cubit
         final cubit = context.read<AddPostToLikesCubit>();
 
         return FutureBuilder<bool>(
           future: cubit.isPostLiked(postId, userId),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
-              );
-            }
-
             bool isLiked = snapshot.data ?? false;
-            return IconButton(
-              icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.black, size: 24),
-              onPressed: () async {
-                if (isLiked) {
-                  await cubit.deletePostRefFromLikes(
-                      postId: postId, userId: userId);
-                } else {
-                  await cubit.addPostToLikes(postId, userId);
-                }
-              },
+
+            return ScaleTransition(
+              scale: _animation,
+              child: IconButton(
+                icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.black, size: 24),
+                onPressed: () async {
+                  _controller.forward(from: 0.0);
+                  if (isLiked) {
+                    await cubit.deletePostRefFromLikes(
+                        postId: postId, userId: userId);
+                  } else {
+                    await cubit.addPostToLikes(postId, userId);
+                  }
+                },
+              ),
             );
           },
         );
@@ -468,13 +484,19 @@ class _PostScreenState extends State<PostScreen>
   Widget _buildBookmarkIcon() {
     final authState = context.read<AuthBloc>().state;
     final _userId = authState.user?.uid;
+    final cubit = context.read<AddPostToLikesCubit>();
 
     return IconButton(
       icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
-      onPressed: () {
-        context.read<FeedMyLikesBloc>().add(
-            FeedMyLikesDeletePostRef(postId: widget.postId, userId: _userId!));
-        SnackbarUtil.showSuccessSnackbar(context, 'Post removed from Likes!');
+      onPressed: () async {
+        // Vérifier si le post est liké
+        bool isLiked = await cubit.isPostLiked(widget.postId, _userId!);
+
+        if (isLiked) {
+          // Si liké, alors supprimer le like
+          await cubit.deletePostRefFromLikes(
+              postId: widget.postId, userId: _userId);
+        }
 
         Navigator.pop(context);
       },
@@ -596,8 +618,6 @@ class _PostScreenState extends State<PostScreen>
                   .addPostToCollection(widget.postId, newCollectionId);
 
               Navigator.pop(context);
-              SnackbarUtil.showSuccessSnackbar(
-                  context, 'Collection Created & Post Added !');
             } else {
               debugPrint('Error: Collection creation failed');
             }
@@ -746,8 +766,6 @@ class _PostScreenState extends State<PostScreen>
                   } else {
                     GoRouter.of(context).go('/profile');
                   }
-
-                  SnackbarUtil.showSuccessSnackbar(context, 'Post Deleted !');
                 },
               ),
             ListTile(
@@ -762,7 +780,4 @@ class _PostScreenState extends State<PostScreen>
       },
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

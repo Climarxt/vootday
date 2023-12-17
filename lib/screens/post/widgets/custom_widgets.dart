@@ -454,3 +454,46 @@ Widget buildTopRow(BuildContext context, Size size, Post post,
     ),
   );
 }
+
+Future<void> showBottomSheetCollection(
+    BuildContext context,
+    MyCollectionState state,
+    Post post,
+    void Function(BuildContext) openCreateCollectionSheet,
+    List<String> imageUrls,
+    Map<String, bool> postInCollectionMap) async {
+  final Size size = MediaQuery.of(context).size;
+
+  int? result = await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+    ),
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.4,
+      minChildSize: 0.2,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ajoutez cette ligne
+          children: [
+            buildTopRow(context, size, post, openCreateCollectionSheet),
+            buildListView(
+              scrollController,
+              state,
+              imageUrls,
+              post.id!,
+              postInCollectionMap,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  // ignore: avoid_print
+  print(result);
+}

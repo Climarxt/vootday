@@ -345,14 +345,28 @@ class _PostScreenState extends State<PostScreen>
           .isPostInLikes(postId: widget.postId, userId: _userId);
 
       if (isPostLiked) {
-        _showBottomSheetCollection(context, state);
+        showBottomSheetCollection(
+          context,
+          state,
+          _post!,
+          openCreateCollectionSheet,
+          _imageUrls,
+          _postInCollectionMap,
+        );
       } else {
         // Ajouter le post aux likes
         context
             .read<AddPostToLikesCubit>()
             .addPostToLikes(widget.postId, _userId);
         // Puis afficher le bottom sheet
-        _showBottomSheetCollection(context, state);
+        showBottomSheetCollection(
+          context,
+          state,
+          _post!,
+          openCreateCollectionSheet,
+          _imageUrls,
+          _postInCollectionMap,
+        );
       }
     } else {
       debugPrint('User ID is null');

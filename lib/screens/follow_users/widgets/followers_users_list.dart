@@ -1,4 +1,3 @@
-import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
@@ -6,7 +5,11 @@ import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cub
 import 'package:bootdv2/screens/follow_users/followers_users/followers_users_state.dart';
 
 class FollowersUsersList extends StatefulWidget {
-  const FollowersUsersList({super.key});
+  final String userId;
+  const FollowersUsersList({
+    super.key,
+    required this.userId,
+  });
 
   @override
   State<FollowersUsersList> createState() => _FollowersUsersListState();
@@ -17,9 +20,7 @@ class _FollowersUsersListState extends State<FollowersUsersList> {
   void initState() {
     super.initState();
 
-    final authState = context.read<AuthBloc>().state;
-    final userId = authState.user?.uid;
-    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+    context.read<FollowersUsersCubit>().fetchUserFollowers(widget.userId);
   }
 
   @override

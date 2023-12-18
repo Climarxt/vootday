@@ -49,7 +49,9 @@ class _FollowUsersScreenState extends State<FollowUsersScreen>
         FollowingUsersList(
           userId: widget.userId,
         ),
-        const FollowersUsersList(),
+        FollowersUsersList(
+          userId: widget.userId,
+        ),
       ],
     );
   }

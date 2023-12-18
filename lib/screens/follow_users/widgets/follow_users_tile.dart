@@ -1,3 +1,4 @@
+import 'package:bootdv2/screens/follow_users/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
@@ -25,7 +26,7 @@ class _FollowUsersTileState extends State<FollowUsersTile> {
           _buildAvatar(context),
           const SizedBox(width: 10),
           _buildUserInfo(context),
-          _buildFollowButton(context),
+          FollowButton(isFollowing: false),
         ],
       ),
     );

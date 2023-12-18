@@ -42,8 +42,8 @@ class _FollowUsersScreenState extends State<FollowUsersScreen>
     return TabBarView(
       controller: _tabController,
       children: const [
-        FollowUsersList(),
-        FollowUsersList(),
+        FollowingUsersList(),
+        FollowersUsersList(),
       ],
     );
   }

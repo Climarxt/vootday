@@ -5,14 +5,14 @@ import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
 import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/followers_users/followers_users_state.dart';
 
-class FollowUsersList extends StatefulWidget {
-  const FollowUsersList({super.key});
+class FollowersUsersList extends StatefulWidget {
+  const FollowersUsersList({super.key});
 
   @override
-  State<FollowUsersList> createState() => _FollowUsersListState();
+  State<FollowersUsersList> createState() => _FollowersUsersListState();
 }
 
-class _FollowUsersListState extends State<FollowUsersList> {
+class _FollowersUsersListState extends State<FollowersUsersList> {
   @override
   void initState() {
     super.initState();

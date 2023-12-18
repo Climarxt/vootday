@@ -50,6 +50,46 @@ class UserRepository extends BaseUserRepository {
     }
   }
 
+  Future<List<User>> getUserFollowing({
+    required String userId,
+  }) async {
+    try {
+      debugPrint(
+          'getUserFollowing : Attempting to fetch user followers from Firestore...');
+
+      // Récupérer les documents de la sous-collection 'userFollowers'
+      QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
+          .collection('following')
+          .doc(userId)
+          .collection('userFollowing')
+          .get();
+
+      debugPrint('getUserFollowing : Followers documents fetched.');
+
+      // Créer une liste pour les futures informations des utilisateurs
+      List<Future<User?>> futureUsers = followersSnapshot.docs.map((doc) async {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(doc.id)
+            .get();
+        return userDoc.exists ? User.fromDocument(userDoc) : null;
+      }).toList();
+
+      // Résoudre tous les futures pour obtenir les informations détaillées des utilisateurs
+      List<User> followers =
+          (await Future.wait(futureUsers)).whereType<User>().toList();
+
+      debugPrint(
+          'getUserFollowing : User objects created. Total followers: ${followers.length}');
+
+      return followers;
+    } catch (e) {
+      debugPrint(
+          'getUserFollowing : An error occurred while fetching followers: ${e.toString()}');
+      return [];
+    }
+  }
+
   @override
   Stream<User> getUser(String userId) {
     return _firebaseFirestore

@@ -1,9 +1,9 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
+import 'package:bootdv2/screens/follow_users/following_users/following_users_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
-import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
-import 'package:bootdv2/screens/follow_users/followers_users/followers_users_state.dart';
 
 class FollowingUsersList extends StatefulWidget {
   const FollowingUsersList({super.key});
@@ -19,12 +19,12 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
 
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
-    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+    context.read<FollowingUsersCubit>().fetchUserFollowers(userId!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FollowersUsersCubit, FollowersUsersState>(
+    return BlocConsumer<FollowingUsersCubit, FollowingUsersState>(
       listener: (context, state) {},
       builder: (context, state) {
         return _buildBody(state);
@@ -32,7 +32,7 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
     );
   }
 
-  Widget _buildBody(FollowersUsersState state) {
+  Widget _buildBody(FollowingUsersState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ListView.builder(

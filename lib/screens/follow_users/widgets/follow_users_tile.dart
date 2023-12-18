@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:go_router/go_router.dart';
 
-class FollowUsersTile extends StatelessWidget {
+class FollowUsersTile extends StatefulWidget {
   final User user;
 
   const FollowUsersTile({
@@ -11,12 +12,17 @@ class FollowUsersTile extends StatelessWidget {
   });
 
   @override
+  State<FollowUsersTile> createState() => _FollowUsersTileState();
+}
+
+class _FollowUsersTileState extends State<FollowUsersTile> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          _buildAvatar(),
+          _buildAvatar(context),
           const SizedBox(width: 10),
           _buildUserInfo(context),
           _buildFollowButton(context),
@@ -25,12 +31,18 @@ class FollowUsersTile extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar() {
-    return CircleAvatar(
-      radius: 27,
-      backgroundImage: NetworkImage(user.profileImageUrl.isNotEmpty
-          ? user.profileImageUrl
-          : 'path/to/default/image'), // Ajoutez un chemin pour une image par défaut
+  Widget _buildAvatar(context) {
+    return GestureDetector(
+      onTap: () {
+        GoRouter.of(context)
+            .push('/user/${widget.user.id}?username=${widget.user.username}');
+      },
+      child: CircleAvatar(
+        radius: 27,
+        backgroundImage: NetworkImage(widget.user.profileImageUrl.isNotEmpty
+            ? widget.user.profileImageUrl
+            : 'assets/image/white_placeholder.png'),
+      ),
     );
   }
 
@@ -40,11 +52,11 @@ class FollowUsersTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            user.username,
+            widget.user.username,
             style: AppTextStyles.titleLargeBlackBold(context),
           ),
           Text(
-            '${user.firstName} ${user.lastName}',
+            '${widget.user.firstName} ${widget.user.lastName}',
             style: AppTextStyles.subtitleLargeGrey(context),
           ),
         ],

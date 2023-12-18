@@ -55,9 +55,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     });
 
     _userRepository.getUser(event.userId).listen((user) {
-      add(
-        UpdateProfile(user: user, userId: event.userId),
-      );
+      if (isClosed) {
+        return;
+      }
+      add(UpdateProfile(user: user, userId: event.userId));
       state.copyWith(status: ProfileStatus.loading);
     });
   }

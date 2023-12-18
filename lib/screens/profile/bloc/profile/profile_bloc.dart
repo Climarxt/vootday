@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
@@ -30,7 +31,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileToggleGridView>(_mapProfileToggleGridViewToState);
     on<ProfileUpdatePosts>(_mapProfileUpdatePostsToState);
     on<ProfileFollowUser>(_mapProfileFollowUserToState);
+    on<ProfileFollowUserWithUserId>(_mapProfileFollowUserWithUserIdToState);
     on<ProfileUnfollowUser>(_mapProfileUnfollowUserToState);
+    on<ProfileUnfollowUserWithUserId>(_mapProfileUnfollowUserWithUserIdToState);
 
     _authSubscription = _authBloc.stream.listen((state) {
       if (state.user is AuthUserChanged) {
@@ -145,11 +148,40 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
+  Future<void> _mapProfileFollowUserWithUserIdToState(
+    ProfileFollowUserWithUserId event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      debugPrint(
+          'ProfileFollowUserWithUserId : Attempting to follow user. User ID to follow: ${event.followUserId}');
+      _userRepository.followUser(
+        userId: _authBloc.state.user!.uid,
+        followUserId: event.followUserId,
+      );
+      final updatedUser =
+          state.user.copyWith(followers: state.user.followers + 1);
+      emit(state.copyWith(user: updatedUser, isFollowing: true));
+      debugPrint(
+          'ProfileFollowUserWithUserId : Follow successful. Updated user: $updatedUser');
+    } catch (err) {
+      debugPrint(
+          'ProfileFollowUserWithUserId : Error during follow: ${err.toString()}');
+      emit(state.copyWith(
+        status: ProfileStatus.error,
+        failure: const Failure(
+            message:
+                'ProfileFollowUserWithUserId : Something went wrong! Please try again.'),
+      ));
+    }
+  }
+
   Future<void> _mapProfileUnfollowUserToState(
     ProfileUnfollowUser event,
     Emitter<ProfileState> emit,
   ) async {
     try {
+      debugPrint('Attempting to unfollow user. User ID: ${state.user.id}');
       _userRepository.unfollowUser(
         userId: _authBloc.state.user!.uid,
         unfollowUserId: state.user.id,
@@ -157,11 +189,41 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final updatedUser =
           state.user.copyWith(followers: state.user.followers - 1);
       emit(state.copyWith(user: updatedUser, isFollowing: false));
+      debugPrint('Unfollow successful. Updated user: $updatedUser');
     } catch (err) {
+      debugPrint('Error during unfollow: ${err.toString()}');
       emit(state.copyWith(
         status: ProfileStatus.error,
         failure:
             const Failure(message: 'Something went wrong! Please try again.'),
+      ));
+    }
+  }
+
+  Future<void> _mapProfileUnfollowUserWithUserIdToState(
+    ProfileUnfollowUserWithUserId event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      debugPrint(
+          'ProfileUnfollowUserWithUserId : Attempting to unfollow user. User ID: ${event.unfollowUserId}');
+      _userRepository.unfollowUser(
+        userId: _authBloc.state.user!.uid,
+        unfollowUserId: event.unfollowUserId,
+      );
+      final updatedUser =
+          state.user.copyWith(followers: state.user.followers - 1);
+      emit(state.copyWith(user: updatedUser, isFollowing: false));
+      debugPrint(
+          'ProfileUnfollowUserWithUserId : Unfollow successful. Updated user: $updatedUser');
+    } catch (err) {
+      debugPrint(
+          'ProfileUnfollowUserWithUserId : Error during unfollow: ${err.toString()}');
+      emit(state.copyWith(
+        status: ProfileStatus.error,
+        failure: const Failure(
+            message:
+                'ProfileUnfollowUserWithUserId : Something went wrong! Please try again.'),
       ));
     }
   }

@@ -46,4 +46,24 @@ class ProfileUpdatePosts extends ProfileEvent {
 
 class ProfileFollowUser extends ProfileEvent {}
 
+class ProfileFollowUserWithUserId extends ProfileEvent {
+  final String followUserId;
+
+  const ProfileFollowUserWithUserId({required this.followUserId});
+
+  @override
+  List<Object> get props => [followUserId];
+}
+
+
 class ProfileUnfollowUser extends ProfileEvent {}
+
+class ProfileUnfollowUserWithUserId extends ProfileEvent {
+  final String unfollowUserId;
+
+  const ProfileUnfollowUserWithUserId({required this.unfollowUserId});
+
+  @override
+  List<Object> get props => [unfollowUserId];
+}
+

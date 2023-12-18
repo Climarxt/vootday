@@ -3,14 +3,21 @@ import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FollowButton extends StatelessWidget {
+class FollowButton extends StatefulWidget {
   final bool isFollowing;
+  final String userId;
 
   const FollowButton({
     super.key,
     required this.isFollowing,
+    required this.userId,
   });
 
+  @override
+  State<FollowButton> createState() => _FollowButtonState();
+}
+
+class _FollowButtonState extends State<FollowButton> {
   @override
   Widget build(BuildContext context) {
     // Show 'Edit Profile' button for the current user, otherwise show 'Follow/Unfollow' button.
@@ -23,13 +30,15 @@ class FollowButton extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: couleurBleuClair2,
         shape: RoundedRectangleBorder(
-          // Ajoute des bords arrondis
           borderRadius: BorderRadius.circular(10), // Rayon des bords arrondis
         ),
       ),
-      onPressed: () => toggleFollowStatus(context),
+      onPressed: () {
+        debugPrint('Follow button pressed');
+        toggleFollowStatus(context);
+      },
       child: Text(
-        isFollowing
+        widget.isFollowing
             ? AppLocalizations.of(context)!.translate('unfollow')
             : AppLocalizations.of(context)!.translate('follow'),
         style:
@@ -38,10 +47,19 @@ class FollowButton extends StatelessWidget {
     );
   }
 
-  // Toggles the follow status of the profile.
+// Toggles the follow status of the profile.
   void toggleFollowStatus(BuildContext context) {
-    isFollowing
-        ? context.read<ProfileBloc>().add(ProfileUnfollowUser())
-        : context.read<ProfileBloc>().add(ProfileFollowUser());
+    debugPrint('Toggling follow status. Current status: ${widget.isFollowing}');
+    if (widget.isFollowing) {
+      debugPrint('Unfollowing user');
+      context
+          .read<ProfileBloc>()
+          .add(ProfileUnfollowUserWithUserId(unfollowUserId: widget.userId));
+    } else {
+      debugPrint('Following user');
+      context
+          .read<ProfileBloc>()
+          .add(ProfileFollowUserWithUserId(followUserId: widget.userId));
+    }
   }
 }

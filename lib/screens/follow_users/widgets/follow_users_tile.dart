@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 
 class FollowUsersTile extends StatefulWidget {
   final User user;
+  final bool isFollowing;
 
   const FollowUsersTile({
     super.key,
     required this.user,
+    required this.isFollowing,
   });
 
   @override
@@ -26,7 +28,10 @@ class _FollowUsersTileState extends State<FollowUsersTile> {
           _buildAvatar(context),
           const SizedBox(width: 10),
           _buildUserInfo(context),
-          FollowButton(isFollowing: false),
+          FollowButton(
+            isFollowing: widget.isFollowing,
+            userId: widget.user.id,
+          ),
         ],
       ),
     );
@@ -61,24 +66,6 @@ class _FollowUsersTileState extends State<FollowUsersTile> {
             style: AppTextStyles.subtitleLargeGrey(context),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFollowButton(BuildContext context) {
-    return TextButton(
-      onPressed: () {},
-      style: TextButton.styleFrom(
-        minimumSize: Size.zero,
-        backgroundColor: couleurBleuClair2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text(
-        'Suivi(e)',
-        style:
-            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
       ),
     );
   }

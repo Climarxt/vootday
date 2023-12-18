@@ -8,9 +8,8 @@ import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
-
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
-
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
@@ -177,6 +176,24 @@ GoRouter createRouter(BuildContext context) {
             },
           ),
         ],
+      ),
+      // Followers Following
+      GoRoute(
+        path: '/followersfollowingscreen',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final userId = RouteConfig.getUserIdUri(state);
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProvider<ProfileBloc>(
+              create: (context) => ProfileBloc(
+                authBloc: context.read<AuthBloc>(),
+                userRepository: context.read<UserRepository>(),
+                postRepository: context.read<PostRepository>(),
+              ),
+              child: FollowUsersScreen(userId: userId),
+            ),
+          );
+        },
       ),
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
@@ -395,17 +412,6 @@ GoRouter createRouter(BuildContext context) {
                       return MaterialPage<void>(
                         key: state.pageKey,
                         child: const NotificationScreen(),
-                      );
-                    },
-                  ),
-                  // profile/followersfollowingusers
-                  GoRoute(
-                    path: 'followersfollowingscreen',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      final userId = RouteConfig.getUserIdUri(state);
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        child: FollowUsersScreen(userId: userId),
                       );
                     },
                   ),

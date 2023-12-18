@@ -14,7 +14,7 @@ class FollowingUsersCubit extends Cubit<FollowingUsersState> {
     debugPrint('FollowingUsersCubit : Loading followers for user $userId');
     emit(state.copyWith(status: FollowingUsersStatus.loading));
     try {
-      final followers = await _userRepository.getUserFollowing(userId: userId);
+      final followers = await _userRepository.getUserFollowers(userId: userId);
       debugPrint('FollowingUsersCubit : Loaded followers successfully');
       emit(state.copyWith(
           followers: followers, status: FollowingUsersStatus.loaded));

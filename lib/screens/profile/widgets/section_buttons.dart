@@ -26,10 +26,10 @@ class ButtonsSection extends StatelessWidget {
           _buildTwoButtonsOnclick(
               state.user.following,
               AppLocalizations.of(context)!.translate('followingsCap'),
-              "/profile/followersfollowingscreen",
+              "/followersfollowingscreen",
               state.user.followers,
               AppLocalizations.of(context)!.translate('followersCap'),
-              "/profile/followersfollowingscreen",
+              "/followersfollowingscreen",
               context,
               state.user.id),
         ],

@@ -83,10 +83,8 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
               isFollowingList.length > index ? isFollowingList[index] : false;
 
           if (user.id == currentUserId) {
-            // Utiliser MeTile pour l'utilisateur courant
             return MeTile(user: user);
           } else {
-            // Utiliser FollowUsersTile pour les autres utilisateurs
             return FollowUsersTile(
               user: user,
               isFollowing: isFollowing,

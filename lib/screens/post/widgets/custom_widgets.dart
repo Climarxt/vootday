@@ -277,8 +277,14 @@ Widget buildPostDetails(
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 18),
     child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildUserProfile(user, post, onUserTitleTap),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            buildUserProfile(user, post, onUserTitleTap),
+          ],
+        ),
         const Spacer(),
         buildActionIcons(
           state,

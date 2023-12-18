@@ -28,6 +28,7 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
     context.read<FollowingUsersCubit>().fetchUserFollowing(widget.userId);
   }
 
+  // Check si user de la liste et suivi ou non
   Future<void> _fetchFollowingStatus(List<User> followers) async {
     isFollowingList = [];
     for (var user in followers) {

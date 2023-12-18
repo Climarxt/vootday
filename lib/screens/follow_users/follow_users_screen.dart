@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 
 class FollowUsersScreen extends StatefulWidget {
   final String userId;
+  final int initialTabIndex;
+
   const FollowUsersScreen({
     super.key,
     required this.userId,
+    required this.initialTabIndex,
   });
 
   @override
@@ -24,7 +27,8 @@ class _FollowUsersScreenState extends State<FollowUsersScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 2, vsync: this, initialIndex: widget.initialTabIndex);
   }
 
   @override

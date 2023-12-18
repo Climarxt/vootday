@@ -24,14 +24,17 @@ class ButtonsSection extends StatelessWidget {
             height: 10,
           ),
           _buildTwoButtonsOnclick(
-              state.user.following,
-              AppLocalizations.of(context)!.translate('followingsCap'),
-              "/followersfollowingscreen",
-              state.user.followers,
-              AppLocalizations.of(context)!.translate('followersCap'),
-              "/followersfollowingscreen",
-              context,
-              state.user.id),
+            state.user.following,
+            AppLocalizations.of(context)!.translate('followingsCap'),
+            "/followersfollowingscreen",
+            state.user.followers,
+            AppLocalizations.of(context)!.translate('followersCap'),
+            "/followersfollowingscreen",
+            context,
+            state.user.id,
+            0, // Index pour l'onglet "Following"
+            1, // Index pour l'onglet "Followers"
+          ),
         ],
       ),
     );
@@ -60,16 +63,22 @@ class ButtonsSection extends StatelessWidget {
       String label2,
       String route2,
       BuildContext context,
-      String userId) {
+      String userId,
+      int index0,
+      int index1) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(child: buildButtonOnClick(count1, label1, context, route1, userId)),
+        Expanded(
+            child: buildButtonOnClickIndex0(
+                count1, label1, context, route1, userId, index0)),
         const SizedBox(
           width: 10,
         ),
-        Expanded(child: buildButtonOnClick(count2, label2, context, route2, userId)),
+        Expanded(
+            child: buildButtonOnClickIndex1(
+                count2, label2, context, route2, userId, index1)),
       ],
     );
   }

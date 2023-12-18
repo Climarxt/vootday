@@ -23,13 +23,13 @@ ButtonTheme buildButton(int num, String texte, BuildContext context) {
   );
 }
 
-ButtonTheme buildButtonOnClick(
-    int num, String texte, BuildContext context, String route, String userId) {
+ButtonTheme buildButtonOnClickIndex0(int num, String texte,
+    BuildContext context, String route, String userId, int index0) {
   return ButtonTheme(
     minWidth: double.infinity,
     child: OutlinedButton(
       onPressed: () {
-        _navigateToScreen(context, route, userId);
+        _navigateToScreenIndex0(context, route, userId, index0);
       },
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -45,6 +45,36 @@ ButtonTheme buildButtonOnClick(
   );
 }
 
-void _navigateToScreen(BuildContext context, String route, String userId) {
-  GoRouter.of(context).push('$route?userId=$userId');
+void _navigateToScreenIndex0(
+    BuildContext context, String route, String userId, int index0) {
+  GoRouter.of(context)
+      .push('$route?userId=$userId', extra: {'initialTabIndex': index0});
+}
+
+ButtonTheme buildButtonOnClickIndex1(int num, String texte,
+    BuildContext context, String route, String userId, int index1) {
+  return ButtonTheme(
+    minWidth: double.infinity,
+    child: OutlinedButton(
+      onPressed: () {
+        _navigateToScreenIndex1(context, route, userId, index1);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Column(
+          children: [
+            Text(num.toString(),
+                style: AppTextStyles.displaySmallBold(context)),
+            Text(texte, style: AppTextStyles.subtitleLargeGrey(context)),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+void _navigateToScreenIndex1(
+    BuildContext context, String route, String userId, int index1) {
+  GoRouter.of(context)
+      .push('$route?userId=$userId', extra: {'initialTabIndex': index1});
 }

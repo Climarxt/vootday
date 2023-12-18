@@ -182,6 +182,11 @@ GoRouter createRouter(BuildContext context) {
         path: '/followersfollowingscreen',
         pageBuilder: (BuildContext context, GoRouterState state) {
           final userId = RouteConfig.getUserIdUri(state);
+          int initialTabIndex = 0;
+          if (state.extra is Map<String, dynamic>) {
+            final extra = state.extra as Map<String, dynamic>;
+            initialTabIndex = extra['initialTabIndex'] ?? 0;
+          }
           return MaterialPage<void>(
             key: state.pageKey,
             child: BlocProvider<ProfileBloc>(
@@ -190,11 +195,13 @@ GoRouter createRouter(BuildContext context) {
                 userRepository: context.read<UserRepository>(),
                 postRepository: context.read<PostRepository>(),
               ),
-              child: FollowUsersScreen(userId: userId),
+              child: FollowUsersScreen(
+                  userId: userId, initialTabIndex: initialTabIndex),
             ),
           );
         },
       ),
+
       // StatefulShellBranch
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,

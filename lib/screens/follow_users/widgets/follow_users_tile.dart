@@ -1,14 +1,13 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:flutter/material.dart';
-import 'package:bootdv2/models/wip/model.dart';
 
 class FollowUsersTile extends StatelessWidget {
-  final NotifWIP notification;
+  final User user;
 
   const FollowUsersTile({
     super.key,
-    required this.notification,
+    required this.user,
   });
 
   @override
@@ -19,9 +18,7 @@ class FollowUsersTile extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 27,
-            backgroundImage: CachedNetworkImageProvider(
-              notification.fromUser.profileImageUrl,
-            ),
+            backgroundImage: NetworkImage(user.profileImageUrl),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -29,11 +26,11 @@ class FollowUsersTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notification.fromUser.username,
+                  user.username,
                   style: AppTextStyles.titleLargeBlackBold(context),
                 ),
                 Text(
-                  "Prénom Nom",
+                  '${user.firstName} ${user.lastName}',
                   style: AppTextStyles.subtitleLargeGrey(context),
                 ),
               ],
@@ -42,11 +39,20 @@ class FollowUsersTile extends StatelessWidget {
           TextButton(
             onPressed: () {},
             style: TextButton.styleFrom(
+              minimumSize: Size.zero,
               backgroundColor: couleurBleuClair2,
+              shape: RoundedRectangleBorder(
+                // Ajoute des bords arrondis
+                borderRadius:
+                    BorderRadius.circular(10), // Rayon des bords arrondis
+              ),
             ),
             child: Text(
               'Suivi(e)',
-              style: AppTextStyles.titleLargeWhiteBold(context),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: white),
             ),
           ),
         ],

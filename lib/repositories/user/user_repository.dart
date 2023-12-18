@@ -24,24 +24,23 @@ class UserRepository extends BaseUserRepository {
           .collection('userFollowers')
           .get();
 
-      debugPrint(
-          'getUserFollowers : Followers documents fetched. Creating User objects...');
+      debugPrint('getUserFollowers : Followers documents fetched.');
 
-      // Créer des objets User à partir des documents récupérés et filtrer les null
-      List<User> followers = followersSnapshot.docs
-          .map((doc) => User.fromDocument(doc))
-          // ignore: unnecessary_null_comparison
-          .where((user) => user != null)
-          .cast<User>() // Cette opération est sûre car on a éliminé les null
-          .toList();
+      // Créer une liste pour les futures informations des utilisateurs
+      List<Future<User?>> futureUsers = followersSnapshot.docs.map((doc) async {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(doc.id)
+            .get();
+        return userDoc.exists ? User.fromDocument(userDoc) : null;
+      }).toList();
+
+      // Résoudre tous les futures pour obtenir les informations détaillées des utilisateurs
+      List<User> followers =
+          (await Future.wait(futureUsers)).whereType<User>().toList();
 
       debugPrint(
           'getUserFollowers : User objects created. Total followers: ${followers.length}');
-
-      if (followers.isNotEmpty) {
-        debugPrint(
-            'getUserFollowers : First follower details: ${followers.first}');
-      }
 
       return followers;
     } catch (e) {

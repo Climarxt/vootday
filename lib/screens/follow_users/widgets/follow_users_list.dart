@@ -1,46 +1,58 @@
-import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
-import 'package:bootdv2/models/wip/model.dart';
-
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
+import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
+import 'package:bootdv2/screens/follow_users/followers_users/followers_users_state.dart';
 
-class FollowUsersList extends StatelessWidget {
+class FollowUsersList extends StatefulWidget {
   const FollowUsersList({super.key});
 
   @override
+  State<FollowUsersList> createState() => _FollowUsersListState();
+}
+
+class _FollowUsersListState extends State<FollowUsersList> {
+  @override
+  void initState() {
+    super.initState();
+
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Scaffold(
-        body: _buildFollowUsersList(),
-      ),
+    return BlocConsumer<FollowersUsersCubit, FollowersUsersState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return _buildBody(state);
+      },
     );
   }
 
-  Widget _buildFollowUsersList() {
-    List<NotifWIP> dummyNotifications = List<NotifWIP>.generate(
-        10,
-        (index) => NotifWIP(
-              fromUser: UserWIP(
-                profileImageUrl:
-                    "https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fposts%2Fpost_dfd48067-cdc9-4443-ab4f-7e309cde9217.jpg?alt=media&token=b077a41c-adb5-4de6-b24f-f0cc24dceebb",
-                username: "User ${index + 1}",
-                id: '1',
-              ),
-              type: index % 2 == 0 ? NotifTypeWIP.like : NotifTypeWIP.comment,
-              date: DateTime.now(),
-              post: PostWIP(
-                  imageUrl:
-                      "https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fposts%2Fpost_39bfbded-e18f-49f7-8b05-c771afddf964.jpg?alt=media&token=3c76f75e-217c-4518-b06c-766316c6ffb0",
-                  id: '1'),
-            ));
-
-    return ListView.builder(
-      itemCount: dummyNotifications.length,
-      itemBuilder: (BuildContext context, int index) {
-        return FollowUsersTile(
-          notification: dummyNotifications[index],
-        );
-      },
-    );
+  Widget _buildBody(FollowersUsersState state) {
+    if (state.status == FollowersUsersStatus.loading) {
+      return const Center(
+        child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)),
+      );
+    } else if (state.status == FollowersUsersStatus.loaded) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: ListView.builder(
+          itemCount: state.followers.length,
+          itemBuilder: (context, index) {
+            final user = state.followers[index];
+            return FollowUsersTile(
+              user: user,
+            );
+          },
+        ),
+      );
+    } else {
+      return const Center(child: Text('No followers to display'));
+    }
   }
 }

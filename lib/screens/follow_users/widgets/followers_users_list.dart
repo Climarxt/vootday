@@ -41,19 +41,28 @@ class _FollowersUsersListState extends State<FollowersUsersList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FollowersUsersCubit, FollowersUsersState>(
+    return BlocListener<FollowersUsersCubit, FollowersUsersState>(
       listener: (context, state) {
         if (state.status == FollowersUsersStatus.loaded) {
           _fetchFollowingStatus(state.followers);
         }
       },
-      builder: (context, state) {
-        if (state.status == FollowersUsersStatus.loaded) {
-          return _buildFollowersList(state.followers);
-        }
-        return const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent));
-      },
+      child: Builder(
+        builder: (context) {
+          final state = context.watch<FollowersUsersCubit>().state;
+
+          if (state.status == FollowersUsersStatus.loading) {
+            return const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent));
+          }
+
+          if (state.status == FollowersUsersStatus.loaded) {
+            return _buildFollowersList(state.followers);
+          }
+
+          return Container();
+        },
+      ),
     );
   }
 

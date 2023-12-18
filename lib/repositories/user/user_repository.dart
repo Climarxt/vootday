@@ -57,7 +57,7 @@ class UserRepository extends BaseUserRepository {
       debugPrint(
           'getUserFollowing : Attempting to fetch user followers from Firestore...');
 
-      // Récupérer les documents de la sous-collection 'userFollowers'
+      // Récupérer les documents de la sous-collection 'userFollowing'
       QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
           .collection('following')
           .doc(userId)

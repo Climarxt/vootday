@@ -6,11 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FollowButton extends StatefulWidget {
   final bool isFollowing;
   final String userId;
+  final VoidCallback onFollowStatusChanged;
 
   const FollowButton({
     super.key,
     required this.isFollowing,
     required this.userId,
+    required this.onFollowStatusChanged,
   });
 
   @override
@@ -61,5 +63,6 @@ class _FollowButtonState extends State<FollowButton> {
           .read<ProfileBloc>()
           .add(ProfileFollowUserWithUserId(followUserId: widget.userId));
     }
+    widget.onFollowStatusChanged();
   }
 }

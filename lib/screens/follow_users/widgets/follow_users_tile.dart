@@ -1,7 +1,10 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class FollowUsersTile extends StatefulWidget {
@@ -19,6 +22,12 @@ class FollowUsersTile extends StatefulWidget {
 }
 
 class _FollowUsersTileState extends State<FollowUsersTile> {
+  void refreshFollowers() {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,9 +38,9 @@ class _FollowUsersTileState extends State<FollowUsersTile> {
           const SizedBox(width: 10),
           _buildUserInfo(context),
           FollowButton(
-            isFollowing: widget.isFollowing,
-            userId: widget.user.id,
-          ),
+              isFollowing: widget.isFollowing,
+              userId: widget.user.id,
+              onFollowStatusChanged: refreshFollowers),
         ],
       ),
     );

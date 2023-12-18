@@ -1,6 +1,7 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/following_users/following_users_state.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,12 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
   void initState() {
     super.initState();
     context.read<FollowingUsersCubit>().fetchUserFollowers(widget.userId);
+  }
+
+  void refreshFollowers() {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
   }
 
   Future<void> _fetchFollowingStatus(List<User> followers) async {

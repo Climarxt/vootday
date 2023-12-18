@@ -33,22 +33,18 @@ class _FollowUsersScreenState extends State<FollowUsersScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar:
-          Tabbar2items(tabController: _tabController, context: context),
+      appBar: Tabbar2items(tabController: _tabController, context: context),
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: TabBarView(
-        controller: _tabController,
-        children: const [
-          FollowUsersList(),
-          FollowUsersList(),
-        ],
-      ),
+    return TabBarView(
+      controller: _tabController,
+      children: const [
+        FollowUsersList(),
+        FollowUsersList(),
+      ],
     );
   }
 

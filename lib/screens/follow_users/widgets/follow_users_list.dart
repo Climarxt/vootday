@@ -8,8 +8,11 @@ class FollowUsersList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildFollowUsersList(),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Scaffold(
+        body: _buildFollowUsersList(),
+      ),
     );
   }
 

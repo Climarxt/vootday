@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '../../config/configs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
@@ -8,6 +9,47 @@ class UserRepository extends BaseUserRepository {
 
   UserRepository({FirebaseFirestore? firebaseFirestore})
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+
+  Future<List<User>> getUserFollowers({
+    required String userId,
+  }) async {
+    try {
+      debugPrint(
+          'getUserFollowers : Attempting to fetch user followers from Firestore...');
+
+      // Récupérer les documents de la sous-collection 'userFollowers'
+      QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
+          .collection('followers')
+          .doc(userId)
+          .collection('userFollowers')
+          .get();
+
+      debugPrint(
+          'getUserFollowers : Followers documents fetched. Creating User objects...');
+
+      // Créer des objets User à partir des documents récupérés et filtrer les null
+      List<User> followers = followersSnapshot.docs
+          .map((doc) => User.fromDocument(doc))
+          // ignore: unnecessary_null_comparison
+          .where((user) => user != null)
+          .cast<User>() // Cette opération est sûre car on a éliminé les null
+          .toList();
+
+      debugPrint(
+          'getUserFollowers : User objects created. Total followers: ${followers.length}');
+
+      if (followers.isNotEmpty) {
+        debugPrint(
+            'getUserFollowers : First follower details: ${followers.first}');
+      }
+
+      return followers;
+    } catch (e) {
+      debugPrint(
+          'getUserFollowers : An error occurred while fetching followers: ${e.toString()}');
+      return [];
+    }
+  }
 
   @override
   Stream<User> getUser(String userId) {

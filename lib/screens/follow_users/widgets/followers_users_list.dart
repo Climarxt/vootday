@@ -32,21 +32,13 @@ class _FollowersUsersListState extends State<FollowersUsersList> {
   Future<void> _fetchFollowingStatus(List<User> followers) async {
     isFollowingList = [];
     String currentUserId = context.read<AuthBloc>().state.user!.uid;
-
-    debugPrint('Current User ID: $currentUserId');
-    debugPrint('Fetching following status for ${followers.length} users');
-
     for (var user in followers) {
-      debugPrint('Checking if following user with ID: ${user.id}');
       var isFollowing = await context.read<UserRepository>().isFollowing(
             userId: currentUserId,
             otherUserId: user.id,
           );
-      debugPrint('Is following ${user.id}? $isFollowing');
       isFollowingList.add(isFollowing);
     }
-
-    debugPrint('Following list updated: $isFollowingList');
     setState(() {});
   }
 
@@ -90,10 +82,8 @@ class _FollowersUsersListState extends State<FollowersUsersList> {
               isFollowingList.length > index ? isFollowingList[index] : false;
 
           if (user.id == currentUserId) {
-            // Utiliser MeTile pour l'utilisateur courant
             return MeTile(user: user);
           } else {
-            // Utiliser FollowUsersTile pour les autres utilisateurs
             return FollowUsersTile(
               user: user,
               isFollowing: isFollowing,

@@ -54,36 +54,33 @@ class _MyProfileScreenState extends State<MyProfileScreen>
               color: Colors.white,
               child: DefaultTabController(
                 length: 4,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: NestedScrollView(
-                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                            SliverAppBarMyProfile(title: state.user.username),
-                            SliverToBoxAdapter(
-                                child: ProfileHeader(state: state)),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              delegate: ProfileTabbar(
-                                child: Container(
-                                  color: Colors.white,
-                                  child: TabbarMyProfile(
-                                      tabController: _tabController),
-                                ),
+                child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                          SliverAppBarMyProfile(title: state.user.username),
+                          SliverToBoxAdapter(
+                              child: ProfileHeader(state: state)),
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: ProfileTabbar(
+                              child: Container(
+                                color: Colors.white,
+                                child: TabbarMyProfile(
+                                    tabController: _tabController),
                               ),
                             ),
-                          ],
-                      body: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          MyProfileTab1(context: context, state: state),
-                          ProfileTab2(context: context, state: state),
-                          MyProfileTab3(
-                            tabController: _tabController,
                           ),
-                          MyProfileTab4(),
                         ],
-                      )),
-                ),
+                    body: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        MyProfileTab1(context: context, state: state),
+                        ProfileTab2(context: context, state: state),
+                        MyProfileTab3(
+                          tabController: _tabController,
+                        ),
+                        MyProfileTab4(),
+                      ],
+                    )),
               ),
             ),
           ],

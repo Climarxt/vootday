@@ -15,7 +15,7 @@ class ButtonsSection extends StatelessWidget {
 
   Widget _buildButtonsSection(ProfileState state, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 4.0, 0, 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

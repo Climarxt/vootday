@@ -28,7 +28,7 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
   return Container(
     color: Colors.white, // Ensuring the background is white
     child: GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       physics: const ClampingScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

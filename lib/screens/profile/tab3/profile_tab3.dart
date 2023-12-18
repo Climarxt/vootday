@@ -56,6 +56,7 @@ class _ProfileTab3State extends State<ProfileTab3> {
           mainAxisSpacing: 8,
           childAspectRatio: 0.8,
         ),
+        padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
         physics: const ClampingScrollPhysics(),
         cacheExtent: 10000,
         itemCount: state.collections.length + 1,

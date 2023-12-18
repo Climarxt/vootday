@@ -34,7 +34,7 @@ Widget _buildGridView(BuildContext context, ProfileState state) {
         mainAxisSpacing: 8,
         childAspectRatio: 0.8,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       physics: const ClampingScrollPhysics(),
       cacheExtent: 10000,
       itemCount: state.posts.length,

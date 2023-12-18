@@ -4,13 +4,11 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-
 class ProfileTab2 extends StatefulWidget {
   final BuildContext context;
   final ProfileState state;
 
-  const ProfileTab2(
-      {super.key, required this.context, required this.state});
+  const ProfileTab2({super.key, required this.context, required this.state});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -30,16 +28,19 @@ class _ProfileTab2State extends State<ProfileTab2>
 }
 
 Widget _buildListView(BuildContext context, ProfileState state) {
-  return Container(
-    color: white,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ButtonsSection(state: state),
-        LocationSection(location: state.user.location),
-        const SocialNetSection(),
-        AboutSection(state: state),
-      ],
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+    child: Container(
+      color: white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonsSection(state: state),
+          LocationSection(location: state.user.location),
+          const SocialNetSection(),
+          AboutSection(state: state),
+        ],
+      ),
     ),
   );
 }

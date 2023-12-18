@@ -4,7 +4,6 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-
 class ProfileBrandTab2 extends StatefulWidget {
   final BuildContext context;
   final ProfileState state;
@@ -30,16 +29,19 @@ class _ProfileBrandTab2State extends State<ProfileBrandTab2>
 }
 
 Widget _buildListView(BuildContext context, ProfileState state) {
-  return Container(
-    color: white,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ButtonsSection(state: state),
-        LocationSection(location: state.user.location),
-        const SocialNetSection(),
-        AboutSection(state: state),
-      ],
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+    child: Container(
+      color: white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ButtonsSection(state: state),
+          LocationSection(location: state.user.location),
+          const SocialNetSection(),
+          AboutSection(state: state),
+        ],
+      ),
     ),
   );
 }

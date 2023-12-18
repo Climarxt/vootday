@@ -52,64 +52,69 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
   }
 
   Widget _buildBody(MyCollectionState state) {
-    return Column(
-      children: [
-        Container(
-          child: buildCreatenewcollection(context),
-        ),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.8,
-              ),
-              physics: const ClampingScrollPhysics(),
-              cacheExtent: 10000,
-              itemCount: state.collections.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                if (index == state.collections.length) {
-                  return state.status == MyCollectionStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final collection =
-                      state.collections[index] ?? Collection.empty;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Container(
+            child: buildCreatenewcollection(context),
+          ),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.8,
+                ),
+                padding: const EdgeInsets.only(top: 5),
+                physics: const ClampingScrollPhysics(),
+                cacheExtent: 10000,
+                itemCount: state.collections.length + 1,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == state.collections.length) {
+                    return state.status == MyCollectionStatus.paginating
+                        ? const Center(child: CircularProgressIndicator())
+                        : const SizedBox.shrink();
+                  } else {
+                    final collection =
+                        state.collections[index] ?? Collection.empty;
 
-                  return FutureBuilder<String>(
-                    future: getMostRecentPostImageUrl(collection.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    return FutureBuilder<String>(
+                      future: getMostRecentPostImageUrl(collection.id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.transparent),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          // Handle the error state
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          // Handle the case where there is no image URL
+                          return const Text('No image available');
+                        }
+                        return MosaiqueCollectionCard(
+                          imageUrl: snapshot.data!,
+                          name: collection.title,
+                          collectionId: collection.id,
                         );
-                      }
-                      if (snapshot.hasError) {
-                        // Handle the error state
-                        return Text('Error: ${snapshot.error}');
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        // Handle the case where there is no image URL
-                        return const Text('No image available');
-                      }
-                      return MosaiqueCollectionCard(
-                        imageUrl: snapshot.data!,
-                        name: collection.title,
-                        collectionId: collection.id,
-                      );
-                    },
-                  );
-                }
-              },
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

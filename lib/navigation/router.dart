@@ -163,8 +163,7 @@ GoRouter createRouter(BuildContext context) {
           final fromPath = state.extra as String? ?? 'defaultFromPath';
           return MaterialPage<void>(
             key: state.pageKey,
-            child: PostScreen(
-                postId: postId, fromPath: fromPath),
+            child: PostScreen(postId: postId, fromPath: fromPath),
           );
         },
         routes: [
@@ -403,9 +402,10 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'followersfollowingscreen',
                     pageBuilder: (BuildContext context, GoRouterState state) {
+                      final userId = RouteConfig.getUserIdUri(state);
                       return MaterialPage<void>(
                         key: state.pageKey,
-                        child: const FollowUsersScreen(),
+                        child: FollowUsersScreen(userId: userId),
                       );
                     },
                   ),

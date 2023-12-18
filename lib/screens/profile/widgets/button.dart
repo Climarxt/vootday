@@ -23,12 +23,13 @@ ButtonTheme buildButton(int num, String texte, BuildContext context) {
   );
 }
 
-ButtonTheme buildButtonOnClick(int num, String texte, BuildContext context, String route) {
+ButtonTheme buildButtonOnClick(
+    int num, String texte, BuildContext context, String route, String userId) {
   return ButtonTheme(
     minWidth: double.infinity,
     child: OutlinedButton(
       onPressed: () {
-        _navigateToScreen(context, route);
+        _navigateToScreen(context, route, userId);
       },
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -44,6 +45,6 @@ ButtonTheme buildButtonOnClick(int num, String texte, BuildContext context, Stri
   );
 }
 
-void _navigateToScreen(BuildContext context, String route) {
-  GoRouter.of(context).push(route);
+void _navigateToScreen(BuildContext context, String route, String userId) {
+  GoRouter.of(context).push('$route?userId=$userId');
 }

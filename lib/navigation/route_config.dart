@@ -13,6 +13,10 @@ class RouteConfig {
     return state.pathParameters['userId']!;
   }
 
+  static String getUserIdUri(GoRouterState state) {
+    return state.uri.queryParameters['userId'] ?? 'Unknown';
+  }
+
   static String getTitle(GoRouterState state) {
     return state.uri.queryParameters['title'] ?? 'title';
   }

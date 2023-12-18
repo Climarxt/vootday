@@ -2,7 +2,11 @@ import 'package:bootdv2/screens/follow_users/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class FollowUsersScreen extends StatefulWidget {
-  const FollowUsersScreen({super.key});
+  final String userId;
+  const FollowUsersScreen({
+    super.key,
+    required this.userId,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -41,9 +45,11 @@ class _FollowUsersScreenState extends State<FollowUsersScreen>
   Widget _buildBody() {
     return TabBarView(
       controller: _tabController,
-      children: const [
-        FollowingUsersList(),
-        FollowersUsersList(),
+      children: [
+        FollowingUsersList(
+          userId: widget.userId,
+        ),
+        const FollowersUsersList(),
       ],
     );
   }

@@ -30,7 +30,8 @@ class ButtonsSection extends StatelessWidget {
               state.user.followers,
               AppLocalizations.of(context)!.translate('followersCap'),
               "/profile/followersfollowingscreen",
-              context),
+              context,
+              state.user.id),
         ],
       ),
     );
@@ -51,17 +52,24 @@ class ButtonsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTwoButtonsOnclick(int count1, String label1, String route1,
-      int count2, String label2, String route2, BuildContext context) {
+  Widget _buildTwoButtonsOnclick(
+      int count1,
+      String label1,
+      String route1,
+      int count2,
+      String label2,
+      String route2,
+      BuildContext context,
+      String userId) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(child: buildButtonOnClick(count1, label1, context, route1)),
+        Expanded(child: buildButtonOnClick(count1, label1, context, route1, userId)),
         const SizedBox(
           width: 10,
         ),
-        Expanded(child: buildButtonOnClick(count2, label2, context, route2)),
+        Expanded(child: buildButtonOnClick(count2, label2, context, route2, userId)),
       ],
     );
   }

@@ -10,7 +10,7 @@ class FollowingUsersCubit extends Cubit<FollowingUsersState> {
       : _userRepository = userRepository,
         super(FollowingUsersState.initial());
 
-  void fetchUserFollowers(String userId) async {
+  void fetchUserFollowing(String userId) async {
     debugPrint('FollowingUsersCubit : Loading followers for user $userId');
     emit(state.copyWith(status: FollowingUsersStatus.loading));
     try {

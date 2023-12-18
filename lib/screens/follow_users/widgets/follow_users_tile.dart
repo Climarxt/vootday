@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
+import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:bootdv2/config/configs.dart';
@@ -26,6 +27,7 @@ class _FollowUsersTileState extends State<FollowUsersTile> {
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
     context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+    context.read<FollowingUsersCubit>().fetchUserFollowing(userId);
   }
 
   @override

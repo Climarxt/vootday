@@ -57,6 +57,7 @@ class _FollowButtonState extends State<FollowButton> {
       context
           .read<ProfileBloc>()
           .add(ProfileUnfollowUserWithUserId(unfollowUserId: widget.userId));
+      widget.onFollowStatusChanged();
     } else {
       debugPrint('Following user');
       context

@@ -19,8 +19,8 @@ class Tabbar2items extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     List<Tab> tabs = const [
-      Tab(child: Text("Notifications")),
-      Tab(child: Text("Messages")),
+      Tab(child: Text("Followers")),
+      Tab(child: Text("Following")),
     ];
     return AppBar(
       toolbarHeight: 62,

@@ -23,11 +23,13 @@ class ButtonsSection extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          _buildTwoButtons(
+          _buildTwoButtonsOnclick(
               state.user.following,
               AppLocalizations.of(context)!.translate('followingsCap'),
+              "/profile/followersfollowingscreen",
               state.user.followers,
               AppLocalizations.of(context)!.translate('followersCap'),
+              "/profile/followersfollowingscreen",
               context),
         ],
       ),
@@ -45,6 +47,21 @@ class ButtonsSection extends StatelessWidget {
           width: 10,
         ),
         Expanded(child: buildButton(count2, label2, context)),
+      ],
+    );
+  }
+
+  Widget _buildTwoButtonsOnclick(int count1, String label1, String route1,
+      int count2, String label2, String route2, BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Expanded(child: buildButtonOnClick(count1, label1, context, route1)),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(child: buildButtonOnClick(count2, label2, context, route2)),
       ],
     );
   }

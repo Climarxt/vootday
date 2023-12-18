@@ -2,18 +2,18 @@ import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 
-class FollowersUsersScreen extends StatefulWidget {
-  const FollowersUsersScreen({super.key});
+class FollowersFollowingScreenScreen extends StatefulWidget {
+  const FollowersFollowingScreenScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _FollowersUsersScreenState createState() => _FollowersUsersScreenState();
+  _FollowersFollowingScreenScreenState createState() => _FollowersFollowingScreenScreenState();
 }
 
-class _FollowersUsersScreenState extends State<FollowersUsersScreen>
+class _FollowersFollowingScreenScreenState extends State<FollowersFollowingScreenScreen>
     with
         TickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<FollowersUsersScreen> {
+        AutomaticKeepAliveClientMixin<FollowersFollowingScreenScreen> {
   // final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
   // final SearchController _searchController = SearchController();

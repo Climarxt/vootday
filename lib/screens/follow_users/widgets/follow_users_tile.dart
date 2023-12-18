@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:bootdv2/models/wip/model.dart';
 import 'package:intl/intl.dart';
 
-class NotificationTile extends StatelessWidget {
+class FollowUsersTile extends StatelessWidget {
   final NotifWIP notification;
 
-  const NotificationTile({
+  const FollowUsersTile({
     super.key,
     required this.notification,
   });

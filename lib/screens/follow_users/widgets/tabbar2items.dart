@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 // ignore: must_be_immutable
-class Tabbar2itemsNotif extends StatelessWidget implements PreferredSizeWidget {
+class Tabbar2items extends StatelessWidget implements PreferredSizeWidget {
   late TabController tabController;
   final BuildContext context;
-  Tabbar2itemsNotif({
+  Tabbar2items({
     super.key,
     required this.tabController,
     required this.context,

@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:bootdv2/models/wip/model.dart';
 import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
 
-class NotificationsList extends StatelessWidget {
-  const NotificationsList({super.key});
+class FollowUsersList extends StatelessWidget {
+  const FollowUsersList({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildNotificationsList(),
+      body: _buildFollowUsersList(),
     );
   }
 
 
-  // Builds and returns the notifications list.
-  Widget _buildNotificationsList() {
-    // replace this with actual list of notifications or other type of data
+  Widget _buildFollowUsersList() {
     List<NotifWIP> dummyNotifications = List<NotifWIP>.generate(
         10,
         (index) => NotifWIP(

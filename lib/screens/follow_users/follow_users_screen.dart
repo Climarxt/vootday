@@ -1,19 +1,18 @@
-import 'package:bootdv2/screens/notifications/widgets/widgets.dart';
-
+import 'package:bootdv2/screens/follow_users/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-class FollowersFollowingScreenScreen extends StatefulWidget {
-  const FollowersFollowingScreenScreen({super.key});
+class FollowUsersScreen extends StatefulWidget {
+  const FollowUsersScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _FollowersFollowingScreenScreenState createState() => _FollowersFollowingScreenScreenState();
+  _FollowUsersScreenState createState() => _FollowUsersScreenState();
 }
 
-class _FollowersFollowingScreenScreenState extends State<FollowersFollowingScreenScreen>
+class _FollowUsersScreenState extends State<FollowUsersScreen>
     with
         TickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<FollowersFollowingScreenScreen> {
+        AutomaticKeepAliveClientMixin<FollowUsersScreen> {
   // final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
   // final SearchController _searchController = SearchController();
@@ -35,7 +34,7 @@ class _FollowersFollowingScreenScreenState extends State<FollowersFollowingScree
     super.build(context);
     return Scaffold(
       appBar:
-          Tabbar2itemsNotif(tabController: _tabController, context: context),
+          Tabbar2items(tabController: _tabController, context: context),
       body: _buildBody(),
     );
   }
@@ -46,8 +45,8 @@ class _FollowersFollowingScreenScreenState extends State<FollowersFollowingScree
       child: TabBarView(
         controller: _tabController,
         children: const [
-          NotificationsList(),
-          NotificationsList(),
+          FollowUsersList(),
+          FollowUsersList(),
         ],
       ),
     );

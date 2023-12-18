@@ -49,16 +49,12 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
         }
       },
       builder: (context, state) {
-        if (state.status == FollowingUsersStatus.loading) {
-          return CircularProgressIndicator();
-        }
-
         if (state.status == FollowingUsersStatus.loaded) {
           return _buildFollowersList(state.followers);
         }
 
-        // Gérer les autres états comme erreur, etc.
-        return Container(); // Ou un widget approprié pour l'état d'erreur
+        return const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent));
       },
     );
   }

@@ -1,4 +1,7 @@
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
+import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,13 +9,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FollowButton extends StatefulWidget {
   final bool isFollowing;
   final String userId;
-  final VoidCallback onFollowStatusChanged;
 
   const FollowButton({
     super.key,
     required this.isFollowing,
     required this.userId,
-    required this.onFollowStatusChanged,
   });
 
   @override
@@ -20,9 +21,15 @@ class FollowButton extends StatefulWidget {
 }
 
 class _FollowButtonState extends State<FollowButton> {
+  void refreshFollowers() {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState.user?.uid;
+    context.read<FollowersUsersCubit>().fetchUserFollowers(userId!);
+    context.read<FollowingUsersCubit>().fetchUserFollowing(userId);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Show 'Edit Profile' button for the current user, otherwise show 'Follow/Unfollow' button.
     return buildFollowButton(context);
   }
 
@@ -57,13 +64,13 @@ class _FollowButtonState extends State<FollowButton> {
       context
           .read<ProfileBloc>()
           .add(ProfileUnfollowUserWithUserId(unfollowUserId: widget.userId));
-      widget.onFollowStatusChanged();
+      refreshFollowers();
     } else {
       debugPrint('Following user');
       context
           .read<ProfileBloc>()
           .add(ProfileFollowUserWithUserId(followUserId: widget.userId));
     }
-    widget.onFollowStatusChanged();
+    refreshFollowers();
   }
 }

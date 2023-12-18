@@ -3,6 +3,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/following_users/following_users_state.dart';
+import 'package:bootdv2/screens/follow_users/widgets/me_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/screens/follow_users/widgets/follow_users_tile.dart';
@@ -31,13 +32,22 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
   // Check si user de la liste et suivi ou non
   Future<void> _fetchFollowingStatus(List<User> followers) async {
     isFollowingList = [];
+    String currentUserId = context.read<AuthBloc>().state.user!.uid;
+
+    debugPrint('Current User ID: $currentUserId');
+    debugPrint('Fetching following status for ${followers.length} users');
+
     for (var user in followers) {
+      debugPrint('Checking if following user with ID: ${user.id}');
       var isFollowing = await context.read<UserRepository>().isFollowing(
-            userId: context.read<AuthBloc>().state.user!.uid,
+            userId: currentUserId,
             otherUserId: user.id,
           );
+      debugPrint('Is following ${user.id}? $isFollowing');
       isFollowingList.add(isFollowing);
     }
+
+    debugPrint('Following list updated: $isFollowingList');
     setState(() {});
   }
 
@@ -69,6 +79,8 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
   }
 
   Widget _buildFollowersList(List<User> followers) {
+    String currentUserId = context.read<AuthBloc>().state.user!.uid;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: ListView.builder(
@@ -77,10 +89,17 @@ class _FollowingUsersListState extends State<FollowingUsersList> {
           final user = followers[index];
           final isFollowing =
               isFollowingList.length > index ? isFollowingList[index] : false;
-          return FollowUsersTile(
-            user: user,
-            isFollowing: isFollowing,
-          );
+
+          if (user.id == currentUserId) {
+            // Utiliser MeTile pour l'utilisateur courant
+            return MeTile(user: user);
+          } else {
+            // Utiliser FollowUsersTile pour les autres utilisateurs
+            return FollowUsersTile(
+              user: user,
+              isFollowing: isFollowing,
+            );
+          }
         },
       ),
     );

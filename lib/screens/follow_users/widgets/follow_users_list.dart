@@ -33,26 +33,17 @@ class _FollowUsersListState extends State<FollowUsersList> {
   }
 
   Widget _buildBody(FollowersUsersState state) {
-    if (state.status == FollowersUsersStatus.loading) {
-      return const Center(
-        child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent)),
-      );
-    } else if (state.status == FollowersUsersStatus.loaded) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView.builder(
-          itemCount: state.followers.length,
-          itemBuilder: (context, index) {
-            final user = state.followers[index];
-            return FollowUsersTile(
-              user: user,
-            );
-          },
-        ),
-      );
-    } else {
-      return const Center(child: Text('No followers to display'));
-    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: ListView.builder(
+        itemCount: state.followers.length,
+        itemBuilder: (context, index) {
+          final user = state.followers[index];
+          return FollowUsersTile(
+            user: user,
+          );
+        },
+      ),
+    );
   }
 }

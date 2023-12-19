@@ -5,6 +5,7 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
+import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
@@ -176,6 +177,11 @@ class BlocProviderConfig {
             );
             return explorerBloc;
           },
+        ),
+        BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(
+            userRepository: context.read<UserRepository>(),
+          ),
         ),
       ],
       child: child,

@@ -1,8 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/screens.dart';
+import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
 import 'package:bootdv2/screens/search/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -33,12 +35,18 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      appBar:
-          Tabbar2itemsSearch(tabController: _tabController, context: context),
-      body: _buildBody(),
-      floatingActionButton: _buildFloatingActionButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    return BlocConsumer<SearchCubit, SearchState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+          appBar: Tabbar2itemsSearch(
+              tabController: _tabController, context: context),
+          body: _buildBody(),
+          floatingActionButton: _buildFloatingActionButton(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+        );
+      },
     );
   }
 

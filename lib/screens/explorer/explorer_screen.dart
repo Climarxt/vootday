@@ -1,4 +1,5 @@
 import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/explorer/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -73,26 +74,9 @@ class _ExplorerScreenState extends State<ExplorerScreen>
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   } else {
-                    final post = state.posts[index];
-                    final likedPostsState =
-                        context.watch<LikedPostsCubit>().state;
-                    final isLiked =
-                        likedPostsState.likedPostIds.contains(post!.id);
-                    final recentlyLiked =
-                        likedPostsState.recentlyLikedPostIds.contains(post.id);
+                    final Post post = state.posts[index] ?? Post.empty;
                     return PostView(
                       post: post,
-                      isLiked: isLiked,
-                      recentlyLiked: recentlyLiked,
-                      onLike: () {
-                        if (isLiked) {
-                          context
-                              .read<LikedPostsCubit>()
-                              .unlikePost(post: post);
-                        } else {
-                          context.read<LikedPostsCubit>().likePost(post: post);
-                        }
-                      },
                     );
                   }
                 },

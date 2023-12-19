@@ -7,5 +7,11 @@ abstract class MyEventEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class MyEventFetchEvents extends MyEventEvent {
+  final String userId;
 
-class MyEventFetchEvents extends MyEventEvent {}
+  const MyEventFetchEvents({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
+}

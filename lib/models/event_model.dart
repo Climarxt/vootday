@@ -18,6 +18,7 @@ class Event {
   final String reward;
   final bool done;
   final String logoUrl;
+  final User user_ref;
 
   const Event({
     required this.id,
@@ -33,6 +34,7 @@ class Event {
     required this.reward,
     this.done = false,
     required this.logoUrl,
+    required this.user_ref,
   });
 
   static var empty = Event(
@@ -49,6 +51,7 @@ class Event {
     reward: '',
     done: false,
     logoUrl: '',
+    user_ref: User.empty,
   );
 
   List<Object?> get props => [
@@ -64,7 +67,8 @@ class Event {
         tags,
         reward,
         done,
-        logoUrl
+        logoUrl,
+        user_ref,
       ];
 
   Event copyWith({
@@ -81,6 +85,7 @@ class Event {
     String? reward,
     bool? done,
     String? logoUrl,
+    User? user_ref,
   }) {
     return Event(
       id: id ?? this.id,
@@ -96,6 +101,7 @@ class Event {
       reward: reward ?? this.reward,
       done: done ?? this.done,
       logoUrl: logoUrl ?? this.logoUrl,
+      user_ref: user_ref ?? this.user_ref,
     );
   }
 
@@ -103,7 +109,7 @@ class Event {
     return CachedNetworkImageProvider(imageUrl);
   }
 
-    CachedNetworkImageProvider get logoProvider {
+  CachedNetworkImageProvider get logoProvider {
     return CachedNetworkImageProvider(logoUrl);
   }
 
@@ -121,19 +127,27 @@ class Event {
       'reward': reward,
       'done': done,
       'Url': imageUrl,
+      'user_ref':
+          FirebaseFirestore.instance.collection('users').doc(user_ref.id),
     };
   }
 
   static Future<Event?> fromDocument(DocumentSnapshot doc) async {
     final data = doc.data() as Map<String, dynamic>;
     final authorRef = data['author'] as DocumentReference?;
-    if (authorRef != null) {
+    final userRef = data['user_ref'] as DocumentReference?;
+
+    if (authorRef != null && userRef != null) {
       final authorDoc = await authorRef.get();
-      if (authorDoc.exists) {
+      final userDoc = await userRef.get();
+
+      if (authorDoc.exists && userDoc.exists) {
         Brand author = Brand.fromSnapshot(authorDoc);
+        User user = User.fromDocument(userDoc);
+
         return Event(
           id: doc.id,
-          author: Brand.fromSnapshot(authorDoc),
+          author: author,
           imageUrl: data['imageUrl'] ?? '',
           caption: data['caption'] ?? '',
           participants: (data['participants'] ?? 0).toInt(),
@@ -145,6 +159,7 @@ class Event {
           reward: data['reward'] ?? '',
           done: (data['done'] ?? false) as bool,
           logoUrl: author.logoUrl,
+          user_ref: user,
         );
       }
     }

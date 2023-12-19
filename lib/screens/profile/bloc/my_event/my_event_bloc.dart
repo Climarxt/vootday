@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
@@ -28,9 +30,9 @@ class MyEventBloc extends Bloc<MyEventEvent, MyEventState> {
     Emitter<MyEventState> emit,
   ) async {
     try {
-      debugPrint('Method _mapMyEventFetchEventsToState : Fetching events...');
-      final events = await _eventRepository.getEventsDone(
-        userId: _authBloc.state.user!.uid,
+      debugPrint('Method _mapMyEventFetchEventsToState : Fetching events for Brand : ${event.userId}');
+      final events = await _eventRepository.getEventsDoneByUserId(
+        userId: event.userId,
       );
 
       if (events.isEmpty) {

@@ -27,7 +27,9 @@ class _ProfileBrandTab1State extends State<ProfileBrandTab1>
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      context.read<MyEventBloc>().add(MyEventFetchEvents());
+      context
+          .read<MyEventBloc>()
+          .add(MyEventFetchEvents(userId: widget.state.user.id));
     });
   }
 
@@ -40,7 +42,9 @@ class _ProfileBrandTab1State extends State<ProfileBrandTab1>
     return BlocConsumer<MyEventBloc, MyEventState>(
       listener: (context, state) {
         if (state.status == MyEventStatus.initial && state.events.isEmpty) {
-          context.read<MyEventBloc>().add(MyEventFetchEvents());
+          context
+              .read<MyEventBloc>()
+              .add(MyEventFetchEvents(userId: widget.state.user.id));
         }
       },
       builder: (context, state) {

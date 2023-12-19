@@ -120,6 +120,73 @@ class EventRepository {
     }
   }
 
+  Future<List<Event?>> getEventsDoneByUserId({
+    required String userId,
+    String? lastEventId,
+  }) async {
+    try {
+      debugPrint(
+          'getEventsDoneByUserId : Attempting to fetch event documents from Firestore for Brand : $userId ...');
+
+      // Créer une référence à un document utilisateur
+      DocumentReference userRef =
+          _firebaseFirestore.collection(Paths.users).doc(userId);
+
+      QuerySnapshot eventSnap;
+      if (lastEventId == null) {
+        // Initial fetch
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('user_ref', isEqualTo: userRef) // Ajouter cette ligne
+            .orderBy('dateEvent', descending: true)
+            .limit(100)
+            .get();
+      } else {
+        // Pagination fetch
+        final lastEventDoc = await _firebaseFirestore
+            .collection(Paths.events)
+            .doc(lastEventId)
+            .get();
+
+        if (!lastEventDoc.exists) {
+          debugPrint('getEventsDoneByUserId : Last event document does not exist.');
+          return [];
+        }
+
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('user_ref', isEqualTo: userRef) // Ajouter cette ligne
+            .orderBy('dateEvent', descending: true)
+            .startAfterDocument(lastEventDoc)
+            .limit(2)
+            .get();
+      }
+
+      debugPrint(
+          'getEventsDoneByUserId : Event documents fetched. Converting to Event objects...');
+      List<Future<Event?>> futureEvents =
+          eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
+
+      // Use Future.wait to resolve all events
+      List<Event?> events = await Future.wait(futureEvents);
+
+      debugPrint(
+          'getEventsDoneByUserId : Event objects created. Total events: ${events.length}');
+      // Here, you might also debugPrint an event for debugging
+      if (events.isNotEmpty) {
+        debugPrint('getEventsDoneByUserId : First event details: ${events.first}');
+      }
+
+      return events;
+    } catch (e) {
+      debugPrint(
+          'getEventsDoneByUserId : An error occurred while fetching events: ${e.toString()}');
+      return [];
+    }
+  }
+
   Future<List<Event>> getThisWeekEvents() async {
     List<Event> eventsList = [];
     try {

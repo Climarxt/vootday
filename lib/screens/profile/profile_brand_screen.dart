@@ -151,19 +151,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               ),
             ),
             const SizedBox(height: 8),
-            AnimatedOpacity(
-              opacity: _opacity,
-              duration: const Duration(milliseconds: 300),
-              child: Text(
-                '${widget.state.user.firstName} ${widget.state.user.lastName}',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 12),
-            ProfileStats(
+            ProfileBrandStats(
               isCurrentUser: widget.state.isCurrentUser,
               isFollowing: widget.state.isFollowing,
               posts: widget.state.posts.length,

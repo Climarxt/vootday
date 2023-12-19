@@ -9,6 +9,7 @@ export 'mosaique_myprofile_card.dart';
 export 'mosaique_profile_card.dart';
 export 'mosaique_collection_card.dart';
 export 'post_collection_view.dart';
+export 'profile_brand_stats.dart';
 export 'profile_button.dart';
 export 'profile_stats.dart';
 export 'section_about.dart';

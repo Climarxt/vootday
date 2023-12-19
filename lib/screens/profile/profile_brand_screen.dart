@@ -1,6 +1,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/profiles.dart';
+import 'package:bootdv2/screens/profile/tab1/profile_brand_tab1.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _ProfileBrandScreenState extends State<ProfileBrandScreen> {
                 ],
                 body: TabBarView(
                   children: [
-                    ProfileTab1(context: context, state: state),
+                    ProfileBrandTab1(context: context, state: state),
                     ProfileTab2(context: context, state: state),
                   ],
                 ),

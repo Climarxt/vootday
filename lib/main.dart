@@ -15,6 +15,7 @@ import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cub
 import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
+import 'package:bootdv2/screens/profile/bloc/my_event/my_event_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -160,6 +161,15 @@ class MyApp extends StatelessWidget {
             create: (context) => FollowingUsersCubit(
               userRepository: context.read<UserRepository>(),
             ),
+          ),
+          BlocProvider(
+            create: (context) {
+              final myEventBloc = MyEventBloc(
+                eventRepository: context.read<EventRepository>(),
+                authBloc: context.read<AuthBloc>(),
+              );
+              return myEventBloc;
+            },
           ),
         ],
         child: Builder(

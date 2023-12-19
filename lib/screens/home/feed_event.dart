@@ -10,12 +10,12 @@ class FeedEvent extends StatefulWidget {
   final String eventId;
   final String title;
   final String logoUrl;
-  FeedEvent({
-    Key? key,
+  const FeedEvent({
+    super.key,
     required this.eventId,
     required this.title,
     required this.logoUrl,
-  }) : super(key: key ?? GlobalKey());
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -25,16 +25,6 @@ class FeedEvent extends StatefulWidget {
 class _FeedEventState extends State<FeedEvent>
     with AutomaticKeepAliveClientMixin<FeedEvent> {
   @override
-  void initState() {
-    super.initState();
-    final feedEventBloc = context.read<FeedEventBloc>();
-    if (!feedEventBloc.state.hasFetchedInitialPosts ||
-        feedEventBloc.state.event?.id != widget.eventId) {
-      feedEventBloc.add(FeedEventFetchPostsEvents(eventId: widget.eventId));
-    }
-  }
-
-  @override
   void dispose() {
     super.dispose();
   }
@@ -42,9 +32,13 @@ class _FeedEventState extends State<FeedEvent>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedEventBloc, FeedEventState>(
-      listener: (context, state) {},
+    return BlocBuilder<FeedEventBloc, FeedEventState>(
       builder: (context, state) {
+        final feedEventBloc = context.read<FeedEventBloc>();
+        if (!feedEventBloc.state.hasFetchedInitialPosts ||
+            feedEventBloc.state.posts.isEmpty) {
+          feedEventBloc.add(FeedEventFetchPostsEvents(eventId: widget.eventId));
+        }
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
@@ -90,7 +84,6 @@ class _FeedEventState extends State<FeedEvent>
     );
   }
 
-// Overridden to retain the state
   @override
   bool get wantKeepAlive => true;
 }

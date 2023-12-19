@@ -23,7 +23,9 @@ class PostView extends StatefulWidget {
 }
 
 class _PostViewState extends State<PostView>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<PostView> {
   bool isImageVisible = false;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -56,6 +58,7 @@ class _PostViewState extends State<PostView>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return AnimatedOpacity(
       opacity: isImageVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 300),
@@ -240,4 +243,7 @@ class _PostViewState extends State<PostView>
         '/user/${widget.post.author.id}?username=${widget.post.author.username}');
     ;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

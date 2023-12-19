@@ -7,7 +7,7 @@ class FeedEventState extends Equatable {
   final Event? event;
   final FeedEventStatus status;
   final Failure failure;
-  final bool hasFetchedInitialPosts; 
+  final bool hasFetchedInitialPosts;
 
   const FeedEventState({
     required this.posts,
@@ -20,14 +20,12 @@ class FeedEventState extends Equatable {
   factory FeedEventState.initial() {
     return const FeedEventState(
       posts: [],
+      event: null,
       status: FeedEventStatus.initial,
       failure: Failure(),
-      event: null,
+      hasFetchedInitialPosts: false,
     );
   }
-
-  @override
-  List<Object?> get props => [posts, status, failure, hasFetchedInitialPosts];
 
   FeedEventState copyWith({
     List<Post?>? posts,
@@ -38,10 +36,15 @@ class FeedEventState extends Equatable {
   }) {
     return FeedEventState(
       posts: posts ?? this.posts,
-      event: event ?? event,
+      event: event ?? this.event,
       status: status ?? this.status,
       failure: failure ?? this.failure,
-      hasFetchedInitialPosts: hasFetchedInitialPosts ?? this.hasFetchedInitialPosts, 
+      hasFetchedInitialPosts:
+          hasFetchedInitialPosts ?? this.hasFetchedInitialPosts,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      [posts, event, status, failure, hasFetchedInitialPosts];
 }

@@ -31,14 +31,10 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     FeedEventFetchPostsEvents event,
     Emitter<FeedEventState> emit,
   ) async {
-    if (state.hasFetchedInitialPosts && event.eventId == state.event?.id) {
-      print(
-          'FeedEventBloc: Already fetched initial posts for event ${event.eventId}.');
-      return;
+    if (state.hasFetchedInitialPosts) {
+      return; // Si les données initiales sont déjà chargées, ne rien faire
     }
-    _onFeedEventClean(FeedEventClean(), emit);
-    print('FeedEventBloc: Fetching posts for event ${event.eventId}.');
-
+    print('In _mapFeedEventFetchPostsEvent with eventId: ${event.eventId}');
     try {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {

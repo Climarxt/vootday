@@ -1,5 +1,4 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/comment/widgets/widgets.dart';
 import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
 import 'package:bootdv2/screens/search/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -158,18 +157,23 @@ class _SearchingScreenState extends State<SearchingScreen> {
             itemCount: state.users.length,
             itemBuilder: (BuildContext context, int index) {
               final user = state.users[index];
-              return ListTile(
-                leading: UserProfileImage(
-                  radius: 22.0,
-                  outerCircleRadius: 23,
-                  profileImageUrl: user.profileImageUrl,
+              final bool isBrand = user.selectedGender == "Brand";
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: ListTile(
+                  leading: UserProfileImage(
+                    radius: 26.0,
+                    outerCircleRadius: 27,
+                    profileImageUrl: user.profileImageUrl,
+                    isBrand: isBrand,
+                  ),
+                  title: Text(
+                    user.username,
+                    style: AppTextStyles.titleLargeBlackBold(context),
+                  ),
+                  onTap: () =>
+                      _navigateToUserScreen(context, user.id, user.username),
                 ),
-                title: Text(
-                  user.username,
-                  style: const TextStyle(fontSize: 16.0),
-                ),
-                onTap: () =>
-                    _navigateToUserScreen(context, user.id, user.username),
               );
             },
           )

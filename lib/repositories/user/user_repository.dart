@@ -111,7 +111,7 @@ class UserRepository extends BaseUserRepository {
   Future<List<User>> searchUsers({required String query}) async {
     final userSnap = await _firebaseFirestore
         .collection(Paths.users)
-        .where('username', isGreaterThanOrEqualTo: query)
+        .where('username_lowercase', isGreaterThanOrEqualTo: query)
         .get();
     return userSnap.docs.map((doc) => User.fromDocument(doc)).toList();
   }

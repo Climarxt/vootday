@@ -79,6 +79,7 @@ class _SearchingScreenState extends State<SearchingScreen> {
             ),
           ),
           onChanged: (value) {
+            debugPrint('Recherche déclenchée avec la valeur : $value');
             context.read<SearchCubit>().searchUsers(value);
           },
         ),
@@ -167,10 +168,24 @@ class _SearchingScreenState extends State<SearchingScreen> {
                     profileImageUrl: user.profileImageUrl,
                     isBrand: isBrand,
                   ),
-                  title: Text(
-                    user.username,
-                    style: AppTextStyles.titleLargeBlackBold(context),
-                  ),
+                  title: isBrand
+                      ? Text(
+                          user.username,
+                          style: AppTextStyles.titleLargeBlackBold(context),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.username,
+                              style: AppTextStyles.titleLargeBlackBold(context),
+                            ),
+                            Text(
+                              '${user.firstName} ${user.lastName}',
+                              style: AppTextStyles.titleSmallGrey(context),
+                            ),
+                          ],
+                        ),
                   onTap: () =>
                       _navigateToUserScreen(context, user.id, user.username),
                 ),

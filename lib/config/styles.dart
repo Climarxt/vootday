@@ -31,6 +31,10 @@ class AppTextStyles {
         .copyWith(color: Colors.black, fontWeight: FontWeight.bold);
   }
 
+  static TextStyle titleSmallGrey(BuildContext context) {
+    return Theme.of(context).textTheme.titleSmall!.copyWith(color: greyDark);
+  }
+
   static TextStyle titleLargeWhiteBold(BuildContext context) {
     return Theme.of(context)
         .textTheme

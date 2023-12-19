@@ -13,6 +13,7 @@ class User extends Equatable {
   final int followers;
   final int following;
   final String bio;
+  final String selectedGender;
 
   const User({
     required this.id,
@@ -25,6 +26,7 @@ class User extends Equatable {
     required this.followers,
     required this.following,
     required this.bio,
+    required this.selectedGender,
   });
 
   static const empty = User(
@@ -38,6 +40,7 @@ class User extends Equatable {
     followers: 0,
     following: 0,
     bio: '',
+    selectedGender: '',
   );
 
   @override
@@ -52,6 +55,7 @@ class User extends Equatable {
         followers,
         following,
         bio,
+        selectedGender,
       ];
 
   User copyWith({
@@ -65,6 +69,7 @@ class User extends Equatable {
     int? followers,
     int? following,
     String? bio,
+    String? selectedGender,
   }) {
     return User(
       id: id ?? this.id,
@@ -77,6 +82,7 @@ class User extends Equatable {
       followers: followers ?? this.followers,
       following: following ?? this.following,
       bio: bio ?? this.bio,
+      selectedGender: selectedGender ?? this.selectedGender,
     );
   }
 
@@ -92,13 +98,13 @@ class User extends Equatable {
       'followers': followers,
       'following': following,
       'bio': bio,
+      'selectedGender': selectedGender,
     };
   }
 
-    CachedNetworkImageProvider get profileImageProvider {
+  CachedNetworkImageProvider get profileImageProvider {
     return CachedNetworkImageProvider(profileImageUrl);
   }
-
 
   static User fromSnapshot(DocumentSnapshot snap) {
     User user = User(
@@ -126,6 +132,9 @@ class User extends Equatable {
           ? snap.get('following')
           : 0,
       bio: snap.data().toString().contains('bio') ? snap.get('bio') : '',
+      selectedGender: snap.data().toString().contains('selectedGender')
+          ? snap.get('selectedGender')
+          : '',
     );
     return user;
   }
@@ -144,6 +153,7 @@ class User extends Equatable {
       followers: (data['followers'] ?? 0).toInt(),
       following: (data['following'] ?? 0).toInt(),
       bio: data['bio'] ?? '',
+      selectedGender: data['selectedGender'] ?? '',
     );
   }
 }

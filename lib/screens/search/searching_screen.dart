@@ -38,15 +38,6 @@ class _SearchingScreenState extends State<SearchingScreen> {
   }
 
   Widget _buildBody(SearchState state, BuildContext context) {
-    return Scaffold(
-      appBar: AppBarComment(
-        title: AppLocalizations.of(context)!.translate('search'),
-      ),
-      body: _buildBody1(state, context),
-    );
-  }
-
-  Widget _buildBody1(SearchState state, BuildContext context) {
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -60,11 +51,13 @@ class _SearchingScreenState extends State<SearchingScreen> {
   AppBar _buildAppBar(BuildContext context) {
     if (_isSearching) {
       return AppBar(
-        backgroundColor: mobileBackgroundColor,
         iconTheme: const IconThemeData(color: black),
-        elevation: 3,
+        centerTitle: true,
+        toolbarHeight: 62,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: black),
+          icon: const Icon(Icons.arrow_back_ios, color: black),
           onPressed: () {
             setState(() {
               _isSearching = false;
@@ -74,24 +67,52 @@ class _SearchingScreenState extends State<SearchingScreen> {
         ),
         title: TextField(
           controller: _textController,
+          cursorColor: greyDark,
           decoration: const InputDecoration(
-            hintText: 'Search for a user',
-            border: InputBorder.none,
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: greyDark), // Couleur de la ligne sous le texte
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color:
+                      greyDark), // Couleur de la ligne lorsque le TextField est sélectionné
+            ),
           ),
           onChanged: (value) {
             context.read<SearchCubit>().searchUsers(value);
           },
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.search,
+              color: black,
+              size: 30,
+            ),
+            onPressed: () {},
+          ),
+        ],
       );
     } else {
       return AppBar(
-        centerTitle: true,
-        backgroundColor: mobileBackgroundColor,
         iconTheme: const IconThemeData(color: black),
-        elevation: 3,
-        leading: IconButton(
-          icon: const Icon(Icons.calendar_month_sharp, color: black, size: 30),
-          onPressed: () {},
+        toolbarHeight: 62,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: GestureDetector(
+          onTap: () {
+            setState(() {
+              _isSearching = true;
+            });
+          },
+          child: Text(
+            AppLocalizations.of(context)!.translate('searching'),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: greyDark),
+          ),
         ),
         actions: <Widget>[
           IconButton(
@@ -105,7 +126,7 @@ class _SearchingScreenState extends State<SearchingScreen> {
                 _isSearching = true;
               });
             },
-          )
+          ),
         ],
       );
     }

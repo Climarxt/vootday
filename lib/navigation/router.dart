@@ -14,6 +14,8 @@ import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/screens.dart';
+import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
+import 'package:bootdv2/screens/search/searching_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -371,6 +373,23 @@ GoRouter createRouter(BuildContext context) {
                     ),
                   );
                 },
+                routes: <RouteBase>[
+                  // search/searching
+                  GoRoute(
+                    path: 'searching',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: BlocProvider<SearchCubit>(
+                          create: (context) => SearchCubit(
+                            userRepository: context.read<UserRepository>(),
+                          ),
+                          child: const SearchingScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

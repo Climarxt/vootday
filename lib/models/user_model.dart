@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
@@ -14,6 +16,7 @@ class User extends Equatable {
   final int following;
   final String bio;
   final String selectedGender;
+  final String username_lowercase;
 
   const User({
     required this.id,
@@ -27,6 +30,7 @@ class User extends Equatable {
     required this.following,
     required this.bio,
     required this.selectedGender,
+    required this.username_lowercase,
   });
 
   static const empty = User(
@@ -41,6 +45,7 @@ class User extends Equatable {
     following: 0,
     bio: '',
     selectedGender: '',
+    username_lowercase: '',
   );
 
   @override
@@ -56,6 +61,7 @@ class User extends Equatable {
         following,
         bio,
         selectedGender,
+        username_lowercase
       ];
 
   User copyWith({
@@ -70,6 +76,7 @@ class User extends Equatable {
     int? following,
     String? bio,
     String? selectedGender,
+    String? username_lowercase,
   }) {
     return User(
       id: id ?? this.id,
@@ -83,6 +90,7 @@ class User extends Equatable {
       following: following ?? this.following,
       bio: bio ?? this.bio,
       selectedGender: selectedGender ?? this.selectedGender,
+      username_lowercase: username_lowercase ?? this.username_lowercase,
     );
   }
 
@@ -99,6 +107,7 @@ class User extends Equatable {
       'following': following,
       'bio': bio,
       'selectedGender': selectedGender,
+      'username_lowercase': username_lowercase,
     };
   }
 
@@ -135,6 +144,9 @@ class User extends Equatable {
       selectedGender: snap.data().toString().contains('selectedGender')
           ? snap.get('selectedGender')
           : '',
+      username_lowercase: snap.data().toString().contains('username_lowercase')
+          ? snap.get('username_lowercase')
+          : '',
     );
     return user;
   }
@@ -154,6 +166,7 @@ class User extends Equatable {
       following: (data['following'] ?? 0).toInt(),
       bio: data['bio'] ?? '',
       selectedGender: data['selectedGender'] ?? '',
+      username_lowercase: data['username_lowercase'] ?? '',
     );
   }
 }

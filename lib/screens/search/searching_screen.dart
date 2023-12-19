@@ -142,7 +142,11 @@ class _SearchingScreenState extends State<SearchingScreen> {
           case SearchStatus.error:
             return CenteredText(text: state.failure.message);
           case SearchStatus.loading:
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.transparent)),
+            );
           case SearchStatus.loaded:
             return _buildLoadedState(context, state);
           default:

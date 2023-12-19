@@ -1,4 +1,4 @@
-import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/models/post_model.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
@@ -51,26 +51,13 @@ class _FeedOOTDState extends State<FeedOOTD>
               const SizedBox(height: 10),
           itemBuilder: (BuildContext context, int index) {
             if (index == state.posts.length) {
-              return state.status == FeedOOTDStatus.paginating
+              return state.status == FeedMonthStatus.paginating
                   ? const Center(child: CircularProgressIndicator())
                   : const SizedBox.shrink();
             } else {
-              final post = state.posts[index];
-              final likedPostsState = context.watch<LikedPostsCubit>().state;
-              final isLiked = likedPostsState.likedPostIds.contains(post!.id);
-              final recentlyLiked =
-                  likedPostsState.recentlyLikedPostIds.contains(post.id);
+              final Post post = state.posts[index] ?? Post.empty;
               return PostView(
                 post: post,
-                isLiked: isLiked,
-                recentlyLiked: recentlyLiked,
-                onLike: () {
-                  if (isLiked) {
-                    context.read<LikedPostsCubit>().unlikePost(post: post);
-                  } else {
-                    context.read<LikedPostsCubit>().likePost(post: post);
-                  }
-                },
               );
             }
           },

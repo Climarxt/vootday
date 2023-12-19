@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unrelated_type_equality_checks
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
@@ -61,7 +61,6 @@ class _FeedEventState extends State<FeedEvent>
     return Stack(
       children: [
         ListView.separated(
-          key: PageStorageKey<String>('feed-event-list-${widget.eventId}'),
           physics: const BouncingScrollPhysics(),
           cacheExtent: 10000,
           itemCount: state.posts.length + 1,
@@ -69,16 +68,12 @@ class _FeedEventState extends State<FeedEvent>
               const SizedBox(height: 10),
           itemBuilder: (BuildContext context, int index) {
             if (index == state.posts.length) {
-              return state.status == FeedEventStatus.paginating
+              return state.status == FeedMonthStatus.paginating
                   ? const Center(child: CircularProgressIndicator())
                   : const SizedBox.shrink();
             } else {
-              final post = state.posts[index] ?? Post.empty;
-              return PostEventView(
-                key: ValueKey('${widget.eventId}-${post.id}'),
-                logoUrl: widget.logoUrl,
-                title: widget.title,
-                eventId: widget.eventId,
+              final Post post = state.posts[index] ?? Post.empty;
+              return PostView(
                 post: post,
               );
             }

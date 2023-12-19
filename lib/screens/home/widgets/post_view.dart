@@ -11,16 +11,10 @@ import 'package:go_router/go_router.dart';
 
 class PostView extends StatefulWidget {
   final Post post;
-  final bool isLiked;
-  final VoidCallback onLike;
-  final bool recentlyLiked;
 
   PostView({
     Key? key,
     required this.post,
-    required this.isLiked,
-    required this.onLike,
-    this.recentlyLiked = false,
   }) : super(key: key ?? ValueKey(post.id));
 
   @override
@@ -223,7 +217,7 @@ class _PostViewState extends State<PostView>
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '${widget.recentlyLiked ? widget.post.likes + 1 : widget.post.likes}',
+          '${widget.post.likes}',
           style: AppTextStyles.titlePost(context),
         ),
         const SizedBox(width: 2),

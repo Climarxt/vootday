@@ -1,5 +1,5 @@
 // ignore_for_file: avoid_print
-import 'package:bootdv2/cubits/cubits.dart';
+import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
@@ -75,7 +75,6 @@ class _FeedMonthState extends State<FeedMonth>
             ListView.separated(
               physics: const BouncingScrollPhysics(),
               cacheExtent: 10000,
-              controller: _scrollController,
               itemCount: state.posts.length + 1,
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(height: 10),
@@ -85,24 +84,9 @@ class _FeedMonthState extends State<FeedMonth>
                       ? const Center(child: CircularProgressIndicator())
                       : const SizedBox.shrink();
                 } else {
-                  final post = state.posts[index];
-                  final likedPostsState =
-                      context.watch<LikedPostsCubit>().state;
-                  final isLiked =
-                      likedPostsState.likedPostIds.contains(post!.id);
-                  final recentlyLiked =
-                      likedPostsState.recentlyLikedPostIds.contains(post.id);
+                  final Post post = state.posts[index] ?? Post.empty;
                   return PostView(
                     post: post,
-                    isLiked: isLiked,
-                    recentlyLiked: recentlyLiked,
-                    onLike: () {
-                      if (isLiked) {
-                        context.read<LikedPostsCubit>().unlikePost(post: post);
-                      } else {
-                        context.read<LikedPostsCubit>().likePost(post: post);
-                      }
-                    },
                   );
                 }
               },

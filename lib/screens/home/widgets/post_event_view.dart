@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';

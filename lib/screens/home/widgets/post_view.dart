@@ -200,10 +200,7 @@ class _PostViewState extends State<PostView>
 
   Widget buildUsername(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        context.push(
-            '/user/${widget.post.author.id}?username=${widget.post.author.username}');
-      },
+      onTap: () => _navigateToUserScreen(context),
       child: Row(
         children: [
           UserProfileImage(
@@ -242,5 +239,11 @@ class _PostViewState extends State<PostView>
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
     GoRouter.of(context).push('/post/${widget.post.id}?username=$username');
+  }
+
+  void _navigateToUserScreen(BuildContext context) {
+    GoRouter.of(context).push(
+        '/user/${widget.post.author.id}?username=${widget.post.author.username}');
+    ;
   }
 }

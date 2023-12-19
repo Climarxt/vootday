@@ -1,7 +1,7 @@
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/my_event/my_event_bloc.dart';
-import 'package:bootdv2/screens/profile/widgets/mosaique_event_long_card.dart';
+import 'package:bootdv2/screens/profile/widgets/mosaique_event_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -61,7 +61,7 @@ Widget _buildBody(BuildContext context, MyEventState state) {
           crossAxisCount: 2,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
-          childAspectRatio: 0.5,
+          childAspectRatio: 0.8,
         ),
         physics: const BouncingScrollPhysics(),
         cacheExtent: 10000,
@@ -91,7 +91,7 @@ Widget _buildBody(BuildContext context, MyEventState state) {
                   // Handle the case where there is no image URL
                   return const Text('No image available');
                 }
-                return MosaiqueEventLongCard(
+                return MosaiqueEventCard(
                   imageUrl: snapshot.data!,
                   title: event.title,
                   logoUrl: event.author.logoUrl,

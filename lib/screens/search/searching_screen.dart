@@ -190,8 +190,9 @@ class _SearchingScreenState extends State<SearchingScreen> {
                             ),
                           ],
                         ),
-                  onTap: () =>
-                      _navigateToUserScreen(context, user.id, user.username),
+                  onTap: () => isBrand
+                      ? _navigateToBrandScreen(context, user.id, user.username)
+                      : _navigateToUserScreen(context, user.id, user.username),
                 ),
               );
             },
@@ -202,7 +203,11 @@ class _SearchingScreenState extends State<SearchingScreen> {
   void _navigateToUserScreen(
       BuildContext context, String userId, String username) {
     GoRouter.of(context).push('/user/$userId?username=$username');
-    ;
+  }
+
+  void _navigateToBrandScreen(
+      BuildContext context, String userId, String username) {
+    GoRouter.of(context).push('/brand/$userId?username=$username');
   }
 
   Widget _buildDefaultState(Size size) {

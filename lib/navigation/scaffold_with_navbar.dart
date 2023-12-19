@@ -22,6 +22,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       appBar: appBar,
       body: navigationShell,
       bottomNavigationBar: !(currentLocation == '/profile/create' ||
+              currentLocation == '/profile/create/brand' ||
               currentLocation.endsWith('/create'))
           ? BottomNavigationBar(
               items: <BottomNavigationBarItem>[

@@ -70,13 +70,13 @@ class _SearchingScreenState extends State<SearchingScreen> {
           cursorColor: greyDark,
           decoration: const InputDecoration(
             border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color: greyDark), // Couleur de la ligne sous le texte
+              borderSide: BorderSide(color: Colors.transparent),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                  color:
-                      greyDark), // Couleur de la ligne lorsque le TextField est sélectionné
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
             ),
           ),
           onChanged: (value) {
@@ -106,12 +106,15 @@ class _SearchingScreenState extends State<SearchingScreen> {
               _isSearching = true;
             });
           },
-          child: Text(
-            AppLocalizations.of(context)!.translate('searching'),
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: greyDark),
+          child: SizedBox(
+            width: double.infinity,
+            child: Text(
+              AppLocalizations.of(context)!.translate('searching'),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(color: greyDark),
+            ),
           ),
         ),
         actions: <Widget>[

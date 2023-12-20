@@ -66,7 +66,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -81,8 +81,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
-                  padding:
-                      const EdgeInsets.only(left: 10, right: 5, bottom: 5),
+                  padding: const EdgeInsets.only(left: 10, right: 5, bottom: 5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls1[_currentIndex1]),
                   cardsCount: _imageUrls1.length,
@@ -100,8 +99,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
-                  padding:
-                      const EdgeInsets.only(right: 10, left: 5, bottom: 5),
+                  padding: const EdgeInsets.only(right: 10, left: 5, bottom: 5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls2[_currentIndex2]),
                   cardsCount: _imageUrls2.length,
@@ -122,18 +120,9 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
 
   Widget _buildCard(String imageUrl) {
     return Container(
-      clipBehavior: Clip
-          .hardEdge, // S'assurer que l'image ne dépasse pas les bordures arrondies
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18), // Rayon des coins arrondis
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Image.network(
         imageUrl,

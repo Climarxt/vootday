@@ -225,20 +225,20 @@ class _PostScreenState extends State<PostScreen>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint("Referenced post document exist.");
+            debugPrint("PostScreen - getMostRecentPostImageUrl : Referenced post document exist.");
             return postData?['imageUrl'] as String? ?? '';
           } else {
-            debugPrint("Referenced post document does not exist.");
+            debugPrint("PostScreen - getMostRecentPostImageUrl : Referenced post document does not exist.");
           }
         } else {
-          debugPrint("Post reference is null.");
+          debugPrint("PostScreen - getMostRecentPostImageUrl : Post reference is null.");
         }
       } else {
-        debugPrint("No posts found in the event's feed.");
+        debugPrint("PostScreen - getMostRecentPostImageUrl : No posts found in the event's feed.");
       }
     } catch (e) {
       debugPrint(
-          "An error occurred while fetching the most liked post image URL: $e");
+          "PostScreen - getMostRecentPostImageUrl : An error occurred while fetching the most liked post image URL: $e");
     }
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }

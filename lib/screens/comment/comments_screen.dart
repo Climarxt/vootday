@@ -4,6 +4,7 @@ import 'package:bootdv2/screens/comment/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
@@ -51,101 +52,115 @@ class _CommentScreenState extends State<CommentScreen> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: white,
-          appBar: AppBarComment(
-            title: AppLocalizations.of(context)!.translate('comments'),
-          ),
-          body: ListView.builder(
-            padding: const EdgeInsets.only(bottom: 60.0),
-            itemCount: state.comments.length,
-            itemBuilder: (BuildContext context, int index) {
-              final comment = state.comments[index];
-              return ListTile(
-                leading: UserProfileImage(
-                  outerCircleRadius: 23,
-                  radius: 22.0,
-                  profileImageUrl: comment!.author.profileImageUrl,
-                ),
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: comment.author.username,
-                        style: AppTextStyles.titleLargeBlackBold(context),
-                      ),
-                      const WidgetSpan(
-                        child: SizedBox(width: 5),
-                      ),
-                      TextSpan(
-                        text: comment.content,
-                        style: AppTextStyles.bodyStyle(context),
-                      ),
-                      const WidgetSpan(
-                        child: SizedBox(width: 5),
-                      ),
-                      TextSpan(
-                        text: formatDuration(comment.date),
-                        style: AppTextStyles.bodySmallStyleGrey(context),
-                      ),
-                    ],
+        return GestureDetector(
+          onTap: () {
+            // Fermer le clavier lorsque l'utilisateur tape en dehors du TextField
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+            backgroundColor: white,
+            appBar: AppBarComment(
+              title: AppLocalizations.of(context)!.translate('comments'),
+            ),
+            body: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 60.0),
+              itemCount: state.comments.length,
+              itemBuilder: (BuildContext context, int index) {
+                final comment = state.comments[index];
+                return ListTile(
+                  leading: GestureDetector(
+                    onTap: () {
+                      GoRouter.of(context).push(
+                          '/user/${comment.author.id}?username=${comment.author.username}');
+                    },
+                    child: UserProfileImage(
+                      outerCircleRadius: 23,
+                      radius: 22.0,
+                      profileImageUrl: comment!.author.profileImageUrl,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-          bottomSheet: Container(
-            color: white,
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8.0),
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.circular(30.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 3.0,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: _commentController,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: const InputDecoration.collapsed(
-                                hintText: 'Ecrire un commentaire...'),
+                  title: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: comment.author.username,
+                          style: AppTextStyles.titleLargeBlackBold(context),
+                        ),
+                        const WidgetSpan(
+                          child: SizedBox(width: 5),
+                        ),
+                        TextSpan(
+                          text: comment.content,
+                          style: AppTextStyles.bodyStyle(context),
+                        ),
+                        const WidgetSpan(
+                          child: SizedBox(width: 5),
+                        ),
+                        TextSpan(
+                          text: formatDuration(comment.date),
+                          style: AppTextStyles.bodySmallStyleGrey(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            bottomSheet: Container(
+              color: white,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: white,
+                              borderRadius: BorderRadius.circular(30.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 3.0,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _commentController,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: const InputDecoration.collapsed(
+                                  hintText: 'Ecrire un commentaire...'),
+                            ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.send),
-                        onPressed: () {
-                          final content = _commentController.text.trim();
-                          if (content.isNotEmpty) {
-                            context
-                                .read<CommentsBloc>()
-                                .add(CommentsPostComment(
-                                  content: content,
-                                  postId: widget.postId, // Ajoutez cette ligne
-                                ));
-                            _commentController.clear();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                        IconButton(
+                          icon: const Icon(Icons.send),
+                          onPressed: () {
+                            final content = _commentController.text.trim();
+                            if (content.isNotEmpty) {
+                              context
+                                  .read<CommentsBloc>()
+                                  .add(CommentsPostComment(
+                                    content: content,
+                                    postId: widget.postId,
+                                  ));
+                              _commentController.clear();
+
+                              FocusScope.of(context).unfocus();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

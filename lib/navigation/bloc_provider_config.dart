@@ -1,3 +1,4 @@
+import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
@@ -128,6 +129,9 @@ class BlocProviderConfig {
             authBloc: context.read<AuthBloc>(),
             postRepository: context.read<PostRepository>(),
           ),
+        ),
+        BlocProvider<RecentPostImageUrlCubit>(
+          create: (context) => RecentPostImageUrlCubit(),
         ),
       ],
       child: child,

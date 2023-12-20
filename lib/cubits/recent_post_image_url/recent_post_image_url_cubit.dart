@@ -2,11 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-class RecentPostImageUrlCubit extends Cubit<String?> {
-  RecentPostImageUrlCubit() : super(null);
+part 'recent_post_image_url_state.dart';
 
-  Future<String?> getMostRecentPostImageUrl(String collectionId) async {
+class RecentPostImageUrlCubit extends Cubit<RecentPostImageUrlState> {
+  RecentPostImageUrlCubit() : super(RecentPostImageUrlInitial());
+
+  Future<void> getMostRecentPostImageUrl(String collectionId) async {
     debugPrint('RecentPostImageUrlCubit: Début de getMostRecentPostImageUrl');
+    emit(RecentPostImageUrlLoading());
 
     try {
       final feedEventRef = FirebaseFirestore.instance
@@ -38,23 +41,31 @@ class RecentPostImageUrlCubit extends Cubit<String?> {
             final imageUrl = postData?['imageUrl'] as String?;
             debugPrint(
                 'RecentPostImageUrlCubit: URL de l\'image récupérée: $imageUrl');
-            return imageUrl;
+
+            if (imageUrl != null) {
+              emit(RecentPostImageUrlSuccess(imageUrl));
+            } else {
+              emit(RecentPostImageUrlFailure());
+            }
           } else {
             debugPrint(
                 'RecentPostImageUrlCubit: Document de post n\'existe pas');
+            emit(RecentPostImageUrlFailure());
           }
         } else {
           debugPrint(
               'RecentPostImageUrlCubit: Aucune référence de post trouvée');
+          emit(RecentPostImageUrlFailure());
         }
       } else {
         debugPrint(
             'RecentPostImageUrlCubit: Aucun document trouvé dans Firestore');
+        emit(RecentPostImageUrlFailure());
       }
     } catch (e) {
       debugPrint(
           'RecentPostImageUrlCubit: Erreur lors de la récupération de l\'URL de l\'image - $e');
+      emit(RecentPostImageUrlFailure());
     }
-    return "https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7";
   }
 }

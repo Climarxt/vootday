@@ -200,15 +200,18 @@ class _PostScreenState extends State<PostScreen>
 
   Future<void> _fetchImageUrls(List<Collection> collections) async {
     List<String> urls = [];
+
     for (var collection in collections) {
-      final imageUrl = await context
-          .read<RecentPostImageUrlCubit>()
-          .getMostRecentPostImageUrl(collection.id);
+      final cubit = context.read<RecentPostImageUrlCubit>();
+      final imageUrlStream = cubit.stream
+          .where((state) => state is RecentPostImageUrlSuccess)
+          .map((state) => (state as RecentPostImageUrlSuccess).imageUrl);
 
-      // Ajoutez un log ici pour vérifier l'URL reçue
+      cubit.getMostRecentPostImageUrl(collection.id);
+
+      final imageUrl = await imageUrlStream.first;
       debugPrint("URL récupérée pour ${collection.id}: $imageUrl");
-
-      urls.add(imageUrl ?? 'URL par défaut');
+      urls.add(imageUrl);
     }
 
     if (mounted) {

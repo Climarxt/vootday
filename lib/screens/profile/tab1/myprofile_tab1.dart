@@ -17,11 +17,15 @@ class MyProfileTab1 extends StatefulWidget {
   State<MyProfileTab1> createState() => _MyProfileTab1State();
 }
 
-class _MyProfileTab1State extends State<MyProfileTab1> {
+class _MyProfileTab1State extends State<MyProfileTab1> with AutomaticKeepAliveClientMixin<MyProfileTab1>  {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _buildGridView(widget.context, widget.state);
   }
+  
+  @override
+  bool get wantKeepAlive => true;
 }
 
 Widget _buildGridView(BuildContext context, ProfileState state) {

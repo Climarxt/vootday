@@ -130,9 +130,9 @@ class _MyProfileTab3State extends State<MyProfileTab3>
           await feedEventRef.orderBy('date', descending: true).limit(1).get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        final data = querySnapshot.docs.first.data() as Map<String, dynamic>?;
+        final data = querySnapshot.docs.first.data();
         final DocumentReference? postRef =
-            data?['post_ref'] as DocumentReference?;
+            data['post_ref'] as DocumentReference?;
 
         if (postRef != null) {
           final postDoc = await postRef.get();
@@ -177,7 +177,7 @@ class _MyProfileTab3State extends State<MyProfileTab3>
             },
             builder: (context, state) {
               return Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[

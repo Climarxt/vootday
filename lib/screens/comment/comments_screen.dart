@@ -8,9 +8,8 @@ import 'package:intl/intl.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
-  final String username;
-  const CommentScreen(
-      {super.key, required this.postId, required this.username});
+
+  const CommentScreen({super.key, required this.postId});
 
   @override
   // ignore: library_private_types_in_public_api

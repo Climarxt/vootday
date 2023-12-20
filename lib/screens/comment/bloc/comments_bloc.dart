@@ -42,14 +42,25 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
     try {
       _commentsSubscription?.cancel();
+      final post = await _postRepository.getPostById(event.postId);
+
+      if (post == null) {
+        // Gérer le cas où le post n'existe pas
+        emit(state.copyWith(
+          status: CommentsStatus.error,
+          failure: const Failure(message: 'Le post demandé n\'existe pas'),
+        ));
+        return;
+      }
+
       _commentsSubscription = _postRepository
-          .getPostComments(postId: event.post.id!)
+          .getPostComments(postId: event.postId)
           .listen((comments) async {
         final allComments = await Future.wait(comments);
         add(CommentsUpdateComments(comments: allComments));
       });
 
-      emit(state.copyWith(post: event.post, status: CommentsStatus.loaded));
+      emit(state.copyWith(post: post, status: CommentsStatus.loaded));
     } catch (err) {
       emit(state.copyWith(
         status: CommentsStatus.error,

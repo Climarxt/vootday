@@ -8,12 +8,12 @@ abstract class CommentsEvent extends Equatable {
 }
 
 class CommentsFetchComments extends CommentsEvent {
-  final Post post;
+  final String postId;
 
-  const CommentsFetchComments({required this.post});
+  const CommentsFetchComments({required this.postId});
 
   @override
-  List<Object?> get props => [post];
+  List<Object?> get props => [postId];
 }
 
 class CommentsUpdateComments extends CommentsEvent {

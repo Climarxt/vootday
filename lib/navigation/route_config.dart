@@ -5,6 +5,10 @@ class RouteConfig {
     return state.pathParameters['postId']!;
   }
 
+    static String getPostIdUri(GoRouterState state) {
+    return state.uri.queryParameters['postId'] ?? 'Unknown';
+  }
+
   static String getUsername(GoRouterState state) {
     return state.uri.queryParameters['username'] ?? 'Unknown';
   }

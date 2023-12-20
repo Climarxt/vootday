@@ -36,15 +36,13 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: TabBarView(
-        controller: _tabController,
-        children: const [
-          SwipeOOTD(),
-          SwipeEvent(),
-        ],
-      ),
+    return TabBarView(
+      physics: NeverScrollableScrollPhysics(),
+      controller: _tabController,
+      children: const [
+        SwipeEvent(),
+        SwipeOOTD(),
+      ],
     );
   }
 

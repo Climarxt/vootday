@@ -1,32 +1,69 @@
-import 'package:bootdv2/screens/swipe/widgets/profileimagefeed.dart';
 import 'package:flutter/material.dart';
 
-bool _isLoading = false;
+class SwipeOOTD extends StatefulWidget {
+  const SwipeOOTD({super.key});
 
-class SwipeOOTD extends StatelessWidget {
-  const SwipeOOTD({
-    super.key,
-  });
+  @override
+  State<SwipeOOTD> createState() => _SwipeOOTDState();
+}
+
+class _SwipeOOTDState extends State<SwipeOOTD> {
+  final List<String> _imageUrls = [
+    // Ajoutez toutes vos URLs d'images ici
+    'assets/images/ITG1_1.jpg',
+    'assets/images/ITG1_2.jpg',
+    'assets/images/ITG3_1.jpg',
+    'assets/images/ITG3_2.jpg',
+  ];
+
+  late String _imageUrl1;
+  late String _imageUrl2;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshImages();
+  }
+
+  void _refreshImages() {
+    // Mélangez la liste et prenez les deux premières images
+    setState(() {
+      _imageUrls.shuffle();
+      _imageUrl1 = _imageUrls[0];
+      _imageUrl2 = _imageUrls[1];
+    });
+  }
+
+  void _onImageTap() {
+    // Lorsqu'une image est sélectionnée, rafraîchissez les deux images
+    _refreshImages();
+  }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return _buildDefaultState(size);
-  }
-
-  Widget _buildDefaultState(Size size) {
-    return Column(
-      children: [
-        _buildCard('assets/images/ITG1_1.jpg','assets/images/profile1.jpg', 'ct.bast'),
-        _buildCard('assets/images/ITG1_2.jpg','assets/images/profile2.jpg', 'user.test'),
-      ],
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: _onImageTap,
+            child: _buildCard(_imageUrl1, size),
+          ),
+          SizedBox(height: 2),
+          GestureDetector(
+            onTap: _onImageTap,
+            child: _buildCard(_imageUrl2, size),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildCard(String imageUrl, String profileImage, String username) {
+  Widget _buildCard(String imageUrl, Size size) {
     return Card(
-      elevation: 0,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -34,35 +71,12 @@ class SwipeOOTD extends StatelessWidget {
         aspectRatio: 1.17,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Stack(
-            children: [
-              _buildPost(imageUrl),
-              Align(
-                alignment: Alignment.topLeft,
-                child: ProfileImageFeed(
-                  username: username,
-                  profileUrl: (profileImage),
-                ),
-              ),
-            ],
+          child: Image.asset(
+            imageUrl,
+            fit: BoxFit.cover,
           ),
         ),
       ),
     );
   }
-
-  Widget _buildPost(String imageUrl) {
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: AssetImage(imageUrl),
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-  }
-
 }

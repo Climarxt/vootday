@@ -50,5 +50,6 @@
   "name": "Nom",
   "makePublic": "Rendre publique",
   "makePublicDescription": "Les collections rendues publiques apparaîtront sur ton profil et peuvent être partagées avec tes amis",
-  "searching": "Rechercher "
+  "searching": "Rechercher ",
+  "comments": "Commentaires"
 }

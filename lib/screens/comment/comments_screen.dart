@@ -4,7 +4,6 @@ import 'package:bootdv2/screens/comment/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
@@ -25,6 +24,21 @@ class _CommentScreenState extends State<CommentScreen> {
     super.dispose();
   }
 
+  String formatDuration(DateTime commentDate) {
+    final now = DateTime.now();
+    final difference = now.difference(commentDate);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}j';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}min';
+    } else {
+      return 'Maintenant';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CommentsBloc, CommentsState>(
@@ -40,7 +54,7 @@ class _CommentScreenState extends State<CommentScreen> {
         return Scaffold(
           backgroundColor: white,
           appBar: AppBarComment(
-            title: "Comments",
+            title: AppLocalizations.of(context)!.translate('comments'),
           ),
           body: ListView.builder(
             padding: const EdgeInsets.only(bottom: 60.0),
@@ -53,31 +67,30 @@ class _CommentScreenState extends State<CommentScreen> {
                   radius: 22.0,
                   profileImageUrl: comment!.author.profileImageUrl,
                 ),
-                title: Text.rich(
-                  TextSpan(
+                title: RichText(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: comment.author.username,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.titleLargeBlackBold(context),
                       ),
-                      const TextSpan(text: ' '),
-                      TextSpan(text: comment.content),
+                      const WidgetSpan(
+                        child: SizedBox(width: 5),
+                      ),
+                      TextSpan(
+                        text: comment.content,
+                        style: AppTextStyles.bodyStyle(context),
+                      ),
+                      const WidgetSpan(
+                        child: SizedBox(width: 5),
+                      ),
+                      TextSpan(
+                        text: formatDuration(comment.date),
+                        style: AppTextStyles.bodySmallStyleGrey(context),
+                      ),
                     ],
                   ),
                 ),
-                subtitle: Text(
-                  DateFormat.yMd('fr_FR').add_jm().format(comment.date),
-                  style: TextStyle(
-                    color: const Color.fromARGB(255, 65, 65, 65),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                /* onTap: () => Navigator.of(context).pushNamed(
-                  ProfileScreen.routeName,
-                  arguments: ProfileScreenArgs(userId: comment.author.id),
-                ),
-              );
-              */
               );
             },
           ),

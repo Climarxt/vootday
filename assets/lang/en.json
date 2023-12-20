@@ -50,5 +50,6 @@
   "name": "Name",
   "makePublic": "Make public",
   "makePublicDescription": "Collections made public will appear on your profile and can be shared with your friends",
-  "searching": "Search "
+  "searching": "Search ",
+  "comments": "Comments"
 }

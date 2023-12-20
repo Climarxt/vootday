@@ -57,7 +57,7 @@ class ProfileImagePost extends StatelessWidget {
                       style: AppTextStyles.bodyStyle(context),
                     ),
                     const SizedBox(width: 2),
-                    Icon(
+                    const Icon(
                       Icons.emoji_events,
                       color: black,
                       size: 12,

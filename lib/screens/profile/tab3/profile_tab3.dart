@@ -18,7 +18,8 @@ class ProfileTab3 extends StatefulWidget {
   State<ProfileTab3> createState() => _ProfileTab3State();
 }
 
-class _ProfileTab3State extends State<ProfileTab3> {
+class _ProfileTab3State extends State<ProfileTab3>
+    with AutomaticKeepAliveClientMixin<ProfileTab3> {
   @override
   void initState() {
     super.initState();
@@ -30,6 +31,8 @@ class _ProfileTab3State extends State<ProfileTab3> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocConsumer<YourCollectionBloc, YourCollectionState>(
       listener: (context, state) {
         if (state.status == YourCollectionStatus.initial &&
@@ -135,4 +138,7 @@ class _ProfileTab3State extends State<ProfileTab3> {
     }
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

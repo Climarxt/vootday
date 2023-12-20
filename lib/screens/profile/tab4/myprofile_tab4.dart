@@ -13,7 +13,8 @@ class MyProfileTab4 extends StatefulWidget {
   State<MyProfileTab4> createState() => _MyProfileTab4State();
 }
 
-class _MyProfileTab4State extends State<MyProfileTab4> {
+class _MyProfileTab4State extends State<MyProfileTab4>
+    with AutomaticKeepAliveClientMixin<MyProfileTab4> {
   @override
   void initState() {
     super.initState();
@@ -24,13 +25,33 @@ class _MyProfileTab4State extends State<MyProfileTab4> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocConsumer<FeedMyLikesBloc, FeedMyLikesState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return _buildGridView(state);
+        return Scaffold(
+          body: _buildBody(state, context),
+        );
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+Widget _buildBody(FeedMyLikesState state, BuildContext context) {
+  return Stack(
+    children: [
+      RefreshIndicator(
+        onRefresh: () async {
+          context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
+        },
+        child: _buildGridView(state),
+      ),
+    ],
+  );
 }
 
 Widget _buildGridView(FeedMyLikesState state) {

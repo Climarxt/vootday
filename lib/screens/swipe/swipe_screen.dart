@@ -40,8 +40,8 @@ class _SwipeScreenState extends State<SwipeScreen>
       physics: NeverScrollableScrollPhysics(),
       controller: _tabController,
       children: const [
-        SwipeEvent(),
         SwipeOOTD(),
+        SwipeEvent(),
       ],
     );
   }

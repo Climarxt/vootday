@@ -76,22 +76,22 @@ class _SwipeEventState extends State<SwipeEvent> {
     }
     return Scaffold(
       body: SafeArea(
-        child: Row(
+        child: Column(
           children: [
             Expanded(
               child: AspectRatio(
-                aspectRatio: 0.29,
+                aspectRatio: 1.22,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
                   padding:
-                      const EdgeInsets.only(left: 10, right: 5, bottom: 15),
+                      const EdgeInsets.only(right: 10, left: 10, bottom: 5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls1[_currentIndex1]),
                   cardsCount: _imageUrls1.length,
                   controller: controller1,
                   onSwipe: (previousIndex, currentIndex, direction) {
                     _changeImage(1);
-                    _changeImage(2); // Change the second swiper image
+                    _changeImage(2);
                     return true;
                   },
                 ),
@@ -99,11 +99,11 @@ class _SwipeEventState extends State<SwipeEvent> {
             ),
             Expanded(
               child: AspectRatio(
-                aspectRatio: 0.29,
+                aspectRatio: 1.22,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
-                  padding:
-                      const EdgeInsets.only(right: 10, left: 5, bottom: 15),
+                  padding: const EdgeInsets.only(
+                      right: 10, left: 10, top: 5, bottom: 5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls2[_currentIndex2]),
                   cardsCount: _imageUrls2.length,

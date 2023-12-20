@@ -1,4 +1,7 @@
+import 'package:bootdv2/config/configs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class SwipeOOTD extends StatefulWidget {
   const SwipeOOTD({super.key});
@@ -8,75 +11,146 @@ class SwipeOOTD extends StatefulWidget {
 }
 
 class _SwipeOOTDState extends State<SwipeOOTD> {
-  final List<String> _imageUrls = [
-    // Ajoutez toutes vos URLs d'images ici
-    'assets/images/ITG1_1.jpg',
-    'assets/images/ITG1_2.jpg',
-    'assets/images/ITG3_1.jpg',
-    'assets/images/ITG3_2.jpg',
-  ];
-
-  late String _imageUrl1;
-  late String _imageUrl2;
+  final CardSwiperController controller1 = CardSwiperController();
+  final CardSwiperController controller2 = CardSwiperController();
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  List<String> _imageUrls1 = [];
+  List<String> _imageUrls2 = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _refreshImages();
+    _loadImages();
   }
 
-  void _refreshImages() {
-    // Mélangez la liste et prenez les deux premières images
-    setState(() {
-      _imageUrls.shuffle();
-      _imageUrl1 = _imageUrls[0];
-      _imageUrl2 = _imageUrls[1];
-    });
+  Future<void> _loadImages() async {
+    try {
+      // Récupérer tous les documents de la collection 'posts'
+      var postsSnapshot =
+          await _firebaseFirestore.collection(Paths.posts).get();
+
+      // Réinitialiser les listes pour éviter les doublons lors du rechargement
+      _imageUrls1.clear();
+      _imageUrls2.clear();
+
+      // Parcourir chaque document et répartir les URLs d'images entre _imageUrls1 et _imageUrls2
+      bool addToFirstList = true;
+      for (var doc in postsSnapshot.docs) {
+        var imageUrl = doc.data()["imageUrl"] as String?;
+        if (imageUrl != null) {
+          if (addToFirstList) {
+            _imageUrls1.add(imageUrl);
+          } else {
+            _imageUrls2.add(imageUrl);
+          }
+          addToFirstList = !addToFirstList; // Alterner entre les listes
+          print('Image URL ajoutée: $imageUrl');
+        }
+      }
+
+      print('Nombre total d\'images dans _imageUrls1: ${_imageUrls1.length}');
+      print('Nombre total d\'images dans _imageUrls2: ${_imageUrls2.length}');
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Erreur lors du chargement des images: $e');
+    }
   }
 
-  void _onImageTap() {
-    // Lorsqu'une image est sélectionnée, rafraîchissez les deux images
-    _refreshImages();
-  }
+  int _currentIndex1 = 0;
+  int _currentIndex2 = 0;
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: _onImageTap,
-            child: _buildCard(_imageUrl1, size),
-          ),
-          SizedBox(height: 2),
-          GestureDetector(
-            onTap: _onImageTap,
-            child: _buildCard(_imageUrl2, size),
-          ),
-        ],
+      body: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 0.29,
+                child: CardSwiper(
+                  numberOfCardsDisplayed: 1,
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 5, bottom: 15),
+                  cardBuilder: (context, index, _, __) =>
+                      _buildCard(_imageUrls1[_currentIndex1]),
+                  cardsCount: _imageUrls1.length,
+                  controller: controller1,
+                  onSwipe: (previousIndex, currentIndex, direction) {
+                    _changeImage(1);
+                    _changeImage(2);
+                    return true;
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: 0.29,
+                child: CardSwiper(
+                  numberOfCardsDisplayed: 1,
+                  padding:
+                      const EdgeInsets.only(right: 10, left: 5, bottom: 15),
+                  cardBuilder: (context, index, _, __) =>
+                      _buildCard(_imageUrls2[_currentIndex2]),
+                  cardsCount: _imageUrls2.length,
+                  controller: controller2,
+                  onSwipe: (previousIndex, currentIndex, direction) {
+                    _changeImage(1);
+                    _changeImage(2);
+                    return true;
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildCard(String imageUrl, Size size) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: AspectRatio(
-        aspectRatio: 1.17,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            imageUrl,
-            fit: BoxFit.cover,
+  Widget _buildCard(String imageUrl) {
+    return Container(
+      clipBehavior: Clip
+          .hardEdge, // S'assurer que l'image ne dépasse pas les bordures arrondies
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18), // Rayon des coins arrondis
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 3,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
           ),
-        ),
+        ],
+      ),
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
       ),
     );
+  }
+
+  void _changeImage(int swiperNumber) {
+    setState(() {
+      if (swiperNumber == 1) {
+        // Mettre à jour l'indice pour le premier swiper
+        _currentIndex1 = (_currentIndex1 + 1) % _imageUrls1.length;
+      } else if (swiperNumber == 2) {
+        // Mettre à jour l'indice pour le deuxième swiper
+        _currentIndex2 = (_currentIndex2 + 1) % _imageUrls2.length;
+      }
+    });
   }
 }

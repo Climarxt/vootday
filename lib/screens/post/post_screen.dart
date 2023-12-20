@@ -225,16 +225,17 @@ class _PostScreenState extends State<PostScreen>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint("PostScreen - getMostRecentPostImageUrl : Referenced post document exist.");
+            debugPrint(
+                "PostScreen - getMostRecentPostImageUrl : Referenced post document exist.");
             return postData?['imageUrl'] as String? ?? '';
           } else {
-            debugPrint("PostScreen - getMostRecentPostImageUrl : Referenced post document does not exist.");
+            debugPrint(
+                "PostScreen - getMostRecentPostImageUrl : Referenced post document does not exist.");
           }
         } else {
-          debugPrint("PostScreen - getMostRecentPostImageUrl : Post reference is null.");
+          debugPrint(
+              "PostScreen - getMostRecentPostImageUrl : Post reference is null.");
         }
-      } else {
-        debugPrint("PostScreen - getMostRecentPostImageUrl : No posts found in the event's feed.");
       }
     } catch (e) {
       debugPrint(

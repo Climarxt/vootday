@@ -119,13 +119,13 @@ class _HomeEventState extends State<HomeEvent>
                 postDoc.data() as Map<String, dynamic>?; // Cast as a map
             return postData?['imageUrl'] as String? ?? ''; // Use the map
           } else {
-            debugPrint("HomeEvent - getMostLikedPostImageUrl : Referenced post document does not exist.");
+            debugPrint(
+                "HomeEvent - getMostLikedPostImageUrl : Referenced post document does not exist.");
           }
         } else {
-          debugPrint("HomeEvent - getMostLikedPostImageUrl : Post reference is null.");
+          debugPrint(
+              "HomeEvent - getMostLikedPostImageUrl : Post reference is null.");
         }
-      } else {
-        debugPrint("HomeEvent - getMostLikedPostImageUrl : No posts found in the event's feed.");
       }
     } catch (e) {
       debugPrint(

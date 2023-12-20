@@ -139,16 +139,17 @@ class _MyProfileTab3State extends State<MyProfileTab3>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint("MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document exist.");
+            debugPrint(
+                "MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document exist.");
             return postData?['imageUrl'] as String? ?? '';
           } else {
-            debugPrint("MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document does not exist.");
+            debugPrint(
+                "MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document does not exist.");
           }
         } else {
-          debugPrint("MyProfileTab3 - getMostRecentPostImageUrl : Post reference is null.");
+          debugPrint(
+              "MyProfileTab3 - getMostRecentPostImageUrl : Post reference is null.");
         }
-      } else {
-        debugPrint("MyProfileTab3 - getMostRecentPostImageUrl : No posts found in the event's feed.");
       }
     } catch (e) {
       debugPrint(

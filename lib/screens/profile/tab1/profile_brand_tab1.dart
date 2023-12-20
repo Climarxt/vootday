@@ -132,13 +132,13 @@ Future<String> getMostLikedPostImageUrl(String eventId) async {
           final postData = postDoc.data() as Map<String, dynamic>?;
           return postData?['imageUrl'] as String? ?? '';
         } else {
-          debugPrint("ProfileBrandTab1 - getMostLikedPostImageUrl : Referenced post document does not exist.");
+          debugPrint(
+              "ProfileBrandTab1 - getMostLikedPostImageUrl : Referenced post document does not exist.");
         }
       } else {
-        debugPrint("ProfileBrandTab1 - getMostLikedPostImageUrl : Post reference is null.");
+        debugPrint(
+            "ProfileBrandTab1 - getMostLikedPostImageUrl : Post reference is null.");
       }
-    } else {
-      debugPrint("ProfileBrandTab1 - getMostLikedPostImageUrl : No posts found in the event's feed.");
     }
   } catch (e) {
     debugPrint(

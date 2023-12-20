@@ -2,6 +2,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 
 class MosaiqueEventLongCard extends StatefulWidget {
@@ -44,7 +45,7 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
       opacity: isImageVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 300),
       child: isImageVisible
-          ? GestureDetector(
+          ? Bounceable(
               onTap: () => _navigateToEventFeed(context),
               child: _buildPost(context, widget.imageUrl, widget.title),
             )

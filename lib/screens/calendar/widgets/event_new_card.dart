@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,7 +50,7 @@ class _EventNewCardState extends State<EventNewCard> {
   Widget _buildCard(
       BuildContext context, String imageUrl, String title, String description) {
     Size size = MediaQuery.of(context).size;
-    return GestureDetector(
+    return Bounceable(
       onTap: () => _navigateToEventScreen(context),
       child: SizedBox(
         width: size.width,

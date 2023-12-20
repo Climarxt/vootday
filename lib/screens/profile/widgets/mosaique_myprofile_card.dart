@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 import '/models/models.dart';
 
@@ -36,10 +37,9 @@ class _MosaiqueMyProfileCardState extends State<MosaiqueMyProfileCard> {
       opacity: isImageVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 300),
       child: isImageVisible
-          ? GestureDetector(
+          ? Bounceable(
               onTap: () => _navigateToPostScreen(context),
-              child: _buildPost(widget.post.thumbnailUrl)
-              )
+              child: _buildPost(widget.post.thumbnailUrl))
           : Container(color: white),
     );
   }

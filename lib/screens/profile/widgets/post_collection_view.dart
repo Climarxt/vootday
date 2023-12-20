@@ -2,6 +2,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 
 class PostCollectionView extends StatefulWidget {
@@ -49,7 +50,7 @@ class _PostCollectionViewState extends State<PostCollectionView>
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _animation,
-      child: GestureDetector(
+      child: Bounceable(
         onTap: () => _navigateToPostScreen(context),
         child: Card(
           shape: RoundedRectangleBorder(
@@ -81,9 +82,8 @@ class _PostCollectionViewState extends State<PostCollectionView>
         Uri.encodeComponent(widget.post.author.username);
     final String encodedTitle = Uri.encodeComponent(widget.title);
 
-    GoRouter.of(context)
-        .push('/post/${widget.post.id}'
-            '?username=$encodedUsername'
-            '&title=$encodedTitle');
+    GoRouter.of(context).push('/post/${widget.post.id}'
+        '?username=$encodedUsername'
+        '&title=$encodedTitle');
   }
 }

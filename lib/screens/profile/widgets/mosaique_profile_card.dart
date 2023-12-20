@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 import '/models/models.dart';
 
@@ -36,7 +37,7 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
       opacity: isImageVisible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 300),
       child: isImageVisible
-          ? GestureDetector(
+          ? Bounceable(
               onTap: () => _navigateToPostScreen(context),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.6,
@@ -56,7 +57,6 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
 
   void _navigateToPostScreen(BuildContext context) {
     final username = widget.post.author.username;
-    GoRouter.of(context)
-        .push('/post/${widget.post.id}?username=$username');
+    GoRouter.of(context).push('/post/${widget.post.id}?username=$username');
   }
 }

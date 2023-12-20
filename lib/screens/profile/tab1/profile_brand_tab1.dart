@@ -67,7 +67,7 @@ Widget _buildBody(BuildContext context, MyEventState state) {
           mainAxisSpacing: 8,
           childAspectRatio: 0.8,
         ),
-        physics: const BouncingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         cacheExtent: 10000,
         itemCount: state.events.length + 1,
         itemBuilder: (BuildContext context, int index) {

@@ -1,5 +1,4 @@
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
-
 import 'package:flutter/material.dart';
 
 class SwipeScreen extends StatefulWidget {

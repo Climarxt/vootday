@@ -32,15 +32,23 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<MyCollectionBloc, MyCollectionState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        if (state.status == MyCollectionStatus.initial &&
-            state.collections.isEmpty) {
+    return BlocListener<CreateCollectionCubit, CreateCollectionState>(
+      listener: (context, state) {
+        if (state.status == CreateCollectionStatus.success) {
           context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
         }
-        return _buildBody(state);
       },
+      child: BlocConsumer<MyCollectionBloc, MyCollectionState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state.status == MyCollectionStatus.initial) {
+            context
+                .read<MyCollectionBloc>()
+                .add(MyCollectionFetchCollections());
+          }
+          return _buildBody(state);
+        },
+      ),
     );
   }
 
@@ -274,12 +282,9 @@ class _MyProfileTab3State extends State<MyProfileTab3>
           final authState = context.read<AuthBloc>().state;
           final userId = authState.user?.uid;
           if (userId != null) {
-            widget.tabController.animateTo(0);
             context
                 .read<CreateCollectionCubit>()
                 .createCollection(userId, collectionName, isPublic);
-
-            SnackbarUtil.showSuccessSnackbar(context, 'Collection Created !');
           } else {
             debugPrint('User ID is null');
           }
@@ -333,6 +338,5 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

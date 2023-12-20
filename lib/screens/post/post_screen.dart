@@ -49,9 +49,9 @@ class _PostScreenState extends State<PostScreen>
   void initState() {
     super.initState();
     _loadPost();
-    Future.delayed(Duration.zero, () {
-      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
-    });
+
+    context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
+
     final authState = context.read<AuthBloc>().state;
     final _userId = authState.user?.uid;
     if (_userId != null) {
@@ -59,13 +59,6 @@ class _PostScreenState extends State<PostScreen>
     } else {
       debugPrint('User ID is null');
     }
-
-    final state = context.read<MyCollectionBloc>().state;
-    final nonNullCollections = state.collections
-        .where((collection) => collection != null)
-        .cast<Collection>()
-        .toList();
-    _fetchImageUrls(nonNullCollections);
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -113,6 +106,13 @@ class _PostScreenState extends State<PostScreen>
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
       listener: (context, state) {},
       builder: (context, state) {
+        final state = context.read<MyCollectionBloc>().state;
+        final nonNullCollections = state.collections
+            .where((collection) => collection != null)
+            .cast<Collection>()
+            .toList();
+        _fetchImageUrls(nonNullCollections);
+
         return SafeArea(
           child: Scaffold(
             appBar: AppBarTitle(title: _user!.username),
@@ -202,13 +202,7 @@ class _PostScreenState extends State<PostScreen>
       String imageUrl = await getMostRecentPostImageUrl(collection.id);
       urls.add(imageUrl);
     }
-
-    // Check if the state is still mounted before updating
-    if (mounted) {
-      setState(() {
-        _imageUrls = urls;
-      });
-    }
+    _imageUrls = urls;
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {

@@ -23,29 +23,22 @@ class MyProfileTab3 extends StatefulWidget {
   _MyProfileTab3State createState() => _MyProfileTab3State();
 }
 
-class _MyProfileTab3State extends State<MyProfileTab3> {
+class _MyProfileTab3State extends State<MyProfileTab3>
+    with AutomaticKeepAliveClientMixin<MyProfileTab3> {
   final TextEditingController _collectionNameController =
       TextEditingController();
   ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
-      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
-      listener: (context, state) {
+      listener: (context, state) {},
+      builder: (context, state) {
         if (state.status == MyCollectionStatus.initial &&
             state.collections.isEmpty) {
           context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
         }
-      },
-      builder: (context, state) {
         return _buildBody(state);
       },
     );
@@ -338,4 +331,8 @@ class _MyProfileTab3State extends State<MyProfileTab3> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

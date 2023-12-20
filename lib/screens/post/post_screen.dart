@@ -4,7 +4,6 @@ import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
-import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/custom_widgets.dart';
@@ -103,6 +102,7 @@ class _PostScreenState extends State<PostScreen>
         ),
       );
     }
+
     if (_post == null || _user == null) {
       return Scaffold(
         appBar: AppBarTitle(title: _user!.username),
@@ -113,33 +113,30 @@ class _PostScreenState extends State<PostScreen>
     return BlocConsumer<MyCollectionBloc, MyCollectionState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return BlocProvider(
-          create: (context) => RecentPostImageUrlCubit(),
-          child: SafeArea(
-            child: Scaffold(
-              appBar: AppBarTitle(title: _user!.username),
-              body: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: size.height),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildPostImage(size, _post!),
-                      buildPostDetails(
-                        state,
-                        context,
-                        _user!,
-                        _post!,
-                        () => _navigateToUserScreen(context, _user!),
-                        _showBottomSheet,
-                        _navigateToCommentScreen,
-                        _addToLikesThenShowCollections,
-                        widget.postId,
-                        _animation,
-                        _controller,
-                      )
-                    ],
-                  ),
+        return SafeArea(
+          child: Scaffold(
+            appBar: AppBarTitle(title: _user!.username),
+            body: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: size.height),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildPostImage(size, _post!),
+                    buildPostDetails(
+                      state,
+                      context,
+                      _user!,
+                      _post!,
+                      () => _navigateToUserScreen(context, _user!),
+                      _showBottomSheet,
+                      _navigateToCommentScreen,
+                      _addToLikesThenShowCollections,
+                      widget.postId,
+                      _animation,
+                      _controller,
+                    )
+                  ],
                 ),
               ),
             ),
@@ -199,26 +196,57 @@ class _PostScreenState extends State<PostScreen>
   }
 
   Future<void> _fetchImageUrls(List<Collection> collections) async {
+    // Fetch all image URLs
     List<String> urls = [];
-
     for (var collection in collections) {
-      final cubit = context.read<RecentPostImageUrlCubit>();
-      final imageUrlStream = cubit.stream
-          .where((state) => state is RecentPostImageUrlSuccess)
-          .map((state) => (state as RecentPostImageUrlSuccess).imageUrl);
-
-      cubit.getMostRecentPostImageUrl(collection.id);
-
-      final imageUrl = await imageUrlStream.first;
-      debugPrint("URL récupérée pour ${collection.id}: $imageUrl");
+      String imageUrl = await getMostRecentPostImageUrl(collection.id);
       urls.add(imageUrl);
     }
 
+    // Check if the state is still mounted before updating
     if (mounted) {
       setState(() {
         _imageUrls = urls;
       });
     }
+  }
+
+  Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    try {
+      final feedEventRef = FirebaseFirestore.instance
+          .collection('collections')
+          .doc(collectionId)
+          .collection('feed_collection');
+
+      final querySnapshot =
+          await feedEventRef.orderBy('date', descending: true).limit(1).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final data = querySnapshot.docs.first.data();
+        final DocumentReference? postRef =
+            data['post_ref'] as DocumentReference?;
+
+        if (postRef != null) {
+          final postDoc = await postRef.get();
+
+          if (postDoc.exists) {
+            final postData = postDoc.data() as Map<String, dynamic>?;
+            debugPrint("Referenced post document exist.");
+            return postData?['imageUrl'] as String? ?? '';
+          } else {
+            debugPrint("Referenced post document does not exist.");
+          }
+        } else {
+          debugPrint("Post reference is null.");
+        }
+      } else {
+        debugPrint("No posts found in the event's feed.");
+      }
+    } catch (e) {
+      debugPrint(
+          "An error occurred while fetching the most liked post image URL: $e");
+    }
+    return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
 
   Future<void> _loadPost() async {
@@ -310,7 +338,6 @@ class _PostScreenState extends State<PostScreen>
     final _userId = authState.user?.uid;
 
     if (_userId != null) {
-      debugPrint("DEBUG : $_imageUrls");
       // Vérifier si le post est déjà dans les likes
       final isPostLiked = await context
           .read<PostRepository>()

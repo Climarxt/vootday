@@ -30,10 +30,10 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
     _heartAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 500),
+    );
 
-    _heartAnimation = Tween(begin: 150.0, end: 170.0).animate(
+    _heartAnimation = Tween(begin: 75.0, end: 100.0).animate(
       CurvedAnimation(
         parent: _heartAnimationController,
         curve: Curves.bounceOut,
@@ -184,7 +184,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
-        _heartAnimationController.forward();
+        _heartAnimationController.repeat(reverse: true);
+        ;
       } else {
         _heartAnimationController.reset();
       }

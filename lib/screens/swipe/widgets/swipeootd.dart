@@ -81,8 +81,15 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
+                  allowedSwipeDirection: AllowedSwipeDirection.only(
+                    up: true,
+                    left: true,
+                    down: true,
+                    right: false,
+                  ),
+                  scale: 0.1,
                   padding: const EdgeInsets.only(
-                      left: 10, right: 5, bottom: 7.5, top: 7.5),
+                      left: 10, right: 10, bottom: 7.5, top: 7.5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls1[_currentIndex1]),
                   cardsCount: _imageUrls1.length,
@@ -100,8 +107,14 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
+                  allowedSwipeDirection: AllowedSwipeDirection.only(
+                    up: true,
+                    left: false,
+                    down: true,
+                    right: true,
+                  ),
                   padding: const EdgeInsets.only(
-                      left: 10, right: 5, bottom: 7.5, top: 7.5),
+                      left: 10, right: 10, bottom: 7.5, top: 7.5),
                   cardBuilder: (context, index, _, __) =>
                       _buildCard(_imageUrls2[_currentIndex2]),
                   cardsCount: _imageUrls2.length,

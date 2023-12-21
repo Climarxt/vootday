@@ -122,6 +122,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
                     if (direction == CardSwiperDirection.bottom) {
                       _showBottomSheet(context);
+                      _resetCard(controller1);
                     }
 
                     return true;
@@ -156,6 +157,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
                     if (direction == CardSwiperDirection.bottom) {
                       _showBottomSheet(context);
+                      _resetCard(controller2);
                     }
 
                     return true;
@@ -169,21 +171,24 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     );
   }
 
+  void _resetCard(CardSwiperController controller) {
+    controller.undo();
+    setState(() {
+      controller.undo();
+    });
+  }
+
   Widget _buildCard(String imageUrl, double verticalSwipePercentage) {
     bool shouldAnimateUp = verticalSwipePercentage < -60;
     bool shouldAnimatetDown = verticalSwipePercentage > 60;
 
-    if (shouldAnimateUp) {
-      _heartAnimationController.forward();
-    } else {
-      _heartAnimationController.reset();
-    }
-
-    if (shouldAnimatetDown) {
-      _heartAnimationController.forward();
-    } else {
-      _heartAnimationController.reset();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (shouldAnimateUp || shouldAnimatetDown) {
+        _heartAnimationController.forward();
+      } else {
+        _heartAnimationController.reset();
+      }
+    });
 
     return Stack(
       children: [
@@ -226,7 +231,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
               builder: (context, _) {
                 return Icon(
                   Icons.favorite,
-                  color: Colors.red,
+                  color: couleurBleuClair2,
                   size: _heartAnimation.value,
                 );
               },
@@ -238,8 +243,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
               animation: _heartAnimationController,
               builder: (context, _) {
                 return Icon(
-                  Icons.favorite,
-                  color: Colors.green,
+                  Icons.bookmark,
+                  color: couleurJauneOrange2,
                   size: _heartAnimation.value,
                 );
               },

@@ -77,54 +77,82 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
         child: Row(
           children: [
             Expanded(
-              child: AspectRatio(
-                aspectRatio: 0.29,
-                child: CardSwiper(
-                  numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: AllowedSwipeDirection.only(
-                    up: true,
-                    left: true,
-                    down: true,
-                    right: false,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: AspectRatio(
+                      aspectRatio: 1 / 3,
+                      child: CardSwiper(
+                        numberOfCardsDisplayed: 1,
+                        allowedSwipeDirection: AllowedSwipeDirection.only(
+                          up: true,
+                          left: true,
+                          down: true,
+                          right: false,
+                        ),
+                        scale: 0.1,
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, bottom: 7.5, top: 7.5),
+                        cardBuilder: (context,
+                                index,
+                                horizontalThresholdPercentage,
+                                verticalThresholdPercentage) =>
+                            _buildCard(
+                                _imageUrls1[_currentIndex1],
+                                horizontalThresholdPercentage.toDouble(),
+                                verticalThresholdPercentage.toDouble()),
+                        cardsCount: _imageUrls1.length,
+                        controller: controller1,
+                        onSwipe: (previousIndex, currentIndex, direction) {
+                          _animateCard(1);
+                          _changeImage(1);
+                          _changeImage(2);
+                          return true;
+                        },
+                      ),
+                    ),
                   ),
-                  scale: 0.1,
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, bottom: 7.5, top: 7.5),
-                  cardBuilder: (context, index, _, __) =>
-                      _buildCard(_imageUrls1[_currentIndex1]),
-                  cardsCount: _imageUrls1.length,
-                  controller: controller1,
-                  onSwipe: (previousIndex, currentIndex, direction) {
-                    _changeImage(1);
-                    _changeImage(2);
-                    return true;
-                  },
-                ),
+                ],
               ),
             ),
             Expanded(
-              child: AspectRatio(
-                aspectRatio: 0.29,
-                child: CardSwiper(
-                  numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: AllowedSwipeDirection.only(
-                    up: true,
-                    left: false,
-                    down: true,
-                    right: true,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: AspectRatio(
+                      aspectRatio: 1 / 3,
+                      child: CardSwiper(
+                        numberOfCardsDisplayed: 1,
+                        allowedSwipeDirection: AllowedSwipeDirection.only(
+                          up: true,
+                          left: false,
+                          down: true,
+                          right: true,
+                        ),
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, bottom: 7.5, top: 7.5),
+                        cardBuilder: (context,
+                                index,
+                                horizontalThresholdPercentage,
+                                verticalThresholdPercentage) =>
+                            _buildCard(
+                                _imageUrls2[_currentIndex2],
+                                horizontalThresholdPercentage.toDouble(),
+                                verticalThresholdPercentage.toDouble()),
+                        cardsCount: _imageUrls2.length,
+                        controller: controller2,
+                        onSwipe: (previousIndex, currentIndex, direction) {
+                          _animateCard(2);
+                          _changeImage(1);
+                          _changeImage(2);
+                          return true;
+                        },
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, bottom: 7.5, top: 7.5),
-                  cardBuilder: (context, index, _, __) =>
-                      _buildCard(_imageUrls2[_currentIndex2]),
-                  cardsCount: _imageUrls2.length,
-                  controller: controller2,
-                  onSwipe: (previousIndex, currentIndex, direction) {
-                    _changeImage(1);
-                    _changeImage(2);
-                    return true;
-                  },
-                ),
+                ],
               ),
             ),
           ],
@@ -133,15 +161,41 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
     );
   }
 
-  Widget _buildCard(String imageUrl) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
+  Widget _buildCard(String imageUrl, double horizontalSwipePercentage,
+      double verticalSwipePercentage) {
+    // Affichez "LIKE" dès que le swipe commence, quel que soit l'angle
+    bool showLike = horizontalSwipePercentage.abs() > 0 ||
+        verticalSwipePercentage.abs() > 0;
+
+    return AspectRatio(
+      aspectRatio: 1 / 3,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          if (showLike)
+            const Align(
+              alignment: Alignment.center,
+              child: Text(
+                "LIKE",
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -155,6 +209,20 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
         // Mettre à jour l'indice pour le deuxième swiper
         _currentIndex2 = (_currentIndex2 + 1) % _imageUrls2.length;
       }
+    });
+  }
+
+  Future<void> _animateCard(int swiperNumber) async {
+    if (swiperNumber == 1) {
+    } else {}
+
+    // Réduire le délai pour un effet plus rapide
+    await Future.delayed(Duration(milliseconds: 500)); // 500 millisecondes
+
+    // Réinitialiser la couleur
+    setState(() {
+      if (swiperNumber == 1) {
+      } else {}
     });
   }
 }

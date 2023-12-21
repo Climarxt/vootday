@@ -1,7 +1,9 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:go_router/go_router.dart';
 
 class SwipeOOTD extends StatefulWidget {
   const SwipeOOTD({super.key});
@@ -17,6 +19,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
   List<String> _imageUrls1 = [];
   List<String> _imageUrls2 = [];
   bool _isLoading = true;
+  bool useFirstUrl = true;
 
   @override
   void initState() {
@@ -75,84 +78,67 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
     return Scaffold(
       body: SafeArea(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: AspectRatio(
-                      aspectRatio: 1 / 3,
-                      child: CardSwiper(
-                        numberOfCardsDisplayed: 1,
-                        allowedSwipeDirection: AllowedSwipeDirection.only(
-                          up: true,
-                          left: true,
-                          down: true,
-                          right: false,
-                        ),
-                        scale: 0.1,
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, bottom: 7.5, top: 7.5),
-                        cardBuilder: (context,
-                                index,
-                                horizontalThresholdPercentage,
-                                verticalThresholdPercentage) =>
-                            _buildCard(
-                                _imageUrls1[_currentIndex1],
-                                horizontalThresholdPercentage.toDouble(),
-                                verticalThresholdPercentage.toDouble()),
-                        cardsCount: _imageUrls1.length,
-                        controller: controller1,
-                        onSwipe: (previousIndex, currentIndex, direction) {
-                          _animateCard(1);
-                          _changeImage(1);
-                          _changeImage(2);
-                          return true;
-                        },
-                      ),
-                    ),
+              child: AspectRatio(
+                aspectRatio: 0.29,
+                child: CardSwiper(
+                  numberOfCardsDisplayed: 1,
+                  allowedSwipeDirection: AllowedSwipeDirection.only(
+                    up: true,
+                    left: true,
+                    down: true,
+                    right: false,
                   ),
-                ],
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 7.5, bottom: 7.5, top: 7.5),
+                  cardBuilder: (context, index, horizontalThresholdPercentage,
+                          verticalThresholdPercentage) =>
+                      _buildCard(
+                          _imageUrls1[_currentIndex1],
+                          horizontalThresholdPercentage.toDouble(),
+                          verticalThresholdPercentage.toDouble()),
+                  cardsCount: _imageUrls1.length,
+                  controller: controller1,
+                  onSwipe: (previousIndex, currentIndex, direction) {
+                    _animateCard(1);
+                    _changeImage(1);
+                    _changeImage(2);
+                    return true;
+                  },
+                ),
               ),
             ),
             Expanded(
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: AspectRatio(
-                      aspectRatio: 1 / 3,
-                      child: CardSwiper(
-                        numberOfCardsDisplayed: 1,
-                        allowedSwipeDirection: AllowedSwipeDirection.only(
-                          up: true,
-                          left: false,
-                          down: true,
-                          right: true,
-                        ),
-                        padding: const EdgeInsets.only(
-                            left: 10, right: 10, bottom: 7.5, top: 7.5),
-                        cardBuilder: (context,
-                                index,
-                                horizontalThresholdPercentage,
-                                verticalThresholdPercentage) =>
-                            _buildCard(
-                                _imageUrls2[_currentIndex2],
-                                horizontalThresholdPercentage.toDouble(),
-                                verticalThresholdPercentage.toDouble()),
-                        cardsCount: _imageUrls2.length,
-                        controller: controller2,
-                        onSwipe: (previousIndex, currentIndex, direction) {
-                          _animateCard(2);
-                          _changeImage(1);
-                          _changeImage(2);
-                          return true;
-                        },
-                      ),
-                    ),
+              child: AspectRatio(
+                aspectRatio: 0.29,
+                child: CardSwiper(
+                  numberOfCardsDisplayed: 1,
+                  allowedSwipeDirection: AllowedSwipeDirection.only(
+                    up: true,
+                    left: false,
+                    down: true,
+                    right: true,
                   ),
-                ],
+                  padding: const EdgeInsets.only(
+                      left: 7.5, right: 10, bottom: 7.5, top: 7.5),
+                  cardBuilder: (context, index, horizontalThresholdPercentage,
+                          verticalThresholdPercentage) =>
+                      _buildCard(
+                          _imageUrls2[_currentIndex2],
+                          horizontalThresholdPercentage.toDouble(),
+                          verticalThresholdPercentage.toDouble()),
+                  cardsCount: _imageUrls2.length,
+                  controller: controller2,
+                  onSwipe: (previousIndex, currentIndex, direction) {
+                    _animateCard(2);
+                    _changeImage(1);
+                    _changeImage(2);
+                    return true;
+                  },
+                ),
               ),
             ),
           ],
@@ -183,6 +169,24 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
               ),
             ),
           ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.center,
+                colors: [
+                  Colors.black.withOpacity(0.6),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 10,
+            left: 12,
+            child: buildUsername(context),
+          ),
           if (showLike)
             const Align(
               alignment: Alignment.center,
@@ -198,6 +202,52 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
         ],
       ),
     );
+  }
+
+  Widget buildText(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          bottom: 10,
+          left: 12,
+          child: buildUsername(context),
+        ),
+      ],
+    );
+  }
+
+  Widget buildUsername(BuildContext context) {
+    // Déterminez quelle URL utiliser
+    final String profileImageUrl = useFirstUrl
+        ? 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fthumbnails%2F1693252778675.jpg?alt=media&token=1dbd3f28-152b-4112-9ef4-13c9d745a083'
+        : 'https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fusers%2FuserProfile_b37d34b8-4557-4a4e-812f-688a46a72471.jpg?alt=media&token=f19bf10c-5d85-4301-be66-bb022b473502'; // Remplacez ceci par votre deuxième URL
+
+    // Basculez l'état pour la prochaine utilisation
+    useFirstUrl = !useFirstUrl;
+
+    return GestureDetector(
+      onTap: () => _navigateToUserScreen(context),
+      child: Row(
+        children: [
+          UserProfileImage(
+            radius: 27,
+            outerCircleRadius: 28,
+            profileImageUrl: profileImageUrl,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'username',
+            style: AppTextStyles.titlePost(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToUserScreen(BuildContext context) {
+    GoRouter.of(context)
+        .push('/user/9ZY3ogMKr6RvRm3PvHIq7hTBgKD2?username=userman1');
+    ;
   }
 
   void _changeImage(int swiperNumber) {

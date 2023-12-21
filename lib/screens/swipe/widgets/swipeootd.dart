@@ -2,6 +2,7 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:go_router/go_router.dart';
 
@@ -30,7 +31,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
     _heartAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 1000),
     );
     _heartAnimation = Tween(begin: 75.0, end: 100.0).animate(
       CurvedAnimation(
@@ -190,69 +191,72 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
       }
     });
 
-    return Stack(
-      children: [
-        // Image
-        Positioned.fill(
-          child: Container(
-            clipBehavior: Clip.hardEdge,
+    return Bounceable(
+      onTap: () {},
+      child: Stack(
+        children: [
+          // Image
+          Positioned.fill(
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-            ),
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.center,
-              colors: [
-                Colors.black.withOpacity(0.6),
-                Colors.transparent,
-              ],
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.center,
+                colors: [
+                  Colors.black.withOpacity(0.6),
+                  Colors.transparent,
+                ],
+              ),
             ),
           ),
-        ),
-        Positioned(
-          top: 10,
-          left: 12,
-          child: buildUsername(context),
-        ),
-        // Heart Animation
-        if (shouldAnimateUp)
-          Align(
-            alignment: const Alignment(0, -0.5),
-            child: AnimatedBuilder(
-              animation: _heartAnimationController,
-              builder: (context, _) {
-                return Icon(
-                  Icons.favorite,
-                  color: couleurBleuClair2,
-                  size: _heartAnimation.value,
-                );
-              },
-            ),
+          Positioned(
+            top: 10,
+            left: 12,
+            child: buildUsername(context),
           ),
-        if (shouldAnimatetDown)
-          Align(
-            alignment: const Alignment(0, 0.5),
-            child: AnimatedBuilder(
-              animation: _heartAnimationController,
-              builder: (context, _) {
-                return Icon(
-                  Icons.bookmark,
-                  color: couleurJauneOrange2,
-                  size: _heartAnimation.value,
-                );
-              },
+          // Heart Animation
+          if (shouldAnimateUp)
+            Align(
+              alignment: const Alignment(0, -0.5),
+              child: AnimatedBuilder(
+                animation: _heartAnimationController,
+                builder: (context, _) {
+                  return Icon(
+                    Icons.favorite,
+                    color: couleurBleuClair2,
+                    size: _heartAnimation.value,
+                  );
+                },
+              ),
             ),
-          ),
-      ],
+          if (shouldAnimatetDown)
+            Align(
+              alignment: const Alignment(0, 0.5),
+              child: AnimatedBuilder(
+                animation: _heartAnimationController,
+                builder: (context, _) {
+                  return Icon(
+                    Icons.bookmark,
+                    color: couleurJauneOrange2,
+                    size: _heartAnimation.value,
+                  );
+                },
+              ),
+            ),
+        ],
+      ),
     );
   }
 

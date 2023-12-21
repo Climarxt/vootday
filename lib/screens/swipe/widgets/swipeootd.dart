@@ -32,7 +32,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
     _heartAnimation = Tween(begin: 75.0, end: 100.0).animate(
       CurvedAnimation(
         parent: _heartAnimationController,
@@ -226,7 +225,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
         ),
         // Heart Animation
         if (shouldAnimateUp)
-          Center(
+          Align(
+            alignment: const Alignment(0, -0.5),
             child: AnimatedBuilder(
               animation: _heartAnimationController,
               builder: (context, _) {
@@ -239,7 +239,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
             ),
           ),
         if (shouldAnimatetDown)
-          Center(
+          Align(
+            alignment: const Alignment(0, 0.5),
             child: AnimatedBuilder(
               animation: _heartAnimationController,
               builder: (context, _) {

@@ -12,10 +12,12 @@ class SwipeOOTD extends StatefulWidget {
   State<SwipeOOTD> createState() => _SwipeOOTDState();
 }
 
-class _SwipeOOTDState extends State<SwipeOOTD> {
+class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   final CardSwiperController controller1 = CardSwiperController();
   final CardSwiperController controller2 = CardSwiperController();
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  late AnimationController _heartAnimationController;
+  late Animation<double> _heartAnimation;
   List<String> _imageUrls1 = [];
   List<String> _imageUrls2 = [];
   bool _isLoading = true;
@@ -25,6 +27,18 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
   void initState() {
     super.initState();
     _loadImages();
+
+    _heartAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+
+    _heartAnimation = Tween(begin: 150.0, end: 170.0).animate(
+      CurvedAnimation(
+        parent: _heartAnimationController,
+        curve: Curves.bounceOut,
+      ),
+    );
   }
 
   Future<void> _loadImages() async {
@@ -88,7 +102,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                   numberOfCardsDisplayed: 1,
                   allowedSwipeDirection: AllowedSwipeDirection.only(
                     up: true,
-                    left: true,
+                    left: false,
                     down: true,
                     right: false,
                   ),
@@ -96,16 +110,20 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                       left: 10, right: 7.5, bottom: 7.5, top: 7.5),
                   cardBuilder: (context, index, horizontalThresholdPercentage,
                           verticalThresholdPercentage) =>
-                      _buildCard(
-                          _imageUrls1[_currentIndex1],
-                          horizontalThresholdPercentage.toDouble(),
+                      _buildCard(_imageUrls1[_currentIndex1],
                           verticalThresholdPercentage.toDouble()),
                   cardsCount: _imageUrls1.length,
                   controller: controller1,
                   onSwipe: (previousIndex, currentIndex, direction) {
-                    _animateCard(1);
-                    _changeImage(1);
-                    _changeImage(2);
+                    if (direction == CardSwiperDirection.top) {
+                      _changeImage(1);
+                      _changeImage(2);
+                    }
+
+                    if (direction == CardSwiperDirection.bottom) {
+                      _showBottomSheet(context);
+                    }
+
                     return true;
                   },
                 ),
@@ -120,22 +138,26 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
                     up: true,
                     left: false,
                     down: true,
-                    right: true,
+                    right: false,
                   ),
                   padding: const EdgeInsets.only(
                       left: 7.5, right: 10, bottom: 7.5, top: 7.5),
                   cardBuilder: (context, index, horizontalThresholdPercentage,
                           verticalThresholdPercentage) =>
-                      _buildCard(
-                          _imageUrls2[_currentIndex2],
-                          horizontalThresholdPercentage.toDouble(),
+                      _buildCard(_imageUrls2[_currentIndex2],
                           verticalThresholdPercentage.toDouble()),
                   cardsCount: _imageUrls2.length,
                   controller: controller2,
                   onSwipe: (previousIndex, currentIndex, direction) {
-                    _animateCard(2);
-                    _changeImage(1);
-                    _changeImage(2);
+                    if (direction == CardSwiperDirection.top) {
+                      _changeImage(1);
+                      _changeImage(2);
+                    }
+
+                    if (direction == CardSwiperDirection.bottom) {
+                      _showBottomSheet(context);
+                    }
+
                     return true;
                   },
                 ),
@@ -147,60 +169,83 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
     );
   }
 
-  Widget _buildCard(String imageUrl, double horizontalSwipePercentage,
-      double verticalSwipePercentage) {
-    // Affichez "LIKE" dès que le swipe commence, quel que soit l'angle
-    bool showLike = horizontalSwipePercentage.abs() > 0 ||
-        verticalSwipePercentage.abs() > 0;
+  Widget _buildCard(String imageUrl, double verticalSwipePercentage) {
+    bool shouldAnimateUp = verticalSwipePercentage < -60;
+    bool shouldAnimatetDown = verticalSwipePercentage > 60;
 
-    return AspectRatio(
-      aspectRatio: 1 / 3,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
+    if (shouldAnimateUp) {
+      _heartAnimationController.forward();
+    } else {
+      _heartAnimationController.reset();
+    }
+
+    if (shouldAnimatetDown) {
+      _heartAnimationController.forward();
+    } else {
+      _heartAnimationController.reset();
+    }
+
+    return Stack(
+      children: [
+        // Image
+        Positioned.fill(
+          child: Container(
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.center,
-                colors: [
-                  Colors.black.withOpacity(0.6),
-                  Colors.transparent,
-                ],
-              ),
+            ),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
             ),
           ),
-          Positioned(
-            top: 10,
-            left: 12,
-            child: buildUsername(context),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.center,
+              colors: [
+                Colors.black.withOpacity(0.6),
+                Colors.transparent,
+              ],
+            ),
           ),
-          if (showLike)
-            const Align(
-              alignment: Alignment.center,
-              child: Text(
-                "LIKE",
-                style: TextStyle(
-                  fontSize: 24,
+        ),
+        Positioned(
+          top: 10,
+          left: 12,
+          child: buildUsername(context),
+        ),
+        // Heart Animation
+        if (shouldAnimateUp)
+          Center(
+            child: AnimatedBuilder(
+              animation: _heartAnimationController,
+              builder: (context, _) {
+                return Icon(
+                  Icons.favorite,
                   color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  size: _heartAnimation.value,
+                );
+              },
             ),
-        ],
-      ),
+          ),
+        if (shouldAnimatetDown)
+          Center(
+            child: AnimatedBuilder(
+              animation: _heartAnimationController,
+              builder: (context, _) {
+                return Icon(
+                  Icons.favorite,
+                  color: Colors.green,
+                  size: _heartAnimation.value,
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 
@@ -244,6 +289,21 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
     );
   }
 
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+          height: 200,
+          color: Colors.white,
+          child: Center(
+            child: Text("Bottom Sheet Content"),
+          ),
+        );
+      },
+    );
+  }
+
   void _navigateToUserScreen(BuildContext context) {
     GoRouter.of(context)
         .push('/user/9ZY3ogMKr6RvRm3PvHIq7hTBgKD2?username=userman1');
@@ -259,20 +319,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> {
         // Mettre à jour l'indice pour le deuxième swiper
         _currentIndex2 = (_currentIndex2 + 1) % _imageUrls2.length;
       }
-    });
-  }
-
-  Future<void> _animateCard(int swiperNumber) async {
-    if (swiperNumber == 1) {
-    } else {}
-
-    // Réduire le délai pour un effet plus rapide
-    await Future.delayed(Duration(milliseconds: 500)); // 500 millisecondes
-
-    // Réinitialiser la couleur
-    setState(() {
-      if (swiperNumber == 1) {
-      } else {}
     });
   }
 }

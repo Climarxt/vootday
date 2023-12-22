@@ -23,6 +23,18 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   List<String> _imageUrls2 = [];
   bool _isLoading = true;
   bool useFirstUrl = true;
+  int _currentIndex1 = 0;
+  int _currentIndex2 = 0;
+  EdgeInsets _swiperPadding() => const EdgeInsets.only(
+        left: 7.5,
+        right: 7.5,
+        bottom: 7.5,
+        top: 7.5,
+      );
+  AllowedSwipeDirection _allowedSwipeDirection() => AllowedSwipeDirection.only(
+      up: true, left: false, down: true, right: false);
+  late double verticalThresholdPercentageSave;
+  bool _hasShownBottomSheet = false;
 
   @override
   void initState() {
@@ -33,52 +45,13 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
-    _heartAnimation = Tween(begin: 75.0, end: 100.0).animate(
+    _heartAnimation = Tween(begin: 65.0, end: 85.0).animate(
       CurvedAnimation(
         parent: _heartAnimationController,
-        curve: Curves.bounceOut,
+        curve: Curves.ease,
       ),
     );
   }
-
-  Future<void> _loadImages() async {
-    try {
-      // Récupérer tous les documents de la collection 'posts'
-      var postsSnapshot =
-          await _firebaseFirestore.collection(Paths.posts).get();
-
-      // Réinitialiser les listes pour éviter les doublons lors du rechargement
-      _imageUrls1.clear();
-      _imageUrls2.clear();
-
-      // Parcourir chaque document et répartir les URLs d'images entre _imageUrls1 et _imageUrls2
-      bool addToFirstList = true;
-      for (var doc in postsSnapshot.docs) {
-        var imageUrl = doc.data()["imageUrl"] as String?;
-        if (imageUrl != null) {
-          if (addToFirstList) {
-            _imageUrls1.add(imageUrl);
-          } else {
-            _imageUrls2.add(imageUrl);
-          }
-          addToFirstList = !addToFirstList; // Alterner entre les listes
-          print('Image URL ajoutée: $imageUrl');
-        }
-      }
-
-      print('Nombre total d\'images dans _imageUrls1: ${_imageUrls1.length}');
-      print('Nombre total d\'images dans _imageUrls2: ${_imageUrls2.length}');
-
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Erreur lors du chargement des images: $e');
-    }
-  }
-
-  int _currentIndex1 = 0;
-  int _currentIndex2 = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -100,14 +73,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: AllowedSwipeDirection.only(
-                    up: true,
-                    left: false,
-                    down: true,
-                    right: false,
-                  ),
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 7.5, bottom: 7.5, top: 7.5),
+                  allowedSwipeDirection: _allowedSwipeDirection(),
+                  padding: _swiperPadding(),
                   cardBuilder: (context, index, horizontalThresholdPercentage,
                           verticalThresholdPercentage) =>
                       _buildCard(_imageUrls1[_currentIndex1],
@@ -120,10 +87,11 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                       _changeImage(2);
                     }
 
-                    if (direction == CardSwiperDirection.bottom) {
+                    /* if (direction == CardSwiperDirection.bottom) {
                       _showBottomSheet(context);
                       _resetCard(controller1);
                     }
+                    */
 
                     return true;
                   },
@@ -135,14 +103,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                 aspectRatio: 0.29,
                 child: CardSwiper(
                   numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: AllowedSwipeDirection.only(
-                    up: true,
-                    left: false,
-                    down: true,
-                    right: false,
-                  ),
-                  padding: const EdgeInsets.only(
-                      left: 7.5, right: 10, bottom: 7.5, top: 7.5),
+                  allowedSwipeDirection: _allowedSwipeDirection(),
+                  padding: _swiperPadding(),
                   cardBuilder: (context, index, horizontalThresholdPercentage,
                           verticalThresholdPercentage) =>
                       _buildCard(_imageUrls2[_currentIndex2],
@@ -150,14 +112,11 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                   cardsCount: _imageUrls2.length,
                   controller: controller2,
                   onSwipe: (previousIndex, currentIndex, direction) {
+                    debugPrint(
+                        "previousIndex: $previousIndex, currentIndex: $currentIndex, direction: $direction ");
                     if (direction == CardSwiperDirection.top) {
                       _changeImage(1);
                       _changeImage(2);
-                    }
-
-                    if (direction == CardSwiperDirection.bottom) {
-                      _showBottomSheet(context);
-                      _resetCard(controller2);
                     }
 
                     return true;
@@ -171,16 +130,17 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     );
   }
 
-  void _resetCard(CardSwiperController controller) {
-    controller.undo();
-    setState(() {
-      controller.undo();
-    });
-  }
-
   Widget _buildCard(String imageUrl, double verticalSwipePercentage) {
-    bool shouldAnimateUp = verticalSwipePercentage < -60;
-    bool shouldAnimatetDown = verticalSwipePercentage > 60;
+    bool shouldAnimateUp = verticalSwipePercentage < -150;
+    bool shouldAnimatetDown = verticalSwipePercentage > 150;
+    bool shouldSwipeDown = verticalSwipePercentage > 375;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (shouldSwipeDown && !_hasShownBottomSheet) {
+        _hasShownBottomSheet = true;
+        _showBottomSheet(context);
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
@@ -228,8 +188,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
           ),
           // Heart Animation
           if (shouldAnimateUp)
-            Align(
-              alignment: const Alignment(0, -0.5),
+            Center(
               child: AnimatedBuilder(
                 animation: _heartAnimationController,
                 builder: (context, _) {
@@ -241,9 +200,9 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                 },
               ),
             ),
+          // Bookmark Animation
           if (shouldAnimatetDown)
-            Align(
-              alignment: const Alignment(0, 0.5),
+            Center(
               child: AnimatedBuilder(
                 animation: _heartAnimationController,
                 builder: (context, _) {
@@ -286,8 +245,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
       child: Row(
         children: [
           UserProfileImage(
-            radius: 27,
-            outerCircleRadius: 28,
+            radius: 23,
+            outerCircleRadius: 24,
             profileImageUrl: profileImageUrl,
           ),
           const SizedBox(width: 12),
@@ -312,7 +271,10 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
           ),
         );
       },
-    );
+    ).then((_) {
+      // Ceci sera appelé lorsque le BottomSheet est complètement fermé
+      _hasShownBottomSheet = false;
+    });
   }
 
   void _navigateToUserScreen(BuildContext context) {
@@ -331,5 +293,48 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
         _currentIndex2 = (_currentIndex2 + 1) % _imageUrls2.length;
       }
     });
+  }
+
+  void _resetCard(CardSwiperController controller) {
+    controller.undo();
+    setState(() {
+      controller.undo();
+    });
+  }
+
+  Future<void> _loadImages() async {
+    try {
+      // Récupérer tous les documents de la collection 'posts'
+      var postsSnapshot =
+          await _firebaseFirestore.collection(Paths.posts).get();
+
+      // Réinitialiser les listes pour éviter les doublons lors du rechargement
+      _imageUrls1.clear();
+      _imageUrls2.clear();
+
+      // Parcourir chaque document et répartir les URLs d'images entre _imageUrls1 et _imageUrls2
+      bool addToFirstList = true;
+      for (var doc in postsSnapshot.docs) {
+        var imageUrl = doc.data()["imageUrl"] as String?;
+        if (imageUrl != null) {
+          if (addToFirstList) {
+            _imageUrls1.add(imageUrl);
+          } else {
+            _imageUrls2.add(imageUrl);
+          }
+          addToFirstList = !addToFirstList; // Alterner entre les listes
+          print('Image URL ajoutée: $imageUrl');
+        }
+      }
+
+      print('Nombre total d\'images dans _imageUrls1: ${_imageUrls1.length}');
+      print('Nombre total d\'images dans _imageUrls2: ${_imageUrls2.length}');
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Erreur lors du chargement des images: $e');
+    }
   }
 }

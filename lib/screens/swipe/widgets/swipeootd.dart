@@ -95,7 +95,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                           _buildCard(
                               _imageUrls1[_currentIndex1],
                               verticalThresholdPercentage.toDouble(),
-                              state.posts[index]),
+                              _posts1[_currentIndex1]),
                       cardsCount: _imageUrls1.length,
                       controller: controller1,
                       onSwipe: (previousIndex, currentIndex, direction) {
@@ -103,13 +103,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                           _changeImage(1);
                           _changeImage(2);
                         }
-
-                        /* if (direction == CardSwiperDirection.bottom) {
-                      _showBottomSheet(context);
-                      _resetCard(controller1);
-                    }
-                    */
-
                         return true;
                       },
                     ),
@@ -129,7 +122,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                           _buildCard(
                               _imageUrls2[_currentIndex2],
                               verticalThresholdPercentage.toDouble(),
-                              state.posts[index]),
+                              _posts2[_currentIndex2]),
                       cardsCount: _imageUrls2.length,
                       controller: controller2,
                       onSwipe: (previousIndex, currentIndex, direction) {
@@ -159,6 +152,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
     bool shouldSwipeDown = verticalSwipePercentage > 375;
+    debugPrint("DEBUG : post: $post");
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldSwipeDown && !_hasShownBottomSheet) {
@@ -177,7 +171,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     });
 
     return Bounceable(
-      onTap: () {},
+      onTap: () => _navigateToPostScreen(context, post),
       child: Stack(
         children: [
           // Image
@@ -246,7 +240,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
   Widget buildUsername(BuildContext context, Post state) {
     return GestureDetector(
-      onTap: () => _navigateToUserScreen(context),
+      onTap: () => _navigateToUserScreen(context, state),
       child: Row(
         children: [
           UserProfileImage(
@@ -282,10 +276,14 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     });
   }
 
-  void _navigateToUserScreen(BuildContext context) {
+  void _navigateToUserScreen(BuildContext context, Post state) {
     GoRouter.of(context)
-        .push('/user/9ZY3ogMKr6RvRm3PvHIq7hTBgKD2?username=userman1');
-    ;
+        .push('/user/${state.author.id}?username=${state.author.username}');
+  }
+
+  void _navigateToPostScreen(BuildContext context, Post state) {
+    final username = state.author.username;
+    GoRouter.of(context).push('/post/${state.id}?username=$username');
   }
 
   void _changeImage(int swiperNumber) {
@@ -300,22 +298,26 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     });
   }
 
-// Ajustez cette méthode pour qu'elle prenne une liste de posts
+  List<Post> _posts1 = [];
+  List<Post> _posts2 = [];
+
   void _loadImages(List<Post> posts) {
     _imageUrls1.clear();
     _imageUrls2.clear();
+    _posts1.clear();
+    _posts2.clear();
 
-    // Répartir les URLs d'images entre _imageUrls1 et _imageUrls2
     bool addToFirstList = true;
     for (var post in posts) {
-      var imageUrl = post
-          .imageUrl; // Assurez-vous que vos objets Post ont un champ imageUrl
+      var imageUrl = post.imageUrl;
       if (addToFirstList) {
         _imageUrls1.add(imageUrl);
+        _posts1.add(post);
       } else {
         _imageUrls2.add(imageUrl);
+        _posts2.add(post);
       }
-      addToFirstList = !addToFirstList; // Alterner entre les listes
+      addToFirstList = !addToFirstList;
     }
   }
 }

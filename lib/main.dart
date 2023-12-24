@@ -17,7 +17,6 @@ import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/my_event/my_event_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

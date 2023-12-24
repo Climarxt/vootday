@@ -2,7 +2,6 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -21,9 +20,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   final CardSwiperController controller2 = CardSwiperController();
   late AnimationController _heartAnimationController;
   late Animation<double> _heartAnimation;
-  List<String> _imageUrls1 = [];
-  List<String> _imageUrls2 = [];
-  bool _isLoading = true;
+  final List<String> _imageUrls1 = [];
+  final List<String> _imageUrls2 = [];
   bool useFirstUrl = true;
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
@@ -328,18 +326,12 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     for (var post in posts) {
       var imageUrl = post
           .imageUrl; // Assurez-vous que vos objets Post ont un champ imageUrl
-      if (imageUrl != null) {
-        if (addToFirstList) {
-          _imageUrls1.add(imageUrl);
-        } else {
-          _imageUrls2.add(imageUrl);
-        }
-        addToFirstList = !addToFirstList; // Alterner entre les listes
+      if (addToFirstList) {
+        _imageUrls1.add(imageUrl);
+      } else {
+        _imageUrls2.add(imageUrl);
       }
+      addToFirstList = !addToFirstList; // Alterner entre les listes
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

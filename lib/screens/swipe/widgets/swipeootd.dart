@@ -22,7 +22,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   late Animation<double> _heartAnimation;
   final List<String> _imageUrls1 = [];
   final List<String> _imageUrls2 = [];
-  bool useFirstUrl = true;
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
   EdgeInsets _swiperPadding() => const EdgeInsets.only(
@@ -246,14 +245,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   }
 
   Widget buildUsername(BuildContext context, Post state) {
-    // Déterminez quelle URL utiliser
-    final String profileImageUrl = useFirstUrl
-        ? 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fthumbnails%2F1693252778675.jpg?alt=media&token=1dbd3f28-152b-4112-9ef4-13c9d745a083'
-        : 'https://firebasestorage.googleapis.com/v0/b/app6-f1b21.appspot.com/o/images%2Fusers%2FuserProfile_b37d34b8-4557-4a4e-812f-688a46a72471.jpg?alt=media&token=f19bf10c-5d85-4301-be66-bb022b473502'; // Remplacez ceci par votre deuxième URL
-
-    // Basculez l'état pour la prochaine utilisation
-    useFirstUrl = !useFirstUrl;
-
     return GestureDetector(
       onTap: () => _navigateToUserScreen(context),
       child: Row(
@@ -280,7 +271,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
         return Container(
           height: 200,
           color: Colors.white,
-          child: Center(
+          child: const Center(
             child: Text("Bottom Sheet Content"),
           ),
         );

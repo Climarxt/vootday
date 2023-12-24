@@ -93,8 +93,10 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                               index,
                               horizontalThresholdPercentage,
                               verticalThresholdPercentage) =>
-                          _buildCard(_imageUrls1[_currentIndex1],
-                              verticalThresholdPercentage.toDouble()),
+                          _buildCard(
+                              _imageUrls1[_currentIndex1],
+                              verticalThresholdPercentage.toDouble(),
+                              state.posts[index]),
                       cardsCount: _imageUrls1.length,
                       controller: controller1,
                       onSwipe: (previousIndex, currentIndex, direction) {
@@ -125,8 +127,10 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
                               index,
                               horizontalThresholdPercentage,
                               verticalThresholdPercentage) =>
-                          _buildCard(_imageUrls2[_currentIndex2],
-                              verticalThresholdPercentage.toDouble()),
+                          _buildCard(
+                              _imageUrls2[_currentIndex2],
+                              verticalThresholdPercentage.toDouble(),
+                              state.posts[index]),
                       cardsCount: _imageUrls2.length,
                       controller: controller2,
                       onSwipe: (previousIndex, currentIndex, direction) {
@@ -151,7 +155,8 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     }
   }
 
-  Widget _buildCard(String imageUrl, double verticalSwipePercentage) {
+  Widget _buildCard(
+      String imageUrl, double verticalSwipePercentage, Post post) {
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
     bool shouldSwipeDown = verticalSwipePercentage > 375;
@@ -205,7 +210,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
           Positioned(
             top: 10,
             left: 12,
-            child: buildUsername(context),
+            child: buildUsername(context, post),
           ),
           // Heart Animation
           if (shouldAnimateUp)
@@ -240,19 +245,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildText(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          bottom: 10,
-          left: 12,
-          child: buildUsername(context),
-        ),
-      ],
-    );
-  }
-
-  Widget buildUsername(BuildContext context) {
+  Widget buildUsername(BuildContext context, Post state) {
     // Déterminez quelle URL utiliser
     final String profileImageUrl = useFirstUrl
         ? 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fthumbnails%2F1693252778675.jpg?alt=media&token=1dbd3f28-152b-4112-9ef4-13c9d745a083'
@@ -268,11 +261,11 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
           UserProfileImage(
             radius: 23,
             outerCircleRadius: 24,
-            profileImageUrl: profileImageUrl,
+            profileImageUrl: state.author.profileImageUrl,
           ),
           const SizedBox(width: 12),
           Text(
-            'username',
+            state.author.username,
             style: AppTextStyles.titlePost(context),
           ),
         ],

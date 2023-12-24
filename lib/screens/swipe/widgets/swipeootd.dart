@@ -1,7 +1,10 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +19,6 @@ class SwipeOOTD extends StatefulWidget {
 class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   final CardSwiperController controller1 = CardSwiperController();
   final CardSwiperController controller2 = CardSwiperController();
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   late AnimationController _heartAnimationController;
   late Animation<double> _heartAnimation;
   List<String> _imageUrls1 = [];
@@ -39,8 +41,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _loadImages();
-
+    context.read<SwipeBloc>().add(SwipeFetchPostsOOTD());
     _heartAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -55,79 +56,101 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    return Scaffold(
-      body: SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: AspectRatio(
-                aspectRatio: 0.29,
-                child: CardSwiper(
-                  numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: _allowedSwipeDirection(),
-                  padding: _swiperPadding(),
-                  cardBuilder: (context, index, horizontalThresholdPercentage,
-                          verticalThresholdPercentage) =>
-                      _buildCard(_imageUrls1[_currentIndex1],
-                          verticalThresholdPercentage.toDouble()),
-                  cardsCount: _imageUrls1.length,
-                  controller: controller1,
-                  onSwipe: (previousIndex, currentIndex, direction) {
-                    if (direction == CardSwiperDirection.top) {
-                      _changeImage(1);
-                      _changeImage(2);
-                    }
+    return BlocConsumer<SwipeBloc, SwipeState>(
+      listener: (context, state) {
+        if (state.status == SwipeStatus.loaded) {
+          _loadImages(state.posts);
+        }
+      },
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Scaffold(
+            body: _buildBody(state),
+          ),
+        );
+      },
+    );
+  }
 
-                    /* if (direction == CardSwiperDirection.bottom) {
+  Widget _buildBody(SwipeState state) {
+    switch (state.status) {
+      case SwipeStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      case SwipeStatus.loaded:
+        return Scaffold(
+          body: SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.29,
+                    child: CardSwiper(
+                      numberOfCardsDisplayed: 1,
+                      allowedSwipeDirection: _allowedSwipeDirection(),
+                      padding: _swiperPadding(),
+                      cardBuilder: (context,
+                              index,
+                              horizontalThresholdPercentage,
+                              verticalThresholdPercentage) =>
+                          _buildCard(_imageUrls1[_currentIndex1],
+                              verticalThresholdPercentage.toDouble()),
+                      cardsCount: _imageUrls1.length,
+                      controller: controller1,
+                      onSwipe: (previousIndex, currentIndex, direction) {
+                        if (direction == CardSwiperDirection.top) {
+                          _changeImage(1);
+                          _changeImage(2);
+                        }
+
+                        /* if (direction == CardSwiperDirection.bottom) {
                       _showBottomSheet(context);
                       _resetCard(controller1);
                     }
                     */
 
-                    return true;
-                  },
+                        return true;
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: AspectRatio(
-                aspectRatio: 0.29,
-                child: CardSwiper(
-                  numberOfCardsDisplayed: 1,
-                  allowedSwipeDirection: _allowedSwipeDirection(),
-                  padding: _swiperPadding(),
-                  cardBuilder: (context, index, horizontalThresholdPercentage,
-                          verticalThresholdPercentage) =>
-                      _buildCard(_imageUrls2[_currentIndex2],
-                          verticalThresholdPercentage.toDouble()),
-                  cardsCount: _imageUrls2.length,
-                  controller: controller2,
-                  onSwipe: (previousIndex, currentIndex, direction) {
-                    debugPrint(
-                        "previousIndex: $previousIndex, currentIndex: $currentIndex, direction: $direction ");
-                    if (direction == CardSwiperDirection.top) {
-                      _changeImage(1);
-                      _changeImage(2);
-                    }
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.29,
+                    child: CardSwiper(
+                      numberOfCardsDisplayed: 1,
+                      allowedSwipeDirection: _allowedSwipeDirection(),
+                      padding: _swiperPadding(),
+                      cardBuilder: (context,
+                              index,
+                              horizontalThresholdPercentage,
+                              verticalThresholdPercentage) =>
+                          _buildCard(_imageUrls2[_currentIndex2],
+                              verticalThresholdPercentage.toDouble()),
+                      cardsCount: _imageUrls2.length,
+                      controller: controller2,
+                      onSwipe: (previousIndex, currentIndex, direction) {
+                        debugPrint(
+                            "previousIndex: $previousIndex, currentIndex: $currentIndex, direction: $direction ");
+                        if (direction == CardSwiperDirection.top) {
+                          _changeImage(1);
+                          _changeImage(2);
+                        }
 
-                    return true;
-                  },
+                        return true;
+                      },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      default:
+        return Container(color: white);
+    }
   }
 
   Widget _buildCard(String imageUrl, double verticalSwipePercentage) {
@@ -295,46 +318,28 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     });
   }
 
-  void _resetCard(CardSwiperController controller) {
-    controller.undo();
-    setState(() {
-      controller.undo();
-    });
-  }
+// Ajustez cette méthode pour qu'elle prenne une liste de posts
+  void _loadImages(List<Post> posts) {
+    _imageUrls1.clear();
+    _imageUrls2.clear();
 
-  Future<void> _loadImages() async {
-    try {
-      // Récupérer tous les documents de la collection 'posts'
-      var postsSnapshot =
-          await _firebaseFirestore.collection(Paths.posts).get();
-
-      // Réinitialiser les listes pour éviter les doublons lors du rechargement
-      _imageUrls1.clear();
-      _imageUrls2.clear();
-
-      // Parcourir chaque document et répartir les URLs d'images entre _imageUrls1 et _imageUrls2
-      bool addToFirstList = true;
-      for (var doc in postsSnapshot.docs) {
-        var imageUrl = doc.data()["imageUrl"] as String?;
-        if (imageUrl != null) {
-          if (addToFirstList) {
-            _imageUrls1.add(imageUrl);
-          } else {
-            _imageUrls2.add(imageUrl);
-          }
-          addToFirstList = !addToFirstList; // Alterner entre les listes
-          print('Image URL ajoutée: $imageUrl');
+    // Répartir les URLs d'images entre _imageUrls1 et _imageUrls2
+    bool addToFirstList = true;
+    for (var post in posts) {
+      var imageUrl = post
+          .imageUrl; // Assurez-vous que vos objets Post ont un champ imageUrl
+      if (imageUrl != null) {
+        if (addToFirstList) {
+          _imageUrls1.add(imageUrl);
+        } else {
+          _imageUrls2.add(imageUrl);
         }
+        addToFirstList = !addToFirstList; // Alterner entre les listes
       }
-
-      print('Nombre total d\'images dans _imageUrls1: ${_imageUrls1.length}');
-      print('Nombre total d\'images dans _imageUrls2: ${_imageUrls2.length}');
-
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Erreur lors du chargement des images: $e');
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

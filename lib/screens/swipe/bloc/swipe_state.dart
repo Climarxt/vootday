@@ -1,6 +1,6 @@
 part of 'swipe_bloc.dart';
 
-enum SwipeStatus { initial, loaded, error }
+enum SwipeStatus { initial, loading, loaded, error }
 
 class SwipeState extends Equatable {
   final SwipeStatus status;

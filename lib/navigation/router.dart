@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
@@ -361,7 +360,13 @@ GoRouter createRouter(BuildContext context) {
               GoRoute(
                 path: '/swipe',
                 pageBuilder: (BuildContext context, GoRouterState state) {
-                  return NoAnimationPage(child: const SwipeScreen());
+                  return MaterialPage<void>(
+                    key: state.pageKey,
+                    child: BlocProviderConfig.getSwipeMultiBlocProvider(
+                      context,
+                      const SwipeScreen(),
+                    ),
+                  );
                 },
               ),
             ],

@@ -6,6 +6,7 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
+import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
@@ -79,6 +80,24 @@ class BlocProviderConfig {
               authBloc: context.read<AuthBloc>(),
             );
             return thisComignSoonEventsBloc;
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  static MultiBlocProvider getSwipeMultiBlocProvider(
+      BuildContext context, Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SwipeBloc>(
+          create: (context) {
+            final swipeBloc = SwipeBloc(
+              swipeRepository: context.read<SwipeRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return swipeBloc;
           },
         ),
       ],

@@ -15,15 +15,19 @@ class SwipeOOTD extends StatefulWidget {
   State<SwipeOOTD> createState() => _SwipeOOTDState();
 }
 
-class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
+class _SwipeOOTDState extends State<SwipeOOTD>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SwipeOOTD> {
   final CardSwiperController controller1 = CardSwiperController();
   final CardSwiperController controller2 = CardSwiperController();
   late AnimationController _heartAnimationController;
   late Animation<double> _heartAnimation;
   final List<String> _imageUrls1 = [];
   final List<String> _imageUrls2 = [];
+  List<Post> _posts1 = [];
+  List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
+
   EdgeInsets _swiperPadding() => const EdgeInsets.only(
         left: 7.5,
         right: 7.5,
@@ -53,8 +57,11 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context, state) {
+        debugPrint("DEBUG : state : $state - context: $context ");
         if (state.status == SwipeStatus.loaded) {
           _loadImages(state.posts);
         }
@@ -298,9 +305,6 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
     });
   }
 
-  List<Post> _posts1 = [];
-  List<Post> _posts2 = [];
-
   void _loadImages(List<Post> posts) {
     _imageUrls1.clear();
     _imageUrls2.clear();
@@ -320,4 +324,7 @@ class _SwipeOOTDState extends State<SwipeOOTD> with TickerProviderStateMixin {
       addToFirstList = !addToFirstList;
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

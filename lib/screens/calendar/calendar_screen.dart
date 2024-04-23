@@ -34,7 +34,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               .headlineMedium!
               .copyWith(color: black),
         ),
-        backgroundColor: white,
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
@@ -63,7 +63,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 default:
                   return Expanded(
                     flex: 1,
-                    child: Container(color: white)
+                    child: Container(color: Colors.white)
                   );
               }
             },
@@ -141,7 +141,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: Container(color: white)
+              child: Container(color: Colors.white,)
             );
           },
         ),

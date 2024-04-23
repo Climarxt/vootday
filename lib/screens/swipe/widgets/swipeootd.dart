@@ -32,7 +32,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
         left: 7.5,
         right: 7.5,
         bottom: 7.5,
-        top: 7.5,
+        top: 0,
       );
   AllowedSwipeDirection _allowedSwipeDirection() => AllowedSwipeDirection.only(
       up: true, left: false, down: true, right: false);
@@ -194,7 +194,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
               ),
             ),
           ),
-          Container(
+          /* Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               gradient: LinearGradient(
@@ -206,7 +206,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                 ],
               ),
             ),
-          ),
+          ), */
           Positioned(
             top: 10,
             left: 12,

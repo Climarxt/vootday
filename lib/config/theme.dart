@@ -7,10 +7,15 @@ ThemeData theme() {
       TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       TargetPlatform.android: CupertinoPageTransitionsBuilder(),
     }),
-    primaryColor: couleurBleuClair2,
+    useMaterial3: false,
+    primaryColor: Colors.white,
+    appBarTheme: const AppBarTheme(backgroundColor: white),
     scaffoldBackgroundColor: Colors.white,
     primaryIconTheme: const IconThemeData(color: Colors.black),
     iconTheme: const IconThemeData(color: Colors.black),
+    canvasColor: Colors.white,
+    cardColor: Colors.white,
+    dialogBackgroundColor: Colors.white,
     textTheme: const TextTheme(
       displayLarge: TextStyle(
         fontWeight: FontWeight.bold,
@@ -47,6 +52,7 @@ ThemeData theme() {
     ),
     colorScheme: ColorScheme.fromSwatch()
         .copyWith(secondary: const Color(0xFFE84545))
-        .copyWith(background: const Color(0xFFF4F4F4)),
+        .copyWith(background: const Color(0xFFF4F4F4))
+        .copyWith(background: Colors.white),
   );
 }

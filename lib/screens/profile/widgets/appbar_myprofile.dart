@@ -17,6 +17,7 @@ class _SliverAppBarMyProfileState extends State<SliverAppBarMyProfile> {
       pinned: true,
       expandedHeight: 62.0,
       centerTitle: true,
+      forceElevated: true,
       backgroundColor: Colors.white,
       elevation: 0,
       iconTheme: const IconThemeData(color: black),

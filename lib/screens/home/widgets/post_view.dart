@@ -97,7 +97,7 @@ class _PostViewState extends State<PostView>
             ),
           ),
         ),
-        Container(
+        /* Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             gradient: LinearGradient(
@@ -109,7 +109,7 @@ class _PostViewState extends State<PostView>
               ],
             ),
           ),
-        ),
+        ), */
       ],
     );
   }

@@ -79,30 +79,26 @@ class _FollowingScreenState extends State<FollowingScreen>
               onRefresh: () async {
                 context.read<FollowingBloc>().add(FollowingFetchPosts());
               },
-              child: ListView.separated(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.5,
+                ),
                 physics: const BouncingScrollPhysics(),
                 cacheExtent: 10000,
-                controller: _scrollController,
                 itemCount: state.posts.length + 1,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(height: 10),
                 itemBuilder: (BuildContext context, int index) {
                   if (index == state.posts.length) {
                     return state.status == FollowingStatus.paginating
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   } else {
-                    final Post? post = state.posts[index];
-
-                    // Vérifier si post est null
-                    if (post != null) {
-                      return PostView(
-                        post: post,
-                      );
-                    } else {
-                      // Retourner un widget de remplacement ou rien si post est null
-                      return const SizedBox.shrink();
-                    }
+                    final Post post = state.posts[index] ?? Post.empty;
+                    return PostView(
+                      post: post,
+                    );
                   }
                 },
               ),

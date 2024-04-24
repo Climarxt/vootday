@@ -50,7 +50,7 @@ class ProfileImagePost extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Row(
+                /* Row(
                   children: [
                     Text(
                       '$likes',
@@ -63,7 +63,7 @@ class ProfileImagePost extends StatelessWidget {
                       size: 12,
                     ),
                   ],
-                ),
+                ), */
               ],
             ),
           ],

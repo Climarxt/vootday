@@ -42,8 +42,8 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.3
   flutter_bounceable: ^1.1.0
-  flutter_card_swiper:
-    git: https://github.com/Climarxt/flutter_card_swiper.git
+  flutter_card_swiper: ^7.0.0
+  #  git: https://github.com/Climarxt/flutter_card_swiper.git
   flutter_image_compress: ^2.1.0
   flutter_localizations:
     sdk: flutter

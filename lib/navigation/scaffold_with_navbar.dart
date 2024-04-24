@@ -24,46 +24,51 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: !(currentLocation == '/profile/create' ||
               currentLocation == '/profile/create/brand' ||
               currentLocation.endsWith('/create'))
-          ? BottomNavigationBar(
-              items: <BottomNavigationBarItem>[
-                const BottomNavigationBarItem(
-                    icon: Icon(Icons.home), label: 'Home'),
-                const BottomNavigationBarItem(
-                    icon: Icon(Icons.calendar_month), label: 'Calendar'),
-                BottomNavigationBarItem(
-                    icon: _buildSwipeIcon(context), label: 'Swipe'),
-                const BottomNavigationBarItem(
-                    icon: Icon(Icons.search), label: 'Search'),
-                const BottomNavigationBarItem(
-                    icon: Icon(Icons.account_circle), label: 'Profile')
-              ],
-              backgroundColor: white,
-              currentIndex: navigationShell.currentIndex,
-              onTap: (int index) => _onTap(context, index),
-              unselectedItemColor: greyDark,
-              selectedItemColor: black,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              type: BottomNavigationBarType.fixed,
+          ? Container(
+              height: 82, // Adjusted height for reduced padding
+              child: BottomNavigationBar(
+                selectedFontSize: 0,
+                items: [
+                  _buildNavBarItem(context, Icons.home, 'Home', 0),
+                  _buildNavBarItem(
+                      context, Icons.calendar_month, 'Calendar', 1),
+                  _buildNavBarItem(context, Icons.swipe, 'Swipe', 2),
+                  _buildNavBarItem(context, Icons.search, 'Search', 3),
+                  _buildNavBarItem(context, Icons.account_circle, 'Profile', 4),
+                ],
+                backgroundColor: Colors.white,
+                currentIndex: navigationShell.currentIndex,
+                onTap: (int index) => _onTap(context, index),
+                unselectedItemColor: Colors.grey,
+                selectedItemColor: Colors.black,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                type: BottomNavigationBarType.fixed,
+              ),
             )
-          : null, // Ne pas afficher la barre de navigation
+          : null,
     );
   }
 
-  // Méthode pour créer un widget personnalisé pour l'icône "Swipe"
-  Widget _buildSwipeIcon(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [couleurBleu1, couleurBleuClair1],
-        ),
+  BottomNavigationBarItem _buildNavBarItem(
+      BuildContext context, IconData icon, String label, int index) {
+    bool isSelected = navigationShell.currentIndex == index;
+    return BottomNavigationBarItem(
+      icon: _customIcon(context, icon, isSelected: isSelected),
+      label: label,
+    );
+  }
+
+  Widget _customIcon(BuildContext context, IconData icon,
+      {bool isSelected = false}) {
+    return Padding(
+      padding:
+          const EdgeInsets.symmetric(vertical: 0), // Reduces vertical padding
+      child: Icon(
+        icon,
+        color: isSelected ? Colors.black : Colors.grey,
+        size: isSelected ? 32 : 24,
       ),
-      child: Icon(Icons.swipe, color: white),
     );
   }
 

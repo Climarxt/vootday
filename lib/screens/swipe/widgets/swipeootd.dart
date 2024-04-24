@@ -28,12 +28,20 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
 
-  EdgeInsets _swiperPadding() => const EdgeInsets.only(
-        left: 7.5,
+  EdgeInsets _swiperPaddingLeft() => const EdgeInsets.only(
+        left: 0,
         right: 7.5,
         bottom: 7.5,
         top: 0,
       );
+
+  EdgeInsets _swiperPaddingRight() => const EdgeInsets.only(
+        left: 7.5,
+        right: 0,
+        bottom: 7.5,
+        top: 0,
+      );
+
   AllowedSwipeDirection _allowedSwipeDirection() => AllowedSwipeDirection.only(
       up: true, left: false, down: true, right: false);
   late double verticalThresholdPercentageSave;
@@ -61,7 +69,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
 
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context, state) {
-        debugPrint("DEBUG : state : $state - context: $context ");
+        // debugPrint("DEBUG : state : $state - context: $context ");
         if (state.status == SwipeStatus.loaded) {
           _loadImages(state.posts);
         }
@@ -94,7 +102,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
                       allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPadding(),
+                      padding: _swiperPaddingLeft(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -106,7 +114,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                       cardsCount: _imageUrls1.length,
                       controller: controller1,
                       onSwipe: (previousIndex, currentIndex, direction) {
-                        if (direction == CardSwiperDirection.top) {
+                        if (direction == CardSwiperDirection.top ||
+                            direction == CardSwiperDirection.bottom) {
                           _changeImage(1);
                           _changeImage(2);
                         }
@@ -121,7 +130,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
                       allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPadding(),
+                      padding: _swiperPaddingRight(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -135,7 +144,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                       onSwipe: (previousIndex, currentIndex, direction) {
                         debugPrint(
                             "previousIndex: $previousIndex, currentIndex: $currentIndex, direction: $direction ");
-                        if (direction == CardSwiperDirection.top) {
+                        if (direction == CardSwiperDirection.top ||
+                            direction == CardSwiperDirection.bottom) {
                           _changeImage(1);
                           _changeImage(2);
                         }
@@ -158,15 +168,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
       String imageUrl, double verticalSwipePercentage, Post post) {
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
-    bool shouldSwipeDown = verticalSwipePercentage > 375;
-    debugPrint("DEBUG : post: $post");
+    // debugPrint("DEBUG : post: $post");
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (shouldSwipeDown && !_hasShownBottomSheet) {
-        _hasShownBottomSheet = true;
-        _showBottomSheet(context);
-      }
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
@@ -213,7 +216,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
             child: buildUsername(context, post),
           ),
           // Heart Animation
-          if (shouldAnimateUp)
+          if (shouldAnimateUp || shouldAnimatetDown)
             Center(
               child: AnimatedBuilder(
                 animation: _heartAnimationController,
@@ -221,20 +224,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                   return Icon(
                     Icons.favorite,
                     color: couleurBleuClair2,
-                    size: _heartAnimation.value,
-                  );
-                },
-              ),
-            ),
-          // Bookmark Animation
-          if (shouldAnimatetDown)
-            Center(
-              child: AnimatedBuilder(
-                animation: _heartAnimationController,
-                builder: (context, _) {
-                  return Icon(
-                    Icons.bookmark,
-                    color: couleurJauneOrange2,
                     size: _heartAnimation.value,
                   );
                 },

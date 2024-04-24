@@ -63,7 +63,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       {bool isSelected = false}) {
     return Padding(
       padding:
-          const EdgeInsets.symmetric(vertical: 0), // Reduces vertical padding
+          const EdgeInsets.symmetric(vertical: 1), // Reduces vertical padding
       child: Icon(
         icon,
         color: isSelected ? Colors.black : Colors.grey,

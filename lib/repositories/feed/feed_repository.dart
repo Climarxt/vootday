@@ -128,7 +128,7 @@ class FeedRepository {
       postsSnap = await eventDocRef
           .collection('feed_event')
           .orderBy('likes', descending: true)
-          .limit(4)
+          .limit(10)
           .get();
       debugPrint(
           'Method getFeedEvent : Fetched ${postsSnap.docs.length} initial events.');

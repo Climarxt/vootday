@@ -130,6 +130,7 @@ class _PostScreenState extends State<PostScreen>
                       _post!,
                       () => _navigateToUserScreen(context, _user!),
                       _showBottomSheet,
+                      _showBottomSheetShare,
                       _navigateToCommentScreen,
                       _addToLikesThenShowCollections,
                       widget.postId,
@@ -419,6 +420,25 @@ class _PostScreenState extends State<PostScreen>
             ListTile(
               leading: const Icon(Icons.report),
               title: const Text('Report'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showBottomSheetShare(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share'),
               onTap: () {
                 Navigator.pop(context);
               },

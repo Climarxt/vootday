@@ -194,6 +194,7 @@ Widget buildActionIcons(
     MyCollectionState state,
     BuildContext context,
     void Function(BuildContext) showBottomSheet,
+    void Function(BuildContext) showBottomSheetShare,
     void Function(BuildContext) navigateToCommentScreen,
     void Function(MyCollectionState) addToLikesThenShowCollections,
     String postId,
@@ -205,7 +206,7 @@ Widget buildActionIcons(
     children: [
       buildIconButton(Icons.more_vert, () => showBottomSheet(context)),
       buildIconButton(Icons.comment, () => navigateToCommentScreen(context)),
-      buildIconButton(Icons.share, () => showBottomSheet(context)),
+      buildIconButton(Icons.share, () => showBottomSheetShare(context)),
       buildIconButton(
           Icons.add_to_photos, () => addToLikesThenShowCollections(state)),
       buildFavoriteButton(context, postId, _userId!, animation, controller),
@@ -268,6 +269,7 @@ Widget buildPostDetails(
   Post post,
   VoidCallback onUserTitleTap,
   Function(BuildContext) onShowBottomSheet,
+  Function(BuildContext) onShowBottomSheetShare,
   Function(BuildContext) onNavigateToCommentScreen,
   Function(MyCollectionState) onAddToLikesThenShowCollections,
   String postId,
@@ -290,6 +292,7 @@ Widget buildPostDetails(
           state,
           context,
           onShowBottomSheet,
+          onShowBottomSheetShare,
           onNavigateToCommentScreen,
           onAddToLikesThenShowCollections,
           postId,

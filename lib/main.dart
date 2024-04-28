@@ -9,7 +9,8 @@ import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart'
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/follow_users/followers_users/followers_users_cubit.dart';
 import 'package:bootdv2/screens/follow_users/following_users/following_users_cubit.dart';
@@ -114,6 +115,12 @@ class MyApp extends StatelessWidget {
             create: (context) => CommentsBloc(
               authBloc: context.read<AuthBloc>(),
               postRepository: context.read<PostRepository>(),
+            ),
+          ),
+          BlocProvider<CommentsEventBloc>(
+            create: (context) => CommentsEventBloc(
+              authBloc: context.read<AuthBloc>(),
+              eventRepository: context.read<EventRepository>(),
             ),
           ),
           BlocProvider(

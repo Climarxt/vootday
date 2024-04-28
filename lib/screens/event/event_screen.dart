@@ -227,7 +227,7 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _navigateToCommentScreen(BuildContext context) {
-    context.push('/event/${widget.eventId}/comment');
+    context.push('/calendar/event/${widget.eventId}/comment');
   }
 
   void _navigateToUserScreen(BuildContext context) {

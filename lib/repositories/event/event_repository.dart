@@ -1,4 +1,5 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/models/comment_event_model.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -254,5 +255,33 @@ class EventRepository {
           'getComingSoonEvents: Error occurred while fetching future events - $e');
     }
     return eventsList;
+  }
+
+  Stream<List<Future<Comment?>>> getEventComments({required String eventId}) {
+    return _firebaseFirestore
+        .collection(Paths.comments)
+        .doc(eventId)
+        .collection(Paths.postComments)
+        .orderBy('date', descending: false)
+        .snapshots()
+        .map((snap) =>
+            snap.docs.map((doc) => Comment.fromDocument(doc)).toList());
+  }
+
+  Future<void> createComment({
+    required CommentEvent comment,
+  }) async {
+    debugPrint('createComment : Début de la méthode createComment');
+
+    debugPrint('createComment : Ajout du commentaire dans Firestore');
+    await _firebaseFirestore
+        .collection(Paths.comments)
+        .doc(comment.eventId)
+        .collection(Paths.postComments)
+        .add(comment.toDocument())
+        .then((_) => debugPrint('createComment : Commentaire ajouté avec succès'))
+        .catchError(
+            (e) => debugPrint('createComment : Erreur lors de l\'ajout du commentaire: $e'));
+    debugPrint('createComment : Fin de la méthode createComment');
   }
 }

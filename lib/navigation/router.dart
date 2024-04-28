@@ -5,7 +5,9 @@ import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/comment/bloc/comments_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
+import 'package:bootdv2/screens/comment/comments_event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
@@ -335,13 +337,13 @@ GoRouter createRouter(BuildContext context) {
                             final eventId = RouteConfig.getEventId(state);
                             return MaterialPage<void>(
                               key: state.pageKey,
-                              child: BlocProvider<CommentsBloc>(
-                                create: (_) => CommentsBloc(
-                                  postRepository:
-                                      context.read<PostRepository>(),
+                              child: BlocProvider<CommentsEventBloc>(
+                                create: (_) => CommentsEventBloc(
+                                  eventRepository:
+                                      context.read<EventRepository>(),
                                   authBloc: context.read<AuthBloc>(),
-                                )..add(CommentsFetchComments(postId: eventId)),
-                                child: CommentScreen(postId: eventId),
+                                )..add(CommentsEventFetchComments(eventId: eventId)),
+                                child: CommentEventScreen(eventId: eventId),
                               ),
                             );
                           },

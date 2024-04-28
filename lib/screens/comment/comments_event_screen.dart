@@ -1,22 +1,22 @@
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
+import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
 import 'package:bootdv2/screens/comment/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CommentScreen extends StatefulWidget {
-  final String postId;
+class CommentEventScreen extends StatefulWidget {
+  final String eventId;
 
-  const CommentScreen({super.key, required this.postId});
+  const CommentEventScreen({super.key, required this.eventId});
 
   @override
   // ignore: library_private_types_in_public_api
-  _CommentScreenState createState() => _CommentScreenState();
+  _CommentEventScreenState createState() => _CommentEventScreenState();
 }
 
-class _CommentScreenState extends State<CommentScreen> {
+class _CommentEventScreenState extends State<CommentEventScreen> {
   final TextEditingController _commentController = TextEditingController();
 
   @override
@@ -42,9 +42,9 @@ class _CommentScreenState extends State<CommentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CommentsBloc, CommentsState>(
+    return BlocConsumer<CommentsEventBloc, CommentsEventState>(
       listener: (context, state) {
-        if (state.status == CommentsStatus.error) {
+        if (state.status == CommentsEventStatus.error) {
           showDialog(
             context: context,
             builder: (context) => ErrorDialog(content: state.failure.message),
@@ -146,10 +146,10 @@ class _CommentScreenState extends State<CommentScreen> {
                             final content = _commentController.text.trim();
                             if (content.isNotEmpty) {
                               context
-                                  .read<CommentsBloc>()
+                                  .read<CommentsEventBloc>()
                                   .add(CommentsPostComment(
                                     content: content,
-                                    postId: widget.postId,
+                                    eventId: widget.eventId,
                                   ));
                               _commentController.clear();
 

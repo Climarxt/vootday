@@ -39,7 +39,8 @@ class _EventScreenState extends State<EventScreen>
 
   @override
   void initState() {
-    debugPrint("DEBUG : fromPath = ${widget.fromPath}");
+    // debugPrint("DEBUG : fromPath = ${widget.fromPath}");
+    // debugPrint("DEBUG : VARIABLE = ${widget.eventId}");
 
     super.initState();
     _fetchEventDetails();
@@ -54,8 +55,21 @@ class _EventScreenState extends State<EventScreen>
     }
   }
 
-  void _navigateToPostScreen(BuildContext context) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchEventDetails(); // Refetch event details if dependencies change
+  }
 
+  @override
+  void didUpdateWidget(EventScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.eventId != oldWidget.eventId) {
+      _fetchEventDetails(); // Refetch event details if event ID changes
+    }
+  }
+
+  void _navigateToPostScreen(BuildContext context) {
     GoRouter.of(context).push('/post/$_postRef', extra: widget.fromPath);
   }
 
@@ -63,12 +77,16 @@ class _EventScreenState extends State<EventScreen>
     Event? event = await eventRepository.getEventById(widget.eventId);
     if (event != null) {
       setState(() {
+        _userRefId = null; // Réinitialiser _userRefId avant de le mettre à jour
         title = event.title;
         logoUrl = event.logoUrl;
         author = event.author.author;
         eventDetails = event;
+        _userRefId = event.user_ref.id;
+        debugPrint("DEBUG : userRefId updated to = $_userRefId");
       });
-      _fetchUserRefFromAuthor(author); // Déplacez cet appel ici
+    } else {
+      debugPrint("No event found, _userRefId remains null");
     }
   }
 
@@ -113,7 +131,8 @@ class _EventScreenState extends State<EventScreen>
                       description: event.caption,
                       tags: event.tags,
                       profileImage: event.logoUrl,
-                      onTitleTap: () => _navigateToUserScreen(context),
+                      onTitleTap: () =>
+                          _navigateToUserScreen(context, event.user_ref.id),
                     ),
                     const Spacer(),
                     Column(
@@ -251,9 +270,12 @@ class _EventScreenState extends State<EventScreen>
     context.push('/calendar/event/${widget.eventId}/comment');
   }
 
-  void _navigateToUserScreen(BuildContext context) {
-    // final author = widget.author;
-    context.push('/brand/$_userRefId?username=$author');
+  void _navigateToUserScreen(BuildContext context, String userId) {
+    debugPrint("DEBUG : Navigate to user with ID = $userId");
+    context.push('/brand/$userId?username=$author').then((_) {
+      _userRefId = null; // Reset _userRefId after navigation is done
+      debugPrint("DEBUG : _userRefId reset to null after navigation");
+    });
   }
 
   void _checkIfUserIsAParticipant(String userId) async {

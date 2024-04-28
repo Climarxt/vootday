@@ -39,7 +39,7 @@ class EventLogoImage extends StatelessWidget {
       child: ClipOval(
         child: SvgPicture.network(
           profileImageUrl,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           width: radius * 2,
           height: radius * 2,
         ),

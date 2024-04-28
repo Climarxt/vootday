@@ -36,7 +36,7 @@ class UserProfileImage extends StatelessWidget {
   Widget buildInnerCircle() {
     return CircleAvatar(
       radius: radius,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       child: ClipOval(
         child: Stack(
           fit: StackFit.expand,
@@ -57,7 +57,7 @@ class UserProfileImage extends StatelessWidget {
       if (isBrand) {
         return SvgPicture.network(
           profileImageUrl,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
         );
       } else {
         return Image(

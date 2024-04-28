@@ -20,15 +20,6 @@ class AppBarTitleLogoOption extends StatelessWidget
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ClipOval(
-            child: SvgPicture.network(
-              logoUrl,
-              width: 40, // Taille du SVG
-              height: 40, // Taille du SVG
-              fit: BoxFit.cover, // Pour s'assurer que l'image remplit le cercle
-            ),
-          ),
-          const SizedBox(width: 8), // Espace entre l'avatar et le titre
           Text(
             title,
             style: Theme.of(context)

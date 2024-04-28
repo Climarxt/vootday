@@ -131,7 +131,7 @@ class _EventScreenState extends State<EventScreen>
                         IconButton(
                           icon: const Icon(Icons.share,
                               color: Colors.black, size: 24),
-                          onPressed: () => _showBottomSheet(context),
+                          onPressed: () => _showBottomSheetShare(context),
                         ),
                       ],
                     ),
@@ -202,6 +202,27 @@ class _EventScreenState extends State<EventScreen>
   }
 
   void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.report),
+              title: const Text('Report'),
+              onTap: () {
+                // Implémentez votre logique de signalement ici
+                Navigator.pop(context);
+              },
+            ),
+            // Ajoutez d'autres options si nécessaire
+          ],
+        );
+      },
+    );
+  }
+
+  void _showBottomSheetShare(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

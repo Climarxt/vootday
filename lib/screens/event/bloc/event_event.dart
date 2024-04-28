@@ -15,3 +15,5 @@ class EventFetchEvent extends EventEvent {
   @override
   List<Object> get props => [eventId];
 }
+
+class EventClean extends EventEvent {}

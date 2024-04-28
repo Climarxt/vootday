@@ -122,6 +122,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 imageUrl: event.logoUrl,
                 title: event.title,
                 description: event.caption,
+                eventId: event.id,
               ),
             );
           },

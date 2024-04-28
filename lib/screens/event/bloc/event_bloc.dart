@@ -14,12 +14,14 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   })  : _eventRepository = eventRepository,
         super(EventState.initial()) {
     on<EventFetchEvent>(_mapEventFetchEvent);
+    on<EventClean>(_onEventClean);
   }
 
   Future<void> _mapEventFetchEvent(
     EventFetchEvent fetchEvent,
     Emitter<EventState> emit,
   ) async {
+    _onEventClean(EventClean(), emit);
     try {
       print('EventBloc: Fetching event ${fetchEvent.eventId}...');
       final Event? eventDetails =
@@ -38,5 +40,12 @@ class EventBloc extends Bloc<EventEvent, EventState> {
         failure: Failure(message: 'Unable to load the event - $err'),
       ));
     }
+  }
+
+  Future<void> _onEventClean(
+    EventClean event,
+    Emitter<EventState> emit,
+  ) async {
+    emit(EventState.initial());
   }
 }

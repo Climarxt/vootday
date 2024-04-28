@@ -208,8 +208,8 @@ class _EventScreenState extends State<EventScreen>
         return Wrap(
           children: <Widget>[
             ListTile(
-              leading: const Icon(Icons.report),
-              title: const Text('Report'),
+              leading: const Icon(Icons.share),
+              title: const Text('Share'),
               onTap: () {
                 // Implémentez votre logique de signalement ici
                 Navigator.pop(context);

@@ -1,16 +1,20 @@
 import 'package:bootdv2/screens/post/widgets/image_loader_card_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:go_router/go_router.dart';
 
 class MosaiqueEventLargeCard extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String description;
+  final String eventId;
 
   const MosaiqueEventLargeCard({
     super.key,
     required this.imageUrl,
     required this.title,
     required this.description,
+    required this.eventId,
   });
 
   @override
@@ -41,16 +45,19 @@ class _MosaiqueEventLargeCardState extends State<MosaiqueEventLargeCard> {
       child: AnimatedOpacity(
         opacity: _opacity,
         duration: const Duration(milliseconds: 300),
-        child: SizedBox(
-          width: cardWidth,
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+        child: Bounceable(
+          onTap: () => _navigateToEventScreen(context),
+          child: SizedBox(
+            width: cardWidth,
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Center(
+                  child: _buildPost(widget.imageUrl, cardWidth, cardHeight)),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Center(
-                child: _buildPost(widget.imageUrl, cardWidth, cardHeight)),
           ),
         ),
       ),
@@ -67,5 +74,14 @@ class _MosaiqueEventLargeCardState extends State<MosaiqueEventLargeCard> {
         height: height,
       ),
     );
+  }
+
+  void _navigateToEventScreen(BuildContext context) {
+    // final String encodedTitle = Uri.encodeComponent(widget.title);
+    // final String encodedLogoUrl = Uri.encodeComponent(widget.imageUrl);
+    // final String encodedAuthor = Uri.encodeComponent(widget.author);
+
+    GoRouter.of(context)
+        .go('/calendar/event/${widget.eventId}', extra: widget.eventId);
   }
 }

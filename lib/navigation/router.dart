@@ -332,9 +332,17 @@ GoRouter createRouter(BuildContext context) {
                           path: 'comment',
                           pageBuilder:
                               (BuildContext context, GoRouterState state) {
+                            final eventId = RouteConfig.getEventId(state);
                             return MaterialPage<void>(
                               key: state.pageKey,
-                              child: const CommentWIPScreen(),
+                              child: BlocProvider<CommentsBloc>(
+                                create: (_) => CommentsBloc(
+                                  postRepository:
+                                      context.read<PostRepository>(),
+                                  authBloc: context.read<AuthBloc>(),
+                                )..add(CommentsFetchComments(postId: eventId)),
+                                child: CommentScreen(postId: eventId),
+                              ),
                             );
                           },
                         ),

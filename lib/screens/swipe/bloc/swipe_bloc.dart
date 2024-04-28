@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';

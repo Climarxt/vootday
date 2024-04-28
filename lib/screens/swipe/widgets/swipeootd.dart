@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';

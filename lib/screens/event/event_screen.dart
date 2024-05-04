@@ -44,8 +44,7 @@ class _EventScreenState extends State<EventScreen>
 
     super.initState();
     _fetchEventDetails();
-    BlocProvider.of<EventBloc>(context)
-        .add(EventFetchEvent(eventId: widget.eventId));
+   BlocProvider.of<EventBloc>(context).add(EventFetchEvent(eventId: widget.eventId));
     final authState = context.read<AuthBloc>().state;
     final userId = authState.user?.uid;
     if (userId != null) {

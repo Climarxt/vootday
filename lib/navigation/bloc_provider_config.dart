@@ -1,6 +1,7 @@
 import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
@@ -196,17 +197,21 @@ class BlocProviderConfig {
     );
   }
 
-  static BlocProvider getFeedEventBlocProvider(
+  static MultiBlocProvider getFeedEventBlocProvider(
       BuildContext context, Widget child) {
-    return BlocProvider<FeedEventBloc>(
-      create: (context) {
-        final feedEventBloc = FeedEventBloc(
-          eventRepository: context.read<EventRepository>(),
-          feedRepository: context.read<FeedRepository>(),
-          authBloc: context.read<AuthBloc>(),
-        );
-        return feedEventBloc;
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FeedEventBloc>(
+          create: (context) {
+            final feedEventBloc = FeedEventBloc(
+              eventRepository: context.read<EventRepository>(),
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return feedEventBloc;
+          },
+        ),
+      ],
       child: child,
     );
   }

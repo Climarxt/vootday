@@ -8,7 +8,10 @@ class AppBarTitleLogoOption extends StatelessWidget
   final String logoUrl; // URL du fichier SVG
 
   const AppBarTitleLogoOption(
-      {super.key, required this.title, required this.logoUrl, required this.eventId});
+      {super.key,
+      required this.title,
+      required this.logoUrl,
+      required this.eventId});
 
   @override
   Size get preferredSize => const Size.fromHeight(62);
@@ -32,7 +35,7 @@ class AppBarTitleLogoOption extends StatelessWidget
       ),
       actions: [
         IconButton(
-          onPressed: () => _navigateToEventScreen(context),
+          onPressed: () {},
           icon: const Icon(
             Icons.event,
             color: Colors.black,
@@ -46,7 +49,6 @@ class AppBarTitleLogoOption extends StatelessWidget
   }
 
   void _navigateToEventScreen(BuildContext context) {
-    GoRouter.of(context)
-        .push('/feedevent/$eventId/event', extra: eventId);
+    GoRouter.of(context).push('/feedevent/$eventId/event', extra: eventId);
   }
 }

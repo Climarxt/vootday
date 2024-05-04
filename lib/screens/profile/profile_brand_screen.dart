@@ -155,7 +155,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ProfileBrandStats(
               isCurrentUser: widget.state.isCurrentUser,
               isFollowing: widget.state.isFollowing,
-              posts: widget.state.posts.length,
+              events: 1,
               followers: widget.state.user.followers,
               following: widget.state.user.following,
             ),

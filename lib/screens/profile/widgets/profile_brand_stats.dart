@@ -5,7 +5,7 @@ import '/screens/profile/widgets/widgets.dart';
 class ProfileBrandStats extends StatelessWidget {
   final bool isCurrentUser;
   final bool isFollowing;
-  final int posts;
+  final int events;
   final int followers;
   final int following;
 
@@ -13,7 +13,7 @@ class ProfileBrandStats extends StatelessWidget {
     super.key,
     required this.isCurrentUser,
     required this.isFollowing,
-    required this.posts,
+    required this.events,
     required this.followers,
     required this.following,
   });
@@ -38,7 +38,7 @@ class ProfileBrandStats extends StatelessWidget {
               count: followers,
               label: AppLocalizations.of(context)!.translate('followersCap')),
         ),
-        Stats(count: posts, label: 'EVENTS'),
+        Stats(count: events, label: 'EVENTS'),
         Expanded(
           child: Stats(
               count: 2532,

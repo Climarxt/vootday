@@ -49,7 +49,7 @@ class _ImageLoaderState extends State<ImageLoader>
           image: widget.imageProvider,
           width: widget.width,
           height: widget.height,
-          fit: BoxFit.cover,
+          fit: BoxFit.fitHeight,
         ),
         Positioned.fill(
           child: Container(

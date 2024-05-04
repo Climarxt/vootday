@@ -43,7 +43,9 @@ class _FeedEventState extends State<FeedEvent>
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
             appBar: AppBarTitleLogoOption(
-                title: widget.title, logoUrl: widget.logoUrl),
+                title: widget.title,
+                logoUrl: widget.logoUrl,
+                eventId: widget.eventId),
             body: _buildBody(state),
           ),
         );

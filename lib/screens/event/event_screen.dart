@@ -297,27 +297,6 @@ class _EventScreenState extends State<EventScreen>
     });
   }
 
-  void _fetchUserRefFromAuthor(String author) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('brands')
-          .where('author', isEqualTo: author)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot brandDoc = querySnapshot.docs.first;
-        DocumentReference userRef = brandDoc.get('user_ref');
-        _userRefId = userRef.id; // Stockez l'ID de référence de l'utilisateur
-      } else {
-        print(
-            'Aucune correspondance pour l\'author "$author" trouvée dans la collection brands.');
-      }
-    } catch (e) {
-      print(
-          'Une erreur s\'est produite lors de la récupération de user_ref: $e');
-    }
-  }
-
   @override
   bool get wantKeepAlive => true;
 }

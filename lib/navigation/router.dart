@@ -84,20 +84,65 @@ GoRouter createRouter(BuildContext context) {
       ),
       // FeedEvent
       GoRoute(
-        path: '/feedevent/:eventId',
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          final eventId = RouteConfig.getEventId(state);
-          final title = RouteConfig.getTitle(state);
-          final logoUrl = RouteConfig.getLogoUrl(state);
-          return MaterialPage<void>(
-            key: state.pageKey,
-            child: BlocProviderConfig.getFeedEventBlocProvider(
-              context,
-              FeedEvent(eventId: eventId, title: title, logoUrl: logoUrl),
+          path: '/feedevent/:eventId',
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final eventId = RouteConfig.getEventId(state);
+            final title = RouteConfig.getTitle(state);
+            final logoUrl = RouteConfig.getLogoUrl(state);
+            return MaterialPage<void>(
+              key: state.pageKey,
+              child: BlocProviderConfig.getFeedEventBlocProvider(
+                context,
+                FeedEvent(eventId: eventId, title: title, logoUrl: logoUrl),
+              ),
+            );
+          },
+          routes: [
+            GoRoute(
+              path: 'event',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                final eventId = RouteConfig.getEventId(state);
+                String currentPath = RouteConfig.getCurrentPath(state);
+                return MaterialPage<void>(
+                  key: state.pageKey,
+                  child: EventScreen(
+                    fromPath: currentPath,
+                    eventId: eventId,
+                  ),
+                );
+              },
+              routes: [
+                // calendar/event/:eventId/comment
+                GoRoute(
+                  path: 'comment',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    final eventId = RouteConfig.getEventId(state);
+                    return MaterialPage<void>(
+                      key: state.pageKey,
+                      child: BlocProvider<CommentsEventBloc>(
+                        create: (_) => CommentsEventBloc(
+                          eventRepository: context.read<EventRepository>(),
+                          authBloc: context.read<AuthBloc>(),
+                        )..add(CommentsEventFetchComments(eventId: eventId)),
+                        child: CommentEventScreen(eventId: eventId),
+                      ),
+                    );
+                  },
+                ),
+                // calendar/event/:eventId/create
+                GoRoute(
+                  path: 'create',
+                  builder: (BuildContext context, GoRouterState state) {
+                    final eventId = RouteConfig.getEventId(state);
+                    return BlocProviderConfig.getCreatePostBlocProvider(
+                      context,
+                      CreatePostEventScreen(eventId: eventId),
+                    );
+                  },
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ]),
       // FeedCollection
       GoRoute(
         path: '/collection/:collectionId',
@@ -342,7 +387,8 @@ GoRouter createRouter(BuildContext context) {
                                   eventRepository:
                                       context.read<EventRepository>(),
                                   authBloc: context.read<AuthBloc>(),
-                                )..add(CommentsEventFetchComments(eventId: eventId)),
+                                )..add(CommentsEventFetchComments(
+                                    eventId: eventId)),
                                 child: CommentEventScreen(eventId: eventId),
                               ),
                             );

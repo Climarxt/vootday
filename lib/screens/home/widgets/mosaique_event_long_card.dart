@@ -120,10 +120,9 @@ class _MosaiqueEventLongCardState extends State<MosaiqueEventLongCard>
 
   void _navigateToEventFeed(BuildContext context) {
     final encodedTitle = Uri.encodeComponent(widget.title);
-    final encodedLogoUrl = Uri.encodeComponent(widget.logoUrl);
 
     GoRouter.of(context).push(
-      '/feedevent/${widget.eventId}?title=$encodedTitle&logoUrl=$encodedLogoUrl',
+      '/feedevent/${widget.eventId}?title=$encodedTitle',
     );
   }
 }

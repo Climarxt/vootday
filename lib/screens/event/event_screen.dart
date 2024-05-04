@@ -164,7 +164,8 @@ class _EventScreenState extends State<EventScreen>
           ),
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(context),
+      floatingActionButton:
+          (event.done == true) ? null : _buildFloatingActionButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

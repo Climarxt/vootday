@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
@@ -90,7 +89,7 @@ class _FeedMonthState extends State<FeedMonth>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBody(state),
+              body: _buildBodyMasculin(state),
             ),
           );
         },
@@ -106,9 +105,7 @@ class _FeedMonthState extends State<FeedMonth>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: Container(
-                color: red,
-              ),
+              body: _buildBodyFeminin(state),
             ),
           );
         },
@@ -120,9 +117,47 @@ class _FeedMonthState extends State<FeedMonth>
     }
   }
 
-  Widget _buildBody(FeedMonthState state) {
+  Widget _buildBodyMasculin(FeedMonthState state) {
     switch (state.status) {
       case FeedMonthStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      default:
+        return Stack(
+          children: [
+            ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              cacheExtent: 10000,
+              itemCount: state.posts.length + 1,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(height: 10),
+              itemBuilder: (BuildContext context, int index) {
+                if (index == state.posts.length) {
+                  return state.status == FeedMonthStatus.paginating
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                } else {
+                  final Post post = state.posts[index] ?? Post.empty;
+                  return PostView(
+                    post: post,
+                  );
+                }
+              },
+            ),
+            if (state.status == FeedMonthStatus.paginating)
+              const Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+    }
+  }
+
+  Widget _buildBodyFeminin(FeedOOTDState state) {
+    switch (state.status) {
+      case FeedOOTDStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(

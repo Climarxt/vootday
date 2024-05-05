@@ -189,4 +189,21 @@ class UserRepository extends BaseUserRepository {
         .get();
     return otherUserDoc.exists;
   }
+
+// Ajout d'une méthode pour récupérer les détails d'un utilisateur
+  Future<User> fetchUserDetails(String userId) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firebaseFirestore.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        debugPrint("User details fetched for ID $userId");
+        return User.fromDocument(userDoc);
+      } else {
+        throw Exception("User not found!");
+      }
+    } catch (e) {
+      debugPrint("Error fetching user details: $e");
+      rethrow;
+    }
+  }
 }

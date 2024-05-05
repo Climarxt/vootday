@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
+import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
@@ -19,11 +22,19 @@ class _FeedMonthState extends State<FeedMonth>
   late ScrollController _scrollController;
   final TextEditingController _textController = TextEditingController();
   bool _isFetching = false;
+  late final String currentUserId;
+  late final UserRepository _userRepository;
+  late Future<User> _userDetailsFuture;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_onScroll);
+    _userRepository = UserRepository();
+
+    // Prépare le future pour récupérer les détails de l'utilisateur
+    _userDetailsFuture = _userRepository
+        .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
   }
 
   void _onScroll() {
@@ -48,21 +59,65 @@ class _FeedMonthState extends State<FeedMonth>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocConsumer<FeedMonthBloc, FeedMonthState>(
-      listener: (context, state) {
-        if (state.status == FeedMonthStatus.initial && state.posts.isEmpty) {
-          context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
+
+    return FutureBuilder<User>(
+      future: _userDetailsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(child: Text("Error: ${snapshot.error}")));
+          }
+          if (snapshot.hasData) {
+            String? selectedGender = snapshot.data!.selectedGender;
+            return _buildGenderSpecificBloc(selectedGender);
+          }
         }
-      },
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Scaffold(
-            body: _buildBody(state),
-          ),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
+  }
+
+  Widget _buildGenderSpecificBloc(String? selectedGender) {
+    if (selectedGender == "Masculin") {
+      return BlocConsumer<FeedMonthBloc, FeedMonthState>(
+        listener: (context, state) {
+          if (state.status == FeedMonthStatus.initial && state.posts.isEmpty) {
+            context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: _buildBody(state),
+            ),
+          );
+        },
+      );
+    } else if (selectedGender == "Féminin") {
+      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
+            context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: Container(
+                color: red,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
   }
 
   Widget _buildBody(FeedMonthState state) {

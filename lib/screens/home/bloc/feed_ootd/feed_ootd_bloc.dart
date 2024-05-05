@@ -21,16 +21,38 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         super(FeedOOTDState.initial()) {
-    on<FeedOOTDFetchPostsOOTD>(_mapFeedOOTDFetchPostsOOTD);
+    on<FeedOOTDManFetchPostsOOTD>(_mapFeedOOTDManFetchPostsOOTD);
+    on<FeedOOTDFemaleFetchPostsOOTD>(_mapFeedOOTDFemaleFetchPostsOOTD);
   }
 
-  Future<void> _mapFeedOOTDFetchPostsOOTD(
-    FeedOOTDFetchPostsOOTD event,
+  Future<void> _mapFeedOOTDManFetchPostsOOTD(
+    FeedOOTDManFetchPostsOOTD event,
     Emitter<FeedOOTDState> emit,
   ) async {
     try {
       final posts =
-          await _feedRepository.getFeedOOTD(userId: _authBloc.state.user!.uid);
+          await _feedRepository.getFeedOOTDMan(userId: _authBloc.state.user!.uid);
+
+      emit(
+        state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
+      );
+    } catch (err) {
+      print(err);
+      emit(state.copyWith(
+        status: FeedOOTDStatus.error,
+        failure:
+            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+      ));
+    }
+  }
+
+  Future<void> _mapFeedOOTDFemaleFetchPostsOOTD(
+    FeedOOTDFemaleFetchPostsOOTD event,
+    Emitter<FeedOOTDState> emit,
+  ) async {
+    try {
+      final posts =
+          await _feedRepository.getFeedOOTDFemale(userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),

@@ -7,4 +7,6 @@ abstract class FeedOOTDEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FeedOOTDFetchPostsOOTD extends FeedOOTDEvent {}
+class FeedOOTDManFetchPostsOOTD extends FeedOOTDEvent {}
+
+class FeedOOTDFemaleFetchPostsOOTD extends FeedOOTDEvent {}

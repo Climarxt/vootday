@@ -23,7 +23,7 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
-            feedOOTDBloc.add(FeedOOTDFetchPostsOOTD());
+            feedOOTDBloc.add(FeedOOTDManFetchPostsOOTD());
             return feedOOTDBloc;
           },
         ),
@@ -37,6 +37,7 @@ class BlocProviderConfig {
             return feedMonthBloc;
           },
         ),
+        
         BlocProvider(
           create: (context) {
             final homeEventBloc = HomeEventBloc(

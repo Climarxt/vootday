@@ -33,7 +33,7 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
-            feedMonthBloc.add(FeedMonthFetchPostsMonth());
+            feedMonthBloc.add(FeedMonthManFetchPostsMonth());
             return feedMonthBloc;
           },
         ),

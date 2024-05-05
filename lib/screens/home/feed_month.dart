@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
@@ -78,12 +79,14 @@ class _FeedMonthState extends State<FeedMonth>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
+    debugPrint("DEBUG PRINT : $selectedGender");
     if (selectedGender == "Masculin") {
+      debugPrint("Executing Masculin code");
       return BlocConsumer<FeedMonthBloc, FeedMonthState>(
         listener: (context, state) {
-          if (state.status == FeedMonthStatus.initial && state.posts.isEmpty) {
-            context.read<FeedMonthBloc>().add(FeedMonthFetchPostsMonth());
-          }
+          debugPrint(
+              "DEBUG PRINT : Déclenchement de FeedMonthManFetchPostsMonth");
+          context.read<FeedMonthBloc>().add(FeedMonthManFetchPostsMonth());
         },
         builder: (context, state) {
           return Padding(
@@ -95,11 +98,12 @@ class _FeedMonthState extends State<FeedMonth>
         },
       );
     } else if (selectedGender == "Féminin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+      debugPrint("Executing Féminin code");
+      return BlocConsumer<FeedMonthBloc, FeedMonthState>(
         listener: (context, state) {
-          if (state.status == FeedOOTDStatus.initial && state.posts.isEmpty) {
-            context.read<FeedOOTDBloc>().add(FeedOOTDFetchPostsOOTD());
-          }
+          debugPrint(
+              "DEBUG PRINT : Déclenchement de FeedMonthFemaleFetchPostsMonth");
+          context.read<FeedMonthBloc>().add(FeedMonthFemaleFetchPostsMonth());
         },
         builder: (context, state) {
           return Padding(
@@ -111,6 +115,7 @@ class _FeedMonthState extends State<FeedMonth>
         },
       );
     } else {
+      debugPrint("Executing fallback code");
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -155,9 +160,9 @@ class _FeedMonthState extends State<FeedMonth>
     }
   }
 
-  Widget _buildBodyFeminin(FeedOOTDState state) {
+  Widget _buildBodyFeminin(FeedMonthState state) {
     switch (state.status) {
-      case FeedOOTDStatus.loading:
+      case FeedMonthStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(

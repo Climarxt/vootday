@@ -9,6 +9,8 @@ abstract class FeedMonthEvent extends Equatable {
 
 class FeedMonthFetchPosts extends FeedMonthEvent {}
 
-class FeedMonthFetchPostsMonth extends FeedMonthEvent {}
+class FeedMonthManFetchPostsMonth extends FeedMonthEvent {}
+
+class FeedMonthFemaleFetchPostsMonth extends FeedMonthEvent {}
 
 class FeedMonthPaginatePosts extends FeedMonthEvent {}

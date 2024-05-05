@@ -51,46 +51,46 @@ class FeedRepository {
     return posts;
   }
 
-  Future<List<Post?>> getFeedMonth({
+  Future<List<Post?>> getFeedMonthMan({
     required String userId,
     String? lastPostId,
   }) async {
     debugPrint(
-        'getFeedMonth :  appelé pour userId: $userId, lastPostId: $lastPostId');
+        'getFeedMonthMan :  appelé pour userId: $userId, lastPostId: $lastPostId');
     QuerySnapshot postsSnap;
 
     if (lastPostId == null) {
       debugPrint(
-          'getFeedMonth :  Aucun lastPostId fourni, récupération des premiers posts');
+          'getFeedMonthMan :  Aucun lastPostId fourni, récupération des premiers posts');
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedMonthMan)
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
       debugPrint(
-          'getFeedMonth :  Nombre de posts récupérés: ${postsSnap.docs.length}');
+          'getFeedMonthMan :  Nombre de posts récupérés: ${postsSnap.docs.length}');
     } else {
       debugPrint(
-          'getFeedMonth :  lastPostId fourni: $lastPostId, récupération des posts suivants');
+          'getFeedMonthMan :  lastPostId fourni: $lastPostId, récupération des posts suivants');
       final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedMonthMan)
           .doc(lastPostId)
           .get();
 
       if (!lastPostDoc.exists) {
         debugPrint(
-            'getFeedMonth :  Le document lastPostDoc n\'existe pas, retour d\'une liste vide');
+            'getFeedMonthMan :  Le document lastPostDoc n\'existe pas, retour d\'une liste vide');
         return [];
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedMonth)
+          .collection(Paths.feedMonthMan)
           .orderBy('likes', descending: true)
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
       debugPrint(
-          'getFeedMonth :  Nombre de posts récupérés après le lastPostId: ${postsSnap.docs.length}');
+          'getFeedMonthMan :  Nombre de posts récupérés après le lastPostId: ${postsSnap.docs.length}');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
@@ -98,18 +98,80 @@ class FeedRepository {
       DocumentSnapshot postSnap = await postRef.get();
 
       if (postSnap.exists) {
-        debugPrint('getFeedMonth :  Post trouvé pour ref: ${postRef.path}');
+        debugPrint('getFeedMonthMan :  Post trouvé pour ref: ${postRef.path}');
         return Post.fromDocument(postSnap);
       } else {
         debugPrint(
-            'getFeedMonth :  Aucun post trouvé pour ref: ${postRef.path}');
+            'getFeedMonthMan :  Aucun post trouvé pour ref: ${postRef.path}');
         return null;
       }
     }).toList();
 
     final posts = await Future.wait(postFutures);
     debugPrint(
-        'getFeedMonth :  Nombre total de posts construits: ${posts.length}');
+        'getFeedMonthMan :  Nombre total de posts construits: ${posts.length}');
+    return posts;
+  }
+
+  Future<List<Post?>> getFeedMonthFemale({
+    required String userId,
+    String? lastPostId,
+  }) async {
+    debugPrint(
+        'getFeedMonthFemale :  appelé pour userId: $userId, lastPostId: $lastPostId');
+    QuerySnapshot postsSnap;
+
+    if (lastPostId == null) {
+      debugPrint(
+          'getFeedMonthFemale :  Aucun lastPostId fourni, récupération des premiers posts');
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedMonthFemale)
+          .orderBy('likes', descending: true)
+          .limit(100)
+          .get();
+      debugPrint(
+          'getFeedMonthFemale :  Nombre de posts récupérés: ${postsSnap.docs.length}');
+    } else {
+      debugPrint(
+          'getFeedMonthFemale :  lastPostId fourni: $lastPostId, récupération des posts suivants');
+      final lastPostDoc = await _firebaseFirestore
+          .collection(Paths.feedMonthFemale)
+          .doc(lastPostId)
+          .get();
+
+      if (!lastPostDoc.exists) {
+        debugPrint(
+            'getFeedMonthFemale :  Le document lastPostDoc n\'existe pas, retour d\'une liste vide');
+        return [];
+      }
+
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.feedMonthFemale)
+          .orderBy('likes', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(2)
+          .get();
+      debugPrint(
+          'getFeedMonthFemale :  Nombre de posts récupérés après le lastPostId: ${postsSnap.docs.length}');
+    }
+
+    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
+      DocumentReference postRef = doc['post_ref'];
+      DocumentSnapshot postSnap = await postRef.get();
+
+      if (postSnap.exists) {
+        debugPrint('getFeedMonthFemale :  Post trouvé pour ref: ${postRef.path}');
+        return Post.fromDocument(postSnap);
+      } else {
+        debugPrint(
+            'getFeedMonthFemale :  Aucun post trouvé pour ref: ${postRef.path}');
+        return null;
+      }
+    }).toList();
+
+    final posts = await Future.wait(postFutures);
+    debugPrint(
+        'getFeedMonthFemale :  Nombre total de posts construits: ${posts.length}');
     return posts;
   }
 

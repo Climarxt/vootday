@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
-import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';

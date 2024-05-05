@@ -27,6 +27,16 @@ class BlocProviderConfig {
             return feedOOTDBloc;
           },
         ),
+        BlocProvider<FeedOOTDBloc>(
+          create: (context) {
+            final feedOOTDBloc = FeedOOTDBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            feedOOTDBloc.add(FeedOOTDFemaleFetchPostsOOTD());
+            return feedOOTDBloc;
+          },
+        ),
         BlocProvider<FeedMonthBloc>(
           create: (context) {
             final feedMonthBloc = FeedMonthBloc(
@@ -37,7 +47,16 @@ class BlocProviderConfig {
             return feedMonthBloc;
           },
         ),
-        
+        BlocProvider<FeedMonthBloc>(
+          create: (context) {
+            final feedMonthBloc = FeedMonthBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            feedMonthBloc.add(FeedMonthFemaleFetchPostsMonth());
+            return feedMonthBloc;
+          },
+        ),
         BlocProvider(
           create: (context) {
             final homeEventBloc = HomeEventBloc(

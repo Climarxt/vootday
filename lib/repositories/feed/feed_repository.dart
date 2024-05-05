@@ -475,7 +475,7 @@ class FeedRepository {
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedOotdMan)
+          .collection(Paths.posts)
           .orderBy('likes', descending: true)
           .startAfterDocument(lastPostDoc)
           .limit(2)

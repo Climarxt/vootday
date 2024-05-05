@@ -101,7 +101,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
           caption: state.caption,
           likes: 0,
           date: DateTime.now(),
-          tags: state.tags);
+          tags: state.tags,);
 
       await _postRepository.createPost(post: post);
 

@@ -31,6 +31,12 @@ class SettingsScreen extends StatelessWidget {
                 'Mot de passe',
                 onTap: () {},
               ),
+              buildSettingsItem(
+                context,
+                FontAwesomeIcons.genderless,
+                'Intéressé par',
+                onTap: () {},
+              ),
             ],
           ),
           buildSettingsCategory(

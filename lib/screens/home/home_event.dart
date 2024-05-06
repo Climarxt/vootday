@@ -1,4 +1,6 @@
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 
@@ -16,12 +18,21 @@ class HomeEvent extends StatefulWidget {
 
 class _HomeEventState extends State<HomeEvent>
     with AutomaticKeepAliveClientMixin<HomeEvent> {
+  late final UserRepository _userRepository;
+  late Future<User> _userDetailsFuture;
+
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      context.read<HomeEventBloc>().add(HomeEventFetchEvents());
+      context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
+      context.read<HomeEventBloc>().add(HomeEventManFetchEvents());
     });
+    _userRepository = UserRepository();
+
+    // Prépare le future pour récupérer les détails de l'utilisateur
+    _userDetailsFuture = _userRepository
+        .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
   }
 
   @override
@@ -29,19 +40,81 @@ class _HomeEventState extends State<HomeEvent>
     super.dispose();
   }
 
+  /*
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<HomeEventBloc, HomeEventState>(
       listener: (context, state) {
         if (state.status == HomeEventStatus.initial && state.events.isEmpty) {
-          context.read<HomeEventBloc>().add(HomeEventFetchEvents());
+          context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
         }
       },
       builder: (context, state) {
         return _buildBody(state);
       },
     );
+  }
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    return FutureBuilder<User>(
+      future: _userDetailsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(child: Text("Error: ${snapshot.error}")));
+          }
+          if (snapshot.hasData) {
+            String? selectedGender = snapshot.data!.selectedGender;
+            return _buildGenderSpecificBloc(selectedGender);
+          }
+        }
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
+    );
+  }
+
+  Widget _buildGenderSpecificBloc(String? selectedGender) {
+    debugPrint("DEBUG PRINT : $selectedGender");
+    if (selectedGender == "Masculin") {
+      debugPrint("Executing Masculin code");
+      return BlocConsumer<HomeEventBloc, HomeEventState>(
+        listener: (context, state) {
+          if (state.status != HomeEventStatus.loading && state.events.isEmpty) {
+            context.read<HomeEventBloc>().add(HomeEventManFetchEvents());
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            body: _buildBody(state),
+          );
+        },
+      );
+    } else if (selectedGender == "Féminin") {
+      debugPrint("Executing Féminin code");
+      return BlocConsumer<HomeEventBloc, HomeEventState>(
+        listener: (context, state) {
+          if (state.status != HomeEventStatus.loading && state.events.isEmpty) {
+            context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            body: _buildBody(state),
+          );
+        },
+      );
+    } else {
+      debugPrint("Executing fallback code");
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
   }
 
   Widget _buildBody(HomeEventState state) {

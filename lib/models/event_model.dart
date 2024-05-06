@@ -19,6 +19,7 @@ class Event {
   final bool done;
   final String logoUrl;
   final User user_ref;
+  final String selectedGender;
 
   const Event({
     required this.id,
@@ -35,6 +36,7 @@ class Event {
     this.done = false,
     required this.logoUrl,
     required this.user_ref,
+    required this.selectedGender,
   });
 
   static var empty = Event(
@@ -52,6 +54,7 @@ class Event {
     done: false,
     logoUrl: '',
     user_ref: User.empty,
+    selectedGender: '',
   );
 
   List<Object?> get props => [
@@ -69,6 +72,7 @@ class Event {
         done,
         logoUrl,
         user_ref,
+        selectedGender,
       ];
 
   Event copyWith({
@@ -86,6 +90,7 @@ class Event {
     bool? done,
     String? logoUrl,
     User? user_ref,
+    String? selectedGender,
   }) {
     return Event(
       id: id ?? this.id,
@@ -102,6 +107,7 @@ class Event {
       done: done ?? this.done,
       logoUrl: logoUrl ?? this.logoUrl,
       user_ref: user_ref ?? this.user_ref,
+      selectedGender: selectedGender ?? this.selectedGender,
     );
   }
 
@@ -129,6 +135,7 @@ class Event {
       'Url': imageUrl,
       'user_ref':
           FirebaseFirestore.instance.collection('users').doc(user_ref.id),
+      'selectedGender': selectedGender,
     };
   }
 
@@ -160,6 +167,7 @@ class Event {
           done: (data['done'] ?? false) as bool,
           logoUrl: author.logoUrl,
           user_ref: user,
+          selectedGender: data['selectedGender'] ?? '',
         );
       }
     }

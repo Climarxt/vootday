@@ -73,9 +73,8 @@ class EventRepository {
         eventSnap = await _firebaseFirestore
             .collection(Paths.events)
             .where('done', isEqualTo: true)
-            .orderBy('dateEvent',
-                descending: true) // Assume we order by the event date.
-            .limit(100) // Or some other limit you prefer.
+            .orderBy('dateEvent', descending: true)
+            .limit(100)
             .get();
       } else {
         // Pagination fetch
@@ -94,7 +93,7 @@ class EventRepository {
             .where('done', isEqualTo: true)
             .orderBy('dateEvent', descending: true)
             .startAfterDocument(lastEventDoc)
-            .limit(2) // Fetch next set of events.
+            .limit(2)
             .get();
       }
 
@@ -117,6 +116,130 @@ class EventRepository {
     } catch (e) {
       debugPrint(
           'getEventsDone : An error occurred while fetching events: ${e.toString()}');
+      return [];
+    }
+  }
+
+  Future<List<Event?>> getEventsManDone({
+    required String userId,
+    String? lastEventId,
+  }) async {
+    try {
+      debugPrint(
+          'getEventsManDone : Attempting to fetch event documents from Firestore...');
+      QuerySnapshot eventSnap;
+      if (lastEventId == null) {
+        // Initial fetch
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('selectedGender', isEqualTo: 'Masculin')
+            .orderBy('dateEvent', descending: true)
+            .limit(100)
+            .get();
+      } else {
+        // Pagination fetch
+        final lastEventDoc = await _firebaseFirestore
+            .collection(Paths.events)
+            .doc(lastEventId)
+            .get();
+
+        if (!lastEventDoc.exists) {
+          debugPrint('getEventsManDone : Last event document does not exist.');
+          return [];
+        }
+
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('selectedGender', isEqualTo: 'Masculin')
+            .orderBy('dateEvent', descending: true)
+            .startAfterDocument(lastEventDoc)
+            .limit(2)
+            .get();
+      }
+
+      debugPrint(
+          'getEventsManDone : Event documents fetched. Converting to Event objects...');
+      List<Future<Event?>> futureEvents =
+          eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
+
+      // Use Future.wait to resolve all events
+      List<Event?> events = await Future.wait(futureEvents);
+
+      debugPrint(
+          'getEventsManDone : Event objects created. Total events: ${events.length}');
+      // Here, you might also debugPrint an event for debugging
+      if (events.isNotEmpty) {
+        debugPrint('getEventsManDone : First event details: ${events.first}');
+      }
+
+      return events;
+    } catch (e) {
+      debugPrint(
+          'getEventsManDone : An error occurred while fetching events: ${e.toString()}');
+      return [];
+    }
+  }
+
+  Future<List<Event?>> getEventsWomanDone({
+    required String userId,
+    String? lastEventId,
+  }) async {
+    try {
+      debugPrint(
+          'getEventsWomanDone : Attempting to fetch event documents from Firestore...');
+      QuerySnapshot eventSnap;
+      if (lastEventId == null) {
+        // Initial fetch
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('selectedGender', isEqualTo: 'Féminin')
+            .orderBy('dateEvent', descending: true)
+            .limit(100)
+            .get();
+      } else {
+        // Pagination fetch
+        final lastEventDoc = await _firebaseFirestore
+            .collection(Paths.events)
+            .doc(lastEventId)
+            .get();
+
+        if (!lastEventDoc.exists) {
+          debugPrint('getEventsWomanDone : Last event document does not exist.');
+          return [];
+        }
+
+        eventSnap = await _firebaseFirestore
+            .collection(Paths.events)
+            .where('done', isEqualTo: true)
+            .where('selectedGender', isEqualTo: 'Féminin')
+            .orderBy('dateEvent', descending: true)
+            .startAfterDocument(lastEventDoc)
+            .limit(2)
+            .get();
+      }
+
+      debugPrint(
+          'getEventsWomanDone : Event documents fetched. Converting to Event objects...');
+      List<Future<Event?>> futureEvents =
+          eventSnap.docs.map((doc) => Event.fromDocument(doc)).toList();
+
+      // Use Future.wait to resolve all events
+      List<Event?> events = await Future.wait(futureEvents);
+
+      debugPrint(
+          'getEventsWomanDone : Event objects created. Total events: ${events.length}');
+      // Here, you might also debugPrint an event for debugging
+      if (events.isNotEmpty) {
+        debugPrint('getEventsWomanDone : First event details: ${events.first}');
+      }
+
+      return events;
+    } catch (e) {
+      debugPrint(
+          'getEventsWomanDone : An error occurred while fetching events: ${e.toString()}');
       return [];
     }
   }
@@ -151,7 +274,8 @@ class EventRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          debugPrint('getEventsDoneByUserId : Last event document does not exist.');
+          debugPrint(
+              'getEventsDoneByUserId : Last event document does not exist.');
           return [];
         }
 
@@ -177,7 +301,8 @@ class EventRepository {
           'getEventsDoneByUserId : Event objects created. Total events: ${events.length}');
       // Here, you might also debugPrint an event for debugging
       if (events.isNotEmpty) {
-        debugPrint('getEventsDoneByUserId : First event details: ${events.first}');
+        debugPrint(
+            'getEventsDoneByUserId : First event details: ${events.first}');
       }
 
       return events;
@@ -279,9 +404,10 @@ class EventRepository {
         .doc(comment.eventId)
         .collection(Paths.postComments)
         .add(comment.toDocument())
-        .then((_) => debugPrint('createComment : Commentaire ajouté avec succès'))
-        .catchError(
-            (e) => debugPrint('createComment : Erreur lors de l\'ajout du commentaire: $e'));
+        .then(
+            (_) => debugPrint('createComment : Commentaire ajouté avec succès'))
+        .catchError((e) => debugPrint(
+            'createComment : Erreur lors de l\'ajout du commentaire: $e'));
     debugPrint('createComment : Fin de la méthode createComment');
   }
 }

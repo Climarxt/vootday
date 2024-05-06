@@ -8,4 +8,6 @@ abstract class HomeEventEvent extends Equatable {
 }
 
 
-class HomeEventFetchEvents extends HomeEventEvent {}
+class HomeEventManFetchEvents extends HomeEventEvent {}
+
+class HomeEventWomanFetchEvents extends HomeEventEvent {}

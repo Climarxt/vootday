@@ -20,24 +20,25 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
   })  : _eventRepository = eventRepository,
         _authBloc = authBloc,
         super(HomeEventState.initial()) {
-    on<HomeEventFetchEvents>(_mapHomeEventFetchEvents);
+    on<HomeEventManFetchEvents>(_mapHomeEventManFetchEvents);
+    on<HomeEventWomanFetchEvents>(_mapHomeEventWomanFetchEvents);
   }
 
-  Future<void> _mapHomeEventFetchEvents(
-    HomeEventFetchEvents event,
+  Future<void> _mapHomeEventManFetchEvents(
+    HomeEventManFetchEvents event,
     Emitter<HomeEventState> emit,
   ) async {
     try {
-      debugPrint('Method _mapHomeEventFetchEventsToState : Fetching events...');
-      final events = await _eventRepository.getEventsDone(
+      debugPrint('HomeEventManFetchEvents : Fetching events...');
+      final events = await _eventRepository.getEventsManDone(
         userId: _authBloc.state.user!.uid,
       );
 
       if (events.isEmpty) {
-        debugPrint('Method _mapHomeEventFetchEventsToState : No events found.');
+        debugPrint('HomeEventManFetchEvents : No events found.');
       } else {
         debugPrint(
-            'Method _mapHomeEventFetchEventsToState : Events fetched successfully. Total events: ${events.length}');
+            'HomeEventManFetchEvents : Events fetched successfully. Total events: ${events.length}');
       }
 
       emit(
@@ -46,13 +47,48 @@ class HomeEventBloc extends Bloc<HomeEventEvent, HomeEventState> {
     } catch (err) {
       // Le log ici vous donnera des détails sur l'exception attrapée
       debugPrint(
-          'Method _mapHomeEventFetchEventsToState : Error fetching events: ${err.toString()}');
+          'HomeEventManFetchEvents : Error fetching events: ${err.toString()}');
 
       emit(state.copyWith(
         status: HomeEventStatus.error,
         failure: const Failure(
             message:
-                'Method _mapHomeEventFetchEventsToState : Impossible de charger les événements'),
+                'HomeEventManFetchEvents : Impossible de charger les événements'),
+        events: [],
+      ));
+    }
+  }
+
+  Future<void> _mapHomeEventWomanFetchEvents(
+    HomeEventWomanFetchEvents event,
+    Emitter<HomeEventState> emit,
+  ) async {
+    try {
+      debugPrint('HomeEventWomanFetchEvents : Fetching events...');
+      final events = await _eventRepository.getEventsWomanDone(
+        userId: _authBloc.state.user!.uid,
+      );
+
+      if (events.isEmpty) {
+        debugPrint('HomeEventWomanFetchEvents : No events found.');
+      } else {
+        debugPrint(
+            'HomeEventWomanFetchEvents : Events fetched successfully. Total events: ${events.length}');
+      }
+
+      emit(
+        state.copyWith(events: events, status: HomeEventStatus.loaded),
+      );
+    } catch (err) {
+      // Le log ici vous donnera des détails sur l'exception attrapée
+      debugPrint(
+          'HomeEventWomanFetchEvents : Error fetching events: ${err.toString()}');
+
+      emit(state.copyWith(
+        status: HomeEventStatus.error,
+        failure: const Failure(
+            message:
+                'HomeEventWomanFetchEvents : Impossible de charger les événements'),
         events: [],
       ));
     }

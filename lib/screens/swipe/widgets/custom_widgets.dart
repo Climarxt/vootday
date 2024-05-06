@@ -10,6 +10,7 @@ import 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_bloc.dart
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 TextButton buildCreatenewcollection(BuildContext context,
     void Function(BuildContext) openCreateCollectionSheet) {
@@ -336,3 +337,21 @@ Widget buildTopRow(BuildContext context, Size size, Post post,
     ),
   );
 }
+
+EdgeInsets swiperPaddingLeft() => const EdgeInsets.only(
+      left: 0,
+      right: 7.5,
+      bottom: 7.5,
+      top: 0,
+    );
+
+EdgeInsets swiperPaddingRight() => const EdgeInsets.only(
+      left: 7.5,
+      right: 0,
+      bottom: 7.5,
+      top: 0,
+    );
+
+AllowedSwipeDirection allowedSwipeDirection() =>
+    const AllowedSwipeDirection.only(
+        up: true, left: false, down: true, right: false);

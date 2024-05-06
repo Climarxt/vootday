@@ -3,6 +3,7 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
+import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,32 +22,15 @@ class _SwipeOOTDState extends State<SwipeOOTD>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SwipeOOTD> {
   final CardSwiperController controller1 = CardSwiperController();
   final CardSwiperController controller2 = CardSwiperController();
-  late AnimationController _heartAnimationController;
-  late Animation<double> _heartAnimation;
   final List<String> _imageUrls1 = [];
   final List<String> _imageUrls2 = [];
+  late AnimationController _heartAnimationController;
+  late Animation<double> _heartAnimation;
+  late double verticalThresholdPercentageSave;
   List<Post> _posts1 = [];
   List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
-
-  EdgeInsets _swiperPaddingLeft() => const EdgeInsets.only(
-        left: 0,
-        right: 7.5,
-        bottom: 7.5,
-        top: 0,
-      );
-
-  EdgeInsets _swiperPaddingRight() => const EdgeInsets.only(
-        left: 7.5,
-        right: 0,
-        bottom: 7.5,
-        top: 0,
-      );
-
-  AllowedSwipeDirection _allowedSwipeDirection() => AllowedSwipeDirection.only(
-      up: true, left: false, down: true, right: false);
-  late double verticalThresholdPercentageSave;
   bool _hasShownBottomSheet = false;
 
   @override
@@ -103,8 +87,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                     aspectRatio: 0.29,
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
-                      allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPaddingLeft(),
+                      allowedSwipeDirection: allowedSwipeDirection(),
+                      padding: swiperPaddingLeft(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -131,8 +115,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                     aspectRatio: 0.29,
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
-                      allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPaddingRight(),
+                      allowedSwipeDirection: allowedSwipeDirection(),
+                      padding: swiperPaddingRight(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -171,7 +155,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
     // debugPrint("DEBUG : post: $post");
-
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
@@ -254,24 +237,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
         ],
       ),
     );
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: const Center(
-            child: Text("Bottom Sheet Content"),
-          ),
-        );
-      },
-    ).then((_) {
-      // Ceci sera appelé lorsque le BottomSheet est complètement fermé
-      _hasShownBottomSheet = false;
-    });
   }
 
   void _navigateToUserScreen(BuildContext context, Post state) {

@@ -78,13 +78,10 @@ class _FeedMonthState extends State<FeedMonth>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
-    debugPrint("DEBUG PRINT : $selectedGender");
     if (selectedGender == "Masculin") {
       debugPrint("Executing Masculin code");
       return BlocConsumer<FeedMonthBloc, FeedMonthState>(
         listener: (context, state) {
-          debugPrint(
-              "DEBUG PRINT : Déclenchement de FeedMonthManFetchPostsMonth");
           context.read<FeedMonthBloc>().add(FeedMonthManFetchPostsMonth());
         },
         builder: (context, state) {
@@ -100,8 +97,6 @@ class _FeedMonthState extends State<FeedMonth>
       debugPrint("Executing Féminin code");
       return BlocConsumer<FeedMonthBloc, FeedMonthState>(
         listener: (context, state) {
-          debugPrint(
-              "DEBUG PRINT : Déclenchement de FeedMonthFemaleFetchPostsMonth");
           context.read<FeedMonthBloc>().add(FeedMonthFemaleFetchPostsMonth());
         },
         builder: (context, state) {

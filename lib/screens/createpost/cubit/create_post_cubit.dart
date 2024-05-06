@@ -61,6 +61,11 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     emit(state.copyWith(caption: caption, status: CreatePostStatus.initial));
   }
 
+  void selectedGenderChanged(String selectedGender) {
+    emit(state.copyWith(
+        selectedGender: selectedGender, status: CreatePostStatus.initial));
+  }
+
   void addTag(String tag) {
     if (tag.isNotEmpty && !state.tags.contains(tag)) {
       // Avoid adding empty or duplicate tags
@@ -101,7 +106,8 @@ class CreatePostCubit extends Cubit<CreatePostState> {
           caption: state.caption,
           likes: 0,
           date: DateTime.now(),
-          tags: state.tags,);
+          tags: state.tags,
+          selectedGender: state.selectedGender);
 
       await _postRepository.createPost(post: post);
 
@@ -157,6 +163,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         date: DateTime.now(),
         // Ajouter le nom de l'auteur (marque) aux tags existants
         tags: [brandAuthorName],
+        selectedGender: state.selectedGender,
       );
 
       // Créer le post dans Firestore

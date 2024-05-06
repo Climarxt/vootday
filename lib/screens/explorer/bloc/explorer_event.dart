@@ -7,4 +7,6 @@ abstract class ExplorerEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class ExplorerFetchPosts extends ExplorerEvent {}
+class ExplorerFetchPostsMan extends ExplorerEvent {}
+
+class ExplorerFetchPostsWoman extends ExplorerEvent {}

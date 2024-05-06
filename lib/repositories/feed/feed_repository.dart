@@ -51,7 +51,7 @@ class FeedRepository {
     return posts;
   }
 
-    Future<List<Post?>> getFeedOOTDMan({
+  Future<List<Post?>> getFeedOOTDMan({
     required String userId,
     String? lastPostId,
   }) async {
@@ -202,7 +202,8 @@ class FeedRepository {
       DocumentSnapshot postSnap = await postRef.get();
 
       if (postSnap.exists) {
-        debugPrint('getFeedMonthFemale :  Post trouvé pour ref: ${postRef.path}');
+        debugPrint(
+            'getFeedMonthFemale :  Post trouvé pour ref: ${postRef.path}');
         return Post.fromDocument(postSnap);
       } else {
         debugPrint(
@@ -335,20 +336,21 @@ class FeedRepository {
     return posts;
   }
 
-  Future<List<Post?>> getFeedExplorer({
+  Future<List<Post?>> getFeedExplorerWoman({
     required String userId,
     String? lastPostId,
   }) async {
     QuerySnapshot postsSnap;
     if (lastPostId == null) {
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedOotdMan)
+          .collection(Paths.posts)
+          .where('selectedGender', isEqualTo: 'Féminin')
           .orderBy('likes', descending: true)
           .limit(100)
           .get();
     } else {
       final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.feedOotdMan)
+          .collection(Paths.posts)
           .doc(lastPostId)
           .get();
 
@@ -357,23 +359,64 @@ class FeedRepository {
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.feedOotdMan)
+          .collection(Paths.posts)
           .orderBy('likes', descending: true)
+          .where('selectedGender', isEqualTo: 'Féminin')
           .startAfterDocument(lastPostDoc)
           .limit(2)
           .get();
     }
 
-    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      DocumentReference postRef = doc['post_ref'];
-      DocumentSnapshot postSnap = await postRef.get();
-      if (postSnap.exists) {
-        return Post.fromDocument(postSnap);
+    // Utilisation de Future.wait pour traiter les futures
+    List<Post?> posts = await Future.wait(postsSnap.docs.map((doc) async {
+      if (doc.exists) {
+        return Post.fromDocument(doc);
       }
       return null;
-    }).toList();
+    }).toList());
 
-    final posts = await Future.wait(postFutures);
+    return posts;
+  }
+
+  Future<List<Post?>> getFeedExplorerMan({
+    required String userId,
+    String? lastPostId,
+  }) async {
+    QuerySnapshot postsSnap;
+    if (lastPostId == null) {
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.posts)
+          .where('selectedGender', isEqualTo: 'Masculin')
+          .orderBy('likes', descending: true)
+          .limit(100)
+          .get();
+    } else {
+      final lastPostDoc = await _firebaseFirestore
+          .collection(Paths.posts)
+          .doc(lastPostId)
+          .get();
+
+      if (!lastPostDoc.exists) {
+        return [];
+      }
+
+      postsSnap = await _firebaseFirestore
+          .collection(Paths.posts)
+          .orderBy('likes', descending: true)
+          .where('selectedGender', isEqualTo: 'Masculin')
+          .startAfterDocument(lastPostDoc)
+          .limit(2)
+          .get();
+    }
+
+    // Utilisation de Future.wait pour traiter les futures
+    List<Post?> posts = await Future.wait(postsSnap.docs.map((doc) async {
+      if (doc.exists) {
+        return Post.fromDocument(doc);
+      }
+      return null;
+    }).toList());
+
     return posts;
   }
 

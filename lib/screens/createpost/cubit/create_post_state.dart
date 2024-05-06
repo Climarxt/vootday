@@ -8,6 +8,7 @@ class CreatePostState extends Equatable {
   final List<String> tags; // New tags property
   final CreatePostStatus status;
   final Failure failure;
+  final String selectedGender;
 
   const CreatePostState({
     required this.postImage,
@@ -15,6 +16,7 @@ class CreatePostState extends Equatable {
     required this.tags, // Required tags property in the constructor
     required this.status,
     required this.failure,
+    required this.selectedGender,
   });
 
   factory CreatePostState.initial() {
@@ -24,6 +26,7 @@ class CreatePostState extends Equatable {
       tags: [], // Initialized as empty
       status: CreatePostStatus.initial,
       failure: Failure(),
+      selectedGender: '',
     );
   }
 
@@ -34,6 +37,7 @@ class CreatePostState extends Equatable {
         tags, // Add tags to props for Equatable
         status,
         failure,
+        selectedGender,
       ];
 
   CreatePostState copyWith({
@@ -42,6 +46,7 @@ class CreatePostState extends Equatable {
     List<String>? tags, // New tags property for copyWith method
     CreatePostStatus? status,
     Failure? failure,
+    String? selectedGender,
   }) {
     return CreatePostState(
       postImage: postImage ?? this.postImage,
@@ -49,6 +54,7 @@ class CreatePostState extends Equatable {
       tags: tags ?? this.tags, // Use tags in copyWith
       status: status ?? this.status,
       failure: failure ?? this.failure,
+      selectedGender: selectedGender ?? this.selectedGender,
     );
   }
 }

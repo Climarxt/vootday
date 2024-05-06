@@ -21,33 +21,63 @@ class ExplorerBloc extends Bloc<ExplorerEvent, ExplorerState> {
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         super(ExplorerState.initial()) {
-    on<ExplorerFetchPosts>(_mapExplorerFetchPostsToState);
+    on<ExplorerFetchPostsMan>(_mapExplorerFetchPostsManToState);
+    on<ExplorerFetchPostsWoman>(_mapExplorerFetchPostsWomanToState);
   }
-  Future<void> _mapExplorerFetchPostsToState(
-    ExplorerFetchPosts event,
+
+  Future<void> _mapExplorerFetchPostsManToState(
+    ExplorerFetchPostsMan event,
     Emitter<ExplorerState> emit,
   ) async {
     try {
       debugPrint(
-          'ExplorerFetchPosts : Fetching posts for user: ${_authBloc.state.user!.uid}');
-      final posts = await _feedRepository.getFeedExplorer(
+          'ExplorerFetchPostsMan : Fetching posts for user: ${_authBloc.state.user!.uid}');
+      final posts = await _feedRepository.getFeedExplorerMan(
           userId: _authBloc.state.user!.uid);
       debugPrint(
-          'ExplorerFetchPosts : Number of posts fetched: ${posts.length}');
+          'ExplorerFetchPostsMan : Number of posts fetched: ${posts.length}');
 
       emit(
         state.copyWith(posts: posts, status: ExplorerStatus.loaded),
       );
-      debugPrint('ExplorerFetchPosts : State emitted with loaded status');
+      debugPrint('ExplorerFetchPostsMan : State emitted with loaded status');
     } catch (err) {
-      debugPrint('ExplorerFetchPosts : Error in fetching posts: $err');
+      debugPrint('ExplorerFetchPostsMan : Error in fetching posts: $err');
       emit(state.copyWith(
         status: ExplorerStatus.error,
         failure: const Failure(
             message:
-                'ExplorerFetchPosts : Nous n\'avons pas pu charger votre flux'),
+                'ExplorerFetchPostsMan : Nous n\'avons pas pu charger votre flux'),
       ));
-      debugPrint('ExplorerFetchPosts : State emitted with error status');
+      debugPrint('ExplorerFetchPostsMan : State emitted with error status');
+    }
+  }
+
+  Future<void> _mapExplorerFetchPostsWomanToState(
+    ExplorerFetchPostsWoman event,
+    Emitter<ExplorerState> emit,
+  ) async {
+    try {
+      debugPrint(
+          'ExplorerFetchPostsWoman : Fetching posts for user: ${_authBloc.state.user!.uid}');
+      final posts = await _feedRepository.getFeedExplorerWoman(
+          userId: _authBloc.state.user!.uid);
+      debugPrint(
+          'ExplorerFetchPostsWoman : Number of posts fetched: ${posts.length}');
+
+      emit(
+        state.copyWith(posts: posts, status: ExplorerStatus.loaded),
+      );
+      debugPrint('ExplorerFetchPostsWoman : State emitted with loaded status');
+    } catch (err) {
+      debugPrint('ExplorerFetchPostsWoman : Error in fetching posts: $err');
+      emit(state.copyWith(
+        status: ExplorerStatus.error,
+        failure: const Failure(
+            message:
+                'ExplorerFetchPostsWoman : Nous n\'avons pas pu charger votre flux'),
+      ));
+      debugPrint('ExplorerFetchPostsWoman : State emitted with error status');
     }
   }
 }

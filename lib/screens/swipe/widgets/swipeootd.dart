@@ -4,7 +4,7 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart' as bloc;
+import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart' as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';

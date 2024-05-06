@@ -2,7 +2,7 @@
 
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
+import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

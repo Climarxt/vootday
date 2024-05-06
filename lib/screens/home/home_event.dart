@@ -24,10 +24,6 @@ class _HomeEventState extends State<HomeEvent>
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
-      context.read<HomeEventBloc>().add(HomeEventManFetchEvents());
-    });
     _userRepository = UserRepository();
 
     // Prépare le future pour récupérer les détails de l'utilisateur
@@ -39,23 +35,6 @@ class _HomeEventState extends State<HomeEvent>
   void dispose() {
     super.dispose();
   }
-
-  /*
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return BlocConsumer<HomeEventBloc, HomeEventState>(
-      listener: (context, state) {
-        if (state.status == HomeEventStatus.initial && state.events.isEmpty) {
-          context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
-        }
-      },
-      builder: (context, state) {
-        return _buildBody(state);
-      },
-    );
-  }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -80,41 +59,29 @@ class _HomeEventState extends State<HomeEvent>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
-    debugPrint("DEBUG PRINT : $selectedGender");
+    HomeEventEvent event;
     if (selectedGender == "Masculin") {
-      debugPrint("Executing Masculin code");
-      return BlocConsumer<HomeEventBloc, HomeEventState>(
-        listener: (context, state) {
-          if (state.status != HomeEventStatus.loading && state.events.isEmpty) {
-            context.read<HomeEventBloc>().add(HomeEventManFetchEvents());
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            body: _buildBody(state),
-          );
-        },
-      );
+      event = HomeEventManFetchEvents();
     } else if (selectedGender == "Féminin") {
-      debugPrint("Executing Féminin code");
-      return BlocConsumer<HomeEventBloc, HomeEventState>(
-        listener: (context, state) {
-          if (state.status != HomeEventStatus.loading && state.events.isEmpty) {
-            context.read<HomeEventBloc>().add(HomeEventWomanFetchEvents());
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            body: _buildBody(state),
-          );
-        },
-      );
+      event = HomeEventWomanFetchEvents();
     } else {
-      debugPrint("Executing fallback code");
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: Text("Aucun genre sélectionné")),
       );
     }
+
+    // BlocConsumer commun pour les deux genres
+    return BlocConsumer<HomeEventBloc, HomeEventState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state.events.isEmpty) {
+          context.read<HomeEventBloc>().add(event);
+        }
+        return Scaffold(
+          body: _buildBody(state),
+        );
+      },
+    );
   }
 
   Widget _buildBody(HomeEventState state) {

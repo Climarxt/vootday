@@ -1,3 +1,4 @@
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,26 +9,113 @@ class SwipeRepository {
   SwipeRepository({FirebaseFirestore? firebaseFirestore})
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
-  Future<List<Post>> getSwipeOOTD() async {
+  Future<List<Post>> getSwipeWoman({
+    required String userId,
+    String? lastPostId,
+  }) async {
     debugPrint(
-        'getSwipeOOTD : Début de la récupération des posts OOTD de la base de données Firestore');
+        'getSwipeWoman : Début de la récupération des posts pour femmes de la base de données Firestore');
     try {
-      var snapshot = await _firebaseFirestore.collection('posts').get();
+      QuerySnapshot postsSnap;
+      if (lastPostId == null) {
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.posts)
+            .where('selectedGender', isEqualTo: 'Féminin')
+            .orderBy('likes', descending: true)
+            .limit(50)
+            .get();
+      } else {
+        final lastPostDoc = await _firebaseFirestore
+            .collection(Paths.posts)
+            .doc(lastPostId)
+            .get();
+
+        if (!lastPostDoc.exists) {
+          debugPrint(
+              'getSwipeWoman : Aucun document postérieur trouvé, retourne une liste vide');
+          return [];
+        }
+
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.posts)
+            .where('selectedGender', isEqualTo: 'Féminin')
+            .orderBy('likes', descending: true)
+            .startAfterDocument(lastPostDoc)
+            .limit(50)
+            .get();
+      }
+
       List<Post> posts = [];
-      debugPrint('getSwipeOOTD : Nombre de documents récupérés: ${snapshot.docs.length}');
-      for (var doc in snapshot.docs) {
+      for (var doc in postsSnap.docs) {
         var post = await Post.fromDocument(doc);
         if (post != null) {
           posts.add(post);
-          debugPrint(
-              'getSwipeOOTD : Post ajouté: ${post.toString()}'); // Affiche des détails sur le post
+          debugPrint('getSwipeWoman : Post ajouté: ${post.toString()}');
         }
       }
-      debugPrint('getSwipeOOTD : Nombre total de posts OOTD récupérés: ${posts.length}');
+      debugPrint(
+          'getSwipeWoman : Nombre total de posts pour femmes récupérés: ${posts.length}');
       return posts;
     } catch (e) {
-      debugPrint('getSwipeOOTD : Erreur lors du chargement des posts OOTD: ${e.toString()}');
-      throw Exception('getSwipeOOTD : Erreur lors du chargement des posts: ${e.toString()}');
+      debugPrint(
+          'getSwipeWoman : Erreur lors du chargement des posts pour femmes: ${e.toString()}');
+      throw Exception(
+          'getSwipeWoman : Erreur lors du chargement des posts: ${e.toString()}');
+    }
+  }
+
+  Future<List<Post>> getSwipeMan({
+    required String userId,
+    String? lastPostId,
+  }) async {
+    debugPrint(
+        'getSwipeMan : Début de la récupération des posts pour hommes de la base de données Firestore');
+    try {
+      QuerySnapshot postsSnap;
+      if (lastPostId == null) {
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.posts)
+            .where('selectedGender', isEqualTo: 'Masculin')
+            .orderBy('likes', descending: true)
+            .limit(50)
+            .get();
+      } else {
+        final lastPostDoc = await _firebaseFirestore
+            .collection(Paths.posts)
+            .doc(lastPostId)
+            .get();
+
+        if (!lastPostDoc.exists) {
+          debugPrint(
+              'getSwipeMan : Aucun document postérieur trouvé, retourne une liste vide');
+          return [];
+        }
+
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.posts)
+            .where('selectedGender', isEqualTo: 'Masculin')
+            .orderBy('likes', descending: true)
+            .startAfterDocument(lastPostDoc)
+            .limit(50)
+            .get();
+      }
+
+      List<Post> posts = [];
+      for (var doc in postsSnap.docs) {
+        var post = await Post.fromDocument(doc);
+        if (post != null) {
+          posts.add(post);
+          debugPrint('getSwipeMan : Post ajouté: ${post.toString()}');
+        }
+      }
+      debugPrint(
+          'getSwipeMan : Nombre total de posts pour hommes récupérés: ${posts.length}');
+      return posts;
+    } catch (e) {
+      debugPrint(
+          'getSwipeMan : Erreur lors du chargement des posts pour hommes: ${e.toString()}');
+      throw Exception(
+          'getSwipeMan : Erreur lors du chargement des posts: ${e.toString()}');
     }
   }
 }

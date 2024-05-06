@@ -1,8 +1,10 @@
 // ignore_for_file: unused_field
 
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart';
+import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/swipe/bloc/swipe_bloc.dart' as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,8 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   late AnimationController _heartAnimationController;
   late Animation<double> _heartAnimation;
   late double verticalThresholdPercentageSave;
+  late final UserRepository _userRepository;
+  late Future<User> _userDetailsFuture;
   List<Post> _posts1 = [];
   List<Post> _posts2 = [];
   int _currentIndex1 = 0;
@@ -36,7 +40,11 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   @override
   void initState() {
     super.initState();
-    context.read<SwipeBloc>().add(SwipeFetchPostsOOTD());
+    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDWoman());
+    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDMan());
+    _userRepository = UserRepository();
+    _userDetailsFuture = _userRepository
+        .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
     _heartAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -53,14 +61,45 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return BlocConsumer<SwipeBloc, SwipeState>(
+    return FutureBuilder<User>(
+      future: _userDetailsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(child: Text("Error: ${snapshot.error}")));
+          }
+          if (snapshot.hasData) {
+            String? selectedGender = snapshot.data!.selectedGender;
+            return _buildGenderSpecificBloc(selectedGender);
+          }
+        }
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
+    );
+  }
+
+  Widget _buildGenderSpecificBloc(String? selectedGender) {
+    bloc.SwipeEvent event;
+    if (selectedGender == "Masculin") {
+      event = bloc.SwipeFetchPostsOOTDMan();
+    } else if (selectedGender == "Féminin") {
+      event = bloc.SwipeFetchPostsOOTDWoman();
+    } else {
+      return const Scaffold(
+        body: Center(child: Text("Aucun genre sélectionné")),
+      );
+    }
+
+    // BlocConsumer commun pour les deux genres
+    return BlocConsumer<bloc.SwipeBloc, bloc.SwipeState>(
       listener: (context, state) {
-        // debugPrint("DEBUG : state : $state - context: $context ");
-        if (state.status == SwipeStatus.loaded) {
+        if (state.status == bloc.SwipeStatus.loaded) {
           _loadImages(state.posts);
         }
       },
       builder: (context, state) {
+        context.read<bloc.SwipeBloc>().add(event);
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
@@ -71,11 +110,11 @@ class _SwipeOOTDState extends State<SwipeOOTD>
     );
   }
 
-  Widget _buildBody(SwipeState state) {
+  Widget _buildBody(bloc.SwipeState state) {
     switch (state.status) {
-      case SwipeStatus.loading:
+      case bloc.SwipeStatus.loading:
         return const Center(child: CircularProgressIndicator());
-      case SwipeStatus.loaded:
+      case bloc.SwipeStatus.loaded:
         return Scaffold(
           body: SafeArea(
             child: Row(

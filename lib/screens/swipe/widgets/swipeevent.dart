@@ -52,7 +52,7 @@ class _SwipeEventState extends State<SwipeEvent>
   @override
   void initState() {
     super.initState();
-    context.read<SwipeBloc>().add(SwipeFetchPostsOOTD());
+    context.read<SwipeBloc>().add(SwipeFetchPostsOOTDMan());
     _heartAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),

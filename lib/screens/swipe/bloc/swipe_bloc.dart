@@ -20,23 +20,47 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> {
   })  : _swipeRepository = swipeRepository,
         _authBloc = authBloc,
         super(SwipeState.initial()) {
-    on<SwipeFetchPostsOOTD>(_onSwipeFetchPostsOOTD);
+    on<SwipeFetchPostsOOTDWoman>(_onSwipeFetchPostsOOTDWoman);
+    on<SwipeFetchPostsOOTDMan>(_onSwipeFetchPostsOOTDMan);
   }
 
-  Future<void> _onSwipeFetchPostsOOTD(
-    SwipeFetchPostsOOTD event,
+  Future<void> _onSwipeFetchPostsOOTDWoman(
+    SwipeFetchPostsOOTDWoman event,
     Emitter<SwipeState> emit,
   ) async {
-    debugPrint('_onSwipeFetchPostsOOTD : Début de la récupération des posts OOTD');
+    debugPrint(
+        'SwipeFetchPostsOOTDWoman : Début de la récupération des posts OOTD');
     try {
-      final posts = await _swipeRepository.getSwipeOOTD();
+      final userId = _authBloc.state.user!.uid;
+      final posts = await _swipeRepository.getSwipeWoman(userId: userId);
       debugPrint(
-          '_onSwipeFetchPostsOOTD : Posts OOTD récupérés avec succès: ${posts.length} posts trouvés');
+          'SwipeFetchPostsOOTDWoman : Posts OOTD récupérés avec succès: ${posts.length} posts trouvés');
       emit(SwipeState.loaded(posts));
     } catch (e) {
-      debugPrint('_onSwipeFetchPostsOOTD : Erreur lors du chargement des posts OOTD: ${e.toString()}');
+      debugPrint(
+          'SwipeFetchPostsOOTDWoman : Erreur lors du chargement des posts OOTD: ${e.toString()}');
       emit(SwipeState.error(
-          '_onSwipeFetchPostsOOTD : Erreur lors du chargement des posts: ${e.toString()}'));
+          'SwipeFetchPostsOOTDWoman : Erreur lors du chargement des posts: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onSwipeFetchPostsOOTDMan(
+    SwipeFetchPostsOOTDMan event,
+    Emitter<SwipeState> emit,
+  ) async {
+    debugPrint(
+        'SwipeFetchPostsOOTDMan : Début de la récupération des posts OOTD');
+    try {
+      final userId = _authBloc.state.user!.uid;
+      final posts = await _swipeRepository.getSwipeMan(userId: userId);
+      debugPrint(
+          'SwipeFetchPostsOOTDMan : Posts OOTD récupérés avec succès: ${posts.length} posts trouvés');
+      emit(SwipeState.loaded(posts));
+    } catch (e) {
+      debugPrint(
+          'SwipeFetchPostsOOTDMan : Erreur lors du chargement des posts OOTD: ${e.toString()}');
+      emit(SwipeState.error(
+          'SwipeFetchPostsOOTDMan : Erreur lors du chargement des posts: ${e.toString()}'));
     }
   }
 }

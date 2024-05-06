@@ -1,8 +1,11 @@
 // ignore_for_file: unused_field
 
+import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart';
+import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart' as bloc;
+import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,38 +24,27 @@ class _SwipeEventState extends State<SwipeEvent>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SwipeEvent> {
   final CardSwiperController controller1 = CardSwiperController();
   final CardSwiperController controller2 = CardSwiperController();
-  late AnimationController _heartAnimationController;
-  late Animation<double> _heartAnimation;
   final List<String> _imageUrls1 = [];
   final List<String> _imageUrls2 = [];
+  late AnimationController _heartAnimationController;
+  late Animation<double> _heartAnimation;
+  late double verticalThresholdPercentageSave;
+  late final UserRepository _userRepository;
+  late Future<User> _userDetailsFuture;
   List<Post> _posts1 = [];
   List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
-
-  EdgeInsets _swiperPaddingLeft() => const EdgeInsets.only(
-        left: 0,
-        right: 7.5,
-        bottom: 7.5,
-        top: 0,
-      );
-
-  EdgeInsets _swiperPaddingRight() => const EdgeInsets.only(
-        left: 7.5,
-        right: 0,
-        bottom: 7.5,
-        top: 0,
-      );
-
-  AllowedSwipeDirection _allowedSwipeDirection() => AllowedSwipeDirection.only(
-      up: true, left: false, down: true, right: false);
-  late double verticalThresholdPercentageSave;
   bool _hasShownBottomSheet = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<SwipeBloc>().add(SwipeFetchPostsOOTDMan());
+    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDWoman());
+    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDMan());
+    _userRepository = UserRepository();
+    _userDetailsFuture = _userRepository
+        .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
     _heartAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -69,14 +61,45 @@ class _SwipeEventState extends State<SwipeEvent>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return BlocConsumer<SwipeBloc, SwipeState>(
+    return FutureBuilder<User>(
+      future: _userDetailsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(child: Text("Error: ${snapshot.error}")));
+          }
+          if (snapshot.hasData) {
+            String? selectedGender = snapshot.data!.selectedGender;
+            return _buildGenderSpecificBloc(selectedGender);
+          }
+        }
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
+    );
+  }
+
+  Widget _buildGenderSpecificBloc(String? selectedGender) {
+    bloc.SwipeEventEvent event;
+    if (selectedGender == "Masculin") {
+      event = bloc.SwipeEventManFetchPosts();
+    } else if (selectedGender == "Féminin") {
+      event = bloc.SwipeEventWomanFetchPosts();
+    } else {
+      return const Scaffold(
+        body: Center(child: Text("Aucun genre sélectionné")),
+      );
+    }
+
+    // BlocConsumer commun pour les deux genres
+    return BlocConsumer<bloc.SwipeEventBloc, bloc.SwipeEventState>(
       listener: (context, state) {
-        // debugPrint("DEBUG : state : $state - context: $context ");
-        if (state.status == SwipeStatus.loaded) {
+        if (state.status == bloc.SwipeEventStatus.loaded) {
           _loadImages(state.posts);
         }
       },
       builder: (context, state) {
+        context.read<bloc.SwipeEventBloc>().add(event);
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
@@ -87,11 +110,11 @@ class _SwipeEventState extends State<SwipeEvent>
     );
   }
 
-  Widget _buildBody(SwipeState state) {
+  Widget _buildBody(bloc.SwipeEventState state) {
     switch (state.status) {
-      case SwipeStatus.loading:
+      case bloc.SwipeEventStatus.loading:
         return const Center(child: CircularProgressIndicator());
-      case SwipeStatus.loaded:
+      case bloc.SwipeEventStatus.loaded:
         return Scaffold(
           body: SafeArea(
             child: Row(
@@ -103,8 +126,8 @@ class _SwipeEventState extends State<SwipeEvent>
                     aspectRatio: 0.29,
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
-                      allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPaddingLeft(),
+                      allowedSwipeDirection: allowedSwipeDirection(),
+                      padding: swiperPaddingLeft(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -131,8 +154,8 @@ class _SwipeEventState extends State<SwipeEvent>
                     aspectRatio: 0.29,
                     child: CardSwiper(
                       numberOfCardsDisplayed: 1,
-                      allowedSwipeDirection: _allowedSwipeDirection(),
-                      padding: _swiperPaddingRight(),
+                      allowedSwipeDirection: allowedSwipeDirection(),
+                      padding: swiperPaddingRight(),
                       cardBuilder: (context,
                               index,
                               horizontalThresholdPercentage,
@@ -171,7 +194,6 @@ class _SwipeEventState extends State<SwipeEvent>
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
     // debugPrint("DEBUG : post: $post");
-
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
@@ -254,24 +276,6 @@ class _SwipeEventState extends State<SwipeEvent>
         ],
       ),
     );
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: const Center(
-            child: Text("Bottom Sheet Content"),
-          ),
-        );
-      },
-    ).then((_) {
-      // Ceci sera appelé lorsque le BottomSheet est complètement fermé
-      _hasShownBottomSheet = false;
-    });
   }
 
   void _navigateToUserScreen(BuildContext context, Post state) {

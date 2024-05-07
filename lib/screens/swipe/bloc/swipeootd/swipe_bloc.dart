@@ -28,19 +28,22 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> {
     SwipeFetchPostsOOTDWoman event,
     Emitter<SwipeState> emit,
   ) async {
-    debugPrint(
-        'SwipeFetchPostsOOTDWoman : Début de la récupération des posts OOTD');
-    try {
-      final userId = _authBloc.state.user!.uid;
-      final posts = await _swipeRepository.getSwipeWoman(userId: userId);
-      debugPrint(
-          'SwipeFetchPostsOOTDWoman : Posts OOTD récupérés avec succès: ${posts.length} posts trouvés');
-      emit(SwipeState.loaded(posts));
-    } catch (e) {
-      debugPrint(
-          'SwipeFetchPostsOOTDWoman : Erreur lors du chargement des posts OOTD: ${e.toString()}');
-      emit(SwipeState.error(
-          'SwipeFetchPostsOOTDWoman : Erreur lors du chargement des posts: ${e.toString()}'));
+    if (state.shouldFetch) {
+      debugPrint('Début de la récupération des posts OOTD pour femmes');
+      try {
+        final userId = _authBloc.state.user!.uid;
+        final posts = await _swipeRepository.getSwipeWoman(userId: userId);
+        debugPrint(
+            'Posts OOTD récupérés avec succès: ${posts.length} posts trouvés');
+        emit(SwipeState.loaded(posts, shouldFetch: false));
+      } catch (e) {
+        debugPrint('Erreur lors du chargement des posts OOTD: ${e.toString()}');
+        emit(SwipeState.error(
+            'Erreur lors du chargement des posts: ${e.toString()}'));
+      }
+    } else {
+      debugPrint('Chargement des posts depuis le cache');
+      emit(SwipeState.loaded(state.posts, shouldFetch: false));
     }
   }
 

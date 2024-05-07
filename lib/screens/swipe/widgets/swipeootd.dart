@@ -7,6 +7,7 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart' as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -80,18 +81,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
-    bloc.SwipeEvent event;
-    if (selectedGender == "Masculin") {
-      event = bloc.SwipeFetchPostsOOTDMan();
-    } else if (selectedGender == "Féminin") {
-      event = bloc.SwipeFetchPostsOOTDWoman();
-    } else {
-      return const Scaffold(
-        body: Center(child: Text("Aucun genre sélectionné")),
-      );
-    }
-
-    // BlocConsumer commun pour les deux genres
     return BlocConsumer<bloc.SwipeBloc, bloc.SwipeState>(
       listener: (context, state) {
         if (state.status == bloc.SwipeStatus.loaded) {
@@ -99,7 +88,12 @@ class _SwipeOOTDState extends State<SwipeOOTD>
         }
       },
       builder: (context, state) {
-        context.read<bloc.SwipeBloc>().add(event);
+        if (state.status == bloc.SwipeStatus.initial) {
+          bloc.SwipeEvent event = selectedGender == "Masculin"
+              ? bloc.SwipeFetchPostsOOTDMan()
+              : bloc.SwipeFetchPostsOOTDWoman();
+          context.read<bloc.SwipeBloc>().add(event);
+        }
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
@@ -193,53 +187,32 @@ class _SwipeOOTDState extends State<SwipeOOTD>
       String imageUrl, double verticalSwipePercentage, Post post) {
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
-    // debugPrint("DEBUG : post: $post");
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (shouldAnimateUp || shouldAnimatetDown) {
-        _heartAnimationController.repeat(reverse: true);
-        ;
-      } else {
-        _heartAnimationController.reset();
-      }
-    });
 
     return Bounceable(
       onTap: () => _navigateToPostScreen(context, post),
       child: Stack(
         children: [
-          // Image
           Positioned.fill(
             child: Container(
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.transparent)),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
           ),
-          /* Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.center,
-                colors: [
-                  Colors.black.withOpacity(0.6),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-          ), */
           Positioned(
             top: 10,
             left: 12,
             child: buildUsername(context, post),
           ),
-          // Heart Animation
           if (shouldAnimateUp || shouldAnimatetDown)
             Center(
               child: AnimatedBuilder(
@@ -309,6 +282,9 @@ class _SwipeOOTDState extends State<SwipeOOTD>
     bool addToFirstList = true;
     for (var post in posts) {
       var imageUrl = post.imageUrl;
+      var imageProvider = CachedNetworkImageProvider(imageUrl);
+      precacheImage(imageProvider, context);
+
       if (addToFirstList) {
         _imageUrls1.add(imageUrl);
         _posts1.add(post);

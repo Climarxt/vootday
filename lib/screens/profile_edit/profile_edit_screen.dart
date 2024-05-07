@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_profile.dart';
 import 'package:bootdv2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,9 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Edit Profile'),
-        ),
+        appBar: const AppBarProfile(title: "Edit Profile"),
         body: BlocConsumer<EditProfileCubit, EditProfileState>(
           listener: (context, state) {
             if (state.status == EditProfileStatus.success) {
@@ -99,9 +98,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             children: [
                               TextFormField(
                                 initialValue:
-                                    profileState.user?.username, // Mis à jour
-                                decoration:
-                                    InputDecoration(hintText: profileState.user.username),
+                                    profileState.user.username, // Mis à jour
+                                decoration: InputDecoration(
+                                    hintText: profileState.user.username),
                                 onChanged: (value) => context
                                     .read<EditProfileCubit>()
                                     .usernameChanged(value),
@@ -111,8 +110,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               const SizedBox(height: 16.0),
                               TextFormField(
-                                initialValue:
-                                    profileState.user?.bio, // Mis à jour
+                                initialValue: profileState.user.bio,
                                 decoration:
                                     const InputDecoration(hintText: 'Bio'),
                                 onChanged: (value) => context
@@ -123,20 +121,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     : null,
                               ),
                               const SizedBox(height: 28.0),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                  textStyle:
-                                      const TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () => _submitForm(
-                                  context,
-                                  editState.status ==
-                                      EditProfileStatus.submitting,
-                                ),
-                                child: const Text('Update'),
-                              ),
+                              buildButton(context, editState),
                             ],
                           ),
                         ),
@@ -157,5 +142,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_formKey.currentState!.validate() && !isSubmitting) {
       context.read<EditProfileCubit>().submit();
     }
+  }
+
+  TextButton buildButton(BuildContext context, EditProfileState editState) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: couleurBleuClair2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      onPressed: () => _submitForm(
+        context,
+        editState.status == EditProfileStatus.submitting,
+      ),
+      child: Text(
+        AppLocalizations.of(context)!.translate('editProfile'),
+        style:
+            Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
+      ),
+    );
   }
 }

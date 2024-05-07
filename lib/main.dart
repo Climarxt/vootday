@@ -27,7 +27,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  Bloc.observer = SimpleBlocObserver();
+  // Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

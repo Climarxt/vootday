@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreenOld extends StatefulWidget {
 
-  const EditProfileScreen({
+  const EditProfileScreenOld({
     super.key,
   });
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  State<EditProfileScreenOld> createState() => _EditProfileScreenOldState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenOldState extends State<EditProfileScreenOld> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override

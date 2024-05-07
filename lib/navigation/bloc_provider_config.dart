@@ -6,6 +6,7 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
+import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart';
 import 'package:flutter/material.dart';
@@ -257,6 +258,48 @@ class BlocProviderConfig {
         );
         return createPostBloc;
       },
+      child: child,
+    );
+  }
+
+  static BlocProvider getEditProfileBlocProvider(
+      BuildContext context, Widget child) {
+    return BlocProvider<EditProfileCubit>(
+      create: (context) {
+        final createPostBloc = EditProfileCubit(
+          userRepository: context.read<UserRepository>(),
+          storageRepository: context.read<StorageRepository>(),
+          profileBloc: context.read<ProfileBloc>(),
+        );
+        return createPostBloc;
+      },
+      child: child,
+    );
+  }
+
+  static MultiBlocProvider getEditProfileMultiBlocProvider(
+      BuildContext context, Widget child) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(
+            authBloc: context.read<AuthBloc>(),
+            userRepository: context.read<UserRepository>(),
+            postRepository: context.read<PostRepository>(),
+          ),
+        ),
+        BlocProvider<EditProfileCubit>(
+          create: (context) {
+            final editProfileBloc = EditProfileCubit(
+              userRepository: context.read<UserRepository>(),
+              storageRepository: context.read<StorageRepository>(),
+              profileBloc: context.read<ProfileBloc>(),
+            );
+            return editProfileBloc;
+          },
+          child: child,
+        ),
+      ],
       child: child,
     );
   }

@@ -15,6 +15,7 @@ import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
+import 'package:bootdv2/screens/profile_edit/profile_edit_screen.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
 import 'package:bootdv2/screens/search/searching_screen.dart';
@@ -200,6 +201,17 @@ GoRouter createRouter(BuildContext context) {
                 title: title,
               ),
             ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/editprofile',
+        builder: (BuildContext context, GoRouterState state) {
+          final userId = authBloc.state.user!.uid;
+          return BlocProviderConfig.getEditProfileMultiBlocProvider(
+            context,
+            EditProfileScreen(userId: userId),
           );
         },
       ),
@@ -481,15 +493,18 @@ GoRouter createRouter(BuildContext context) {
                 },
                 routes: <RouteBase>[
                   // profile/editprofile
+                  /*
                   GoRoute(
                     path: 'editprofile',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      return MaterialPage<void>(
-                        key: state.pageKey,
-                        child: const EditProfileScreen(),
+                    builder: (BuildContext context, GoRouterState state) {
+                      final userId = authBloc.state.user!.uid;
+                      return BlocProviderConfig.getEditProfileMultiBlocProvider(
+                        context,
+                        EditProfileScreen(userId: userId),
                       );
                     },
                   ),
+                  */
                   // profile/settings
                   GoRoute(
                     path: 'settings',

@@ -230,6 +230,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
 // Navigates to the 'Edit Bio' screen.
   void navigateToEditBio(BuildContext context) {
-    GoRouter.of(context).push('/editbio');
+    GoRouter.of(context).push('/editprofile/editbio');
   }
 }

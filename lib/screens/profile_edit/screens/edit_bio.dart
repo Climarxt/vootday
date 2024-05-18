@@ -7,20 +7,20 @@ import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
 import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 
-class EditLastnameScreen extends StatefulWidget {
+class EditBioScreen extends StatefulWidget {
   final String userId;
 
-  const EditLastnameScreen({
+  const EditBioScreen({
     Key? key,
     required this.userId,
   }) : super(key: key);
 
   @override
-  _EditLastnameScreenState createState() => _EditLastnameScreenState();
+  _EditBioScreenState createState() => _EditBioScreenState();
 }
 
-class _EditLastnameScreenState extends State<EditLastnameScreen> {
-  final TextEditingController _lastnameController = TextEditingController();
+class _EditBioScreenState extends State<EditBioScreen> {
+  final TextEditingController _bioController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
 
   @override
   void dispose() {
-    _lastnameController.dispose();
+    _bioController.dispose();
     super.dispose();
   }
 
@@ -45,12 +45,12 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
           if (profileState.status == ProfileStatus.loaded &&
-              _lastnameController.text.isEmpty) {
-            _lastnameController.text = profileState.user.lastName;
+              _bioController.text.isEmpty) {
+            _bioController.text = profileState.user.bio;
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit lastname"),
+            appBar: const AppBarEditProfile(title: "Edit bio"),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -70,18 +70,13 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
-                        controller: _lastnameController,
-                        labelText: 'Lastname',
+                        controller: _bioController,
+                        labelText: 'Bio',
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
-                              .lastnameChanged(value);
+                              .bioChanged(value);
                         },
-                      ),
-                      const SizedBox(height: 16.0),
-                      Text(
-                        "Aidez les gens à trouver votre compte à l'aide de votre nom.",
-                        style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),
                     ],
@@ -104,11 +99,11 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,
       onPressed: () {
-        final currentlastname = _lastnameController.text.isEmpty
-            ? profileState.user.lastName
-            : _lastnameController.text;
-        context.read<EditProfileCubit>().lastnameChanged(currentlastname);
-        context.read<EditProfileCubit>().submitLastNameChange();
+        final currentbio = _bioController.text.isEmpty
+            ? profileState.user.bio
+            : _bioController.text;
+        context.read<EditProfileCubit>().bioChanged(currentbio);
+        context.read<EditProfileCubit>().submitBioChange();
       },
       label: Text(
         AppLocalizations.of(context)!.translate('validate'),

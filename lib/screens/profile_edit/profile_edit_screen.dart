@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -47,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (state.status == EditProfileStatus.success) {
               Navigator.of(context).pop();
             } else if (state.status == EditProfileStatus.error) {
-              _showErrorDialog(context, state.failure.message);
+              ErrorDialog(content: state.failure.message);
             }
           },
           builder: (context, editState) {
@@ -106,38 +107,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildField(context, 'Username', profileState.user.username,
-                EditUsernamePage(userId: widget.userId)),
+                navigateToEditUsername),
             const SizedBox(height: 16.0),
             _buildField(context, 'FirstName', profileState.user.firstName,
-                EditNamePage(userId: widget.userId)),
+                navigateToEditfirstName),
             const SizedBox(height: 16.0),
             _buildField(context, 'LastName', profileState.user.lastName,
-                EditNamePage(userId: widget.userId)),
+                navigateToEditLastName),
             const SizedBox(height: 16.0),
             _buildField(context, 'Location', profileState.user.location,
-                EditNamePage(userId: widget.userId)),
+                navigateToEditLocation),
+            const SizedBox(height: 16.0),
+            _buildField(context, 'Intéressé par',
+                profileState.user.selectedGender, navigateToEditInterestedIn),
             const SizedBox(height: 16.0),
             _buildField(
-                context,
-                'Intéressé par',
-                profileState.user.selectedGender,
-                EditNamePage(userId: widget.userId)),
-            const SizedBox(height: 16.0),
-            _buildField(context, 'Bio', profileState.user.bio,
-                EditBioPage(userId: widget.userId)),
+                context, 'Bio', profileState.user.bio, navigateToEditBio),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildField(
-      BuildContext context, String label, String value, Widget editPage) {
+  Widget _buildField(BuildContext context, String label, String value,
+      Function(BuildContext) navigateFunction) {
     return Bounceable(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => editPage,
-        ));
+        navigateFunction(context);
       },
       child: Container(
         color: Colors.transparent,
@@ -207,67 +203,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(content: message),
-    );
+// Navigates to the 'Edit Username' screen.
+  void navigateToEditUsername(BuildContext context) {
+    GoRouter.of(context).push('/editprofile/editusername');
   }
-}
 
-class EditUsernamePage extends StatelessWidget {
-  final String userId;
-
-  const EditUsernamePage({
-    Key? key,
-    required this.userId,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Edit Username")),
-      body: Center(
-        child: Text("Edit Username Page for user $userId"),
-      ),
-    );
+// Navigates to the 'Edit Firstname' screen.
+  void navigateToEditfirstName(BuildContext context) {
+    GoRouter.of(context).push('/editprofile/editfirstname');
   }
-}
 
-class EditNamePage extends StatelessWidget {
-  final String userId;
-
-  const EditNamePage({
-    Key? key,
-    required this.userId,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Edit Name")),
-      body: Center(
-        child: Text("Edit Name Page for user $userId"),
-      ),
-    );
+// Navigates to the 'Edit Lastname' screen.
+  void navigateToEditLastName(BuildContext context) {
+    GoRouter.of(context).push('/editlastname');
   }
-}
 
-class EditBioPage extends StatelessWidget {
-  final String userId;
+// Navigates to the 'Edit Location' screen.
+  void navigateToEditLocation(BuildContext context) {
+    GoRouter.of(context).push('/editlocation');
+  }
 
-  const EditBioPage({
-    Key? key,
-    required this.userId,
-  }) : super(key: key);
+// Navigates to the 'Edit Interested In' screen.
+  void navigateToEditInterestedIn(BuildContext context) {
+    GoRouter.of(context).push('/editinterestedin');
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Edit Bio")),
-      body: Center(
-        child: Text("Edit Bio Page for user $userId"),
-      ),
-    );
+// Navigates to the 'Edit Bio' screen.
+  void navigateToEditBio(BuildContext context) {
+    GoRouter.of(context).push('/editbio');
   }
 }

@@ -16,6 +16,8 @@ import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/profile_edit/profile_edit_screen.dart';
+import 'package:bootdv2/screens/profile_edit/screens/edit_firstname.dart';
+import 'package:bootdv2/screens/profile_edit/screens/edit_username.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
 import 'package:bootdv2/screens/search/searching_screen.dart';
@@ -204,6 +206,7 @@ GoRouter createRouter(BuildContext context) {
           );
         },
       ),
+// EditProfile
       GoRoute(
         path: '/editprofile',
         builder: (BuildContext context, GoRouterState state) {
@@ -213,7 +216,34 @@ GoRouter createRouter(BuildContext context) {
             EditProfileScreen(userId: userId),
           );
         },
+        routes: [
+          // Edit Username
+          GoRoute(
+            path: 'editusername',
+            builder: (BuildContext context, GoRouterState state) {
+              final userId = authBloc.state.user!.uid;
+              return BlocProviderConfig.getEditProfileMultiBlocProvider(
+                context,
+                EditUsernameScreen(userId: userId),
+              );
+            },
+          ),
+          // Edit First Name
+          GoRoute(
+            path: 'editfirstname',
+            builder: (BuildContext context, GoRouterState state) {
+              final userId = authBloc.state.user!.uid;
+              return BlocProviderConfig.getEditProfileMultiBlocProvider(
+                context,
+                EditFirstnameScreen(
+                    userId:
+                        userId), // Correcting the screen to EditFirstNameScreen
+              );
+            },
+          ),
+        ],
       ),
+
       // Post
       GoRoute(
         path: '/post/:postId',

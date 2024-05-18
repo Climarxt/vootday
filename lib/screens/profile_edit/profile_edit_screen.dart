@@ -111,6 +111,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _buildField(context, 'FirstName', profileState.user.firstName,
                 EditNamePage(userId: widget.userId)),
             const SizedBox(height: 16.0),
+            _buildField(context, 'LastName', profileState.user.lastName,
+                EditNamePage(userId: widget.userId)),
+            const SizedBox(height: 16.0),
+            _buildField(context, 'Location', profileState.user.location,
+                EditNamePage(userId: widget.userId)),
+            const SizedBox(height: 16.0),
+            _buildField(
+                context,
+                'Intéressé par',
+                profileState.user.selectedGender,
+                EditNamePage(userId: widget.userId)),
+            const SizedBox(height: 16.0),
             _buildField(context, 'Bio', profileState.user.bio,
                 EditBioPage(userId: widget.userId)),
           ],
@@ -151,7 +163,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       children: [
                         Text(
                           value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
-                          style: AppTextStyles.bodyStyle(context),
+                          style: value.isEmpty
+                              ? AppTextStyles.bodyStyleGrey(context)
+                              : AppTextStyles.bodyStyle(context),
                           textAlign: TextAlign.start,
                         ),
                       ],

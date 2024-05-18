@@ -204,7 +204,6 @@ GoRouter createRouter(BuildContext context) {
           );
         },
       ),
-
       GoRoute(
         path: '/editprofile',
         builder: (BuildContext context, GoRouterState state) {

@@ -17,6 +17,7 @@ import 'package:bootdv2/screens/profile/profile_screen.dart';
 import 'package:bootdv2/screens/profile/tab3/feed_collection.dart';
 import 'package:bootdv2/screens/profile_edit/profile_edit_screen.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_firstname.dart';
+import 'package:bootdv2/screens/profile_edit/screens/edit_lastname.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_username.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
@@ -235,9 +236,18 @@ GoRouter createRouter(BuildContext context) {
               final userId = authBloc.state.user!.uid;
               return BlocProviderConfig.getEditProfileMultiBlocProvider(
                 context,
-                EditFirstnameScreen(
-                    userId:
-                        userId), // Correcting the screen to EditFirstNameScreen
+                EditFirstnameScreen(userId: userId),
+              );
+            },
+          ),
+          // Edit Last Name
+          GoRoute(
+            path: 'editlastname',
+            builder: (BuildContext context, GoRouterState state) {
+              final userId = authBloc.state.user!.uid;
+              return BlocProviderConfig.getEditProfileMultiBlocProvider(
+                context,
+                EditLastnameScreen(userId: userId),
               );
             },
           ),

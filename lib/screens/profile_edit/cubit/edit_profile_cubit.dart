@@ -122,6 +122,38 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
+  void lastnameChanged(String lastName) {
+    emit(
+      state.copyWith(lastName: lastName, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitLastNameChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+
+      final updatedUser = user.copyWith(
+        lastName: state.lastName,
+      );
+
+      await _userRepository.updateUser(user: updatedUser);
+
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      emit(state.copyWith(status: EditProfileStatus.success));
+    } catch (err) {
+      emit(
+        state.copyWith(
+          status: EditProfileStatus.error,
+          failure: const Failure(
+            message: 'We were unable to update your first name.',
+          ),
+        ),
+      );
+    }
+  }
+
   void bioChanged(String bio) {
     emit(
       state.copyWith(bio: bio, status: EditProfileStatus.initial),

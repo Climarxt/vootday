@@ -215,7 +215,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
 // Navigates to the 'Edit Lastname' screen.
   void navigateToEditLastName(BuildContext context) {
-    GoRouter.of(context).push('/editlastname');
+    GoRouter.of(context).push('/editprofile/editlastname');
   }
 
 // Navigates to the 'Edit Location' screen.

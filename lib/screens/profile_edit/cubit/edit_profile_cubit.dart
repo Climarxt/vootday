@@ -60,6 +60,68 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     );
   }
 
+  void submitUsernameChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+
+      // Convert the username to lowercase
+      final usernameLowercase = state.username.toLowerCase();
+
+      final updatedUser = user.copyWith(
+        username: state.username,
+        username_lowercase: usernameLowercase,
+      );
+
+      await _userRepository.updateUser(user: updatedUser);
+
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      emit(state.copyWith(status: EditProfileStatus.success));
+    } catch (err) {
+      emit(
+        state.copyWith(
+          status: EditProfileStatus.error,
+          failure: const Failure(
+            message: 'We were unable to update your username.',
+          ),
+        ),
+      );
+    }
+  }
+
+  void firstnameChanged(String firstname) {
+    emit(
+      state.copyWith(firstName: firstname, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitFirstNameChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+
+      final updatedUser = user.copyWith(
+        firstName: state.firstName,
+      );
+
+      await _userRepository.updateUser(user: updatedUser);
+
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      emit(state.copyWith(status: EditProfileStatus.success));
+    } catch (err) {
+      emit(
+        state.copyWith(
+          status: EditProfileStatus.error,
+          failure: const Failure(
+            message: 'We were unable to update your first name.',
+          ),
+        ),
+      );
+    }
+  }
+
   void bioChanged(String bio) {
     emit(
       state.copyWith(bio: bio, status: EditProfileStatus.initial),
@@ -88,6 +150,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       final updatedUser = user.copyWith(
         username: state.username,
         username_lowercase: usernameLowercase,
+        firstName: state.firstName,
         bio: state.bio,
         profileImageUrl: profileImageUrl,
       );

@@ -5,6 +5,7 @@ enum EditProfileStatus { initial, submitting, success, error }
 class EditProfileState extends Equatable {
   final File? profileImage;
   final String username;
+  final String firstName;
   final String bio;
   final EditProfileStatus status;
   final Failure failure;
@@ -12,6 +13,7 @@ class EditProfileState extends Equatable {
   const EditProfileState({
     required this.profileImage,
     required this.username,
+    required this.firstName,
     required this.bio,
     required this.status,
     required this.failure,
@@ -21,6 +23,7 @@ class EditProfileState extends Equatable {
     return const EditProfileState(
       profileImage: null,
       username: '',
+      firstName: '',
       bio: '',
       status: EditProfileStatus.initial,
       failure: Failure(),
@@ -31,6 +34,7 @@ class EditProfileState extends Equatable {
   List<Object?> get props => [
         profileImage,
         username,
+        firstName,
         bio,
         status,
         failure,
@@ -39,6 +43,7 @@ class EditProfileState extends Equatable {
   EditProfileState copyWith({
     File? profileImage,
     String? username,
+    String? firstName,
     String? bio,
     EditProfileStatus? status,
     Failure? failure,
@@ -46,6 +51,7 @@ class EditProfileState extends Equatable {
     return EditProfileState(
       profileImage: profileImage ?? this.profileImage,
       username: username ?? this.username,
+      firstName: firstName ?? this. firstName,
       bio: bio ?? this.bio,
       status: status ?? this.status,
       failure: failure ?? this.failure,

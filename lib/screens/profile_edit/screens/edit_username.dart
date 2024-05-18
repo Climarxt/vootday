@@ -108,7 +108,7 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
             ? profileState.user.username
             : _usernameController.text;
         context.read<EditProfileCubit>().usernameChanged(currentUsername);
-        context.read<EditProfileCubit>().submit();
+        context.read<EditProfileCubit>().submitUsernameChange();
       },
       label: Text(
         AppLocalizations.of(context)!.translate('validate'),

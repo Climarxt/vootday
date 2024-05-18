@@ -1,27 +1,27 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
-import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
+import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_profile.dart';
 
 class EditFirstnameScreen extends StatefulWidget {
   final String userId;
 
   const EditFirstnameScreen({
-    super.key,
+    Key? key,
     required this.userId,
-  });
+  }) : super(key: key);
 
   @override
   _EditFirstnameScreenState createState() => _EditFirstnameScreenState();
 }
 
 class _EditFirstnameScreenState extends State<EditFirstnameScreen> {
+  final TextEditingController _firstnameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -33,37 +33,89 @@ class _EditFirstnameScreenState extends State<EditFirstnameScreen> {
   }
 
   @override
+  void dispose() {
+    _firstnameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: const AppBarProfile(title: "Edit Firstname"),
-        body: BlocConsumer<EditProfileCubit, EditProfileState>(
-          listener: (context, state) {
-            if (state.status == EditProfileStatus.success) {
-              Navigator.of(context).pop();
-            } else if (state.status == EditProfileStatus.error) {
-              ErrorDialog(content: state.failure.message);
-            }
-          },
-          builder: (context, editState) {
-            return BlocBuilder<ProfileBloc, ProfileState>(
-              builder: (context, profileState) {
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, profileState) {
+          if (profileState.status == ProfileStatus.loaded &&
+              _firstnameController.text.isEmpty) {
+            _firstnameController.text = profileState.user.firstName;
+          }
+
+          return Scaffold(
+            appBar: const AppBarEditProfile(title: "Edit Firstname"),
+            body: BlocConsumer<EditProfileCubit, EditProfileState>(
+              listener: (context, state) {
+                if (state.status == EditProfileStatus.success) {
+                  Navigator.of(context).pop();
+                } else if (state.status == EditProfileStatus.error) {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        ErrorDialog(content: state.failure.message),
+                  );
+                }
+              },
+              builder: (context, editState) {
                 return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (editState.status == EditProfileStatus.submitting)
-                        const LinearProgressIndicator(),
-                      Container(
-                        color: red,
-                      )
+                      CustomTextField(
+                        controller: _firstnameController,
+                        labelText: 'Firstname',
+                        onChanged: (value) {
+                          context
+                              .read<EditProfileCubit>()
+                              .firstnameChanged(value);
+                        },
+                      ),
+                      const SizedBox(height: 16.0),
+                      Text(
+                        "Aidez les gens à trouver votre compte à l'aide de votre prénom.",
+                        style: AppTextStyles.bodySmallStyleGrey(context),
+                      ),
+                      const SizedBox(height: 16.0),
                     ],
                   ),
                 );
               },
-            );
-          },
-        ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton:
+                _buildFloatingValidateButton(context, profileState),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFloatingValidateButton(
+      BuildContext context, ProfileState profileState) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () {
+        final currentFirstname = _firstnameController.text.isEmpty
+            ? profileState.user.firstName
+            : _firstnameController.text;
+        context.read<EditProfileCubit>().firstnameChanged(currentFirstname);
+        context.read<EditProfileCubit>().submitFirstNameChange();
+      },
+      label: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: Colors.white),
       ),
     );
   }

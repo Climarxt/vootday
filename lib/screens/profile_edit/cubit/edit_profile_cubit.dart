@@ -82,8 +82,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         );
       }
 
+      // Convert the username to lowercase
+      final usernameLowercase = state.username.toLowerCase();
+
       final updatedUser = user.copyWith(
         username: state.username,
+        username_lowercase: usernameLowercase, // Update the lowercase username field
         bio: state.bio,
         profileImageUrl: profileImageUrl,
       );

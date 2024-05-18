@@ -1,7 +1,8 @@
-import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
 import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
 import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -10,9 +11,9 @@ class EditUsernameScreen extends StatefulWidget {
   final String userId;
 
   const EditUsernameScreen({
-    super.key,
+    Key? key,
     required this.userId,
-  });
+  }) : super(key: key);
 
   @override
   _EditUsernameScreenState createState() => _EditUsernameScreenState();
@@ -55,7 +56,11 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
                 if (state.status == EditProfileStatus.success) {
                   Navigator.of(context).pop();
                 } else if (state.status == EditProfileStatus.error) {
-                  ErrorDialog(content: state.failure.message);
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        ErrorDialog(content: state.failure.message),
+                  );
                 }
               },
               builder: (context, editState) {
@@ -64,24 +69,9 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextField(
-                        cursorColor: couleurBleuClair2,
-                        style: AppTextStyles.titleSmallGrey(context),
+                      CustomTextField(
                         controller: _usernameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Username',
-                          labelStyle: TextStyle(color: Colors.black),
-                          floatingLabelStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                        ),
+                        labelText: 'Username',
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
@@ -102,14 +92,14 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton:
-                buildFloatingValidateButton(context, profileState),
+                _buildFloatingValidateButton(context, profileState),
           );
         },
       ),
     );
   }
 
-  Widget buildFloatingValidateButton(
+  Widget _buildFloatingValidateButton(
       BuildContext context, ProfileState profileState) {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,

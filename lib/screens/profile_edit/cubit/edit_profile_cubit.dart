@@ -87,7 +87,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
       final updatedUser = user.copyWith(
         username: state.username,
-        username_lowercase: usernameLowercase, // Update the lowercase username field
+        username_lowercase: usernameLowercase,
         bio: state.bio,
         profileImageUrl: profileImageUrl,
       );

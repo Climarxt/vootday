@@ -87,6 +87,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                       const SizedBox(height: 16.0),
                       CSCPicker(
                         onCountryChanged: (country) {
+                          debugPrint("DEBUG : Country - $country");
                           setState(() {
                             selectedCountry = country;
                             selectedState = null;
@@ -95,11 +96,13 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                         },
                         onStateChanged: (state) {
                           setState(() {
+                            debugPrint("DEBUG : Country - $state");
                             selectedState = state;
                             selectedCity = null;
                           });
                         },
                         onCityChanged: (city) {
+                          debugPrint("DEBUG : Country - $city");
                           setState(() {
                             selectedCity = city;
                           });

@@ -40,6 +40,14 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
           decoration: const InputDecoration(
             hintText: 'Genre',
             labelText: 'Choisir un genre',
+            hintStyle: TextStyle(color: Colors.black),
+            labelStyle: TextStyle(color: Colors.black),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
           ),
           value: selectedGender,
           items: const [

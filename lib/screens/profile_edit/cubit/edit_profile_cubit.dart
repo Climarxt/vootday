@@ -43,12 +43,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  void profileImageChanged(File image) {
-    emit(
-      state.copyWith(profileImage: image, status: EditProfileStatus.initial),
-    );
-  }
-
   void usernameChanged(String username) {
     emit(
       state.copyWith(username: username, status: EditProfileStatus.initial),
@@ -212,7 +206,13 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  void submit() async {
+  void profileImageChanged(File image) {
+    emit(
+      state.copyWith(profileImage: image, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitprofileImage() async {
     emit(state.copyWith(status: EditProfileStatus.submitting));
     try {
       final user = _profileBloc.state.user;
@@ -224,14 +224,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           image: compressedImage,
         );
       }
-      final usernameLowercase = state.username.toLowerCase();
-      final updatedUser = user.copyWith(
-        username: state.username,
-        username_lowercase: usernameLowercase,
-        firstName: state.firstName,
-        bio: state.bio,
-        profileImageUrl: profileImageUrl,
-      );
+      final updatedUser = user.copyWith(profileImageUrl: profileImageUrl);
       await _userRepository.updateUser(user: updatedUser);
       _profileBloc.add(ProfileLoadUser(userId: user.id));
 

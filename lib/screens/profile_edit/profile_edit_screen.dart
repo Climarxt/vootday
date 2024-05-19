@@ -185,7 +185,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      onPressed: () => _submitForm(
+      onPressed: () => _submitsubmitprofileImage(
           context, editState.status == EditProfileStatus.submitting),
       child: Text(
         AppLocalizations.of(context)!.translate('editProfile'),
@@ -197,9 +197,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  void _submitForm(BuildContext context, bool isSubmitting) {
+  void _submitsubmitprofileImage(BuildContext context, bool isSubmitting) {
     if (_formKey.currentState!.validate() && !isSubmitting) {
-      context.read<EditProfileCubit>().submit();
+      context.read<EditProfileCubit>().submitprofileImage();
     }
   }
 

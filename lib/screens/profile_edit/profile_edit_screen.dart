@@ -143,6 +143,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(height: 12),
             _buildField(
                 context, 'Bio', profileState.user.bio, navigateToEditBio),
+            const SizedBox(height: 12),
+            _buildField(
+                context, 'Links', "Réseaux sociaux", navigateToEditLinks),
           ],
         ),
       ),
@@ -244,5 +247,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   // Navigates to the 'Edit Bio' screen.
   void navigateToEditBio(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editbio');
+  }
+
+  // Navigates to the 'Edit Links' screen.
+  void navigateToEditLinks(BuildContext context) {
+    GoRouter.of(context).push('/editprofile/editlinks');
   }
 }

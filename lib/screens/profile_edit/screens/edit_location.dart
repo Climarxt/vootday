@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield_location.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
@@ -55,13 +53,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
             final locationCity = profileState.user.locationCity;
             final locationState = profileState.user.locationState;
             final locationCountry = profileState.user.locationCountry;
-            currentLocation = '$locationCity, $locationState - $locationCountry';
-
-            debugPrint("DEBUG : Country - $locationCountry");
-            debugPrint("DEBUG : State - $locationState");
-            debugPrint("DEBUG : Location - $locationCity");
-            debugPrint("DEBUG : currentLocation - $currentLocation");
-
+            currentLocation =
+                '$locationCity, $locationState - $locationCountry';
             _locationController.text = currentLocation!;
           }
 
@@ -143,8 +136,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
               ),
               const SizedBox(height: 10),
               CSCPicker(
+                flagState: CountryFlag.DISABLE,
                 onCountryChanged: (country) {
-                  debugPrint("DEBUG : Country - $country");
                   setState(() {
                     selectedCountry = country;
                     selectedState = null;
@@ -153,30 +146,30 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                 },
                 onStateChanged: (state) {
                   setState(() {
-                    debugPrint("DEBUG : Country - $state");
                     selectedState = state;
                     selectedCity = null;
                   });
                 },
                 onCityChanged: (city) {
-                  debugPrint("DEBUG : Country - $city");
                   setState(() {
                     selectedCity = city;
                   });
-                  context.read<EditProfileCubit>().locationChanged(city);
                 },
               ),
               const SizedBox(height: 18),
               TextButton(
                 onPressed: () {
-                  final currentlocation = selectedCity ??
-                      (_locationController.text.isEmpty
-                          ? profileState.user.locationCity
-                          : _locationController.text);
-                  context
-                      .read<EditProfileCubit>()
-                      .locationChanged(currentlocation);
+                  final currentCity =
+                      selectedCity ?? profileState.user.locationCity;
+                  final currentState =
+                      selectedState ?? profileState.user.locationState;
+                  final currentCountry =
+                      selectedCountry ?? profileState.user.locationCountry;
+
+                  context.read<EditProfileCubit>().locationChanged(
+                      currentCity, currentState, currentCountry);
                   context.read<EditProfileCubit>().submitLocationChange();
+
                   Navigator.pop(context);
                 },
                 style: TextButton.styleFrom(
@@ -193,7 +186,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall!
-                        .copyWith(color: white),
+                        .copyWith(color: Colors.white),
                   ),
                 ),
               ),

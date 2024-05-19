@@ -26,7 +26,7 @@ class AppBarEditProfile extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () {
           final goRouter = GoRouter.of(context);
-          goRouter.go('/profile');
+          goRouter.go('/editprofile');
         },
       ),
     );

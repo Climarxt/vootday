@@ -9,7 +9,7 @@ class EditProfileState extends Equatable {
   final String lastName;
   final String bio;
   final String selectedGender;
-  final String location;
+  final String locationCity;
   final String locationState;
   final String locationCountry;
   final EditProfileStatus status;
@@ -22,7 +22,7 @@ class EditProfileState extends Equatable {
     required this.lastName,
     required this.bio,
     required this.selectedGender,
-    required this.location,
+    required this.locationCity,
     required this.locationState,
     required this.locationCountry,
     required this.status,
@@ -37,7 +37,7 @@ class EditProfileState extends Equatable {
       lastName: '',
       bio: '',
       selectedGender: '',
-      location: '',
+      locationCity: '',
       locationState: '',
       locationCountry: '',
       status: EditProfileStatus.initial,
@@ -53,7 +53,7 @@ class EditProfileState extends Equatable {
         lastName,
         bio,
         selectedGender,
-        location,
+        locationCity,
         locationState,
         locationCountry,
         status,
@@ -67,7 +67,7 @@ class EditProfileState extends Equatable {
     String? lastName,
     String? bio,
     String? selectedGender,
-    String? location,
+    String? locationCity,
     String? locationState,
     String? locationCountry,
     EditProfileStatus? status,
@@ -80,7 +80,7 @@ class EditProfileState extends Equatable {
       lastName: lastName ?? this.lastName,
       bio: bio ?? this.bio,
       selectedGender: selectedGender ?? this.selectedGender,
-      location: location ?? this.location,
+      locationCity: locationCity ?? this.locationCity,
       locationState: locationState ?? this.locationState,
       locationCountry: locationCountry ?? this.locationCountry,
       status: status ?? this.status,

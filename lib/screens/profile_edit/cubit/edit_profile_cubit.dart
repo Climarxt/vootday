@@ -189,9 +189,15 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  void locationChanged(String? location) {
+  void locationChanged(
+      String? locationCity, String? locationState, String? locationCountry) {
     emit(
-      state.copyWith(location: location, status: EditProfileStatus.initial),
+      state.copyWith(
+        locationCity: locationCity,
+        locationState: locationState,
+        locationCountry: locationCountry,
+        status: EditProfileStatus.initial,
+      ),
     );
   }
 
@@ -199,7 +205,43 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     emit(state.copyWith(status: EditProfileStatus.submitting));
     try {
       final user = _profileBloc.state.user;
-      final updatedUser = user.copyWith(locationCity: state.location);
+      final updatedUser = user.copyWith(
+        locationCity: state.locationCity,
+        locationState: state.locationState,
+        locationCountry: state.locationCountry,
+      );
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your location.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void locationCityChanged(String? locationCity) {
+    emit(
+      state.copyWith(
+          locationCity: locationCity, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitLocationCityChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(locationCity: state.locationCity);
       await _userRepository.updateUser(user: updatedUser);
       _profileBloc.add(ProfileLoadUser(userId: user.id));
 

@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -187,47 +185,49 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildFloatingValidateButton(
       BuildContext context, ProfileState profileState) {
-    return FloatingActionButton.extended(
-      backgroundColor: couleurBleuClair2,
-      onPressed: () {
-        context.read<EditProfileCubit>().submitprofileImage();
-      },
-      label: Text(
-        AppLocalizations.of(context)!.translate('validate'),
-        style: Theme.of(context)
-            .textTheme
-            .headlineSmall!
-            .copyWith(color: Colors.white),
-      ),
-    );
+    return _image != null
+        ? FloatingActionButton.extended(
+            backgroundColor: couleurBleuClair2,
+            onPressed: () {
+              context.read<EditProfileCubit>().submitprofileImage();
+            },
+            label: Text(
+              AppLocalizations.of(context)!.translate('validate'),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: Colors.white),
+            ),
+          )
+        : SizedBox.shrink();
   }
 
-// Navigates to the 'Edit Username' screen.
+  // Navigates to the 'Edit Username' screen.
   void navigateToEditUsername(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editusername');
   }
 
-// Navigates to the 'Edit Firstname' screen.
+  // Navigates to the 'Edit Firstname' screen.
   void navigateToEditfirstName(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editfirstname');
   }
 
-// Navigates to the 'Edit Lastname' screen.
+  // Navigates to the 'Edit Lastname' screen.
   void navigateToEditLastName(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editlastname');
   }
 
-// Navigates to the 'Edit Location' screen.
+  // Navigates to the 'Edit Location' screen.
   void navigateToEditLocation(BuildContext context) {
-    GoRouter.of(context).push('/editlocation');
+    GoRouter.of(context).push('/editprofile/editlocation');
   }
 
-// Navigates to the 'Edit Interested In' screen.
+  // Navigates to the 'Edit Interested In' screen.
   void navigateToEditInterestedIn(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editselectedgender');
   }
 
-// Navigates to the 'Edit Bio' screen.
+  // Navigates to the 'Edit Bio' screen.
   void navigateToEditBio(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editbio');
   }

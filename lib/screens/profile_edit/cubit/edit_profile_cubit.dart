@@ -189,6 +189,37 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
+  void locationChanged(String location) {
+    emit(
+      state.copyWith(location: location, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitLocationChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(location: state.location);
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your location.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   void profileImageChanged(File image) {
     emit(
       state.copyWith(profileImage: image, status: EditProfileStatus.initial),

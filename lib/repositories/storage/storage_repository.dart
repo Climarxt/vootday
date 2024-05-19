@@ -1,10 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import '/repositories/storage/base_storage_repository.dart';
-
-// ignore: depend_on_referenced_packages
 import 'package:uuid/uuid.dart';
 
 class StorageRepository extends BaseStorageRepository {
@@ -50,13 +47,19 @@ class StorageRepository extends BaseStorageRepository {
     // Update user profile image.
     if (url.isNotEmpty) {
       final exp = RegExp(r'userProfile_(.*).jpg');
-      imageId = exp.firstMatch(url)![1]!;
+      final match = exp.firstMatch(url);
+      if (match != null && match.groupCount > 0) {
+        imageId = match[1]!;
+      } else {
+        print('No match found for the URL: $url');
+      }
     }
 
     final downloadUrl = await _uploadImage(
       image: image,
       ref: 'images/users/userProfile_$imageId.jpg',
     );
+    print('Upload successful. New URL: $downloadUrl');
     return downloadUrl;
   }
 

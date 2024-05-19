@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
@@ -23,24 +24,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         super(EditProfileState.initial()) {
     final user = _profileBloc.state.user;
     emit(state.copyWith(username: user.username, bio: user.bio));
-  }
-
-  Future<File> compressImage(File imageFile, {int quality = 45}) async {
-    final filePath = imageFile.absolute.path;
-    final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
-    final newPath = filePath.substring(0, lastIndex);
-    var compressedImageFile = await FlutterImageCompress.compressAndGetFile(
-      imageFile.absolute.path,
-      '$newPath/compressed.jpg',
-      quality: quality,
-    );
-
-    if (compressedImageFile is XFile) {
-      return File(compressedImageFile.path);
-    } else {
-      // ignore: null_check_always_fails
-      return compressedImageFile!;
-    }
   }
 
   void usernameChanged(String username) {
@@ -214,24 +197,52 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
   void submitprofileImage() async {
     emit(state.copyWith(status: EditProfileStatus.submitting));
+    debugPrint('Submitting profile image...');
+
     try {
       final user = _profileBloc.state.user;
+
+      debugPrint('Current user: ${user.id}');
       var profileImageUrl = user.profileImageUrl;
+      debugPrint('Current profile image URL: $profileImageUrl');
+
       if (state.profileImage != null) {
+        debugPrint('Profile image exists. Compressing image...');
         File compressedImage = await compressImage(state.profileImage!);
+        debugPrint(
+            'Image compressed. Compressed image path: ${compressedImage.path}');
+
+        debugPrint('Uploading profile image...');
         profileImageUrl = await _storageRepository.uploadProfileImage(
           url: profileImageUrl,
           image: compressedImage,
         );
+
+        if (profileImageUrl.isEmpty) {
+          debugPrint('Error: profileImageUrl is empty after upload.');
+          throw Exception('Failed to upload profile image.');
+        }
+
+        debugPrint('Profile image uploaded. New URL: $profileImageUrl');
+      } else {
+        debugPrint('Error: state.profileImage is null.');
+        throw Exception('Profile image is null.');
       }
+
       final updatedUser = user.copyWith(profileImageUrl: profileImageUrl);
+      debugPrint('Updating user with new profile image URL...');
       await _userRepository.updateUser(user: updatedUser);
+      debugPrint('User updated successfully.');
+
       _profileBloc.add(ProfileLoadUser(userId: user.id));
+      debugPrint('ProfileLoadUser event added to ProfileBloc.');
 
       if (!isClosed) {
         emit(state.copyWith(status: EditProfileStatus.success));
+        debugPrint('Profile image submission successful.');
       }
     } catch (err) {
+      debugPrint('Error during profile image submission: $err');
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -241,7 +252,26 @@ class EditProfileCubit extends Cubit<EditProfileState> {
             ),
           ),
         );
+        debugPrint('Profile image submission failed.');
       }
     }
+  }
+
+  Future<File> compressImage(File imageFile, {int quality = 45}) async {
+    final filePath = imageFile.absolute.path;
+    final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
+    final newPath = filePath.substring(0, lastIndex);
+    var compressedImageFile = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      '$newPath/compressed.jpg',
+      quality: quality,
+    );
+
+    if (compressedImageFile == null) {
+      debugPrint('Error: compressedImageFile is null.');
+      throw Exception('Image compression failed.');
+    }
+
+    return File(compressedImageFile.path);
   }
 }

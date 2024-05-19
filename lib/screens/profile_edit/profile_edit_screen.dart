@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,9 +16,9 @@ class EditProfileScreen extends StatefulWidget {
   final String userId;
 
   const EditProfileScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
@@ -41,19 +43,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: const AppBarProfile(title: "Edit Profile"),
-        body: BlocConsumer<EditProfileCubit, EditProfileState>(
-          listener: (context, state) {
-            if (state.status == EditProfileStatus.success) {
-              Navigator.of(context).pop();
-            } else if (state.status == EditProfileStatus.error) {
-              ErrorDialog(content: state.failure.message);
-            }
-          },
-          builder: (context, editState) {
-            return BlocBuilder<ProfileBloc, ProfileState>(
-              builder: (context, profileState) {
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, profileState) {
+          return Scaffold(
+            appBar: const AppBarProfile(title: "Edit Profile"),
+            body: BlocConsumer<EditProfileCubit, EditProfileState>(
+              listener: (context, state) {
+                if (state.status == EditProfileStatus.success) {
+                  Navigator.of(context).pop();
+                } else if (state.status == EditProfileStatus.error) {
+                  ErrorDialog(content: state.failure.message);
+                }
+              },
+              builder: (context, editState) {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
@@ -65,9 +67,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 );
               },
-            );
-          },
-        ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton:
+                _buildFloatingValidateButton(context, profileState),
+          );
+        },
       ),
     );
   }
@@ -83,8 +89,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (croppedFile != null) {
             setState(() {
               _image = File(croppedFile.path);
-              context.read<EditProfileCubit>().profileImageChanged(_image!);
             });
+            if (mounted) {
+              context.read<EditProfileCubit>().profileImageChanged(_image!);
+            }
           }
         }
       },
@@ -177,30 +185,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context, EditProfileState editState) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: couleurBleuClair2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      onPressed: () => _submitsubmitprofileImage(
-          context, editState.status == EditProfileStatus.submitting),
-      child: Text(
-        AppLocalizations.of(context)!.translate('editProfile'),
+  Widget _buildFloatingValidateButton(
+      BuildContext context, ProfileState profileState) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () {
+        context.read<EditProfileCubit>().submitprofileImage();
+      },
+      label: Text(
+        AppLocalizations.of(context)!.translate('validate'),
         style: Theme.of(context)
             .textTheme
             .headlineSmall!
             .copyWith(color: Colors.white),
       ),
     );
-  }
-
-  void _submitsubmitprofileImage(BuildContext context, bool isSubmitting) {
-    if (_formKey.currentState!.validate() && !isSubmitting) {
-      context.read<EditProfileCubit>().submitprofileImage();
-    }
   }
 
 // Navigates to the 'Edit Username' screen.

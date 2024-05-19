@@ -33,45 +33,6 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
     });
   }
 
-  Widget _buildGenderDropdown(BuildContext context, String? selectedGender) {
-    return Column(
-      children: [
-        DropdownButtonFormField(
-          decoration: const InputDecoration(
-            hintText: 'Genre',
-            labelText: 'Choisir un genre',
-            hintStyle: TextStyle(color: Colors.black),
-            labelStyle: TextStyle(color: Colors.black),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-          ),
-          value: selectedGender,
-          items: const [
-            DropdownMenuItem(
-              value: 'Masculin',
-              child: Text("Masculin"),
-            ),
-            DropdownMenuItem(
-              value: 'Féminin',
-              child: Text("Féminin"),
-            ),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedGender = value;
-            });
-            context.read<EditProfileCubit>().selectedGenderChanged(value!);
-          },
-        ),
-        const SizedBox(height: 24),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -147,6 +108,45 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
             .headlineSmall!
             .copyWith(color: Colors.white),
       ),
+    );
+  }
+
+  Widget _buildGenderDropdown(BuildContext context, String? selectedGender) {
+    return Column(
+      children: [
+        DropdownButtonFormField(
+          decoration: const InputDecoration(
+            hintText: 'Genre',
+            labelText: 'Choisir un genre',
+            hintStyle: TextStyle(color: Colors.black),
+            labelStyle: TextStyle(color: Colors.black),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+          value: selectedGender,
+          items: const [
+            DropdownMenuItem(
+              value: 'Masculin',
+              child: Text("Masculin"),
+            ),
+            DropdownMenuItem(
+              value: 'Féminin',
+              child: Text("Féminin"),
+            ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedGender = value;
+            });
+            context.read<EditProfileCubit>().selectedGenderChanged(value!);
+          },
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

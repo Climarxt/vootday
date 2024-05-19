@@ -52,14 +52,14 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
           if (profileState.status == ProfileStatus.loaded) {
-            final location = profileState.user.location;
+            final locationCity = profileState.user.locationCity;
             final locationState = profileState.user.locationState;
             final locationCountry = profileState.user.locationCountry;
-            currentLocation = '$location, $locationState - $locationCountry';
+            currentLocation = '$locationCity, $locationState - $locationCountry';
 
             debugPrint("DEBUG : Country - $locationCountry");
             debugPrint("DEBUG : State - $locationState");
-            debugPrint("DEBUG : Location - $location");
+            debugPrint("DEBUG : Location - $locationCity");
             debugPrint("DEBUG : currentLocation - $currentLocation");
 
             _locationController.text = currentLocation!;
@@ -171,7 +171,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                 onPressed: () {
                   final currentlocation = selectedCity ??
                       (_locationController.text.isEmpty
-                          ? profileState.user.location
+                          ? profileState.user.locationCity
                           : _locationController.text);
                   context
                       .read<EditProfileCubit>()

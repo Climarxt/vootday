@@ -199,7 +199,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     emit(state.copyWith(status: EditProfileStatus.submitting));
     try {
       final user = _profileBloc.state.user;
-      final updatedUser = user.copyWith(location: state.location);
+      final updatedUser = user.copyWith(locationCity: state.location);
       await _userRepository.updateUser(user: updatedUser);
       _profileBloc.add(ProfileLoadUser(userId: user.id));
 
@@ -212,7 +212,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           state.copyWith(
             status: EditProfileStatus.error,
             failure: const Failure(
-              message: 'We were unable to update your location.',
+              message: 'We were unable to update your location City.',
             ),
           ),
         );

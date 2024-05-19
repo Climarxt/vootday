@@ -135,7 +135,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _buildField(context, 'LastName', profileState.user.lastName,
                 navigateToEditLastName),
             const SizedBox(height: 12),
-            _buildField(context, 'Location', profileState.user.location,
+            _buildField(context, 'Location', profileState.user.locationCity,
                 navigateToEditLocation),
             const SizedBox(height: 12),
             _buildField(context, 'Intéressé par',

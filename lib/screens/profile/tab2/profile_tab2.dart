@@ -36,7 +36,7 @@ Widget _buildListView(BuildContext context, ProfileState state) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ButtonsSection(state: state),
-          LocationSection(location: state.user.location),
+          LocationSection(location: state.user.locationCity),
           const SocialNetSection(),
           AboutSection(state: state),
         ],

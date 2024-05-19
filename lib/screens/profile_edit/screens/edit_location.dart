@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
+import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
@@ -23,6 +24,9 @@ class EditLocationScreen extends StatefulWidget {
 
 class _EditLocationScreenState extends State<EditLocationScreen> {
   final TextEditingController _locationController = TextEditingController();
+  String? selectedCountry;
+  String? selectedState;
+  String? selectedCity;
 
   @override
   void initState() {
@@ -81,6 +85,30 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                         },
                       ),
                       const SizedBox(height: 16.0),
+                      CSCPicker(
+                        onCountryChanged: (country) {
+                          setState(() {
+                            selectedCountry = country;
+                            selectedState = null;
+                            selectedCity = null;
+                          });
+                        },
+                        onStateChanged: (state) {
+                          setState(() {
+                            selectedState = state;
+                            selectedCity = null;
+                          });
+                        },
+                        onCityChanged: (city) {
+                          setState(() {
+                            selectedCity = city;
+                          });
+                          context
+                              .read<EditProfileCubit>()
+                              .locationChanged(city);
+                        },
+                      ),
+                      const SizedBox(height: 16.0),
                     ],
                   ),
                 );
@@ -101,9 +129,10 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,
       onPressed: () {
-        final currentlocation = _locationController.text.isEmpty
-            ? profileState.user.location
-            : _locationController.text;
+        final currentlocation = selectedCity ??
+            (_locationController.text.isEmpty
+                ? profileState.user.location
+                : _locationController.text);
         context.read<EditProfileCubit>().locationChanged(currentlocation);
         context.read<EditProfileCubit>().submitLocationChange();
       },

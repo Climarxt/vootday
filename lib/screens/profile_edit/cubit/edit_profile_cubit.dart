@@ -189,7 +189,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  void locationChanged(String location) {
+  void locationChanged(String? location) {
     emit(
       state.copyWith(location: location, status: EditProfileStatus.initial),
     );

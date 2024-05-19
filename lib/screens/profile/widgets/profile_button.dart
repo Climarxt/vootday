@@ -38,7 +38,7 @@ class ProfileButton extends StatelessWidget {
         ),
       ),
       child: Text(
-        AppLocalizations.of(context)!.translate('editProfile'),
+        AppLocalizations.of(context)!.translate('edit'),
         style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
       ),
     );

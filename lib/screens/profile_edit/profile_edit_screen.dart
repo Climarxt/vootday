@@ -114,19 +114,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             _buildField(context, 'Username', profileState.user.username,
                 navigateToEditUsername),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12),
             _buildField(context, 'FirstName', profileState.user.firstName,
                 navigateToEditfirstName),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12),
             _buildField(context, 'LastName', profileState.user.lastName,
                 navigateToEditLastName),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12),
             _buildField(context, 'Location', profileState.user.location,
                 navigateToEditLocation),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12),
             _buildField(context, 'Intéressé par',
                 profileState.user.selectedGender, navigateToEditInterestedIn),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 12),
             _buildField(
                 context, 'Bio', profileState.user.bio, navigateToEditBio),
           ],
@@ -143,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: Container(
         color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -173,7 +173,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, color: black, size: 16.0),
+                  const Icon(Icons.arrow_forward_ios, color: black, size: 16),
                 ],
               ),
             ),

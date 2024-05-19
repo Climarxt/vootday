@@ -59,7 +59,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     children: [
                       if (editState.status == EditProfileStatus.submitting)
                         const LinearProgressIndicator(),
-                      _buildProfileImage(context, profileState, editState),
+                      Column(
+                        children: [
+                          _buildProfileImage(context, profileState, editState),
+                        ],
+                      ),
                       _buildForm(context, profileState, editState),
                     ],
                   ),
@@ -94,11 +98,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           }
         }
       },
-      child: UserProfileImage(
-        radius: 80.0,
-        outerCircleRadius: 81,
-        profileImageUrl: profileState.user.profileImageUrl,
-        profileImage: editState.profileImage,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          UserProfileImage(
+            radius: 80.0,
+            outerCircleRadius: 81,
+            profileImageUrl: profileState.user.profileImageUrl,
+            profileImage: editState.profileImage,
+          ),
+          Icon(
+            Icons.edit,
+            color: Colors.white.withOpacity(0.6),
+            size: 30.0,
+          ),
+        ],
       ),
     );
   }

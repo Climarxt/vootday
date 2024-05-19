@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield_location.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +27,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
   String? selectedCountry;
   String? selectedState;
   String? selectedCity;
+  String? currentLocation;
 
   @override
   void initState() {
@@ -50,9 +51,18 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
-          if (profileState.status == ProfileStatus.loaded &&
-              _locationController.text.isEmpty) {
-            _locationController.text = profileState.user.location;
+          if (profileState.status == ProfileStatus.loaded) {
+            final location = profileState.user.location;
+            final locationState = profileState.user.locationState;
+            final locationCountry = profileState.user.locationCountry;
+            currentLocation = '$location, $locationState - $locationCountry';
+
+            debugPrint("DEBUG : Country - $locationCountry");
+            debugPrint("DEBUG : State - $locationState");
+            debugPrint("DEBUG : Location - $location");
+            debugPrint("DEBUG : currentLocation - $currentLocation");
+
+            _locationController.text = currentLocation!;
           }
 
           return Scaffold(
@@ -75,14 +85,9 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomTextField(
+                      CustomTextFieldLocation(
                         controller: _locationController,
                         labelText: 'Location',
-                        onChanged: (value) {
-                          context
-                              .read<EditProfileCubit>()
-                              .locationChanged(value);
-                        },
                       ),
                       const SizedBox(height: 16.0),
                       CSCPicker(

@@ -220,6 +220,70 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
+  void locationStateChanged(String? locationState) {
+    emit(
+      state.copyWith(
+          locationState: locationState, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitLocationStateChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(locationState: state.locationState);
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your location state.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void locationCountryChanged(String? locationCountry) {
+    emit(
+      state.copyWith(
+          locationCountry: locationCountry, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitLocationCountryChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(locationCountry: state.locationCountry);
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your location country.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   void profileImageChanged(File image) {
     emit(
       state.copyWith(profileImage: image, status: EditProfileStatus.initial),

@@ -12,6 +12,8 @@ class User extends Equatable {
   final String email;
   final String profileImageUrl;
   final String location;
+  final String locationState;
+  final String locationCountry;
   final int followers;
   final int following;
   final String bio;
@@ -26,6 +28,8 @@ class User extends Equatable {
     required this.email,
     required this.profileImageUrl,
     required this.location,
+    required this.locationState,
+    required this.locationCountry,
     required this.followers,
     required this.following,
     required this.bio,
@@ -41,6 +45,8 @@ class User extends Equatable {
     email: '',
     profileImageUrl: '',
     location: '',
+    locationState: '',
+    locationCountry: '',
     followers: 0,
     following: 0,
     bio: '',
@@ -57,6 +63,8 @@ class User extends Equatable {
         email,
         profileImageUrl,
         location,
+        locationState,
+        locationCountry,
         followers,
         following,
         bio,
@@ -72,6 +80,8 @@ class User extends Equatable {
     String? email,
     String? profileImageUrl,
     String? location,
+    String? locationState,
+    String? locationCountry,
     int? followers,
     int? following,
     String? bio,
@@ -86,6 +96,8 @@ class User extends Equatable {
       email: email ?? this.email,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       location: location ?? this.location,
+      locationState: locationState ?? this.locationState,
+      locationCountry: locationCountry ?? this.locationCountry,
       followers: followers ?? this.followers,
       following: following ?? this.following,
       bio: bio ?? this.bio,
@@ -103,6 +115,8 @@ class User extends Equatable {
       'lastName': lastName,
       'profileImageUrl': profileImageUrl,
       'location': location,
+      'locationState': locationState,
+      'locationCountry': locationCountry,
       'followers': followers,
       'following': following,
       'bio': bio,
@@ -134,6 +148,12 @@ class User extends Equatable {
       location: snap.data().toString().contains('location')
           ? snap.get('location')
           : '',
+      locationState: snap.data().toString().contains('locationState')
+          ? snap.get('locationState')
+          : '',
+      locationCountry: snap.data().toString().contains('locationCountry')
+          ? snap.get('locationCountry')
+          : '',
       followers: snap.data().toString().contains('followers')
           ? snap.get('followers')
           : 0,
@@ -162,6 +182,8 @@ class User extends Equatable {
       email: data['email'] ?? '',
       profileImageUrl: data['profileImageUrl'] ?? '',
       location: data['location'] ?? '',
+      locationState: data['locationState'] ?? '',
+      locationCountry: data['locationCountry'] ?? '',
       followers: (data['followers'] ?? 0).toInt(),
       following: (data['following'] ?? 0).toInt(),
       bio: data['bio'] ?? '',

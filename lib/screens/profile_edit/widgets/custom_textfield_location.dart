@@ -1,16 +1,14 @@
 import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextFieldLocation extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final ValueChanged<String> onChanged;
 
-  const CustomTextField({
+  const CustomTextFieldLocation({
     Key? key,
     required this.controller,
     required this.labelText,
-    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -38,7 +36,7 @@ class CustomTextField extends StatelessWidget {
             borderSide: BorderSide(color: Colors.black),
           ),
         ),
-        onChanged: onChanged,
+        enabled: false,
       ),
     );
   }

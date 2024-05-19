@@ -145,7 +145,6 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
             context.read<EditProfileCubit>().selectedGenderChanged(value!);
           },
         ),
-        const SizedBox(height: 24),
       ],
     );
   }

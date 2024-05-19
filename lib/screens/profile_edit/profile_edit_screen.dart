@@ -225,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
 // Navigates to the 'Edit Interested In' screen.
   void navigateToEditInterestedIn(BuildContext context) {
-    GoRouter.of(context).push('/editinterestedin');
+    GoRouter.of(context).push('/editprofile/editselectedgender');
   }
 
 // Navigates to the 'Edit Bio' screen.

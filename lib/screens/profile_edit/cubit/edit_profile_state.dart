@@ -8,6 +8,7 @@ class EditProfileState extends Equatable {
   final String firstName;
   final String lastName;
   final String bio;
+  final String selectedGender;
   final EditProfileStatus status;
   final Failure failure;
 
@@ -17,6 +18,7 @@ class EditProfileState extends Equatable {
     required this.firstName,
     required this.lastName,
     required this.bio,
+    required this.selectedGender,
     required this.status,
     required this.failure,
   });
@@ -28,6 +30,7 @@ class EditProfileState extends Equatable {
       firstName: '',
       lastName: '',
       bio: '',
+      selectedGender: '',
       status: EditProfileStatus.initial,
       failure: Failure(),
     );
@@ -40,6 +43,7 @@ class EditProfileState extends Equatable {
         firstName,
         lastName,
         bio,
+        selectedGender,
         status,
         failure,
       ];
@@ -50,6 +54,7 @@ class EditProfileState extends Equatable {
     String? firstName,
     String? lastName,
     String? bio,
+    String? selectedGender,
     EditProfileStatus? status,
     Failure? failure,
   }) {
@@ -59,6 +64,7 @@ class EditProfileState extends Equatable {
       firstName: firstName ?? this. firstName,
       lastName: lastName ?? this. lastName,
       bio: bio ?? this.bio,
+      selectedGender: selectedGender ?? this.selectedGender,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );

@@ -1,3 +1,4 @@
+
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart'
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/restart_app.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
 import 'package:bootdv2/screens/event/bloc/event_bloc.dart';
@@ -27,13 +29,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  // Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeDateFormatting('fr_FR', null);
-  runApp(const MyApp());
+  runApp(RestartWidget(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

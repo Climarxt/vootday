@@ -37,7 +37,7 @@ Widget _buildListView(BuildContext context, ProfileState state) {
         children: [
           ButtonsSection(state: state),
           LocationSection(location: state.user.locationCity),
-          const SocialNetSection(),
+          SocialNetSection(state: state),
           AboutSection(state: state),
         ],
       ),

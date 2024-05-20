@@ -12,6 +12,8 @@ class EditProfileState extends Equatable {
   final String locationCity;
   final String locationState;
   final String locationCountry;
+  final String socialInstagram;
+  final String socialTiktok;
   final EditProfileStatus status;
   final Failure failure;
 
@@ -25,6 +27,8 @@ class EditProfileState extends Equatable {
     required this.locationCity,
     required this.locationState,
     required this.locationCountry,
+    required this.socialInstagram,
+    required this.socialTiktok,
     required this.status,
     required this.failure,
   });
@@ -40,6 +44,8 @@ class EditProfileState extends Equatable {
       locationCity: '',
       locationState: '',
       locationCountry: '',
+      socialInstagram: '',
+      socialTiktok: '',
       status: EditProfileStatus.initial,
       failure: Failure(),
     );
@@ -56,6 +62,8 @@ class EditProfileState extends Equatable {
         locationCity,
         locationState,
         locationCountry,
+        socialInstagram,
+        socialTiktok,
         status,
         failure,
       ];
@@ -70,6 +78,8 @@ class EditProfileState extends Equatable {
     String? locationCity,
     String? locationState,
     String? locationCountry,
+    String? socialInstagram,
+    String? socialTiktok,
     EditProfileStatus? status,
     Failure? failure,
   }) {
@@ -83,6 +93,8 @@ class EditProfileState extends Equatable {
       locationCity: locationCity ?? this.locationCity,
       locationState: locationState ?? this.locationState,
       locationCountry: locationCountry ?? this.locationCountry,
+      socialInstagram: socialInstagram ?? this.socialInstagram,
+      socialTiktok: socialTiktok ?? this.socialTiktok,
       status: status ?? this.status,
       failure: failure ?? this.failure,
     );

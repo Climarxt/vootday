@@ -38,10 +38,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     _authSubscription = _authBloc.stream.listen((state) {
       if (state.user is AuthUserChanged) {
         if (state.user != null) {
-          add(ProfileLoadUser(userId: state.user!.uid));
+          _safeAdd(ProfileLoadUser(userId: state.user!.uid));
         }
       }
     });
+  }
+
+  void _safeAdd(ProfileEvent event) {
+    if (!isClosed) {
+      add(event);
+    }
   }
 
   void _onProfileLoadUser(
@@ -54,14 +60,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         .listen((posts) async {
       final allPosts = await Future.wait(posts);
 
-      add(ProfileUpdatePosts(posts: allPosts));
+      _safeAdd(ProfileUpdatePosts(posts: allPosts));
     });
 
     _userRepository.getUser(event.userId).listen((user) {
       if (isClosed) {
         return;
       }
-      add(UpdateProfile(user: user, userId: event.userId));
+      _safeAdd(UpdateProfile(user: user, userId: event.userId));
       state.copyWith(status: ProfileStatus.loading);
     });
   }
@@ -85,7 +91,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           .listen((posts) async {
         final allPosts = await Future.wait(posts);
 
-        add(ProfileUpdatePosts(posts: allPosts));
+        _safeAdd(ProfileUpdatePosts(posts: allPosts));
       });
 
       emit(state.copyWith(

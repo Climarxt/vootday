@@ -60,10 +60,11 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildField(
-                context, 'Instagram', profileState.user.socialInstagram, navigateToEditUsername),
+            _buildField(context, 'Instagram', profileState.user.socialInstagram,
+                navigateToEditLinkInstagram),
             const SizedBox(height: 12),
-            _buildField(context, 'Tiktok', profileState.user.socialTiktok, navigateToEditUsername),
+            _buildField(context, 'Tiktok', profileState.user.socialTiktok,
+                navigateToEditLinkTiktok),
           ],
         ),
       ),
@@ -118,8 +119,13 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
     );
   }
 
-  // Navigates to the 'Edit Username' screen.
-  void navigateToEditUsername(BuildContext context) {
+  // Navigates to the 'Edit Link Instagram' screen.
+  void navigateToEditLinkInstagram(BuildContext context) {
+    GoRouter.of(context).push('/editprofile/editlinks/instagram');
+  }
+
+  // Navigates to the 'Edit Link TikTok' screen.
+  void navigateToEditLinkTiktok(BuildContext context) {
     GoRouter.of(context).push('/editprofile/editusername');
   }
 }

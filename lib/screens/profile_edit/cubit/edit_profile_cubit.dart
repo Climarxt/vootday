@@ -411,4 +411,68 @@ class EditProfileCubit extends Cubit<EditProfileState> {
 
     return File(compressedImageFile.path);
   }
+
+  void socialInstagramChanged(String socialInstagram) {
+    emit(
+      state.copyWith(
+          socialInstagram: socialInstagram, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitSocialInstagramChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(socialInstagram: state.socialInstagram);
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your socialInstagram.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void socialTiktokChanged(String socialTiktok) {
+    emit(
+      state.copyWith(
+          socialTiktok: socialTiktok, status: EditProfileStatus.initial),
+    );
+  }
+
+  void submitSocialTiktokChange() async {
+    emit(state.copyWith(status: EditProfileStatus.submitting));
+    try {
+      final user = _profileBloc.state.user;
+      final updatedUser = user.copyWith(socialTiktok: state.socialTiktok);
+      await _userRepository.updateUser(user: updatedUser);
+      _profileBloc.add(ProfileLoadUser(userId: user.id));
+
+      if (!isClosed) {
+        emit(state.copyWith(status: EditProfileStatus.success));
+      }
+    } catch (err) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: EditProfileStatus.error,
+            failure: const Failure(
+              message: 'We were unable to update your socialTiktok.',
+            ),
+          ),
+        );
+      }
+    }
+  }
 }

@@ -63,13 +63,9 @@ class _FeedOOTDState extends State<FeedOOTD>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
-    debugPrint("DEBUG PRINT : $selectedGender");
     if (selectedGender == "Masculin") {
-      debugPrint("Executing Masculin code");
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          debugPrint(
-              "DEBUG PRINT : Déclenchement de FeedOOTDManFetchPostsOOTD");
           context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsOOTD());
         },
         builder: (context, state) {
@@ -82,11 +78,8 @@ class _FeedOOTDState extends State<FeedOOTD>
         },
       );
     } else if (selectedGender == "Féminin") {
-      debugPrint("Executing Féminin code");
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          debugPrint(
-              "DEBUG PRINT : Déclenchement de FeedOOTDFemaleFetchPostsOOTD");
           context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
         },
         builder: (context, state) {

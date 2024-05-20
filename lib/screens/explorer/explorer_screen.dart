@@ -84,7 +84,6 @@ class _ExplorerScreenState extends State<ExplorerScreen>
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
     if (selectedGender == "Masculin") {
-      debugPrint("Executing Masculin code");
       return BlocConsumer<ExplorerBloc, ExplorerState>(
         listener: (context, state) {
           context.read<ExplorerBloc>().add(ExplorerFetchPostsMan());
@@ -99,7 +98,6 @@ class _ExplorerScreenState extends State<ExplorerScreen>
         },
       );
     } else if (selectedGender == "Féminin") {
-      debugPrint("Executing Féminin code");
       return BlocConsumer<ExplorerBloc, ExplorerState>(
         listener: (context, state) {
           context.read<ExplorerBloc>().add(ExplorerFetchPostsWoman());

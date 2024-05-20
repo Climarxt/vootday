@@ -23,7 +23,7 @@ class SocialNetSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)!.translate('networks'),
+            AppLocalizations.of(context)!.translate('socialNetworks'),
             style: AppTextStyles.titleLargeBlackBold(context),
           ),
           const SizedBox(

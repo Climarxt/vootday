@@ -43,7 +43,7 @@ class _MosaiqueProfileCardState extends State<MosaiqueProfileCard> {
                 height: MediaQuery.of(context).size.height * 0.6,
                 width: MediaQuery.of(context).size.width,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(18),
                   child: CachedNetworkImage(
                     imageUrl: widget.post.thumbnailUrl,
                     fit: BoxFit.cover,

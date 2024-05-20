@@ -180,7 +180,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               followers: widget.state.user.followers,
               following: widget.state.user.following,
             ),
-            const SizedBox(height: 8), // Bottom space
+            const SizedBox(height: 6), // Bottom space
           ],
         ),
       ),

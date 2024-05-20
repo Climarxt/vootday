@@ -23,7 +23,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  
   @override
   void initState() {
     super.initState();
@@ -138,8 +137,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   Widget build(BuildContext context) {
     // Utiliser widget.state pour accéder à l'état passé à ProfileHeader
     return Container(
-      color: Colors
-          .white, // Assurez-vous que `Colors.white` est importé correctement
+      color: Colors.white,
       child: Center(
         child: Column(
           children: [
@@ -173,7 +171,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               followers: widget.state.user.followers,
               following: widget.state.user.following,
             ),
-            const SizedBox(height: 8), // Bottom space
+            const SizedBox(height: 6), // Bottom space
           ],
         ),
       ),

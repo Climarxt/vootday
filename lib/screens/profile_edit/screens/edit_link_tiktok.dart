@@ -19,13 +19,11 @@ class EditLinkTiktokScreen extends StatefulWidget {
   });
 
   @override
-  _EditLinkTiktokScreenState createState() =>
-      _EditLinkTiktokScreenState();
+  _EditLinkTiktokScreenState createState() => _EditLinkTiktokScreenState();
 }
 
 class _EditLinkTiktokScreenState extends State<EditLinkTiktokScreen> {
-  final TextEditingController _socialTiktokController =
-      TextEditingController();
+  final TextEditingController _socialTiktokController = TextEditingController();
 
   @override
   void initState() {
@@ -85,21 +83,9 @@ class _EditLinkTiktokScreenState extends State<EditLinkTiktokScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Redirigez les gens vers votre compte TikTok.",
+                        AppLocalizations.of(context)!
+                            .translate('redirectToTikTok'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
-                      ),
-                      const SizedBox(height: 16.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          final socialTiktok =
-                              _socialTiktokController.text.isNotEmpty
-                                  ? _socialTiktokController.text
-                                  : profileState.user.socialTiktok;
-                          final url = Uri.parse(
-                              'https://www.tiktok.com/@$socialTiktok/');
-                          _launchURL(url);
-                        },
-                        child: Text("Ouvrir Tiktok"),
                       ),
                     ],
                   ),

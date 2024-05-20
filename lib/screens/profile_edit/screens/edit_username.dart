@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +13,9 @@ class EditUsernameScreen extends StatefulWidget {
   final String userId;
 
   const EditUsernameScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditUsernameScreenState createState() => _EditUsernameScreenState();
@@ -50,7 +52,9 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit Username"),
+            appBar: AppBarEditProfile(
+              title: AppLocalizations.of(context)!.translate('editUsername'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -71,7 +75,8 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
                     children: [
                       CustomTextField(
                         controller: _usernameController,
-                        labelText: 'Username',
+                        labelText: AppLocalizations.of(context)!
+                            .translate('editUsername'),
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
@@ -80,7 +85,8 @@ class _EditUsernameScreenState extends State<EditUsernameScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Aidez les gens à trouver votre compte à l'aide de votre nom le plus connu, que ce soit votre nom complet, votre surnom ou votre nom d'entreprise.\n\nVous pouvez uniquement changer votre nom deux fois tous les 14 jours.",
+                        AppLocalizations.of(context)!
+                            .translate('helpFindUsername'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),

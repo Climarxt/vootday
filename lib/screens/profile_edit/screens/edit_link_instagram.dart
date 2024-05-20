@@ -85,22 +85,11 @@ class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Redirigez les gens vers votre compte Instagram.",
+                        AppLocalizations.of(context)!
+                            .translate('redirectToInstagram'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          final socialInstagram =
-                              _socialInstagramController.text.isNotEmpty
-                                  ? _socialInstagramController.text
-                                  : profileState.user.socialInstagram;
-                          final url = Uri.parse(
-                              'https://www.instagram.com/$socialInstagram/');
-                          _launchURL(url);
-                        },
-                        child: Text("Ouvrir Instagram"),
-                      ),
                     ],
                   ),
                 );

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield_location.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +61,9 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit location"),
+            appBar: AppBarEditProfile(
+              title: AppLocalizations.of(context)!.translate('editLocation'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -80,7 +84,8 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
                     children: [
                       CustomTextFieldLocation(
                         controller: _locationController,
-                        labelText: 'Location',
+                        labelText:
+                            AppLocalizations.of(context)!.translate('location'),
                       ),
                       const SizedBox(height: 16.0),
                     ],
@@ -127,7 +132,7 @@ class _EditLocationScreenState extends State<EditLocationScreen> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "Location",
+                AppLocalizations.of(context)!.translate('location'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme

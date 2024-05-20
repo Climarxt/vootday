@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +13,9 @@ class EditFirstnameScreen extends StatefulWidget {
   final String userId;
 
   const EditFirstnameScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditFirstnameScreenState createState() => _EditFirstnameScreenState();
@@ -50,7 +52,9 @@ class _EditFirstnameScreenState extends State<EditFirstnameScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit Firstname"),
+            appBar: AppBarEditProfile(
+              title: AppLocalizations.of(context)!.translate('editFirstName'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -71,7 +75,8 @@ class _EditFirstnameScreenState extends State<EditFirstnameScreen> {
                     children: [
                       CustomTextField(
                         controller: _firstnameController,
-                        labelText: 'Firstname',
+                        labelText: AppLocalizations.of(context)!
+                            .translate('firstName'),
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
@@ -80,7 +85,8 @@ class _EditFirstnameScreenState extends State<EditFirstnameScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Aidez les gens à trouver votre compte à l'aide de votre prénom.",
+                        AppLocalizations.of(context)!
+                            .translate('helpFindFirstName'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),

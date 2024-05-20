@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/restart_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +13,9 @@ class EditSelectedGenderScreen extends StatefulWidget {
   final String userId;
 
   const EditSelectedGenderScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditSelectedGenderScreenState createState() =>
@@ -45,7 +47,10 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit Gender"),
+            appBar: AppBarEditProfile(
+              title:
+                  AppLocalizations.of(context)!.translate('editInterestedIn'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -67,7 +72,7 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
                       _buildGenderDropdown(context, _selectedGender),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Sélectionnez le genre qui vous intéresse.",
+                        AppLocalizations.of(context)!.translate('selectGender'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),
@@ -115,27 +120,33 @@ class _EditSelectedGenderScreenState extends State<EditSelectedGenderScreen> {
     return Column(
       children: [
         DropdownButtonFormField(
-          decoration: const InputDecoration(
-            hintText: 'Genre',
-            labelText: 'Choisir un genre',
-            hintStyle: TextStyle(color: Colors.black),
-            labelStyle: TextStyle(color: Colors.black),
-            enabledBorder: UnderlineInputBorder(
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.translate('gender'),
+            labelText: AppLocalizations.of(context)!.translate('gender'),
+            hintStyle: const TextStyle(color: Colors.black),
+            labelStyle: const TextStyle(color: Colors.black),
+            enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.black),
             ),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
           value: selectedGender,
-          items: const [
+          items: [
             DropdownMenuItem(
               value: 'Masculin',
-              child: Text("Masculin"),
+              child: Text(
+                AppLocalizations.of(context)!.translate('male'),
+                style: AppTextStyles.titleSmallGrey(context),
+              ),
             ),
             DropdownMenuItem(
               value: 'Féminin',
-              child: Text("Féminin"),
+              child: Text(
+                AppLocalizations.of(context)!.translate('female'),
+                style: AppTextStyles.titleSmallGrey(context),
+              ),
             ),
           ],
           onChanged: (value) {

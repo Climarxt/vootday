@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +13,9 @@ class EditLastnameScreen extends StatefulWidget {
   final String userId;
 
   const EditLastnameScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditLastnameScreenState createState() => _EditLastnameScreenState();
@@ -50,7 +52,9 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit lastname"),
+            appBar: AppBarEditProfile(
+              title: AppLocalizations.of(context)!.translate('editLastName'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -71,7 +75,7 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
                     children: [
                       CustomTextField(
                         controller: _lastnameController,
-                        labelText: 'Lastname',
+                        labelText: AppLocalizations.of(context)!.translate('lastName'),
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
@@ -80,7 +84,7 @@ class _EditLastnameScreenState extends State<EditLastnameScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Aidez les gens à trouver votre compte à l'aide de votre nom.",
+                        AppLocalizations.of(context)!.translate('helpFindLastName'),
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),

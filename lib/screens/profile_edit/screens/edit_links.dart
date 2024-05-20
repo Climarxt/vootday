@@ -45,7 +45,9 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: const AppBarEditProfile(title: "Edit Links"),
+          appBar: AppBarEditProfile(
+            title: AppLocalizations.of(context)!.translate('editLinks'),
+          ),
           body: _buildForm(context, state),
         );
       },
@@ -100,7 +102,9 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
+                          value.isEmpty
+                              ? '${AppLocalizations.of(context)!.translate('add')} ${label.toLowerCase()}'
+                              : value,
                           style: value.isEmpty
                               ? AppTextStyles.bodyStyleGrey(context)
                               : AppTextStyles.bodyStyle(context),

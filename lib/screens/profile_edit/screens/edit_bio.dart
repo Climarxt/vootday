@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +13,9 @@ class EditBioScreen extends StatefulWidget {
   final String userId;
 
   const EditBioScreen({
-    Key? key,
+    super.key,
     required this.userId,
-  }) : super(key: key);
+  });
 
   @override
   _EditBioScreenState createState() => _EditBioScreenState();
@@ -50,7 +52,9 @@ class _EditBioScreenState extends State<EditBioScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarEditProfile(title: "Edit bio"),
+            appBar: AppBarEditProfile(
+              title: AppLocalizations.of(context)!.translate('editBio'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -73,9 +77,7 @@ class _EditBioScreenState extends State<EditBioScreen> {
                         controller: _bioController,
                         labelText: 'Bio',
                         onChanged: (value) {
-                          context
-                              .read<EditProfileCubit>()
-                              .bioChanged(value);
+                          context.read<EditProfileCubit>().bioChanged(value);
                         },
                       ),
                       const SizedBox(height: 16.0),

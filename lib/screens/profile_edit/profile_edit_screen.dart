@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,7 +46,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
           return Scaffold(
-            appBar: const AppBarProfile(title: "Edit Profile"),
+            appBar: AppBarProfile(
+              title: AppLocalizations.of(context)!.translate('editProfile'),
+            ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -126,26 +130,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildField(context, 'Username', profileState.user.username,
+            _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('username'),
+                profileState.user.username,
                 navigateToEditUsername),
             const SizedBox(height: 12),
-            _buildField(context, 'FirstName', profileState.user.firstName,
+            _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('firstName'),
+                profileState.user.firstName,
                 navigateToEditfirstName),
             const SizedBox(height: 12),
-            _buildField(context, 'LastName', profileState.user.lastName,
+            _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('lastName'),
+                profileState.user.lastName,
                 navigateToEditLastName),
             const SizedBox(height: 12),
-            _buildField(context, 'Location', profileState.user.locationCity,
+            _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('location'),
+                profileState.user.locationCity,
                 navigateToEditLocation),
             const SizedBox(height: 12),
-            _buildField(context, 'Intéressé par',
-                profileState.user.selectedGender, navigateToEditInterestedIn),
+            _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('interestedIn'),
+                profileState.user.selectedGender,
+                navigateToEditInterestedIn),
             const SizedBox(height: 12),
             _buildField(
                 context, 'Bio', profileState.user.bio, navigateToEditBio),
             const SizedBox(height: 12),
             _buildField(
-                context, 'Links', "Réseaux sociaux", navigateToEditLinks),
+                context,
+                AppLocalizations.of(context)!.translate('links'),
+                AppLocalizations.of(context)!.translate('socialNetworks'),
+                navigateToEditLinks),
           ],
         ),
       ),

@@ -518,11 +518,19 @@ class FeedRepository {
       }
 
       postsSnap = await _firebaseFirestore
-          .collection(Paths.posts)
-          .orderBy('likes', descending: true)
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.likes)
+          .orderBy('date', descending: true)
           .startAfterDocument(lastPostDoc)
-          .limit(2)
+          .limit(100)
           .get();
+    }
+
+    // Ajout du debugPrint pour afficher les IDs des posts récupérés
+    for (var doc in postsSnap.docs) {
+      debugPrint(
+          'getFeedMyLikes : Post ID - ${doc.id}, Post Ref - ${doc['post_ref']}');
     }
 
     List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {

@@ -42,13 +42,17 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppBarEditProfile(title: "Edit Links"),
-      body: _buildForm(context),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: const AppBarEditProfile(title: "Edit Links"),
+          body: _buildForm(context, state),
+        );
+      },
     );
   }
 
-  Widget _buildForm(BuildContext context) {
+  Widget _buildForm(BuildContext context, ProfileState profileState) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Form(
@@ -57,10 +61,9 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildField(
-                context, 'Username', 'Username', navigateToEditUsername),
+                context, 'Instagram', profileState.user.socialInstagram, navigateToEditUsername),
             const SizedBox(height: 12),
-            _buildField(
-                context, 'Username', 'Username', navigateToEditUsername),
+            _buildField(context, 'Tiktok', profileState.user.socialTiktok, navigateToEditUsername),
           ],
         ),
       ),

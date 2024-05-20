@@ -19,6 +19,8 @@ class User extends Equatable {
   final String bio;
   final String selectedGender;
   final String username_lowercase;
+  final String socialInstagram;
+  final String socialTiktok;
 
   const User({
     required this.id,
@@ -35,6 +37,8 @@ class User extends Equatable {
     required this.bio,
     required this.selectedGender,
     required this.username_lowercase,
+    required this.socialInstagram,
+    required this.socialTiktok,
   });
 
   static const empty = User(
@@ -52,6 +56,8 @@ class User extends Equatable {
     bio: '',
     selectedGender: '',
     username_lowercase: '',
+    socialInstagram: '',
+    socialTiktok: '',
   );
 
   @override
@@ -69,7 +75,9 @@ class User extends Equatable {
         following,
         bio,
         selectedGender,
-        username_lowercase
+        username_lowercase,
+        socialInstagram,
+        socialTiktok,
       ];
 
   User copyWith({
@@ -87,6 +95,8 @@ class User extends Equatable {
     String? bio,
     String? selectedGender,
     String? username_lowercase,
+    String? socialInstagram,
+    String? socialTiktok,
   }) {
     return User(
       id: id ?? this.id,
@@ -103,6 +113,8 @@ class User extends Equatable {
       bio: bio ?? this.bio,
       selectedGender: selectedGender ?? this.selectedGender,
       username_lowercase: username_lowercase ?? this.username_lowercase,
+      socialInstagram: socialInstagram ?? this.socialInstagram,
+      socialTiktok: socialTiktok ?? this.socialTiktok,
     );
   }
 
@@ -122,6 +134,8 @@ class User extends Equatable {
       'bio': bio,
       'selectedGender': selectedGender,
       'username_lowercase': username_lowercase,
+      'socialInstagram': socialInstagram,
+      'socialTiktok': socialTiktok,
     };
   }
 
@@ -167,6 +181,12 @@ class User extends Equatable {
       username_lowercase: snap.data().toString().contains('username_lowercase')
           ? snap.get('username_lowercase')
           : '',
+      socialInstagram: snap.data().toString().contains('socialInstagram')
+          ? snap.get('socialInstagram')
+          : '',
+      socialTiktok: snap.data().toString().contains('socialTiktok')
+          ? snap.get('socialTiktok')
+          : '',
     );
     return user;
   }
@@ -189,6 +209,8 @@ class User extends Equatable {
       bio: data['bio'] ?? '',
       selectedGender: data['selectedGender'] ?? '',
       username_lowercase: data['username_lowercase'] ?? '',
+      socialInstagram: data['socialInstagram'] ?? '',
+      socialTiktok: data['socialTiktok'] ?? '',
     );
   }
 }

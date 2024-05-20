@@ -28,7 +28,6 @@ import 'package:bootdv2/screens/profile_edit/screens/edit_selectedgender.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_username.dart';
 import 'package:bootdv2/screens/screens.dart';
 import 'package:bootdv2/screens/search/cubit/search_cubit.dart';
-import 'package:bootdv2/screens/search/searching_screen.dart';
 import 'package:bootdv2/screens/signup/cubit/signup_cubit.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -15,7 +15,7 @@ class MyCollectionCheckPostInCollection extends MyCollectionEvent {
   final String postId;
   final String collectionId;
 
-  MyCollectionCheckPostInCollection({
+  const MyCollectionCheckPostInCollection({
     required this.postId,
     required this.collectionId,
   });
@@ -28,7 +28,7 @@ class MyCollectionDeletePostRef extends MyCollectionEvent {
   final String postId;
   final String collectionId;
 
-  MyCollectionDeletePostRef({
+  const MyCollectionDeletePostRef({
     required this.postId,
     required this.collectionId,
   });

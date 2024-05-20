@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:io';
 import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
@@ -238,7 +238,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   .copyWith(color: Colors.white),
             ),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 
   // Navigates to the 'Edit Username' screen.

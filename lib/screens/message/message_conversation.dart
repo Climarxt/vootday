@@ -9,6 +9,8 @@ class MessageConversationScreen extends StatelessWidget {
     {'text': 'I am fine too.', 'isSentByMe': false},
   ];
 
+  MessageConversationScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final messageController = TextEditingController();
@@ -27,8 +29,8 @@ class MessageConversationScreen extends StatelessWidget {
                       ? Alignment.centerRight
                       : Alignment.centerLeft,
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: message['isSentByMe']
                           ? Colors.blue
@@ -63,7 +65,7 @@ class MessageConversationScreen extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () {
                     if (messageController.text.isNotEmpty) {
                       // Ajoutez le message envoyé par l'utilisateur

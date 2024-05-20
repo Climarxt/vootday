@@ -66,8 +66,7 @@ class UserProfileImage extends StatelessWidget {
         );
       }
     }
-    return SizedBox
-        .shrink(); // Retourne un widget vide si aucune image n'est fournie
+    return const SizedBox.shrink();
   }
 
   Widget? getNoProfileIcon() {

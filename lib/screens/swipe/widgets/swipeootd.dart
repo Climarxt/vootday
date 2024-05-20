@@ -32,11 +32,11 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   late double verticalThresholdPercentageSave;
   late final UserRepository _userRepository;
   late Future<User> _userDetailsFuture;
-  List<Post> _posts1 = [];
-  List<Post> _posts2 = [];
+  final List<Post> _posts1 = [];
+  final List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
-  bool _hasShownBottomSheet = false;
+  final bool _hasShownBottomSheet = false;
 
   @override
   void initState() {
@@ -204,7 +204,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
                 placeholder: (context, url) => const CircularProgressIndicator(
                     valueColor:
                         AlwaysStoppedAnimation<Color>(Colors.transparent)),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
           ),

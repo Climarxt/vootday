@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
@@ -19,7 +17,7 @@ class SwipeEventBloc extends Bloc<SwipeEventEvent, SwipeEventState> {
     required AuthBloc authBloc,
   })  : _swipeRepository = swipeRepository,
         _authBloc = authBloc,
-        super(SwipeEventState.initial()) {
+        super(const SwipeEventState.initial()) {
     on<SwipeEventWomanFetchPosts>(_onSwipeEventWomanFetchPosts);
     on<SwipeEventManFetchPosts>(_onSwipeEventManFetchPosts);
   }

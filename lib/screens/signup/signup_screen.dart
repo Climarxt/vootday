@@ -15,14 +15,11 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: BlocConsumer<SignupCubit, SignupState>(
-          listener: _signupStateListener,
-          builder: (context, state) => _buildSignupForm(context, state),
-        ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: BlocConsumer<SignupCubit, SignupState>(
+        listener: _signupStateListener,
+        builder: (context, state) => _buildSignupForm(context, state),
       ),
     );
   }

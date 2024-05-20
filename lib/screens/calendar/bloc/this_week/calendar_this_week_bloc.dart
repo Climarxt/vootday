@@ -3,6 +3,7 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 part 'calendar_this_week_event.dart';
 part 'calendar_this_week_state.dart';
@@ -24,22 +25,22 @@ class CalendarThisWeekBloc
     Emitter<CalendarThisWeekState> emit,
   ) async {
     try {
-      print('CalendarThisWeekFetchEvent : Fetching this week events...');
+      debugPrint('CalendarThisWeekFetchEvent : Fetching this week events...');
       final thisWeekEvents = await _eventRepository.getThisWeekEvents();
 
       if (thisWeekEvents.isNotEmpty) {
-        print(
+        debugPrint(
             'CalendarThisWeekFetchEvent : This week events fetched successfully.');
         emit(state.copyWith(
             thisWeekEvents: thisWeekEvents,
             status: CalendarThisWeekStatus.loaded));
       } else {
-        print('CalendarThisWeekFetchEvent : No events found for this week.');
+        debugPrint('CalendarThisWeekFetchEvent : No events found for this week.');
         emit(state.copyWith(
             thisWeekEvents: [], status: CalendarThisWeekStatus.noEvents));
       }
     } catch (err) {
-      print('CalendarThisWeekFetchEvent : Error fetching events - $err');
+      debugPrint('CalendarThisWeekFetchEvent : Error fetching events - $err');
       emit(state.copyWith(
         status: CalendarThisWeekStatus.error,
         failure: const Failure(message: 'Unable to load the events'),

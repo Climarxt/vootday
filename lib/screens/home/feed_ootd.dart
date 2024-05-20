@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
@@ -20,18 +19,23 @@ class FeedOOTD extends StatefulWidget {
 class _FeedOOTDState extends State<FeedOOTD>
     with AutomaticKeepAliveClientMixin<FeedOOTD> {
   final TextEditingController _textController = TextEditingController();
-  late final String currentUserId;
+  late final String? currentUserId;
   late final UserRepository _userRepository;
-  late Future<User> _userDetailsFuture;
+  late Future<User>? _userDetailsFuture;
 
   @override
   void initState() {
     super.initState();
     _userRepository = UserRepository();
 
-    // Prépare le future pour récupérer les détails de l'utilisateur
-    _userDetailsFuture = _userRepository
-        .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
+    final authState = context.read<AuthBloc>().state;
+    final user = authState.user;
+
+    if (user != null) {
+      _userDetailsFuture = _userRepository.fetchUserDetails(user.uid);
+    } else {
+      _userDetailsFuture = null;
+    }
   }
 
   @override
@@ -43,6 +47,12 @@ class _FeedOOTDState extends State<FeedOOTD>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    if (_userDetailsFuture == null) {
+      return const Scaffold(
+        body: Center(child: Text("User not logged in")),
+      );
+    }
 
     return FutureBuilder<User>(
       future: _userDetailsFuture,
@@ -175,7 +185,6 @@ class _FeedOOTDState extends State<FeedOOTD>
     }
   }
 
-// Overridden to retain the state
   @override
   bool get wantKeepAlive => true;
 }

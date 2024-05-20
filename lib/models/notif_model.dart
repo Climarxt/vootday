@@ -3,7 +3,6 @@ import 'package:bootdv2/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:equatable/equatable.dart';
-import 'package:bootdv2/config/enums/enums.dart';
 
 class Notif extends Equatable {
   final String? id;

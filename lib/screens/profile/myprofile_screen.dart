@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/profiles.dart';
@@ -5,7 +7,6 @@ import 'package:bootdv2/screens/profile/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class MyProfileScreen extends StatefulWidget {
   final String userId;
@@ -78,7 +79,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         MyProfileTab3(
                           tabController: _tabController,
                         ),
-                        MyProfileTab4(),
+                        const MyProfileTab4(),
                       ],
                     )),
               ),
@@ -185,9 +186,5 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         ),
       ),
     );
-  }
-
-  void _navigateToCreatePostScreen(BuildContext context) {
-    GoRouter.of(context).push('/profile/create');
   }
 }

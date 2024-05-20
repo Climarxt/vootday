@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 

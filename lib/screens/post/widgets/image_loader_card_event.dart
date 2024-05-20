@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -7,11 +9,11 @@ class ImageLoaderCardEvent extends StatefulWidget {
   final double height;
 
   const ImageLoaderCardEvent({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.width,
     required this.height,
-  }) : super(key: key);
+  });
 
   @override
   _ImageLoaderCardEventState createState() => _ImageLoaderCardEventState();

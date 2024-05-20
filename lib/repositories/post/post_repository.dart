@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_debugPrint
 
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/models/collection_model.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -12,7 +12,7 @@ class CreateCollectionState extends Equatable {
   });
 
   factory CreateCollectionState.initial() {
-    return CreateCollectionState(
+    return const CreateCollectionState(
       status: CreateCollectionStatus.initial,
       failure: Failure(),
     );

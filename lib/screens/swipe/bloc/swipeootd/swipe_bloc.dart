@@ -19,7 +19,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> {
     required AuthBloc authBloc,
   })  : _swipeRepository = swipeRepository,
         _authBloc = authBloc,
-        super(SwipeState.initial()) {
+        super(const SwipeState.initial()) {
     on<SwipeFetchPostsOOTDWoman>(_onSwipeFetchPostsOOTDWoman);
     on<SwipeFetchPostsOOTDMan>(_onSwipeFetchPostsOOTDMan);
   }

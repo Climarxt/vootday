@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class AppBarTitleLogoOption extends StatelessWidget
     implements PreferredSizeWidget {
@@ -48,7 +47,8 @@ class AppBarTitleLogoOption extends StatelessWidget
     );
   }
 
-  void _navigateToEventScreen(BuildContext context) {
+  /* void _navigateToEventScreen(BuildContext context) {
     GoRouter.of(context).push('/feedevent/$eventId/event', extra: eventId);
   }
+  */
 }

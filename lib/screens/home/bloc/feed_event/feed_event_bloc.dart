@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
 import '/repositories/repositories.dart';
 
@@ -34,14 +35,14 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     if (state.hasFetchedInitialPosts) {
       return; // Si les données initiales sont déjà chargées, ne rien faire
     }
-    print('In _mapFeedEventFetchPostsEvent with eventId: ${event.eventId}');
+    debugPrint('In _mapFeedEventFetchPostsEvent with eventId: ${event.eventId}');
     try {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
-      print('FeedEventBloc: Fetching posts for user $userId.');
+      debugPrint('FeedEventBloc: Fetching posts for user $userId.');
 
       // Retrieve the event details
       final Event? eventDetails =
@@ -49,14 +50,14 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
       if (eventDetails == null) {
         throw Exception("Event with id ${event.eventId} does not exist.");
       }
-      print('FeedEventBloc: Retrieved event details for ${event.eventId}.');
+      debugPrint('FeedEventBloc: Retrieved event details for ${event.eventId}.');
 
       // Continue with fetching posts
       final posts = await _feedRepository.getFeedEvent(
         userId: userId,
         eventId: event.eventId,
       );
-      print('FeedEventBloc: Fetched ${posts.length} posts.');
+      debugPrint('FeedEventBloc: Fetched ${posts.length} posts.');
 
       // Emit the new state with the posts and event details
       emit(state.copyWith(
@@ -65,9 +66,9 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
         event: eventDetails, // Pass the retrieved Event object here
         hasFetchedInitialPosts: true, // Set this flag to true after fetching
       ));
-      print('FeedEventBloc: Posts loaded successfully.');
+      debugPrint('FeedEventBloc: Posts loaded successfully.');
     } catch (err) {
-      print('FeedEventBloc: Error fetching posts - ${err.toString()}');
+      debugPrint('FeedEventBloc: Error fetching posts - ${err.toString()}');
       emit(state.copyWith(
         status: FeedEventStatus.error,
         failure: Failure(
@@ -82,18 +83,18 @@ class FeedEventBloc extends Bloc<FeedEventEvent, FeedEventState> {
     Emitter<FeedEventState> emit,
   ) async {
     try {
-      print(
+      debugPrint(
           '_onFeedEventFetchEventDetails : Fetching event details for event ID: ${event.eventId}');
       final eventDetails = await _eventRepository.getEventById(event.eventId);
-      print(
+      debugPrint(
           '_onFeedEventFetchEventDetails : Fetched event details: $eventDetails');
       emit(state.copyWith(
           event: eventDetails)); // Mettez à jour l'état avec l'Event
     } catch (_) {
-      print('_onFeedEventFetchEventDetails : Error loading event details');
+      debugPrint('_onFeedEventFetchEventDetails : Error loading event details');
       emit(state.copyWith(
         status: FeedEventStatus.error,
-        failure: Failure(
+        failure: const Failure(
             message:
                 '_onFeedEventFetchEventDetails : Erreur de chargement des détails de l\'événement'),
       ));

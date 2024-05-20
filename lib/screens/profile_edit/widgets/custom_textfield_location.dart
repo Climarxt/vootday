@@ -6,22 +6,22 @@ class CustomTextFieldLocation extends StatelessWidget {
   final String labelText;
 
   const CustomTextFieldLocation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.labelText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: 50.0, // Hauteur minimale du champ de texte
+      constraints: const BoxConstraints(
+        minHeight: 50.0,
       ),
       child: TextField(
         cursorColor: couleurBleuClair2,
         style: AppTextStyles.titleSmallGrey(context),
         controller: controller,
-        maxLines: null, // Permet au TextField de s'agrandir verticalement
+        maxLines: null,
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(color: Colors.black),

@@ -207,7 +207,8 @@ class EventRepository {
             .get();
 
         if (!lastEventDoc.exists) {
-          debugPrint('getEventsWomanDone : Last event document does not exist.');
+          debugPrint(
+              'getEventsWomanDone : Last event document does not exist.');
           return [];
         }
 
@@ -320,7 +321,7 @@ class EventRepository {
           'getThisWeekEvents: Attempting to fetch events from Firestore for the current week.');
 
       DateTime now = DateTime.now();
-      DateTime oneWeekFromNow = now.add(Duration(days: 7));
+      DateTime oneWeekFromNow = now.add(const Duration(days: 7));
 
       QuerySnapshot eventSnap = await FirebaseFirestore.instance
           .collection('events')
@@ -355,7 +356,7 @@ class EventRepository {
           'getComingSoonEvents: Attempting to fetch future events from Firestore.');
 
       DateTime now = DateTime.now();
-      DateTime oneWeekFromNow = now.add(Duration(days: 7));
+      DateTime oneWeekFromNow = now.add(const Duration(days: 7));
 
       QuerySnapshot eventSnap = await FirebaseFirestore.instance
           .collection('events')

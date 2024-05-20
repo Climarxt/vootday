@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 class ImageLoaderPostEvent extends StatefulWidget {
@@ -6,11 +8,11 @@ class ImageLoaderPostEvent extends StatefulWidget {
   final double height;
 
   const ImageLoaderPostEvent({
-    Key? key,
+    super.key,
     required this.imageProvider,
     required this.width,
     required this.height,
-  }) : super(key: key);
+  });
 
   @override
   _ImageLoaderPostEventState createState() => _ImageLoaderPostEventState();

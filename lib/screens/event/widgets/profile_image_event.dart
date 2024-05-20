@@ -82,7 +82,7 @@ class ProfileImageEvent extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       // Gérez l'événement de clic ici, par exemple, naviguez vers un écran de recherche avec le tag.
-                      print('Tag "$tag" a été cliqué');
+                      debugPrint('Tag "$tag" a été cliqué');
                     },
                     child: Text(
                       '#$tag ',

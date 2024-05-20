@@ -201,7 +201,7 @@ Widget buildActionIcons(
     Animation<double> animation,
     AnimationController controller) {
   final authState = context.read<AuthBloc>().state;
-  final _userId = authState.user?.uid;
+  final userId = authState.user?.uid;
   return Column(
     children: [
       buildIconButton(Icons.more_vert, () => showBottomSheet(context)),
@@ -209,7 +209,7 @@ Widget buildActionIcons(
       buildIconButton(Icons.share, () => showBottomSheetShare(context)),
       buildIconButton(
           Icons.add_to_photos, () => addToLikesThenShowCollections(state)),
-      buildFavoriteButton(context, postId, _userId!, animation, controller),
+      buildFavoriteButton(context, postId, userId!, animation, controller),
     ],
   );
 }

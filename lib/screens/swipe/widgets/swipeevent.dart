@@ -4,7 +4,8 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart' as bloc;
+import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart'
+    as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +32,11 @@ class _SwipeEventState extends State<SwipeEvent>
   late double verticalThresholdPercentageSave;
   late final UserRepository _userRepository;
   late Future<User> _userDetailsFuture;
-  List<Post> _posts1 = [];
-  List<Post> _posts2 = [];
+  final List<Post> _posts1 = [];
+  final List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
-  bool _hasShownBottomSheet = false;
+  final bool _hasShownBottomSheet = false;
 
   @override
   void initState() {
@@ -198,7 +199,6 @@ class _SwipeEventState extends State<SwipeEvent>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (shouldAnimateUp || shouldAnimatetDown) {
         _heartAnimationController.repeat(reverse: true);
-        ;
       } else {
         _heartAnimationController.reset();
       }

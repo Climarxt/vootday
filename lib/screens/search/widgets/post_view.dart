@@ -239,6 +239,5 @@ class _PostViewState extends State<PostView>
   void _navigateToUserScreen(BuildContext context) {
     GoRouter.of(context).push(
         '/user/${widget.post.author.id}?username=${widget.post.author.username}');
-    ;
   }
 }

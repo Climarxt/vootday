@@ -8,7 +8,6 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
 import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EditLinkTiktokScreen extends StatefulWidget {
   final String userId;
@@ -123,13 +122,5 @@ class _EditLinkTiktokScreenState extends State<EditLinkTiktokScreen> {
             .copyWith(color: Colors.white),
       ),
     );
-  }
-
-  Future<void> _launchURL(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

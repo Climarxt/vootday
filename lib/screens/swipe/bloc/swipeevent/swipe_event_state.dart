@@ -13,12 +13,12 @@ class SwipeEventState extends Equatable {
     this.error = '',
   });
 
-  SwipeEventState.initial() : this._();
+  const SwipeEventState.initial() : this._();
 
-  SwipeEventState.loaded(List<Post> posts)
+  const SwipeEventState.loaded(List<Post> posts)
       : this._(status: SwipeEventStatus.loaded, posts: posts);
 
-  SwipeEventState.error(String error)
+  const SwipeEventState.error(String error)
       : this._(status: SwipeEventStatus.error, error: error);
 
   @override

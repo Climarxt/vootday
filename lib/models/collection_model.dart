@@ -27,6 +27,7 @@ class Collection extends Equatable {
     public: true,
   );
 
+  @override
   List<Object?> get props => [id, author, date, title, public];
 
   Collection copyWith({

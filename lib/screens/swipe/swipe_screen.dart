@@ -36,7 +36,7 @@ class _SwipeScreenState extends State<SwipeScreen>
 
   Widget _buildBody() {
     return TabBarView(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       controller: _tabController,
       children: const [
         SwipeOOTD(),

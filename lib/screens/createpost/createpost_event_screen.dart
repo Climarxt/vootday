@@ -177,7 +177,7 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
     }
   }
 
-  // Builds the brand ListTile
+  /* Builds the brand ListTile
   Widget _buildBrandInput(BuildContext context) {
     return ListTile(
       trailing: Row(
@@ -199,6 +199,7 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
           .go('/profile/create/brand', extra: context.read<CreatePostCubit>()),
     );
   }
+  */
 
   // Resets the form
   void _resetForm(BuildContext context) {

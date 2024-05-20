@@ -23,8 +23,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: !(currentLocation == '/profile/create' ||
               currentLocation == '/profile/create/brand' ||
               currentLocation.endsWith('/create'))
-          ? Container(
-              height: 82, // Adjusted height for reduced padding
+          ? SizedBox(
+              height: 82,
               child: BottomNavigationBar(
                 selectedFontSize: 0,
                 items: [

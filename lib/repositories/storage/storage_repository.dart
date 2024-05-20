@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import '/repositories/storage/base_storage_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -51,7 +52,7 @@ class StorageRepository extends BaseStorageRepository {
       if (match != null && match.groupCount > 0) {
         imageId = match[1]!;
       } else {
-        print('No match found for the URL: $url');
+        debugPrint('No match found for the URL: $url');
       }
     }
 
@@ -59,7 +60,7 @@ class StorageRepository extends BaseStorageRepository {
       image: image,
       ref: 'images/users/userProfile_$imageId.jpg',
     );
-    print('Upload successful. New URL: $downloadUrl');
+    debugPrint('Upload successful. New URL: $downloadUrl');
     return downloadUrl;
   }
 

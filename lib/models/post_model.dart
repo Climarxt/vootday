@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class Post extends Equatable {
   final String? id;
@@ -118,15 +121,15 @@ class Post extends Equatable {
             selectedGender: data['selectedGender'] ?? '',
           );
         } else {
-          print(
+          debugPrint(
               'Class POST fromDocument : Author document does not exist for doc ID: ${doc.id}');
         }
       } else {
-        print(
+        debugPrint(
             'Class POST fromDocument : Author reference is null for doc ID: ${doc.id}');
       }
     } catch (e) {
-      print(
+      debugPrint(
           'Class POST fromDocument : Error in fromDocument for doc ID: ${doc.id}: $e');
     }
 

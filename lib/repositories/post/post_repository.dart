@@ -37,13 +37,16 @@ class PostRepository extends BasePostRepository {
     debugPrint(
         'deletePost : Suppression terminée pour le post avec ID: $postId');
 
-// Suppression des références du post dans les collections userFeed
-    await _deletePostReferencesInUserFeeds(batch, postRef);
+    // Créer un nouveau batch pour les suppressions des feeds des utilisateurs
+    WriteBatch userFeedBatch = _firebaseFirestore.batch();
 
-// Exécution du batch pour effectuer toutes les suppressions
+    // Suppression des références du post dans les collections userFeed
+    await _deletePostReferencesInUserFeeds(userFeedBatch, postRef);
+
+    // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
-        'deletePost : Exécution du batch pour la suppression du post et des références associées');
-    await batch.commit();
+        'deletePost : Exécution du batch pour la suppression des références de feed des utilisateurs');
+    await userFeedBatch.commit();
     debugPrint(
         'deletePost : Suppression terminée pour le post avec ID: $postId');
   }

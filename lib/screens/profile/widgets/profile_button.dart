@@ -98,7 +98,7 @@ class ProfileButton extends StatelessWidget {
     return SizedBox(
       width: 160, // Fixed width for consistency
       child: TextButton(
-        onPressed: () => GoRouter.of(context).go('/profile/create'),
+        onPressed: () => GoRouter.of(context).push('/message'),
         style: TextButton.styleFrom(
           minimumSize: Size.zero,
           backgroundColor: grey,

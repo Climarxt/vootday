@@ -11,6 +11,7 @@ import 'package:bootdv2/screens/comment/comments_event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
+import 'package:bootdv2/screens/message/message_conversation.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/myprofile_screen.dart';
 import 'package:bootdv2/screens/profile/profile_screen.dart';
@@ -91,6 +92,19 @@ GoRouter createRouter(BuildContext context) {
               SignupCubit(authRepository: context.read<AuthRepository>()),
           child: SignupScreen(),
         ),
+      ),
+      // Message
+      GoRoute(
+        path: '/message',
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return MaterialPage<void>(
+            key: state.pageKey,
+            child: BlocProviderConfig.getProfileMultiBlocProvider(
+              context,
+              MessageConversationScreen(),
+            ),
+          );
+        },
       ),
       // FeedEvent
       GoRoute(
@@ -213,7 +227,7 @@ GoRouter createRouter(BuildContext context) {
           );
         },
       ),
-// EditProfile
+      // EditProfile
       GoRoute(
         path: '/editprofile',
         builder: (BuildContext context, GoRouterState state) {

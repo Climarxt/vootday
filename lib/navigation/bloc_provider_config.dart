@@ -254,6 +254,7 @@ class BlocProviderConfig {
           postRepository: context.read<PostRepository>(),
           eventRepository: context.read<EventRepository>(),
           storageRepository: context.read<StorageRepository>(),
+          userRepository: context.read<UserRepository>(),
           authBloc: context.read<AuthBloc>(),
         );
         return createPostBloc;

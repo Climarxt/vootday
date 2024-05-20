@@ -13,17 +13,20 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   final PostRepository _postRepository;
   final EventRepository _eventRepository;
   final StorageRepository _storageRepository;
+  final UserRepository _userRepository;
   final AuthBloc _authBloc;
 
   CreatePostCubit({
     required PostRepository postRepository,
     required EventRepository eventRepository,
     required StorageRepository storageRepository,
+    required UserRepository userRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
         _eventRepository = eventRepository,
         _storageRepository = storageRepository,
         _authBloc = authBloc,
+        _userRepository = userRepository,
         super(CreatePostState.initial());
 
   Future<File> compressImage(File imageFile, {int quality = 90}) async {
@@ -82,7 +85,11 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   void submit() async {
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
-      final author = User.empty.copyWith(id: _authBloc.state.user!.uid);
+      final userId = _authBloc.state.user!.uid;
+      final user = await _userRepository.fetchUserDetails(userId);
+
+      final author = User.empty.copyWith(id: userId);
+      final selectedGender = user.selectedGender;
 
       // Compress and upload the original image
       final compressedImage = await compressImage(state.postImage!);
@@ -100,14 +107,15 @@ class CreatePostCubit extends Cubit<CreatePostState> {
           thumbnailImageBytes: thumbnailImageBytes);
 
       final post = Post(
-          author: author,
-          imageUrl: postImageUrl,
-          thumbnailUrl: thumbnailImageUrl,
-          caption: state.caption,
-          likes: 0,
-          date: DateTime.now(),
-          tags: state.tags,
-          selectedGender: author.selectedGender);
+        author: author,
+        imageUrl: postImageUrl,
+        thumbnailUrl: thumbnailImageUrl,
+        caption: state.caption,
+        likes: 0,
+        date: DateTime.now(),
+        tags: state.tags,
+        selectedGender: selectedGender,
+      );
 
       await _postRepository.createPost(post: post);
 

@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:io';
+import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -8,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_profile.dart';
 import 'package:bootdv2/widgets/widgets.dart';
 import 'cubit/edit_profile_cubit.dart';
 
@@ -46,7 +46,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
           return Scaffold(
-            appBar: AppBarProfile(
+            appBar: AppBarEditProfile(
               title: AppLocalizations.of(context)!.translate('editProfile'),
             ),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(

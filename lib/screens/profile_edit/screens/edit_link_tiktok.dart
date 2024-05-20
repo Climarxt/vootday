@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_links.dart';
+import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
 import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,7 +53,7 @@ class _EditLinkTiktokScreenState extends State<EditLinkTiktokScreen> {
           }
 
           return Scaffold(
-            appBar: const AppBarLinks(title: "TikTok"),
+            appBar: const AppBarEditProfile(title: "TikTok"),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {

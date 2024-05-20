@@ -51,5 +51,12 @@
 		<string>Nous avons besoin d'accéder à votre galerie pour choisir des photos.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>Nous avons besoin de la permission pour sauvegarder des photos dans votre galerie.</string>
+
+		<!-- URL Schemes -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>http</string>
+			<string>https</string>
+		</array>
 	</dict>
 </plist>

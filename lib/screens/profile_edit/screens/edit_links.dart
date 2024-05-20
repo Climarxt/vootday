@@ -126,6 +126,6 @@ class _EditLinksScreenState extends State<EditLinksScreen> {
 
   // Navigates to the 'Edit Link TikTok' screen.
   void navigateToEditLinkTiktok(BuildContext context) {
-    GoRouter.of(context).push('/editprofile/editusername');
+    GoRouter.of(context).push('/editprofile/editlinks/tiktok');
   }
 }

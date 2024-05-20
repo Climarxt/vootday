@@ -20,6 +20,7 @@ import 'package:bootdv2/screens/profile_edit/screens/edit_bio.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_firstname.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_lastname.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_link_instagram.dart';
+import 'package:bootdv2/screens/profile_edit/screens/edit_link_tiktok.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_links.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_location.dart';
 import 'package:bootdv2/screens/profile_edit/screens/edit_selectedgender.dart';
@@ -307,6 +308,16 @@ GoRouter createRouter(BuildContext context) {
                   return BlocProviderConfig.getEditProfileMultiBlocProvider(
                     context,
                     EditLinkInstagramScreen(userId: userId),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'tiktok',
+                builder: (BuildContext context, GoRouterState state) {
+                  final userId = authBloc.state.user!.uid;
+                  return BlocProviderConfig.getEditProfileMultiBlocProvider(
+                    context,
+                    EditLinkTiktokScreen(userId: userId),
                   );
                 },
               ),

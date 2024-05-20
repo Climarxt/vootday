@@ -10,21 +10,21 @@ import 'package:bootdv2/screens/profile_edit/widgets/error_dialog.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EditLinkInstagramScreen extends StatefulWidget {
+class EditLinkTiktokScreen extends StatefulWidget {
   final String userId;
 
-  const EditLinkInstagramScreen({
+  const EditLinkTiktokScreen({
     super.key,
     required this.userId,
   });
 
   @override
-  _EditLinkInstagramScreenState createState() =>
-      _EditLinkInstagramScreenState();
+  _EditLinkTiktokScreenState createState() =>
+      _EditLinkTiktokScreenState();
 }
 
-class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
-  final TextEditingController _socialInstagramController =
+class _EditLinkTiktokScreenState extends State<EditLinkTiktokScreen> {
+  final TextEditingController _socialTiktokController =
       TextEditingController();
 
   @override
@@ -39,7 +39,7 @@ class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
 
   @override
   void dispose() {
-    _socialInstagramController.dispose();
+    _socialTiktokController.dispose();
     super.dispose();
   }
 
@@ -50,12 +50,12 @@ class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, profileState) {
           if (profileState.status == ProfileStatus.loaded &&
-              _socialInstagramController.text.isEmpty) {
-            _socialInstagramController.text = profileState.user.socialInstagram;
+              _socialTiktokController.text.isEmpty) {
+            _socialTiktokController.text = profileState.user.socialTiktok;
           }
 
           return Scaffold(
-            appBar: const AppBarLinks(title: "Instagram"),
+            appBar: const AppBarLinks(title: "TikTok"),
             body: BlocConsumer<EditProfileCubit, EditProfileState>(
               listener: (context, state) {
                 if (state.status == EditProfileStatus.success) {
@@ -75,31 +75,31 @@ class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
-                        controller: _socialInstagramController,
-                        labelText: 'Instagram',
+                        controller: _socialTiktokController,
+                        labelText: 'TikTok',
                         onChanged: (value) {
                           context
                               .read<EditProfileCubit>()
-                              .socialInstagramChanged(value);
+                              .socialTiktokChanged(value);
                         },
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        "Redirigez les gens vers votre compte Instagram.",
+                        "Redirigez les gens vers votre compte TikTok.",
                         style: AppTextStyles.bodySmallStyleGrey(context),
                       ),
                       const SizedBox(height: 16.0),
                       ElevatedButton(
                         onPressed: () {
-                          final socialInstagram =
-                              _socialInstagramController.text.isNotEmpty
-                                  ? _socialInstagramController.text
-                                  : profileState.user.socialInstagram;
+                          final socialTiktok =
+                              _socialTiktokController.text.isNotEmpty
+                                  ? _socialTiktokController.text
+                                  : profileState.user.socialTiktok;
                           final url = Uri.parse(
-                              'https://www.instagram.com/$socialInstagram/');
+                              'https://www.tiktok.com/@$socialTiktok/');
                           _launchURL(url);
                         },
-                        child: Text("Ouvrir Instagram"),
+                        child: Text("Ouvrir Tiktok"),
                       ),
                     ],
                   ),
@@ -121,13 +121,13 @@ class _EditLinkInstagramScreenState extends State<EditLinkInstagramScreen> {
     return FloatingActionButton.extended(
       backgroundColor: couleurBleuClair2,
       onPressed: () {
-        final currentsocialInstagram = _socialInstagramController.text.isEmpty
-            ? profileState.user.socialInstagram
-            : _socialInstagramController.text;
+        final currentsocialTiktok = _socialTiktokController.text.isEmpty
+            ? profileState.user.socialTiktok
+            : _socialTiktokController.text;
         context
             .read<EditProfileCubit>()
-            .socialInstagramChanged(currentsocialInstagram);
-        context.read<EditProfileCubit>().submitSocialInstagramChange();
+            .socialTiktokChanged(currentsocialTiktok);
+        context.read<EditProfileCubit>().submitSocialTiktokChange();
       },
       label: Text(
         AppLocalizations.of(context)!.translate('validate'),

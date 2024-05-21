@@ -113,32 +113,30 @@ class _PostScreenState extends State<PostScreen>
             .toList();
         _fetchImageUrls(nonNullCollections);
 
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBarTitle(title: _user!.username),
-            body: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: size.height),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildPostImage(size, _post!),
-                    buildPostDetails(
-                      state,
-                      context,
-                      _user!,
-                      _post!,
-                      () => _navigateToUserScreen(context, _user!),
-                      _showBottomSheet,
-                      _showBottomSheetShare,
-                      _navigateToCommentScreen,
-                      _addToLikesThenShowCollections,
-                      widget.postId,
-                      _animation,
-                      _controller,
-                    )
-                  ],
-                ),
+        return Scaffold(
+          appBar: AppBarTitle(title: _user!.username),
+          body: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: size.height),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildPostImage(size, _post!),
+                  buildPostDetails(
+                    state,
+                    context,
+                    _user!,
+                    _post!,
+                    () => _navigateToUserScreen(context, _user!),
+                    _showBottomSheet,
+                    _showBottomSheetShare,
+                    _navigateToCommentScreen,
+                    _addToLikesThenShowCollections,
+                    widget.postId,
+                    _animation,
+                    _controller,
+                  )
+                ],
               ),
             ),
           ),

@@ -34,20 +34,18 @@ class _CreatePostEventScreenState extends State<CreatePostEventScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBarCreateEventPost(
-            title: AppLocalizations.of(context)!.translate('addpost'),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          body: BlocConsumer<CreatePostCubit, CreatePostState>(
-            listener: (context, state) =>
-                _handleCreatePostStateChanges(context, state),
-            builder: (context, state) => _buildForm(context, state),
-          ),
-          floatingActionButton: _buildFloatingActionButton(context),
+      child: Scaffold(
+        appBar: AppBarCreateEventPost(
+          title: AppLocalizations.of(context)!.translate('addpost'),
         ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerFloat,
+        body: BlocConsumer<CreatePostCubit, CreatePostState>(
+          listener: (context, state) =>
+              _handleCreatePostStateChanges(context, state),
+          builder: (context, state) => _buildForm(context, state),
+        ),
+        floatingActionButton: _buildFloatingActionButton(context),
       ),
     );
   }

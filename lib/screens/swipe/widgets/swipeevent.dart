@@ -4,10 +4,10 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart'
-    as bloc;
+import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart' as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -81,18 +81,6 @@ class _SwipeEventState extends State<SwipeEvent>
   }
 
   Widget _buildGenderSpecificBloc(String? selectedGender) {
-    bloc.SwipeEventEvent event;
-    if (selectedGender == "Masculin") {
-      event = bloc.SwipeEventManFetchPosts();
-    } else if (selectedGender == "Féminin") {
-      event = bloc.SwipeEventWomanFetchPosts();
-    } else {
-      return const Scaffold(
-        body: Center(child: Text("Aucun genre sélectionné")),
-      );
-    }
-
-    // BlocConsumer commun pour les deux genres
     return BlocConsumer<bloc.SwipeEventBloc, bloc.SwipeEventState>(
       listener: (context, state) {
         if (state.status == bloc.SwipeEventStatus.loaded) {
@@ -100,7 +88,12 @@ class _SwipeEventState extends State<SwipeEvent>
         }
       },
       builder: (context, state) {
-        context.read<bloc.SwipeEventBloc>().add(event);
+        if (state.status == bloc.SwipeEventStatus.initial) {
+          bloc.SwipeEventEvent event = selectedGender == "Masculin"
+              ? bloc.SwipeEventManFetchPosts()
+              : bloc.SwipeEventWomanFetchPosts();
+          context.read<bloc.SwipeEventBloc>().add(event);
+        }
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
@@ -194,52 +187,32 @@ class _SwipeEventState extends State<SwipeEvent>
       String imageUrl, double verticalSwipePercentage, Post post) {
     bool shouldAnimateUp = verticalSwipePercentage < -150;
     bool shouldAnimatetDown = verticalSwipePercentage > 150;
-    // debugPrint("DEBUG : post: $post");
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (shouldAnimateUp || shouldAnimatetDown) {
-        _heartAnimationController.repeat(reverse: true);
-      } else {
-        _heartAnimationController.reset();
-      }
-    });
 
     return Bounceable(
       onTap: () => _navigateToPostScreen(context, post),
       child: Stack(
         children: [
-          // Image
           Positioned.fill(
             child: Container(
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.transparent)),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
           ),
-          /* Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.center,
-                colors: [
-                  Colors.black.withOpacity(0.6),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-          ), */
           Positioned(
             top: 10,
             left: 12,
             child: buildUsername(context, post),
           ),
-          // Heart Animation
           if (shouldAnimateUp || shouldAnimatetDown)
             Center(
               child: AnimatedBuilder(
@@ -309,6 +282,9 @@ class _SwipeEventState extends State<SwipeEvent>
     bool addToFirstList = true;
     for (var post in posts) {
       var imageUrl = post.imageUrl;
+      var imageProvider = CachedNetworkImageProvider(imageUrl);
+      precacheImage(imageProvider, context);
+
       if (addToFirstList) {
         _imageUrls1.add(imageUrl);
         _posts1.add(post);

@@ -24,27 +24,24 @@ class LoginScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 19.0),
-            child: Scaffold(
-              appBar: const AppBarWhite(),
-              body: Builder(
-                // Added Builder here
-                builder: (innerContext) => Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(innerContext).size.height -
-                          Scaffold.of(innerContext).appBarMaxHeight! -
-                          MediaQuery.of(innerContext).padding.top,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const LogoTitle(),
-                        ButtonsLogin(),
-                        const TextLoginPolicy(),
-                      ],
-                    ),
+          return Scaffold(
+            appBar: const AppBarWhite(),
+            body: Builder(
+              // Added Builder here
+              builder: (innerContext) => Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(innerContext).size.height -
+                        Scaffold.of(innerContext).appBarMaxHeight! -
+                        MediaQuery.of(innerContext).padding.top,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const LogoTitle(),
+                      ButtonsLogin(),
+                      const TextLoginPolicy(),
+                    ],
                   ),
                 ),
               ),

@@ -80,15 +80,12 @@ class _FeedCollectionState extends State<FeedCollection>
     return BlocConsumer<FeedCollectionBloc, FeedCollectionState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Scaffold(
-            appBar: AppBarTitleOption(
-                title: widget.title,
-                collectionId: widget.collectionId,
-                isUserTheAuthor: _isUserTheAuthor),
-            body: _buildBody(state),
-          ),
+        return Scaffold(
+          appBar: AppBarTitleOption(
+              title: widget.title,
+              collectionId: widget.collectionId,
+              isUserTheAuthor: _isUserTheAuthor),
+          body: _buildBody(state),
         );
       },
     );
@@ -97,31 +94,34 @@ class _FeedCollectionState extends State<FeedCollection>
   Widget _buildBody(FeedCollectionState state) {
     return Stack(
       children: [
-        GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
-            childAspectRatio: 0.5,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 4,
+              mainAxisSpacing: 4,
+              childAspectRatio: 0.5,
+            ),
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 10000,
+            itemCount: state.posts.length + 1,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == state.posts.length) {
+                return state.status == FeedCollectionStatus.paginating
+                    ? const Center(child: CircularProgressIndicator())
+                    : const SizedBox.shrink();
+              } else {
+                final post = state.posts[index] ?? Post.empty;
+                return PostCollectionView(
+                  key: ValueKey('${widget.collectionId}-${post.id}'),
+                  title: widget.title,
+                  collectionId: widget.collectionId,
+                  post: post,
+                );
+              }
+            },
           ),
-          physics: const BouncingScrollPhysics(),
-          cacheExtent: 10000,
-          itemCount: state.posts.length + 1,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == state.posts.length) {
-              return state.status == FeedCollectionStatus.paginating
-                  ? const Center(child: CircularProgressIndicator())
-                  : const SizedBox.shrink();
-            } else {
-              final post = state.posts[index] ?? Post.empty;
-              return PostCollectionView(
-                key: ValueKey('${widget.collectionId}-${post.id}'),
-                title: widget.title,
-                collectionId: widget.collectionId,
-                post: post,
-              );
-            }
-          },
         ),
         if (state.status == FeedCollectionStatus.paginating)
           const Positioned(

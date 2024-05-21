@@ -39,15 +39,12 @@ class _FeedEventState extends State<FeedEvent>
             feedEventBloc.state.posts.isEmpty) {
           feedEventBloc.add(FeedEventFetchPostsEvents(eventId: widget.eventId));
         }
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Scaffold(
-            appBar: AppBarTitleLogoOption(
-                title: widget.title,
-                logoUrl: widget.logoUrl,
-                eventId: widget.eventId),
-            body: _buildBody(state),
-          ),
+        return Scaffold(
+          appBar: AppBarTitleLogoOption(
+              title: widget.title,
+              logoUrl: widget.logoUrl,
+              eventId: widget.eventId),
+          body: _buildBody(state),
         );
       },
     );
@@ -56,24 +53,27 @@ class _FeedEventState extends State<FeedEvent>
   Widget _buildBody(FeedEventState state) {
     return Stack(
       children: [
-        ListView.separated(
-          physics: const BouncingScrollPhysics(),
-          cacheExtent: 10000,
-          itemCount: state.posts.length + 1,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 10),
-          itemBuilder: (BuildContext context, int index) {
-            if (index == state.posts.length) {
-              return state.status == FeedMonthStatus.paginating
-                  ? const Center(child: CircularProgressIndicator())
-                  : const SizedBox.shrink();
-            } else {
-              final Post post = state.posts[index] ?? Post.empty;
-              return PostView(
-                post: post,
-              );
-            }
-          },
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: ListView.separated(
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 10000,
+            itemCount: state.posts.length + 1,
+            separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(height: 10),
+            itemBuilder: (BuildContext context, int index) {
+              if (index == state.posts.length) {
+                return state.status == FeedMonthStatus.paginating
+                    ? const Center(child: CircularProgressIndicator())
+                    : const SizedBox.shrink();
+              } else {
+                final Post post = state.posts[index] ?? Post.empty;
+                return PostView(
+                  post: post,
+                );
+              }
+            },
+          ),
         ),
         if (state.status == FeedEventStatus.paginating)
           const Positioned(

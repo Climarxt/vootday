@@ -44,7 +44,13 @@ class _HomeScreenState extends State<HomeScreen>
         );
       },
       child: Scaffold(
-        appBar: Tabbar3items(tabController: _tabController, context: context),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(62),
+          child: Padding(
+            padding: const EdgeInsets.all(0),
+            child: Tabbar3items(tabController: _tabController, context: context),
+          ),
+        ),
         body: _buildBody(),
       ),
     );

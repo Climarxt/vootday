@@ -47,7 +47,7 @@ class ProfileStats extends StatelessWidget {
 
   Padding buildProfileButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: ProfileButton(
         isCurrentUser: isCurrentUser,
         isFollowing: isFollowing,

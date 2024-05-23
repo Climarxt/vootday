@@ -39,10 +39,11 @@ class Tabbar3itemsSecond extends StatelessWidget {
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: const BoxDecoration(),
                 controller: tabController,
-                labelStyle: Theme.of(context).textTheme.headlineMedium!,
+                labelStyle: AppTextStyles.labelSelectedStyle(context),
                 labelColor: black,
                 unselectedLabelColor: Colors.grey,
-                unselectedLabelStyle: Theme.of(context).textTheme.headlineMedium,
+                unselectedLabelStyle:
+                    AppTextStyles.labelUnselectedStyle(context),
                 tabs: tabs,
               ),
             ),

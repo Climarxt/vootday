@@ -80,4 +80,20 @@ class AppTextStyles {
       ],
     );
   }
+
+  static TextStyle labelSelectedStyle(BuildContext context) {
+    return Theme.of(context).textTheme.headlineMedium!.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Colors.black,
+        );
+  }
+
+  static TextStyle labelUnselectedStyle(BuildContext context) {
+    return Theme.of(context).textTheme.titleLarge!.copyWith(
+          fontWeight: FontWeight.normal,
+          fontSize: 14,
+          color: Colors.grey,
+        );
+  }
 }

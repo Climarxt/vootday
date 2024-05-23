@@ -4,8 +4,8 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
+import 'package:bootdv2/screens/home/widgets/tabbar3items_second.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
-import 'package:bootdv2/screens/swipe/widgets/tabbar3items_second.dart';
 import 'package:csc_picker/csc_picker.dart';
 
 import 'package:flutter/material.dart';

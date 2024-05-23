@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
@@ -38,7 +36,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   final List<Post> _posts2 = [];
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
-  final bool _hasShownBottomSheet = false;
   late TabController _tabController;
   String? selectedCountry;
   String? selectedState;
@@ -48,8 +45,6 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDWoman());
-    // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDMan());
     _userRepository = UserRepository();
     _userDetailsFuture = _userRepository
         .fetchUserDetails(context.read<AuthBloc>().state.user!.uid);
@@ -79,7 +74,24 @@ class _SwipeOOTDState extends State<SwipeOOTD>
           }
           if (snapshot.hasData) {
             String? selectedGender = snapshot.data!.selectedGender;
-            return _buildGenderSpecificBloc(selectedGender);
+            return Scaffold(
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(62),
+                child: Tabbar3itemsSecond(
+                  tabController: _tabController,
+                  context: context,
+                  onMapIconPressed: () => _openSheet(context),
+                ),
+              ),
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildGenderSpecificBlocCity(selectedGender),
+                  _buildGenderSpecificBlocState(selectedGender),
+                  _buildGenderSpecificBlocCountry(selectedGender),
+                ],
+              ),
+            );
           }
         }
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -87,7 +99,7 @@ class _SwipeOOTDState extends State<SwipeOOTD>
     );
   }
 
-  Widget _buildGenderSpecificBloc(String? selectedGender) {
+  Widget _buildGenderSpecificBlocCity(String? selectedGender) {
     return BlocConsumer<bloc.SwipeBloc, bloc.SwipeState>(
       listener: (context, state) {
         if (state.status == bloc.SwipeStatus.loaded) {
@@ -101,20 +113,53 @@ class _SwipeOOTDState extends State<SwipeOOTD>
               : bloc.SwipeFetchPostsOOTDWoman();
           context.read<bloc.SwipeBloc>().add(event);
         }
-        return Scaffold(
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(62),
-            child: Tabbar3itemsSecond(
-              tabController: _tabController,
-              context: context,
-              onMapIconPressed: () =>
-                  _openSheet(context), // Provide the callback
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: _buildBody(state),
-          ),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: _buildBody(state),
+        );
+      },
+    );
+  }
+
+  Widget _buildGenderSpecificBlocState(String? selectedGender) {
+    return BlocConsumer<bloc.SwipeBloc, bloc.SwipeState>(
+      listener: (context, state) {
+        if (state.status == bloc.SwipeStatus.loaded) {
+          _loadImages(state.posts);
+        }
+      },
+      builder: (context, state) {
+        if (state.status == bloc.SwipeStatus.initial) {
+          bloc.SwipeEvent event = selectedGender == "Masculin"
+              ? bloc.SwipeFetchPostsOOTDMan()
+              : bloc.SwipeFetchPostsOOTDWoman();
+          context.read<bloc.SwipeBloc>().add(event);
+        }
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: _buildBody(state),
+        );
+      },
+    );
+  }
+
+  Widget _buildGenderSpecificBlocCountry(String? selectedGender) {
+    return BlocConsumer<bloc.SwipeBloc, bloc.SwipeState>(
+      listener: (context, state) {
+        if (state.status == bloc.SwipeStatus.loaded) {
+          _loadImages(state.posts);
+        }
+      },
+      builder: (context, state) {
+        if (state.status == bloc.SwipeStatus.initial) {
+          bloc.SwipeEvent event = selectedGender == "Masculin"
+              ? bloc.SwipeFetchPostsOOTDMan()
+              : bloc.SwipeFetchPostsOOTDWoman();
+          context.read<bloc.SwipeBloc>().add(event);
+        }
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: _buildBody(state),
         );
       },
     );

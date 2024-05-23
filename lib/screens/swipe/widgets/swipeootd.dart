@@ -6,8 +6,10 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/swipe/bloc/swipeootd/swipe_bloc.dart' as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
+import 'package:bootdv2/screens/swipe/widgets/tabbar3items_second.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -37,10 +39,15 @@ class _SwipeOOTDState extends State<SwipeOOTD>
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
   final bool _hasShownBottomSheet = false;
+  late TabController _tabController;
+  String? selectedCountry;
+  String? selectedState;
+  String? selectedCity;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDWoman());
     // context.read<bloc.SwipeBloc>().add(bloc.SwipeFetchPostsOOTDMan());
     _userRepository = UserRepository();
@@ -94,10 +101,19 @@ class _SwipeOOTDState extends State<SwipeOOTD>
               : bloc.SwipeFetchPostsOOTDWoman();
           context.read<bloc.SwipeBloc>().add(event);
         }
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Scaffold(
-            body: _buildBody(state),
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(62),
+            child: Tabbar3itemsSecond(
+              tabController: _tabController,
+              context: context,
+              onMapIconPressed: () =>
+                  _openSheet(context), // Provide the callback
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: _buildBody(state),
           ),
         );
       },
@@ -294,6 +310,79 @@ class _SwipeOOTDState extends State<SwipeOOTD>
       }
       addToFirstList = !addToFirstList;
     }
+  }
+
+  void _openSheet(BuildContext context) {
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.translate('location'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              CSCPicker(
+                flagState: CountryFlag.DISABLE,
+                onCountryChanged: (country) {
+                  setState(() {
+                    selectedCountry = country;
+                    selectedState = null;
+                    selectedCity = null;
+                  });
+                },
+                onStateChanged: (state) {
+                  setState(() {
+                    selectedState = state;
+                    selectedCity = null;
+                  });
+                },
+                onCityChanged: (city) {
+                  setState(() {
+                    selectedCity = city;
+                  });
+                },
+              ),
+              const SizedBox(height: 18),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  backgroundColor: couleurBleuClair2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('validate'),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override

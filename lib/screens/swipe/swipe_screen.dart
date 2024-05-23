@@ -29,7 +29,9 @@ class _SwipeScreenState extends State<SwipeScreen>
   Widget build(BuildContext context) {
     super.build(context); // Call this method for the mixin to work
     return Scaffold(
-      appBar: Tabbar2items(tabController: _tabController, context: context),
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(62),
+          child: Tabbar2items(tabController: _tabController, context: context)),
       body: _buildBody(),
     );
   }

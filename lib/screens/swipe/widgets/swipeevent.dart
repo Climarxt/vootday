@@ -4,10 +4,13 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
-import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart' as bloc;
+import 'package:bootdv2/screens/swipe/bloc/swipeevent/swipe_event_bloc.dart'
+    as bloc;
 import 'package:bootdv2/screens/swipe/widgets/custom_widgets.dart';
+import 'package:bootdv2/screens/swipe/widgets/titlebar.dart';
 import 'package:bootdv2/screens/swipe/widgets/widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -37,6 +40,9 @@ class _SwipeEventState extends State<SwipeEvent>
   int _currentIndex1 = 0;
   int _currentIndex2 = 0;
   final bool _hasShownBottomSheet = false;
+  String? selectedCountry;
+  String? selectedState;
+  String? selectedCity;
 
   @override
   void initState() {
@@ -97,6 +103,13 @@ class _SwipeEventState extends State<SwipeEvent>
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Scaffold(
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(62),
+              child: TitleBar(
+                context: context,
+                onIconPressed: () => _openSheet(context),
+              ),
+            ),
             body: _buildBody(state),
           ),
         );
@@ -294,6 +307,79 @@ class _SwipeEventState extends State<SwipeEvent>
       }
       addToFirstList = !addToFirstList;
     }
+  }
+
+  void _openSheet(BuildContext context) {
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.translate('location'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              CSCPicker(
+                flagState: CountryFlag.DISABLE,
+                onCountryChanged: (country) {
+                  setState(() {
+                    selectedCountry = country;
+                    selectedState = null;
+                    selectedCity = null;
+                  });
+                },
+                onStateChanged: (state) {
+                  setState(() {
+                    selectedState = state;
+                    selectedCity = null;
+                  });
+                },
+                onCityChanged: (city) {
+                  setState(() {
+                    selectedCity = city;
+                  });
+                },
+              ),
+              const SizedBox(height: 18),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  backgroundColor: couleurBleuClair2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('validate'),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override

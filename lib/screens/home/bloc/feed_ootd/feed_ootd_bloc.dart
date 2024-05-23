@@ -30,8 +30,8 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     Emitter<FeedOOTDState> emit,
   ) async {
     try {
-      final posts =
-          await _feedRepository.getFeedOOTDMan(userId: _authBloc.state.user!.uid);
+      final posts = await _feedRepository.getFeedOOTDMan(
+          userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
@@ -51,8 +51,8 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
     Emitter<FeedOOTDState> emit,
   ) async {
     try {
-      final posts =
-          await _feedRepository.getFeedOOTDFemale(userId: _authBloc.state.user!.uid);
+      final posts = await _feedRepository.getFeedOOTDFemale(
+          userId: _authBloc.state.user!.uid);
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),

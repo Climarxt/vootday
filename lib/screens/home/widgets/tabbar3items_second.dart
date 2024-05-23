@@ -52,7 +52,7 @@ class Tabbar3itemsSecond extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            width: 8,
+            width: 10,
           )
         ],
       ),

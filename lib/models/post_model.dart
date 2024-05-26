@@ -17,6 +17,10 @@ class Post extends Equatable {
   final DateTime date;
   final List<String> tags;
   final String selectedGender;
+  final String locationCity;
+  final String locationState;
+  final String locationCountry;
+  final String locationSelected;
 
   const Post({
     this.id,
@@ -28,6 +32,10 @@ class Post extends Equatable {
     required this.date,
     required this.tags,
     required this.selectedGender,
+    required this.locationCity,
+    required this.locationState,
+    required this.locationCountry,
+    required this.locationSelected,
   });
 
   static var empty = Post(
@@ -40,6 +48,10 @@ class Post extends Equatable {
     date: DateTime(0),
     tags: [],
     selectedGender: '',
+    locationCity: '',
+    locationState: '',
+    locationCountry: '',
+    locationSelected: '',
   );
 
   @override
@@ -53,6 +65,10 @@ class Post extends Equatable {
         date,
         tags,
         selectedGender,
+        locationCity,
+        locationState,
+        locationCountry,
+        locationSelected,
       ];
 
   Post copyWith({
@@ -65,6 +81,10 @@ class Post extends Equatable {
     DateTime? date,
     List<String>? tags,
     String? selectedGender,
+    String? locationCity,
+    String? locationState,
+    String? locationCountry,
+    String? locationSelected,
   }) {
     return Post(
       id: id ?? this.id,
@@ -76,6 +96,10 @@ class Post extends Equatable {
       date: date ?? this.date,
       tags: tags ?? this.tags,
       selectedGender: selectedGender ?? this.selectedGender,
+      locationCity: locationCity ?? this.locationCity,
+      locationState: locationState ?? this.locationState,
+      locationCountry: locationCountry ?? this.locationCountry,
+      locationSelected: locationSelected ?? this.locationSelected,
     );
   }
 
@@ -90,6 +114,10 @@ class Post extends Equatable {
       'date': Timestamp.fromDate(date),
       'tags': tags,
       'selectedGender': selectedGender,
+      'locationCity': locationCity,
+      'locationState': locationState,
+      'locationCountry': locationCountry,
+      'locationSelected': locationCountry,
     };
   }
 
@@ -119,6 +147,10 @@ class Post extends Equatable {
             date: (data['date'] as Timestamp).toDate(),
             tags: (data['tags'] as List).map((item) => item as String).toList(),
             selectedGender: data['selectedGender'] ?? '',
+            locationCity: data['locationCity'] ?? '',
+            locationState: data['locationState'] ?? '',
+            locationCountry: data['locationCountry'] ?? '',
+            locationSelected: data['locationSelected'] ?? '',
           );
         } else {
           debugPrint(

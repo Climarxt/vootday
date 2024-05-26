@@ -115,6 +115,10 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         date: DateTime.now(),
         tags: state.tags,
         selectedGender: selectedGender,
+        locationCity: '',
+        locationState: '',
+        locationCountry: '',
+        locationSelected: '',
       );
 
       await _postRepository.createPost(post: post);
@@ -172,6 +176,10 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         // Ajouter le nom de l'auteur (marque) aux tags existants
         tags: [brandAuthorName],
         selectedGender: state.selectedGender,
+        locationCity: '',
+        locationState: '',
+        locationCountry: '',
+        locationSelected: '',
       );
 
       // Créer le post dans Firestore

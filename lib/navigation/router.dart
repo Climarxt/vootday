@@ -8,7 +8,9 @@ import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
 import 'package:bootdv2/screens/comment/comments_event_screen.dart';
+import 'package:bootdv2/screens/createpost/createpost_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/createpost/screens/edit_caption.dart';
 import 'package:bootdv2/screens/createpost/screens/edit_location.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
@@ -271,7 +273,7 @@ GoRouter createRouter(BuildContext context) {
               );
             },
           ),
-          // Edit Last Name
+          // Edit Bio
           GoRoute(
             path: 'editbio',
             builder: (BuildContext context, GoRouterState state) {
@@ -687,6 +689,25 @@ GoRouter createRouter(BuildContext context) {
                               ),
                             ],
                             child: EditLocationCreatePostScreen(userId: userId),
+                          );
+                        },
+                      ),
+                      // Edit Caption
+                      GoRoute(
+                        path: 'editcaption',
+                        builder: (BuildContext context, GoRouterState state) {
+                          final userId = authBloc.state.user!.uid;
+                          final extra = state.extra as Map<String, dynamic>;
+                          final cubit = extra['cubit'] as CreatePostCubit;
+
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(
+                                value: cubit,
+                              ),
+                            ],
+                            child: EditCaptionCreatePostScreen(
+                                userId: userId),
                           );
                         },
                       ),

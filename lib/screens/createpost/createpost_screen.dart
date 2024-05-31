@@ -26,7 +26,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   // Image file to be posted
-  late File _postImage;
+  File? _postImage;
 
   // Helper for image operations
   final imageHelper = ImageHelperPost();
@@ -62,103 +62,88 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget _buildForm(
       BuildContext context, CreatePostState state, ProfileState profileState) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildImageSection(context, state),
-          if (state.status == CreatePostStatus.submitting)
-            const LinearProgressIndicator(),
-          _buildCaptionInput(context),
-          _buildBrandInput(context),
-          _buildField(
-            context,
-            AppLocalizations.of(context)!.translate('location'),
-            state.locationSelected,
-            navigateToEditLocation,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Builds the caption input field
-  Widget _buildCaptionInput(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          Text(
-            AppLocalizations.of(context)!.translate('description'),
-            style: AppTextStyles.titleLargeBlackBold(context),
-          ),
-          Form(
-            key: _formKey,
-            child: TextFormField(
-              cursorColor: couleurBleuClair2,
-              style: AppTextStyles.bodyStyle(context),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintStyle: AppTextStyles.subtitleLargeGrey(context),
-                hintText: AppLocalizations.of(context)!
-                    .translate('detaildescription'),
-              ),
-              onChanged: (value) =>
-                  context.read<CreatePostCubit>().captionChanged(value),
-              validator: (value) => value!.trim().isEmpty
-                  ? AppLocalizations.of(context)!.translate('captionnotempty')
-                  : null,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildImageSection(context, state),
+            if (state.status == CreatePostStatus.submitting)
+              const LinearProgressIndicator(),
+            _buildBrandInput(context),
+            _buildField(
+              context,
+              AppLocalizations.of(context)!.translate('location'),
+              state.locationSelected,
+              navigateToEditLocation,
             ),
-          ),
-        ],
+            _buildField(
+              context,
+              AppLocalizations.of(context)!.translate('description'),
+              state.caption,
+              navigateToEditCaption,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildField(BuildContext context, String label, String value,
       Function(BuildContext) navigateFunction) {
-    return Bounceable(
-      onTap: () {
-        navigateFunction(context);
-      },
-      child: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Text(
-                label,
-                style: AppTextStyles.titleLargeBlackBold(context),
-              ),
-            ),
-            Expanded(
-              flex: 2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          Bounceable(
+            onTap: () {
+              navigateFunction(context);
+            },
+            child: Container(
+              color: Colors.transparent,
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    flex: 1,
+                    child: Text(
+                      label,
+                      style: AppTextStyles.titleLargeBlackBold(context),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
-                          style: value.isEmpty
-                              ? AppTextStyles.bodyStyleGrey(context)
-                              : AppTextStyles.bodyStyle(context),
-                          textAlign: TextAlign.start,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                value.isEmpty
+                                    ? 'Add ${label.toLowerCase()}'
+                                    : value,
+                                style: value.isEmpty
+                                    ? AppTextStyles.bodyStyleGrey(context)
+                                    : AppTextStyles.bodyStyle(context),
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
+                          ),
                         ),
+                        const Icon(Icons.arrow_forward_ios,
+                            color: black, size: 16),
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, color: black, size: 16),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -169,6 +154,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       '/profile/create/editlocation',
       extra: context.read<CreatePostCubit>(),
     );
+  }
+
+  void navigateToEditCaption(BuildContext context) {
+    GoRouter.of(context).go('/profile/create/editcaption',
+        extra: {'cubit': context.read<CreatePostCubit>()});
   }
 
   // Builds the brand ListTile
@@ -212,8 +202,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   // Submits the form
   void _submitForm(BuildContext context) {
-    // ignore: unnecessary_null_comparison
-    if (_formKey.currentState!.validate() && _postImage != null) {
+    final state = context.read<CreatePostCubit>().state;
+
+    if (_formKey.currentState!.validate()) {
+      if (_postImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.translate('imagenotempty'),
+            ),
+          ),
+        );
+        return;
+      }
+      if (state.locationSelected.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.translate('locationnotempty'),
+            ),
+          ),
+        );
+        return;
+      }
       context.read<CreatePostCubit>().submit();
     }
   }
@@ -229,7 +240,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         child: SizedBox(
           height: reducedHeight,
           width: reducedWidth,
-          child: CreatePostCard(postImage: state.postImage),
+          child: _postImage != null
+              ? Image.file(_postImage!)
+              : CreatePostCard(postImage: state.postImage),
         ),
       ),
     );
@@ -246,7 +259,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (croppedFile != null) {
         setState(() {
           _postImage = File(croppedFile.path);
-          context.read<CreatePostCubit>().postImageChanged(_postImage);
+          context.read<CreatePostCubit>().postImageChanged(_postImage!);
         });
       }
     }
@@ -256,14 +269,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   void _handleCreatePostStateChanges(
       BuildContext context, CreatePostState state) {
     if (state.status == CreatePostStatus.success) {
-      // Reset form and show success message
       _resetForm(context);
       SnackbarUtil.showSuccessSnackbar(context, 'Post Created !');
-
-      // Navigate to the calendar route
       GoRouter.of(context).go('/profile');
     } else if (state.status == CreatePostStatus.error) {
-      // Show error message
       SnackbarUtil.showErrorSnackbar(context, state.failure.message);
     }
   }

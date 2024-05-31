@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:bootdv2/screens/profile_edit/widgets/appbar_title_editprofile.dart';
-import 'package:bootdv2/screens/profile_edit/widgets/custom_textfield.dart';
+import 'package:bootdv2/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bootdv2/config/configs.dart';

@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
+import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
-
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -18,7 +19,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -37,24 +37,30 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBarCreatePost(
-          title: AppLocalizations.of(context)!.translate('addpost'),
-        ),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
-        body: BlocConsumer<CreatePostCubit, CreatePostState>(
-          listener: (context, state) =>
-              _handleCreatePostStateChanges(context, state),
-          builder: (context, state) => _buildForm(context, state),
-        ),
-        floatingActionButton: _buildFloatingActionButton(context),
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, profileState) {
+          return Scaffold(
+            appBar: AppBarCreatePost(
+              title: AppLocalizations.of(context)!.translate('addpost'),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            body: BlocConsumer<CreatePostCubit, CreatePostState>(
+              listener: (context, state) =>
+                  _handleCreatePostStateChanges(context, state),
+              builder: (context, state) =>
+                  _buildForm(context, state, profileState),
+            ),
+            floatingActionButton: _buildFloatingActionButton(context),
+          );
+        },
       ),
     );
   }
 
-  // Builds the form
-  Widget _buildForm(BuildContext context, CreatePostState state) {
+// Builds the form
+  Widget _buildForm(
+      BuildContext context, CreatePostState state, ProfileState profileState) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -63,6 +69,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             const LinearProgressIndicator(),
           _buildCaptionInput(context),
           _buildBrandInput(context),
+          _buildField(
+            context,
+            AppLocalizations.of(context)!.translate('location'),
+            state.locationSelected,
+            navigateToEditLocation,
+          ),
         ],
       ),
     );
@@ -103,6 +115,62 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  Widget _buildField(BuildContext context, String label, String value,
+      Function(BuildContext) navigateFunction) {
+    return Bounceable(
+      onTap: () {
+        navigateFunction(context);
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Text(
+                label,
+                style: AppTextStyles.titleLargeBlackBold(context),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
+                          style: value.isEmpty
+                              ? AppTextStyles.bodyStyleGrey(context)
+                              : AppTextStyles.bodyStyle(context),
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios, color: black, size: 16),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Navigates to the 'Edit Location' screen.
+  void navigateToEditLocation(BuildContext context) {
+    GoRouter.of(context).go(
+      '/profile/create/editlocation',
+      extra: context.read<CreatePostCubit>(),
+    );
+  }
+
   // Builds the brand ListTile
   Widget _buildBrandInput(BuildContext context) {
     return ListTile(
@@ -121,8 +189,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       ),
       title: Text(AppLocalizations.of(context)!.translate('brand'),
           style: AppTextStyles.titleLargeBlackBold(context)),
-      onTap: () => GoRouter.of(context).go('/profile/create/brand',
-          extra: context.read<CreatePostCubit>()),
+      onTap: () => GoRouter.of(context)
+          .go('/profile/create/brand', extra: context.read<CreatePostCubit>()),
     );
   }
 

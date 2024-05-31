@@ -117,7 +117,7 @@ class Post extends Equatable {
       'locationCity': locationCity,
       'locationState': locationState,
       'locationCountry': locationCountry,
-      'locationSelected': locationCountry,
+      'locationSelected': locationSelected,
     };
   }
 

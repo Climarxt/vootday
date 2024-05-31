@@ -5,6 +5,7 @@ import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 part 'create_post_state.dart';
@@ -115,11 +116,26 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         date: DateTime.now(),
         tags: state.tags,
         selectedGender: selectedGender,
-        locationCity: '',
-        locationState: '',
-        locationCountry: '',
-        locationSelected: '',
+        locationCity: state.locationCity,
+        locationState: state.locationState,
+        locationCountry: state.locationCountry,
+        locationSelected: state.locationSelected,
       );
+
+      // Debug print all the post values
+      debugPrint('Creating post with values:');
+      debugPrint('Author: ${post.author}');
+      debugPrint('Image URL: ${post.imageUrl}');
+      debugPrint('Thumbnail URL: ${post.thumbnailUrl}');
+      debugPrint('Caption: ${post.caption}');
+      debugPrint('Likes: ${post.likes}');
+      debugPrint('Date: ${post.date}');
+      debugPrint('Tags: ${post.tags}');
+      debugPrint('Selected Gender: ${post.selectedGender}');
+      debugPrint('Location City: ${post.locationCity}');
+      debugPrint('Location State: ${post.locationState}');
+      debugPrint('Location Country: ${post.locationCountry}');
+      debugPrint('Location Selected: ${post.locationSelected}');
 
       await _postRepository.createPost(post: post);
 
@@ -205,5 +221,10 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   void reset() {
     emit(CreatePostState.initial());
+  }
+
+  void locationSelectedChanged(String location) {
+    emit(state.copyWith(
+        locationSelected: location, status: CreatePostStatus.initial));
   }
 }

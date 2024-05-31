@@ -9,6 +9,7 @@ import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.
 import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
 import 'package:bootdv2/screens/comment/comments_event_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/createpost/screens/edit_location.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
 import 'package:bootdv2/screens/message/message_conversation.dart';
@@ -157,7 +158,7 @@ GoRouter createRouter(BuildContext context) {
                   path: 'create',
                   builder: (BuildContext context, GoRouterState state) {
                     final eventId = RouteConfig.getEventId(state);
-                    return BlocProviderConfig.getCreatePostBlocProvider(
+                    return BlocProviderConfig.getCreatePostMultiBlocProvider(
                       context,
                       CreatePostEventScreen(eventId: eventId),
                     );
@@ -303,7 +304,7 @@ GoRouter createRouter(BuildContext context) {
               );
             },
           ),
-          // Edit Location
+          // Edit Links
           GoRoute(
             path: 'editlinks',
             builder: (BuildContext context, GoRouterState state) {
@@ -535,7 +536,8 @@ GoRouter createRouter(BuildContext context) {
                           path: 'create',
                           builder: (BuildContext context, GoRouterState state) {
                             final eventId = RouteConfig.getEventId(state);
-                            return BlocProviderConfig.getCreatePostBlocProvider(
+                            return BlocProviderConfig
+                                .getCreatePostMultiBlocProvider(
                               context,
                               CreatePostEventScreen(eventId: eventId),
                             );
@@ -616,20 +618,6 @@ GoRouter createRouter(BuildContext context) {
                   );
                 },
                 routes: <RouteBase>[
-                  // profile/editprofile
-                  /*
-                  GoRoute(
-                    path: 'editprofile',
-                    builder: (BuildContext context, GoRouterState state) {
-                      final userId = authBloc.state.user!.uid;
-                      return BlocProviderConfig.getEditProfileMultiBlocProvider(
-                        context,
-                        EditProfileScreen(userId: userId),
-                      );
-                    },
-                  ),
-                  */
-                  // profile/settings
                   GoRoute(
                     path: 'settings',
                     pageBuilder: (BuildContext context, GoRouterState state) {
@@ -653,18 +641,15 @@ GoRouter createRouter(BuildContext context) {
                   GoRoute(
                     path: 'create',
                     builder: (BuildContext context, GoRouterState state) {
-                      return BlocProviderConfig.getCreatePostBlocProvider(
+                      return BlocProviderConfig.getCreatePostMultiBlocProvider(
                         context,
                         const CreatePostScreen(),
                       );
                     },
                     routes: [
-                      // calendar/event/:eventId/create/brand
                       GoRoute(
                         path: 'brand',
                         builder: (BuildContext context, GoRouterState state) {
-                          print('State extra value: ${state.extra}');
-
                           return MultiBlocProvider(
                             providers: [
                               BlocProvider.value(
@@ -678,6 +663,30 @@ GoRouter createRouter(BuildContext context) {
                               ),
                             ],
                             child: const BrandSearchScreen(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'editlocation',
+                        builder: (BuildContext context, GoRouterState state) {
+                          final userId =
+                              context.read<AuthBloc>().state.user!.uid;
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(
+                                value: state.extra! as CreatePostCubit,
+                              ),
+                              BlocProvider<ProfileBloc>(
+                                create: (context) => ProfileBloc(
+                                  authBloc: context.read<AuthBloc>(),
+                                  userRepository:
+                                      context.read<UserRepository>(),
+                                  postRepository:
+                                      context.read<PostRepository>(),
+                                ),
+                              ),
+                            ],
+                            child: EditLocationCreatePostScreen(userId: userId),
                           );
                         },
                       ),

@@ -246,19 +246,30 @@ class BlocProviderConfig {
     );
   }
 
-  static BlocProvider getCreatePostBlocProvider(
+  static MultiBlocProvider getCreatePostMultiBlocProvider(
       BuildContext context, Widget child) {
-    return BlocProvider<CreatePostCubit>(
-      create: (context) {
-        final createPostBloc = CreatePostCubit(
-          postRepository: context.read<PostRepository>(),
-          eventRepository: context.read<EventRepository>(),
-          storageRepository: context.read<StorageRepository>(),
-          userRepository: context.read<UserRepository>(),
-          authBloc: context.read<AuthBloc>(),
-        );
-        return createPostBloc;
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(
+            authBloc: context.read<AuthBloc>(),
+            userRepository: context.read<UserRepository>(),
+            postRepository: context.read<PostRepository>(),
+          ),
+        ),
+        BlocProvider<CreatePostCubit>(
+          create: (context) {
+            final createPostBloc = CreatePostCubit(
+              postRepository: context.read<PostRepository>(),
+              eventRepository: context.read<EventRepository>(),
+              storageRepository: context.read<StorageRepository>(),
+              userRepository: context.read<UserRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            return createPostBloc;
+          },
+        ),
+      ],
       child: child,
     );
   }

@@ -74,6 +74,7 @@
   "editBio": "Edit Bio",
   "editLinks": "Edit Links",
   "redirectToInstagram": "Redirect people to your Instagram account.",
-  "redirectToTikTok": "Redirect people to your TikTok account."
+  "redirectToTikTok": "Redirect people to your TikTok account.",
+  "helpCreatePostLocalisation": "The post will appear in the Swipes for this location."
 
 }

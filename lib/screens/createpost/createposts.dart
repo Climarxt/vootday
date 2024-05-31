@@ -1,3 +1,3 @@
 export 'createpost_event_screen.dart';
-export 'createpost_screen_save';
+export 'create_post_screen.dart';
 export 'screens/search_brand_screen.dart';

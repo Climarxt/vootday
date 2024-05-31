@@ -24,7 +24,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _pickAndCropImage(context);
   }
 
-  late File _postImage;
+  // Image file to be posted
+  File? _postImage;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -42,7 +44,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             body: BlocConsumer<CreatePostCubit, CreatePostState>(
               listener: (context, state) =>
                   _handleCreatePostStateChanges(context, state),
-              builder: (context, state) => CreatePostForm(_formKey, _postImage),
+              builder: (context, state) => Column(
+                children: [
+                  _buildImageSection(context, state),
+                  CreatePostForm(_formKey),
+                ],
+              ),
             ),
             floatingActionButton: CreatePostFab(_formKey, _postImage),
           );
@@ -51,15 +58,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  // Builds the image section of the form
+  Widget _buildImageSection(BuildContext context, CreatePostState state) {
+    double reducedHeight = MediaQuery.of(context).size.height * 0.3 * 0.8;
+    double reducedWidth = reducedHeight * 0.7; // Maintain aspect ratio
+
+    return GestureDetector(
+      onTap: () async => _pickAndCropImage(context),
+      child: Center(
+        child: SizedBox(
+          height: reducedHeight,
+          width: reducedWidth,
+          child: CreatePostCard(postImage: state.postImage),
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickAndCropImage(BuildContext context) async {
     final file = await ImageHelperPost().pickImage();
     if (file != null) {
-      final croppedFile = await ImageHelperPost()
-          .crop(file: file, cropStyle: CropStyle.rectangle);
+      final croppedFile = await ImageHelperPost().crop(
+        file: file,
+        cropStyle: CropStyle.rectangle,
+      );
       if (croppedFile != null) {
         setState(() {
           _postImage = File(croppedFile.path);
-          context.read<CreatePostCubit>().postImageChanged(_postImage);
+          context.read<CreatePostCubit>().postImageChanged(_postImage!);
         });
       }
     }

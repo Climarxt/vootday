@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
+import 'package:bootdv2/screens/createpost/utils/snackbar_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CreatePostFab extends StatelessWidget {
   final GlobalKey<FormState> formKey;
-  final File postImage;
+  final File? postImage;
 
   const CreatePostFab(this.formKey, this.postImage, {super.key});
 
@@ -24,8 +25,10 @@ class CreatePostFab extends StatelessWidget {
   }
 
   void _submitForm(BuildContext context) {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate() && postImage != null) {
       context.read<CreatePostCubit>().submit();
+    } else {
+      SnackbarUtil.showErrorSnackbar(context, 'Please select an image.');
     }
   }
 }

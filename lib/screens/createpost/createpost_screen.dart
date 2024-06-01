@@ -19,19 +19,15 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  File? _postImage;
+  final imageHelper = ImageHelperPost();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
     _pickAndCropImage(context);
   }
-
-  // Image file to be posted
-  File? _postImage;
-
-  // Helper for image operations
-  final imageHelper = ImageHelperPost();
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +47,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               builder: (context, state) {
                 return Stack(
                   children: [
-                    _buildForm(context, state, profileState),
+                    Column(
+                      children: [
+                        _buildImageSection(context, state),
+                        _buildForm(context, state, profileState),
+                      ],
+                    ),
                     if (state.status == CreatePostStatus.submitting) ...[
                       const ModalBarrier(
                         dismissible: false,
@@ -75,31 +76,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget _buildForm(
       BuildContext context, CreatePostState state, ProfileState profileState) {
     String tagsAsString = state.tags.join(', ');
-    return SingleChildScrollView(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildImageSection(context, state),
-            _buildField(
-              context,
-              AppLocalizations.of(context)!.translate('brand'),
-              tagsAsString,
-              navigateToEditBrand,
-            ),
-            _buildField(
-              context,
-              AppLocalizations.of(context)!.translate('location'),
-              state.locationSelected,
-              navigateToEditLocation,
-            ),
-            _buildField(
-              context,
-              AppLocalizations.of(context)!.translate('description'),
-              state.caption,
-              navigateToEditCaption,
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('brand'),
+                tagsAsString,
+                navigateToEditBrand,
+              ),
+              const SizedBox(height: 12),
+              _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('location'),
+                state.locationSelected,
+                navigateToEditLocation,
+              ),
+              const SizedBox(height: 12),
+              _buildField(
+                context,
+                AppLocalizations.of(context)!.translate('description'),
+                state.caption,
+                navigateToEditCaption,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -107,60 +113,48 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Widget _buildField(BuildContext context, String label, String value,
       Function(BuildContext) navigateFunction) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          Bounceable(
-            onTap: () {
-              navigateFunction(context);
-            },
-            child: Container(
-              color: Colors.transparent,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+    return Bounceable(
+      onTap: () {
+        navigateFunction(context);
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Text(
+                label,
+                style: AppTextStyles.titleLargeBlackBold(context),
+              ),
+            ),
+            Expanded(
+              flex: 2,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Expanded(
-                    flex: 1,
-                    child: Text(
-                      label,
-                      style: AppTextStyles.titleLargeBlackBold(context),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                value.isEmpty
-                                    ? 'Add ${label.toLowerCase()}'
-                                    : value,
-                                style: value.isEmpty
-                                    ? AppTextStyles.bodyStyleGrey(context)
-                                    : AppTextStyles.bodyStyle(context),
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
+                        Text(
+                          value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
+                          style: value.isEmpty
+                              ? AppTextStyles.bodyStyleGrey(context)
+                              : AppTextStyles.bodyStyle(context),
+                          textAlign: TextAlign.start,
                         ),
-                        const Icon(Icons.arrow_forward_ios,
-                            color: black, size: 16),
                       ],
                     ),
                   ),
+                  const Icon(Icons.arrow_forward_ios, color: black, size: 16),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

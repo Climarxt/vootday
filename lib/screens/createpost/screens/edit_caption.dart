@@ -59,7 +59,8 @@ class _EditLocationCreatePostScreenState
                 children: [
                   CustomTextFieldCaption(
                     controller: _captionController,
-                    labelText: AppLocalizations.of(context)!.translate('description'),
+                    labelText:
+                        AppLocalizations.of(context)!.translate('description'),
                     onChanged: (value) {
                       context.read<CreatePostCubit>().captionChanged(value);
                       setState(() {
@@ -73,6 +74,8 @@ class _EditLocationCreatePostScreenState
             );
           },
         ),
+        floatingActionButton: _buildFloatingActionButton(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -85,5 +88,26 @@ class _EditLocationCreatePostScreenState
     } else if (state.status == CreatePostStatus.error) {
       SnackbarUtil.showErrorSnackbar(context, state.failure.message);
     }
+  }
+
+  // Builds the floating action button
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () => _handlePostButtonPressed(context),
+      label: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style: Theme.of(context)
+            .textTheme
+            .headlineMedium!
+            .copyWith(color: Colors.white),
+      ),
+    );
+  }
+
+  // Handling the click of the floating action button
+  void _handlePostButtonPressed(BuildContext context) {
+    final goRouter = GoRouter.of(context);
+    goRouter.go('/profile/create');
   }
 }

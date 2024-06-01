@@ -57,7 +57,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         dismissible: false,
                       ),
                       const Center(
-                        child: const CircularProgressIndicator(),
+                        child: CircularProgressIndicator(),
                       ),
                     ],
                   ],
@@ -144,74 +144,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     ? 'Add ${label.toLowerCase()}'
                                     : value,
                                 style: value.isEmpty
-                                    ? AppTextStyles.bodyStyleGrey(context)
-                                    : AppTextStyles.bodyStyle(context),
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.arrow_forward_ios,
-                            color: black, size: 16),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Builds the brand ListTile
-  Widget _buildBrandInput(BuildContext context) {
-    final state = context.read<CreatePostCubit>().state;
-    final brandLabel = AppLocalizations.of(context)!.translate('brand');
-    final brandValue = state.tags.isEmpty
-        ? 'Add ${brandLabel.toLowerCase()}'
-        : '(${state.tags.length})';
-    final navigateFunction = (BuildContext context) {
-      GoRouter.of(context)
-          .go('/profile/create/brand', extra: context.read<CreatePostCubit>());
-    };
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          Bounceable(
-            onTap: () {
-              navigateFunction(context);
-            },
-            child: Container(
-              color: Colors.transparent,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      brandLabel,
-                      style: AppTextStyles.titleLargeBlackBold(context),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                brandValue,
-                                style: state.tags.isEmpty
                                     ? AppTextStyles.bodyStyleGrey(context)
                                     : AppTextStyles.bodyStyle(context),
                                 textAlign: TextAlign.start,

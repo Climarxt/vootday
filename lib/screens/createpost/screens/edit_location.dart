@@ -133,6 +133,9 @@ class _EditLocationCreatePostScreenState
                   );
                 },
               ),
+              floatingActionButton: _buildFloatingActionButton(context),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
             );
           }
           return const Center(
@@ -158,5 +161,26 @@ class _EditLocationCreatePostScreenState
   void _resetForm(BuildContext context) {
     _formKey.currentState!.reset();
     context.read<CreatePostCubit>().reset();
+  }
+
+  // Builds the floating action button
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      backgroundColor: couleurBleuClair2,
+      onPressed: () => _handlePostButtonPressed(context),
+      label: Text(
+        AppLocalizations.of(context)!.translate('validate'),
+        style: Theme.of(context)
+            .textTheme
+            .headlineMedium!
+            .copyWith(color: Colors.white),
+      ),
+    );
+  }
+
+  // Handling the click of the floating action button
+  void _handlePostButtonPressed(BuildContext context) {
+    final goRouter = GoRouter.of(context);
+    goRouter.go('/profile/create');
   }
 }

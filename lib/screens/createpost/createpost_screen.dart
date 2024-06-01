@@ -48,8 +48,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             body: BlocConsumer<CreatePostCubit, CreatePostState>(
               listener: (context, state) =>
                   _handleCreatePostStateChanges(context, state),
-              builder: (context, state) =>
-                  _buildForm(context, state, profileState),
+              builder: (context, state) {
+                return Stack(
+                  children: [
+                    _buildForm(context, state, profileState),
+                    if (state.status == CreatePostStatus.submitting) ...[
+                      const ModalBarrier(
+                        dismissible: false,
+                      ),
+                      const Center(
+                        child: const CircularProgressIndicator(),
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
             floatingActionButton: _buildFloatingActionButton(context),
           );
@@ -61,15 +74,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 // Builds the form
   Widget _buildForm(
       BuildContext context, CreatePostState state, ProfileState profileState) {
+    String tagsAsString = state.tags.join(', ');
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
         child: Column(
           children: [
             _buildImageSection(context, state),
-            if (state.status == CreatePostStatus.submitting)
-              const LinearProgressIndicator(),
-            _buildBrandInput(context),
+            _buildField(
+              context,
+              AppLocalizations.of(context)!.translate('brand'),
+              tagsAsString,
+              navigateToEditBrand,
+            ),
             _buildField(
               context,
               AppLocalizations.of(context)!.translate('location'),
@@ -95,7 +112,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Bounceable(
             onTap: () {
               navigateFunction(context);
@@ -148,39 +165,71 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Navigates to the 'Edit Location' screen.
-  void navigateToEditLocation(BuildContext context) {
-    GoRouter.of(context).go(
-      '/profile/create/editlocation',
-      extra: context.read<CreatePostCubit>(),
-    );
-  }
-
-  void navigateToEditCaption(BuildContext context) {
-    GoRouter.of(context).go('/profile/create/editcaption',
-        extra: {'cubit': context.read<CreatePostCubit>()});
-  }
-
   // Builds the brand ListTile
   Widget _buildBrandInput(BuildContext context) {
-    return ListTile(
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+    final state = context.read<CreatePostCubit>().state;
+    final brandLabel = AppLocalizations.of(context)!.translate('brand');
+    final brandValue = state.tags.isEmpty
+        ? 'Add ${brandLabel.toLowerCase()}'
+        : '(${state.tags.length})';
+    final navigateFunction = (BuildContext context) {
+      GoRouter.of(context)
+          .go('/profile/create/brand', extra: context.read<CreatePostCubit>());
+    };
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '(${context.read<CreatePostCubit>().state.tags.length})',
-            style: AppTextStyles.subtitleLargeGrey(context),
-          ), // Display the count
-          const SizedBox(
-            width: 8,
+          const SizedBox(height: 12),
+          Bounceable(
+            onTap: () {
+              navigateFunction(context);
+            },
+            child: Container(
+              color: Colors.transparent,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      brandLabel,
+                      style: AppTextStyles.titleLargeBlackBold(context),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                brandValue,
+                                style: state.tags.isEmpty
+                                    ? AppTextStyles.bodyStyleGrey(context)
+                                    : AppTextStyles.bodyStyle(context),
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios,
+                            color: black, size: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const Icon(Icons.arrow_forward),
         ],
       ),
-      title: Text(AppLocalizations.of(context)!.translate('brand'),
-          style: AppTextStyles.titleLargeBlackBold(context)),
-      onTap: () => GoRouter.of(context)
-          .go('/profile/create/brand', extra: context.read<CreatePostCubit>()),
     );
   }
 
@@ -198,35 +247,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               .headlineMedium!
               .copyWith(color: Colors.white)),
     );
-  }
-
-  // Submits the form
-  void _submitForm(BuildContext context) {
-    final state = context.read<CreatePostCubit>().state;
-
-    if (_formKey.currentState!.validate()) {
-      if (_postImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.translate('imagenotempty'),
-            ),
-          ),
-        );
-        return;
-      }
-      if (state.locationSelected.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.translate('locationnotempty'),
-            ),
-          ),
-        );
-        return;
-      }
-      context.read<CreatePostCubit>().submit();
-    }
   }
 
   // Builds the image section of the form
@@ -263,6 +283,55 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         });
       }
     }
+  }
+
+  // Submits the form
+  void _submitForm(BuildContext context) {
+    final state = context.read<CreatePostCubit>().state;
+
+    if (_formKey.currentState!.validate()) {
+      if (_postImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.translate('imagenotempty'),
+            ),
+          ),
+        );
+        return;
+      }
+      if (state.locationSelected.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.translate('locationnotempty'),
+            ),
+          ),
+        );
+        return;
+      }
+      context.read<CreatePostCubit>().submit();
+    }
+  }
+
+  // Navigates to the 'Edit Location' screen.
+  void navigateToEditLocation(BuildContext context) {
+    GoRouter.of(context).go(
+      '/profile/create/editlocation',
+      extra: context.read<CreatePostCubit>(),
+    );
+  }
+
+  // Navigates to the 'Edit Caption' screen.
+  void navigateToEditCaption(BuildContext context) {
+    GoRouter.of(context).go('/profile/create/editcaption',
+        extra: {'cubit': context.read<CreatePostCubit>()});
+  }
+
+  // Navigates to the 'Edit Brand' screen.
+  void navigateToEditBrand(BuildContext context) {
+    GoRouter.of(context)
+        .go('/profile/create/brand', extra: context.read<CreatePostCubit>());
   }
 
   // Handles different state changes

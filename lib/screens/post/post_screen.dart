@@ -122,6 +122,7 @@ class _PostScreenState extends State<PostScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildPostImage(size, _post!),
+                  const SizedBox(height: 12),
                   buildPostDetails(
                     state,
                     context,

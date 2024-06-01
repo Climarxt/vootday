@@ -2,7 +2,8 @@ import 'package:bootdv2/config/configs.dart';
 import 'package:flutter/material.dart';
 
 class ProfileImagePost extends StatelessWidget {
-  final String title;
+  final String firstNamelastName;
+  final String locationSelected;
   final int likes;
   final String description;
   final ImageProvider<Object>? profileImageProvider;
@@ -11,7 +12,8 @@ class ProfileImagePost extends StatelessWidget {
 
   const ProfileImagePost({
     super.key,
-    required this.title,
+    required this.firstNamelastName,
+    required this.locationSelected,
     required this.likes,
     required this.description,
     required this.profileImageProvider,
@@ -45,12 +47,21 @@ class ProfileImagePost extends StatelessWidget {
                 GestureDetector(
                   onTap: onTitleTap,
                   child: Text(
-                    title,
+                    firstNamelastName,
                     style: AppTextStyles.titleLargeBlackBold(context),
                   ),
                 ),
-                const SizedBox(height: 2),
-                /* Row(
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      locationSelected,
+                      style: AppTextStyles.bodyStyle(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
                   children: [
                     Text(
                       '$likes',
@@ -63,12 +74,12 @@ class ProfileImagePost extends StatelessWidget {
                       size: 12,
                     ),
                   ],
-                ), */
+                ),
               ],
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
         SizedBox(
           width: 300,
           child: RichText(
@@ -83,7 +94,7 @@ class ProfileImagePost extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
         SizedBox(
           width: 300,
           child: RichText(

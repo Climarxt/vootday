@@ -247,21 +247,6 @@ Widget buildFavoriteButton(BuildContext context, String postId, String userId,
   );
 }
 
-Widget buildUserProfile(
-  User user,
-  Post post,
-  VoidCallback onTitleTap,
-) {
-  return ProfileImagePost(
-    title: '${user.firstName} ${user.lastName}',
-    likes: post.likes,
-    profileImageProvider: user.profileImageProvider,
-    description: post.caption,
-    tags: post.tags,
-    onTitleTap: onTitleTap,
-  );
-}
-
 Widget buildPostDetails(
   MyCollectionState state,
   BuildContext context,
@@ -301,6 +286,22 @@ Widget buildPostDetails(
         ),
       ],
     ),
+  );
+}
+
+Widget buildUserProfile(
+  User user,
+  Post post,
+  VoidCallback onTitleTap,
+) {
+  return ProfileImagePost(
+    firstNamelastName: '${user.firstName} ${user.lastName}',
+    locationSelected: post.locationSelected,
+    likes: post.likes,
+    profileImageProvider: user.profileImageProvider,
+    description: post.caption,
+    tags: post.tags,
+    onTitleTap: onTitleTap,
   );
 }
 

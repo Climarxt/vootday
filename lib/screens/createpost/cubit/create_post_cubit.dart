@@ -116,9 +116,9 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         date: DateTime.now(),
         tags: state.tags,
         selectedGender: selectedGender,
-        locationCity: state.locationCity,
-        locationState: state.locationState,
-        locationCountry: state.locationCountry,
+        locationCity: user.locationCity,
+        locationState: user.locationState,
+        locationCountry: user.locationCountry,
         locationSelected: state.locationSelected,
       );
 

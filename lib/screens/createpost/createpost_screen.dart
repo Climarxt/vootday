@@ -138,7 +138,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          value.isEmpty ? 'Add ${label.toLowerCase()}' : value,
+                          value.isEmpty ? '${AppLocalizations.of(context)!.translate('add')} ${label.toLowerCase()}' : value,
                           style: value.isEmpty
                               ? AppTextStyles.bodyStyleGrey(context)
                               : AppTextStyles.bodyStyle(context),

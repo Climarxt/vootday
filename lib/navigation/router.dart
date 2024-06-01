@@ -11,6 +11,7 @@ import 'package:bootdv2/screens/comment/comments_event_screen.dart';
 import 'package:bootdv2/screens/createpost/createpost_screen.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/screens/edit_caption.dart';
+import 'package:bootdv2/screens/createpost/screens/edit_caption_event.dart';
 import 'package:bootdv2/screens/createpost/screens/edit_location.dart';
 import 'package:bootdv2/screens/follow_users/follow_users.dart';
 import 'package:bootdv2/screens/login/cubit/login_cubit.dart';
@@ -544,6 +545,31 @@ GoRouter createRouter(BuildContext context) {
                               CreatePostEventScreen(eventId: eventId),
                             );
                           },
+                          routes: [
+                            GoRoute(
+                              path: 'editcaption',
+                              builder:
+                                  (BuildContext context, GoRouterState state) {
+                                final userId = authBloc.state.user!.uid;
+                                final extra =
+                                    state.extra as Map<String, dynamic>;
+                                final cubit = extra['cubit'] as CreatePostCubit;
+                                final eventId = extra['eventId'] as String;
+
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider.value(
+                                      value: cubit,
+                                    ),
+                                  ],
+                                  child: EditCaptionEventCreatePostScreen(
+                                    userId: userId,
+                                    eventId: eventId,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -706,8 +732,7 @@ GoRouter createRouter(BuildContext context) {
                                 value: cubit,
                               ),
                             ],
-                            child: EditCaptionCreatePostScreen(
-                                userId: userId),
+                            child: EditCaptionCreatePostScreen(userId: userId),
                           );
                         },
                       ),

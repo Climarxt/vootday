@@ -45,7 +45,7 @@ class _EditLocationCreatePostScreenState
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBarEditProfile(
-          title: AppLocalizations.of(context)!.translate('description'),
+          title: AppLocalizations.of(context)!.translate('editDescription'),
         ),
         body: BlocConsumer<CreatePostCubit, CreatePostState>(
           listener: (context, state) =>

@@ -1,15 +1,14 @@
 import 'dart:io';
-
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/createpost/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -22,11 +21,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   File? _postImage;
   final imageHelper = ImageHelperPost();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isPickingImage = false; // Add this variable
 
   @override
   void initState() {
     super.initState();
-    _pickAndCropImage(context);
   }
 
   @override
@@ -72,7 +71,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-// Builds the form
   Widget _buildForm(
       BuildContext context, CreatePostState state, ProfileState profileState) {
     String tagsAsString = state.tags.join(', ');
@@ -159,7 +157,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Builds the post button
   Widget _buildFloatingActionButton(BuildContext context) {
     final state = context.watch<CreatePostCubit>().state;
     return FloatingActionButton.extended(
@@ -175,17 +172,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Builds the image section of the form
   Widget _buildImageSection(BuildContext context, CreatePostState state) {
-    double reducedHeight = MediaQuery.of(context).size.height * 0.3 * 0.8;
-    double reducedWidth = reducedHeight * 0.7; // Maintain aspect ratio
+    double enlargedHeight = MediaQuery.of(context).size.height * 0.4;
+    double enlargedWidth = enlargedHeight * 0.7; // Maintain aspect ratio
 
     return GestureDetector(
       onTap: () async => _pickAndCropImage(context),
       child: Center(
         child: SizedBox(
-          height: reducedHeight,
-          width: reducedWidth,
+          height: enlargedHeight,
+          width: enlargedWidth,
           child: _postImage != null
               ? Image.file(_postImage!)
               : CreatePostCard(postImage: state.postImage),
@@ -194,24 +190,33 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Picks and crops the image
   Future<void> _pickAndCropImage(BuildContext context) async {
-    final file = await imageHelper.pickImage();
-    if (file != null) {
-      final croppedFile = await imageHelper.crop(
-        file: file,
-        cropStyle: CropStyle.rectangle,
-      );
-      if (croppedFile != null) {
-        setState(() {
-          _postImage = File(croppedFile.path);
-          context.read<CreatePostCubit>().postImageChanged(_postImage!);
-        });
+    if (_isPickingImage) return; // Prevent multiple requests
+    setState(() {
+      _isPickingImage = true;
+    });
+
+    try {
+      final file = await imageHelper.pickImage();
+      if (file != null) {
+        final croppedFile = await imageHelper.crop(
+          file: file,
+          cropStyle: CropStyle.rectangle,
+        );
+        if (croppedFile != null) {
+          setState(() {
+            _postImage = File(croppedFile.path);
+            context.read<CreatePostCubit>().postImageChanged(_postImage!);
+          });
+        }
       }
+    } finally {
+      setState(() {
+        _isPickingImage = false;
+      });
     }
   }
 
-  // Submits the form
   void _submitForm(BuildContext context) {
     final state = context.read<CreatePostCubit>().state;
 
@@ -240,7 +245,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  // Navigates to the 'Edit Location' screen.
   void navigateToEditLocation(BuildContext context) {
     GoRouter.of(context).go(
       '/profile/create/editlocation',
@@ -248,19 +252,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Navigates to the 'Edit Caption' screen.
   void navigateToEditCaption(BuildContext context) {
     GoRouter.of(context).go('/profile/create/editcaption',
         extra: {'cubit': context.read<CreatePostCubit>()});
   }
 
-  // Navigates to the 'Edit Brand' screen.
   void navigateToEditBrand(BuildContext context) {
     GoRouter.of(context)
         .go('/profile/create/brand', extra: context.read<CreatePostCubit>());
   }
 
-  // Handles different state changes
   void _handleCreatePostStateChanges(
       BuildContext context, CreatePostState state) {
     if (state.status == CreatePostStatus.success) {
@@ -272,9 +273,38 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  // Resets the form
   void _resetForm(BuildContext context) {
     _formKey.currentState!.reset();
     context.read<CreatePostCubit>().reset();
   }
+}
+
+class ImageHelperPost {
+  ImageHelperPost({
+    ImagePicker? imagePicker,
+    ImageCropper? imageCropper,
+  })  : _imagePicker = imagePicker ?? ImagePicker(),
+        _imageCropper = imageCropper ?? ImageCropper();
+
+  final ImagePicker _imagePicker;
+  final ImageCropper _imageCropper;
+
+  Future<XFile?> pickImage({
+    ImageSource source = ImageSource.gallery,
+    int imageQuality = 50,
+  }) async {
+    return await _imagePicker.pickImage(
+        source: source, imageQuality: imageQuality);
+  }
+
+  Future<CroppedFile?> crop({
+    required XFile file,
+    required CropStyle cropStyle,
+  }) async =>
+      await _imageCropper.cropImage(
+        cropStyle: cropStyle,
+        sourcePath: file.path,
+        compressQuality: 50,
+        aspectRatio: const CropAspectRatio(ratioX: 0.7, ratioY: 1.0),
+      );
 }

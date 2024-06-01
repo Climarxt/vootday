@@ -105,14 +105,16 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
     }
 
     // Convert the list of Brand objects to a list of brand names
-    List<String> brandNames = brands.map((brand) => brand.author).toList();
+    List<String> brandNames =
+        brands.map((brand) => brand.author_lowercase).toList();
 
     // Find matching brand names
-    var matchingTags =
-        brandNames.where((tag) => tag.contains(textEditingValue.text));
+    var matchingTags = brandNames
+        .where((tag) => tag.contains(textEditingValue.text.toLowerCase()));
 
-    if (!matchingTags.contains(textEditingValue.text)) {
-      matchingTags = matchingTags.followedBy([textEditingValue.text]);
+    if (!matchingTags.contains(textEditingValue.text.toLowerCase())) {
+      matchingTags =
+          matchingTags.followedBy([textEditingValue.text.toLowerCase()]);
     }
 
     return matchingTags;
@@ -149,9 +151,11 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
       String option,
       List<Brand> brands) {
     // Find the brand object that matches the selected option
-    final brand = brands.firstWhere((b) => b.author == option,
+    final brand = brands.firstWhere(
+        (b) => b.author_lowercase == option.toLowerCase(),
         orElse: () => Brand(
             author: option,
+            author_lowercase: option.toLowerCase(),
             logoUrl:
                 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fquestionmarklogo.svg?alt=media&token=0803c330-d49c-4808-ba80-80f1e6258897&_gl=1*111mjg0*_ga*NzczMDE3MDE2LjE2OTcwMzM5MTE.*_ga_CW55HF8NVT*MTY5ODM0ODMxMS4yMC4xLjE2OTgzNDkxMDUuMzkuMC4w'));
 
@@ -168,16 +172,21 @@ class _BrandSearchScreenState extends State<BrandSearchScreen> {
             ),
           ),
         ),
-        title: Text(option),
-        onTap: () => onSelected(option),
+        title: Text(brand.author), // Display the original author here
+        onTap: () => onSelected(brand.author_lowercase),
       ),
     );
   }
 
   // Handle the event when a tag is selected
   void _handleTagSelected(BuildContext context, String tag) {
+    final brands = context.read<BrandCubit>().state.brands;
+    final brand = brands.firstWhere(
+        (b) => b.author_lowercase == tag.toLowerCase(),
+        orElse: () => Brand(
+            author: tag, author_lowercase: tag.toLowerCase(), logoUrl: ''));
     // Add the selected tag to the CreatePostCubit
-    context.read<CreatePostCubit>().addTag(tag);
+    context.read<CreatePostCubit>().addTag(brand.author);
     // Clear the autocomplete text field
     _tagAutocompleteController.clear();
   }

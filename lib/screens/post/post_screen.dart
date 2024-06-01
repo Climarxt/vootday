@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unused_field
 
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
@@ -163,7 +163,7 @@ class _PostScreenState extends State<PostScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
+        initialChildSize: 0.8,
         minChildSize: 0.2,
         maxChildSize: 0.9,
         expand: false,
@@ -272,6 +272,9 @@ class _PostScreenState extends State<PostScreen>
 
   void openCreateCollectionSheet(BuildContext context) {
     final createCollectionCubit = context.read<CreateCollectionCubit>();
+    final TextEditingController _collectionNameController =
+        TextEditingController();
+    final FocusNode _focusNode = FocusNode();
 
     showModalBottomSheet(
       isDismissible: true,
@@ -279,6 +282,8 @@ class _PostScreenState extends State<PostScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
       context: context,
+      isScrollControlled:
+          true, // Allow the sheet to be scrollable and adjust its size
       builder: (BuildContext bottomSheetContext) {
         return BlocProvider.value(
           value: createCollectionCubit,
@@ -289,37 +294,54 @@ class _PostScreenState extends State<PostScreen>
               }
             },
             builder: (context, state) {
-              return Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of(context)!.translate('newcollection'),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium!
-                          .copyWith(color: Colors.black),
+              return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return AnimatedPadding(
+                    duration: const Duration(milliseconds: 300),
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
                     ),
-                    const SizedBox(height: 10),
-                    buildCaptionInput(context, _collectionNameController),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: isPublicNotifier,
-                      builder: (context, isPublic, _) {
-                        return buildPublicButton(
-                            context, isPublic, isPublicNotifier);
-                      },
+                    child: SafeArea(
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .translate('newcollection'),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(color: Colors.black),
+                            ),
+                            const SizedBox(height: 10),
+                            buildCaptionInput(
+                                context,
+                                _collectionNameController,
+                                _focusNode,
+                                setState),
+                            ValueListenableBuilder<bool>(
+                              valueListenable: isPublicNotifier,
+                              builder: (context, isPublic, _) {
+                                return buildPublicButton(
+                                    context, isPublic, isPublicNotifier);
+                              },
+                            ),
+                            const SizedBox(height: 18),
+                            buildValidateButton(
+                              context,
+                              _collectionNameController,
+                              isPublicNotifier,
+                              widget.postId,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 18),
-                    buildValidateButton(
-                      context,
-                      _collectionNameController,
-                      isPublicNotifier,
-                      widget.postId,
-                    ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),
@@ -400,30 +422,32 @@ class _PostScreenState extends State<PostScreen>
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            if (_isUserTheAuthor)
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              if (_isUserTheAuthor)
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text('Delete'),
+                  onTap: () {
+                    final postCubit = context.read<DeletePostsCubit>();
+                    postCubit.deletePosts(widget.postId);
+                    if (widget.fromPath.contains("/calendar")) {
+                      GoRouter.of(context).go('/calendar');
+                    } else {
+                      GoRouter.of(context).go('/profile');
+                    }
+                  },
+                ),
               ListTile(
-                leading: const Icon(Icons.delete),
-                title: const Text('Delete'),
+                leading: const Icon(Icons.report),
+                title: const Text('Report'),
                 onTap: () {
-                  final postCubit = context.read<DeletePostsCubit>();
-                  postCubit.deletePosts(widget.postId);
-                  if (widget.fromPath.contains("/calendar")) {
-                    GoRouter.of(context).go('/calendar');
-                  } else {
-                    GoRouter.of(context).go('/profile');
-                  }
+                  Navigator.pop(context);
                 },
               ),
-            ListTile(
-              leading: const Icon(Icons.report),
-              title: const Text('Report'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -433,16 +457,18 @@ class _PostScreenState extends State<PostScreen>
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text('Share'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         );
       },
     );

@@ -132,6 +132,8 @@ Widget buildPublicButton(
 Widget buildCaptionInput(
   BuildContext context,
   TextEditingController collectionNameController,
+  FocusNode focusNode,
+  StateSetter setState,
 ) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,6 +146,7 @@ Widget buildCaptionInput(
       Form(
         child: TextFormField(
           controller: collectionNameController,
+          focusNode: focusNode,
           cursorColor: couleurBleuClair2,
           style: AppTextStyles.bodyStyle(context),
           decoration: InputDecoration(
@@ -155,6 +158,9 @@ Widget buildCaptionInput(
           validator: (value) => value!.trim().isEmpty
               ? AppLocalizations.of(context)!.translate('captionnotempty')
               : null,
+          onTap: () {
+            setState(() {});
+          },
         ),
       ),
     ],
@@ -183,13 +189,6 @@ Widget buildBookmarkIcon(
   );
 }
 
-Widget buildIconButton(IconData icon, VoidCallback onPressed) {
-  return IconButton(
-    icon: Icon(icon, color: Colors.black, size: 24),
-    onPressed: onPressed,
-  );
-}
-
 Widget buildActionIcons(
     MyCollectionState state,
     BuildContext context,
@@ -211,6 +210,13 @@ Widget buildActionIcons(
           Icons.add_to_photos, () => addToLikesThenShowCollections(state)),
       buildFavoriteButton(context, postId, userId!, animation, controller),
     ],
+  );
+}
+
+Widget buildIconButton(IconData icon, VoidCallback onPressed) {
+  return IconButton(
+    icon: Icon(icon, color: Colors.black, size: 24),
+    onPressed: onPressed,
   );
 }
 

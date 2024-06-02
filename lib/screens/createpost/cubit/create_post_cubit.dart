@@ -92,18 +92,18 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       final author = User.empty.copyWith(id: userId);
       final selectedGender = user.selectedGender;
 
-      // Compress and upload the original image
+      // Compresser et télécharger l'image originale
       final compressedImage = await compressImage(state.postImage!);
       final postImageUrl =
           await _storageRepository.uploadPostImage(image: compressedImage);
 
-      // Compress and create the thumbnail image
+      // Compresser et créer l'image miniature
       final thumbnailImage = await createThumbnail(state.postImage!);
 
-      // Read the thumbnail image as bytes
+      // Lire l'image miniature en tant que bytes
       final thumbnailImageBytes = await thumbnailImage.readAsBytes();
 
-      // Create and upload the thumbnail
+      // Créer et télécharger l'image miniature
       final thumbnailImageUrl = await _storageRepository.uploadThumbnailImage(
           thumbnailImageBytes: thumbnailImageBytes);
 
@@ -122,7 +122,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         locationSelected: state.locationSelected,
       );
 
-      // Debug print all the post values
+      // Debug print toutes les valeurs du post
       debugPrint('Creating post with values:');
       debugPrint('Author: ${post.author}');
       debugPrint('Image URL: ${post.imageUrl}');
@@ -137,7 +137,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       debugPrint('Location Country: ${post.locationCountry}');
       debugPrint('Location Selected: ${post.locationSelected}');
 
-      await _postRepository.createPost(post: post);
+      await _postRepository.createPost(post: post, userId: userId);
 
       emit(state.copyWith(status: CreatePostStatus.success));
     } catch (err) {

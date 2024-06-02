@@ -1,7 +1,7 @@
 import '../../models/models.dart';
 
 abstract class BasePostRepository {
-  Future<void> createPost({required Post post});
+  Future<void> createPost({required Post post, required String userId});
   Future<void> createComment({required Post post, required Comment comment});
   void createLike({required Post post, required String userId});
   Stream<List<Future<Post?>>> getUserPosts({required String userId});

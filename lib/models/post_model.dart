@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, non_constant_identifier_names
 
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/models/models.dart';
@@ -21,6 +21,7 @@ class Post extends Equatable {
   final String locationState;
   final String locationCountry;
   final String locationSelected;
+  final DocumentReference? postReference; // Nouveau champ
 
   const Post({
     this.id,
@@ -36,6 +37,7 @@ class Post extends Equatable {
     required this.locationState,
     required this.locationCountry,
     required this.locationSelected,
+    this.postReference, // Initialisation du nouveau champ
   });
 
   static var empty = Post(
@@ -52,6 +54,7 @@ class Post extends Equatable {
     locationState: '',
     locationCountry: '',
     locationSelected: '',
+    postReference: null, // Initialisation du champ
   );
 
   @override
@@ -69,6 +72,7 @@ class Post extends Equatable {
         locationState,
         locationCountry,
         locationSelected,
+        postReference,
       ];
 
   Post copyWith({
@@ -85,6 +89,7 @@ class Post extends Equatable {
     String? locationState,
     String? locationCountry,
     String? locationSelected,
+    DocumentReference? postReference,
   }) {
     return Post(
       id: id ?? this.id,
@@ -100,6 +105,7 @@ class Post extends Equatable {
       locationState: locationState ?? this.locationState,
       locationCountry: locationCountry ?? this.locationCountry,
       locationSelected: locationSelected ?? this.locationSelected,
+      postReference: postReference ?? this.postReference,
     );
   }
 
@@ -118,6 +124,7 @@ class Post extends Equatable {
       'locationState': locationState,
       'locationCountry': locationCountry,
       'locationSelected': locationSelected,
+      'postReference': postReference, // Ajout de la référence dans le document
     };
   }
 
@@ -151,6 +158,8 @@ class Post extends Equatable {
             locationState: data['locationState'] ?? '',
             locationCountry: data['locationCountry'] ?? '',
             locationSelected: data['locationSelected'] ?? '',
+            postReference: data['postReference']
+                as DocumentReference?, // Extraction de la référence du document
           );
         } else {
           debugPrint(

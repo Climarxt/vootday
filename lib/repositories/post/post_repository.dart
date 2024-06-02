@@ -170,8 +170,38 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Future<void> createPost({required Post post}) async {
-    await _firebaseFirestore.collection(Paths.posts).add(post.toDocument());
+  Future<void> createPost({required Post post, required String userId}) async {
+    // Créer le post dans la collection personnelle de l'utilisateur
+    final userPostRef = await _firebaseFirestore
+        .collection(Paths.users)
+        .doc(userId)
+        .collection(Paths.posts)
+        .add(post.toDocument());
+
+    // Construire le chemin pour la référence du post
+    String genderPath =
+        post.selectedGender == 'Masculin' ? 'posts_man' : 'posts_woman';
+    String locationPath = _getLocationPath(post);
+
+    // Créer un document avec une référence du post
+    final locationPostRef = await _firebaseFirestore
+        .collection('$genderPath/$locationPath/posts')
+        .add({'post_ref': userPostRef});
+
+    // Mettre à jour le post avec la référence de l'emplacement
+    await userPostRef.update({'postReference': locationPostRef});
+  }
+
+  String _getLocationPath(Post post) {
+    if (post.locationSelected == post.locationCountry) {
+      return post.locationCountry;
+    } else if (post.locationSelected == post.locationState) {
+      return '${post.locationCountry}/regions/${post.locationState}';
+    } else if (post.locationSelected == post.locationCity) {
+      return '${post.locationCountry}/regions/${post.locationState}/cities/${post.locationCity}';
+    } else {
+      throw Exception('Invalid location selected');
+    }
   }
 
   @override

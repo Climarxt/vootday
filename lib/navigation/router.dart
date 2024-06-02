@@ -348,10 +348,12 @@ GoRouter createRouter(BuildContext context) {
         path: '/post/:postId',
         pageBuilder: (BuildContext context, GoRouterState state) {
           final postId = RouteConfig.getPostId(state);
+          final userId = RouteConfig.getUserIdUri(state);
           final fromPath = state.extra as String? ?? 'defaultFromPath';
           return MaterialPage<void>(
             key: state.pageKey,
-            child: PostScreen(postId: postId, fromPath: fromPath),
+            child:
+                PostScreen(postId: postId, fromPath: fromPath, userId: userId),
           );
         },
         routes: [

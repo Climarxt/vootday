@@ -18,11 +18,13 @@ import 'package:go_router/go_router.dart';
 
 class PostScreen extends StatefulWidget {
   final String postId;
+  final String userId;
   final String fromPath;
 
   const PostScreen({
     super.key,
     required this.postId,
+    required this.userId,
     required this.fromPath,
   });
 
@@ -246,8 +248,10 @@ class _PostScreenState extends State<PostScreen>
 
   Future<void> _loadPost() async {
     try {
+      final postId = widget.postId;
+      final userId = widget.userId; // Récupérer userId à partir du widget
       final post =
-          await context.read<PostRepository>().getPostById(widget.postId);
+          await context.read<PostRepository>().getPostById(postId, userId);
       if (post != null) {
         final userDoc = await FirebaseFirestore.instance
             .collection(Paths.users)

@@ -56,7 +56,7 @@ class _MosaiqueMyProfileCardState extends State<MosaiqueMyProfileCard> {
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    final username = widget.post.author.username;
-    GoRouter.of(context).push('/post/${widget.post.id}?username=$username');
+    final id = widget.post.author.id;
+    GoRouter.of(context).push('/post/${widget.post.id}?userId=$id');
   }
 }

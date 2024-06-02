@@ -42,7 +42,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
     try {
       _commentsSubscription?.cancel();
-      final post = await _postRepository.getPostById(event.postId);
+      final post = await _postRepository.getPostById(event.postId, "");
 
       if (post == null) {
         // Gérer le cas où le post n'existe pas
@@ -96,7 +96,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     debugPrint('État de soumission émis');
 
     try {
-      final post = await _postRepository.getPostById(event.postId);
+      final post = await _postRepository.getPostById(event.postId, "");
       if (post == null) {
         throw Exception('Post récupéré est null');
       }

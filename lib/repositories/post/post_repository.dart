@@ -331,10 +331,14 @@ class PostRepository extends BasePostRepository {
         .delete();
   }
 
-  Future<Post?> getPostById(String postId) async {
+  Future<Post?> getPostById(String postId, String userId) async {
     try {
-      DocumentSnapshot postSnap =
-          await _firebaseFirestore.collection(Paths.posts).doc(postId).get();
+      DocumentSnapshot postSnap = await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .doc(postId)
+          .get();
 
       if (postSnap.exists) {
         return Post.fromDocument(postSnap);

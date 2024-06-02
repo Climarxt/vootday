@@ -275,10 +275,10 @@ class PostRepository extends BasePostRepository {
 
   @override
   Stream<List<Future<Post?>>> getUserPosts({required String userId}) {
-    final authorRef = _firebaseFirestore.collection(Paths.users).doc(userId);
     return _firebaseFirestore
+        .collection(Paths.users)
+        .doc(userId)
         .collection(Paths.posts)
-        .where('author', isEqualTo: authorRef)
         .orderBy('date', descending: true)
         .snapshots()
         .map((snap) => snap.docs.map((doc) => Post.fromDocument(doc)).toList());

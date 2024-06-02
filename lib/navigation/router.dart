@@ -361,14 +361,15 @@ GoRouter createRouter(BuildContext context) {
             path: 'comment',
             pageBuilder: (BuildContext context, GoRouterState state) {
               final postId = RouteConfig.getPostIdUri(state);
+              final userId = RouteConfig.getUserIdUri(state);
               return MaterialPage<void>(
                 key: state.pageKey,
                 child: BlocProvider<CommentsBloc>(
                   create: (_) => CommentsBloc(
                     postRepository: context.read<PostRepository>(),
                     authBloc: context.read<AuthBloc>(),
-                  )..add(CommentsFetchComments(postId: postId)),
-                  child: CommentScreen(postId: postId),
+                  )..add(CommentsFetchComments(postId: postId, userId: userId)),
+                  child: CommentScreen(postId: postId, userId: userId),
                 ),
               );
             },

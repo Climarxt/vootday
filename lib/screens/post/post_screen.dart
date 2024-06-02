@@ -419,7 +419,8 @@ class _PostScreenState extends State<PostScreen>
   }
 
   void _navigateToCommentScreen(BuildContext context) {
-    context.push('/post/${widget.postId}/comment?postId=${widget.postId}');
+    context.push(
+        '/post/${widget.postId}/comment?postId=${widget.postId}&userId=${widget.userId}');
   }
 
   void _showBottomSheet(BuildContext context) {

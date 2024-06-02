@@ -42,7 +42,13 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
     try {
       _commentsSubscription?.cancel();
-      final post = await _postRepository.getPostById(event.postId, "");
+
+      // Debug print pour vérifier les valeurs de postId et userId
+      debugPrint(
+          'Fetching post with postId: ${event.postId} and userId: ${event.userId}');
+
+      final post =
+          await _postRepository.getPostById(event.postId, event.userId);
 
       if (post == null) {
         // Gérer le cas où le post n'existe pas
@@ -57,11 +63,15 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
           .getPostComments(postId: event.postId)
           .listen((comments) async {
         final allComments = await Future.wait(comments);
-        add(CommentsUpdateComments(comments: allComments));
+        add(CommentsUpdateComments(
+            comments: allComments, userId: event.userId));
       });
 
       emit(state.copyWith(post: post, status: CommentsStatus.loaded));
     } catch (err) {
+      // Debug print pour afficher l'erreur
+      debugPrint('Error fetching comments: $err');
+
       emit(state.copyWith(
         status: CommentsStatus.error,
         failure: const Failure(
@@ -96,7 +106,8 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     debugPrint('État de soumission émis');
 
     try {
-      final post = await _postRepository.getPostById(event.postId, "");
+      final post =
+          await _postRepository.getPostById(event.postId, event.userId);
       if (post == null) {
         throw Exception('Post récupéré est null');
       }

@@ -8,8 +8,9 @@ import 'package:go_router/go_router.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
+  final String userId;
 
-  const CommentScreen({super.key, required this.postId});
+  const CommentScreen({super.key, required this.postId, required this.userId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -153,6 +154,7 @@ class _CommentScreenState extends State<CommentScreen> {
                                       .add(CommentsPostComment(
                                         content: content,
                                         postId: widget.postId,
+                                        userId: widget.userId,
                                       ));
                                   _commentController.clear();
               

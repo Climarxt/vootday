@@ -1,6 +1,5 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
-import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';

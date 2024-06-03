@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
-
-import 'package:flutter/material.dart';
 
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_state.dart';
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart';
@@ -14,12 +13,14 @@ part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart'
 class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
+  final ContextualLogger logger;
 
   MyCollectionBloc({
     required PostRepository postRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
         _authBloc = authBloc,
+        logger = ContextualLogger('MyCollectionBloc'),
         super(MyCollectionState.initial()) {
     on<MyCollectionFetchCollections>(_mapMyCollectionFetchCollections);
     on<MyCollectionClean>(_onMyCollectionClean);
@@ -32,20 +33,27 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     Emitter<MyCollectionState> emit,
   ) async {
     _onMyCollectionClean(MyCollectionClean(), emit);
+    logger.logInfo('mapMyCollectionFetchCollections', 'Fetching collections',
+        {'event': event});
     try {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            '_mapMyCollectionFetchCollections : User ID is null. User must be logged in to fetch posts.');
+            'User ID is null. User must be logged in to fetch posts.');
       }
-      debugPrint('_mapMyCollectionFetchCollections : Fetching collections...');
+      logger.logInfo('mapMyCollectionFetchCollections',
+          'Fetching collections for user', {'userId': userId});
+
       final collections = await _postRepository.getMyCollection(userId: userId);
 
       if (collections.isEmpty) {
-        debugPrint('_mapMyCollectionFetchCollections : No collections found.');
+        logger.logInfo('mapMyCollectionFetchCollections',
+            'No collections found', {'userId': userId});
       } else {
-        debugPrint(
-            '_mapMyCollectionFetchCollections : Collections fetched successfully. Total collections: ${collections.length}');
+        logger.logInfo(
+            'mapMyCollectionFetchCollections',
+            'Collections fetched successfully',
+            {'totalCollections': collections.length});
       }
 
       emit(
@@ -55,14 +63,12 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
             isPostInCollection: true),
       );
     } catch (err) {
-      debugPrint(
-          '_mapMyCollectionFetchCollections : Error fetching collections: ${err.toString()}');
-
+      logger.logError('mapMyCollectionFetchCollections',
+          'Error fetching collections', {'error': err.toString()});
       emit(state.copyWith(
         status: MyCollectionStatus.error,
-        failure: const Failure(
-            message:
-                '_mapMyCollectionFetchCollections : Impossible de charger les collections'),
+        failure:
+            const Failure(message: 'Impossible de charger les collections'),
         collections: [],
         isPostInCollection: true,
       ));
@@ -73,7 +79,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     MyCollectionClean event,
     Emitter<MyCollectionState> emit,
   ) async {
-    emit(MyCollectionState.initial()); // Remet l'état à son état initial
+    emit(MyCollectionState.initial());
   }
 
   Future<void> _onCheckPostInCollection(
@@ -86,13 +92,19 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
         collectionId: event.collectionId,
       );
 
+      logger.logInfo(
+          'onCheckPostInCollection', 'Checked if post is in collection', {
+        'postId': event.postId,
+        'collectionId': event.collectionId,
+        'isPostInCollection': isPostInCollection
+      });
+
       emit(state.copyWith(
         isPostInCollection: isPostInCollection,
       ));
     } catch (e) {
-      debugPrint(
-          '_onCheckPostInCollection : Error checking post in collection: ${e.toString()}');
-      // Vous pouvez également émettre un état d'erreur ici si nécessaire
+      logger.logError('onCheckPostInCollection',
+          'Error checking post in collection', {'error': e.toString()});
     }
   }
 
@@ -103,14 +115,19 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     try {
       await _postRepository.deletePostRefFromCollection(
           postId: event.postId, collectionId: event.collectionId);
-      debugPrint(
-          '_onDeletePostRefFromCollection : Post référence supprimée de la collection avec succès.');
+
+      logger.logInfo(
+          'onDeletePostRefFromCollection',
+          'Post reference deleted from collection',
+          {'postId': event.postId, 'collectionId': event.collectionId});
 
       // Vous pouvez émettre un nouvel état ici si nécessaire
       // Par exemple, recharger les collections pour refléter la suppression
     } catch (e) {
-      debugPrint(
-          '_onDeletePostRefFromCollection : Erreur lors de la suppression de la post référence de la collection: ${e.toString()}');
+      logger.logError(
+          'onDeletePostRefFromCollection',
+          'Error deleting post reference from collection',
+          {'error': e.toString()});
       // Gérer l'état d'erreur comme vous le souhaitez
     }
   }

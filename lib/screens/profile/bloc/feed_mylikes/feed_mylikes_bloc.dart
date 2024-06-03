@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
   final FeedRepository _feedRepository;
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
+  final ContextualLogger logger;
 
   FeedMyLikesBloc({
     required FeedRepository feedRepository,
@@ -22,6 +24,7 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         _postRepository = postRepository,
+        logger = ContextualLogger('FeedMyLikesBloc'),
         super(FeedMyLikesState.initial()) {
     on<FeedMyLikesFetchPosts>(_mapFeedMyLikesFetchPosts);
     on<FeedMyLikesClean>(_onFeedMyLikesClean);
@@ -34,20 +37,21 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
     Emitter<FeedMyLikesState> emit,
   ) async {
     _onFeedMyLikesClean(FeedMyLikesClean(), emit);
-    debugPrint('FeedMyLikesFetchPosts : Fetching posts for MyLikes');
+    logger.logInfo('_mapFeedMyLikesFetchPosts',
+        'Fetching posts for MyLikes', {'event': event});
 
     try {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            'FeedMyLikesFetchPosts : User ID is null. User must be logged in to fetch posts.');
+            'User ID is null. User must be logged in to fetch posts.');
       }
-      debugPrint('FeedMyLikesFetchPosts : Fetching posts for user $userId.');
+      logger.logInfo('_mapFeedMyLikesFetchPosts',
+          'Fetching posts for user', {'userId': userId});
 
-      final posts = await _feedRepository.getFeedMyLikes(
-        userId: userId,
-      );
-      debugPrint('FeedMyLikesFetchPosts : Fetched ${posts.length} posts.');
+      final posts = await _feedRepository.getFeedMyLikes(userId: userId);
+      logger.logInfo('_mapFeedMyLikesFetchPosts',
+          'Fetched posts', {'postCount': posts.length});
 
       emit(state.copyWith(
         posts: posts,
@@ -55,15 +59,15 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         hasFetchedInitialPosts: true,
         isPostInLikes: true,
       ));
-      debugPrint('FeedMyLikesFetchPosts : Posts loaded successfully.');
+      logger.logInfo('_mapFeedMyLikesFetchPosts',
+          'Posts loaded successfully');
     } catch (err) {
-      debugPrint(
-          'FeedMyLikesFetchPosts : Error fetching posts - ${err.toString()}');
+      logger.logError('_mapFeedMyLikesFetchPosts',
+          'Error fetching posts', {'error': err.toString()});
       emit(state.copyWith(
         status: FeedMyLikesStatus.error,
-        failure: Failure(
-            message:
-                'FeedMyLikesFetchPosts : Unable to load the feed - ${err.toString()}'),
+        failure:
+            Failure(message: 'Unable to load the feed - ${err.toString()}'),
         isPostInLikes: true,
       ));
     }
@@ -82,24 +86,27 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
   ) async {
     try {
       final userId = _authBloc.state.user?.uid;
-      debugPrint('_onCheckPostInLikes : User ID - $userId');
+      logger.logInfo(
+          '_onCheckPostInLikes',
+          'Checking if post is in likes',
+          {'userId': userId, 'postId': event.postId});
       if (userId == null) {
         throw Exception(
-            '_onCheckPostInLikes : User ID is null. User must be logged in to fetch posts.');
+            'User ID is null. User must be logged in to fetch posts.');
       }
       final isPostInLikes = await _postRepository.isPostInLikes(
-        postId: event.postId,
-        userId: userId,
-      );
-      debugPrint(
-          '_onCheckPostInLikes : Post ${event.postId} is in likes - $isPostInLikes');
+          postId: event.postId, userId: userId);
+      logger.logInfo(
+          '_onCheckPostInLikes',
+          'Checked post in likes',
+          {'postId': event.postId, 'isPostInLikes': isPostInLikes});
 
       emit(state.copyWith(
         isPostInLikes: isPostInLikes,
       ));
     } catch (e) {
-      debugPrint(
-          '_onCheckPostInLikes : Error checking post in collection: ${e.toString()}');
+      logger.logError('_onCheckPostInLikes',
+          'Error checking post in collection', {'error': e.toString()});
     }
   }
 
@@ -111,16 +118,17 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
       final userId = _authBloc.state.user?.uid;
       if (userId == null) {
         throw Exception(
-            '_onDeletePostRefFromCollection : User ID is null. User must be logged in to fetch posts.');
+            'User ID is null. User must be logged in to fetch posts.');
       }
       await _postRepository.deletePostRefFromLikes(
           postId: event.postId, userId: userId);
-
-      debugPrint(
-          '_onDeletePostRefFromCollection : Post référence supprimée de la collection avec succès.');
+      logger.logInfo(
+          '_onDeletePostRefFromLikes',
+          'Post reference deleted from likes',
+          {'postId': event.postId, 'userId': userId});
     } catch (e) {
-      debugPrint(
-          '_onDeletePostRefFromCollection : Erreur lors de la suppression de la post référence de la collection: ${e.toString()}');
+      logger.logError('_onDeletePostRefFromLikes',
+          'Error deleting post reference from likes', {'error': e.toString()});
     }
   }
 }

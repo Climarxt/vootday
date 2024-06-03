@@ -1,4 +1,3 @@
-
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
@@ -102,6 +101,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<CreateCollectionCubit>(
             create: (context) => CreateCollectionCubit(
               firebaseFirestore: FirebaseFirestore.instance,
+              widgetName: 'CreateCollectionCubit',
             ),
           ),
           BlocProvider(

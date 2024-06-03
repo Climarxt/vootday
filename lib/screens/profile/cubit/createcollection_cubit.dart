@@ -1,19 +1,22 @@
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'createcollection_state.dart';
 
 class CreateCollectionCubit extends Cubit<CreateCollectionState> {
   final FirebaseFirestore _firebaseFirestore;
+  final ContextualLogger _logger;
 
   CreateCollectionCubit({
     required FirebaseFirestore firebaseFirestore,
+    required String widgetName,
   })  : _firebaseFirestore = firebaseFirestore,
+        _logger = ContextualLogger(widgetName),
         super(CreateCollectionState.initial()) {
-    debugPrint('CreateCollectionCubit created');
+    _logger.logInfo('constructor', 'CreateCollectionCubit created');
   }
 
   Future<void> createCollection(
@@ -21,11 +24,18 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
     emit(state.copyWith(status: CreateCollectionStatus.loading));
 
     try {
-      debugPrint('createCollection : Creating new collection...');
+      _logger.logInfo(
+        'createCollection',
+        'Creating new collection...',
+        {
+          'userId': userId,
+          'collectionTitle': collectionTitle,
+          'public': public
+        },
+      );
 
-      DateTime now = DateTime.now(); // Capture de la date actuelle
+      DateTime now = DateTime.now();
 
-      // Création de la nouvelle collection
       final newCollection = Collection(
         id: '',
         author: User.empty.copyWith(id: userId),
@@ -38,22 +48,25 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
           .collection('collections')
           .add(newCollection.toDocument());
 
-      // Ajout de la référence de la collection et de la date à la sous-collection de l'utilisateur
       await _firebaseFirestore
           .collection('users')
           .doc(userId)
           .collection('mycollection')
-          .add({
-        'collection_ref': collectionRef,
-        'date': now // Ajout de la date ici
-      });
+          .add({'collection_ref': collectionRef, 'date': now});
 
-      debugPrint('createCollection : Collection created successfully.');
+      _logger.logInfo(
+        'createCollection',
+        'Collection created successfully.',
+        {'collectionRefId': collectionRef.id},
+      );
 
       emit(state.copyWith(status: CreateCollectionStatus.success));
     } catch (e) {
-      debugPrint(
-          'createCollection : Error creating collection: ${e.toString()}');
+      _logger.logError(
+        'createCollection',
+        'Error creating collection',
+        {'error': e.toString()},
+      );
       emit(state.copyWith(
         status: CreateCollectionStatus.error,
         failure: const Failure(
@@ -67,10 +80,18 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
     emit(state.copyWith(status: CreateCollectionStatus.loading));
 
     try {
-      debugPrint('createCollectionReturnCollectionId : Creating new collection...');
+      _logger.logInfo(
+        'createCollectionReturnCollectionId',
+        'Creating new collection...',
+        {
+          'userId': userId,
+          'collectionTitle': collectionTitle,
+          'public': public
+        },
+      );
+
       DateTime now = DateTime.now();
 
-      // Création de la nouvelle collection
       final newCollection = Collection(
         id: '',
         author: User.empty.copyWith(id: userId),
@@ -83,27 +104,32 @@ class CreateCollectionCubit extends Cubit<CreateCollectionState> {
           .collection('collections')
           .add(newCollection.toDocument());
 
-      // Ajout de la référence de la collection et de la date à la sous-collection de l'utilisateur
       await _firebaseFirestore
           .collection('users')
           .doc(userId)
           .collection('mycollection')
           .add({'collection_ref': collectionRef, 'date': now});
 
-      debugPrint('createCollectionReturnCollectionId : Collection created successfully.');
+      _logger.logInfo(
+        'createCollectionReturnCollectionId',
+        'Collection created successfully.',
+        {'collectionRefId': collectionRef.id},
+      );
 
       emit(state.copyWith(status: CreateCollectionStatus.success));
-      return collectionRef.id; // Retourne l'ID de la nouvelle collection
-
+      return collectionRef.id;
     } catch (e) {
-      debugPrint(
-          'createCollectionReturnCollectionId : Error creating collection: ${e.toString()}');
+      _logger.logError(
+        'createCollectionReturnCollectionId',
+        'Error creating collection',
+        {'error': e.toString()},
+      );
       emit(state.copyWith(
         status: CreateCollectionStatus.error,
         failure: const Failure(
             message: 'Erreur lors de la création de la collection'),
       ));
-      return ''; // Retourne une chaîne vide en cas d'échec
+      return '';
     }
   }
 }

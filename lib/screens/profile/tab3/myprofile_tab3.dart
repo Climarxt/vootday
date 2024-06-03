@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
@@ -19,12 +20,13 @@ class MyProfileTab3 extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _MyProfileTab3State createState() => _MyProfileTab3State();
 }
 
 class _MyProfileTab3State extends State<MyProfileTab3>
-    with AutomaticKeepAliveClientMixin<MyProfileTab3> {
+    with
+        AutomaticKeepAliveClientMixin<MyProfileTab3>,
+        LoggingMixin<MyProfileTab3> {
   final TextEditingController _collectionNameController =
       TextEditingController();
   ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
@@ -32,9 +34,12 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return BlocListener<CreateCollectionCubit, CreateCollectionState>(
       listener: (context, state) {
         if (state.status == CreateCollectionStatus.success) {
+          logInfo('CreateCollectionCubit.listener', 'CreateCollection success',
+              {'status': state.status});
           context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
         }
       },
@@ -42,6 +47,8 @@ class _MyProfileTab3State extends State<MyProfileTab3>
         listener: (context, state) {},
         builder: (context, state) {
           if (state.status == MyCollectionStatus.initial) {
+            logInfo('MyCollectionBloc.builder',
+                'Initial state detected, fetching collections', {});
             context
                 .read<MyCollectionBloc>()
                 .add(MyCollectionFetchCollections());
@@ -53,6 +60,9 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   Widget _buildBody(MyCollectionState state) {
+    const String widgetName = '_buildBody';
+    logInfo(widgetName, 'Building body with ', {'state': state});
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -83,7 +93,6 @@ class _MyProfileTab3State extends State<MyProfileTab3>
                   } else {
                     final collection =
                         state.collections[index] ?? Collection.empty;
-
                     return FutureBuilder<String>(
                       future: getMostRecentPostImageUrl(collection.id),
                       builder: (context, snapshot) {
@@ -95,11 +104,15 @@ class _MyProfileTab3State extends State<MyProfileTab3>
                           );
                         }
                         if (snapshot.hasError) {
-                          // Handle the error state
+                          logError(widgetName, 'Error fetching image URL',
+                              {'error': snapshot.error});
                           return Text('Error: ${snapshot.error}');
                         }
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          // Handle the case where there is no image URL
+                          logInfo(
+                              widgetName,
+                              'No image available for collection',
+                              {'collectionId': collection.id});
                           return const Text('No image available');
                         }
                         return MosaiqueCollectionCard(
@@ -120,6 +133,8 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    const String widgetName = 'getMostRecentPostImageUrl';
+
     try {
       final feedEventRef = FirebaseFirestore.instance
           .collection('collections')
@@ -139,27 +154,30 @@ class _MyProfileTab3State extends State<MyProfileTab3>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint(
-                "MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document exist.");
+            logInfo(widgetName, 'Referenced post document exists',
+                {'collectionId': collectionId});
             return postData?['imageUrl'] as String? ?? '';
           } else {
-            debugPrint(
-                "MyProfileTab3 - getMostRecentPostImageUrl : Referenced post document does not exist.");
+            logInfo(widgetName, 'Referenced post document does not exist',
+                {'collectionId': collectionId});
           }
         } else {
-          debugPrint(
-              "MyProfileTab3 - getMostRecentPostImageUrl : Post reference is null.");
+          logInfo(widgetName, 'Post reference is null',
+              {'collectionId': collectionId});
         }
       }
     } catch (e) {
-      debugPrint(
-          "MyProfileTab3 - getMostRecentPostImageUrl : An error occurred while fetching the most liked post image URL: $e");
+      logError(widgetName, 'Error fetching most liked post image URL',
+          {'collectionId': collectionId, 'error': e.toString()});
     }
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }
 
   void _openCreateCollectionSheet(BuildContext context) {
+    const String widgetName = '_openCreateCollectionSheet';
+
     final createCollectionCubit = context.read<CreateCollectionCubit>();
+    logInfo(widgetName, 'Opening create collection sheet', {});
 
     showModalBottomSheet(
       isDismissible: true,
@@ -173,6 +191,8 @@ class _MyProfileTab3State extends State<MyProfileTab3>
           child: BlocConsumer<CreateCollectionCubit, CreateCollectionState>(
             listener: (context, state) {
               if (state.status == CreateCollectionStatus.success) {
+                logInfo(widgetName, 'Collection creation successful',
+                    {'status': state.status});
                 Navigator.pop(context);
               }
             },
@@ -211,6 +231,8 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   Widget _buildCaptionInput(BuildContext context) {
+    const String widgetName = '_buildCaptionInput';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -240,6 +262,10 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   Widget _buildPublicButton(BuildContext context, bool isPublic) {
+    const String widgetName = '_buildPublicButton';
+
+    logInfo(widgetName, 'Building public button', {'isPublic': isPublic});
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -254,7 +280,8 @@ class _MyProfileTab3State extends State<MyProfileTab3>
               activeColor: couleurBleuClair2,
               value: isPublic,
               onChanged: (bool value) {
-                debugPrint("Switch Changed: $value"); // Ajout de debugPrint
+                logInfo(
+                    widgetName, 'Public switch changed', {'newValue': value});
                 isPublicNotifier.value = value;
               },
             ),
@@ -272,23 +299,30 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   TextButton buildValidateButton(BuildContext context, bool isPublic) {
+    const String widgetName = 'buildValidateButton';
+
     return TextButton(
       onPressed: () {
         final String collectionName = _collectionNameController.text.trim();
         final bool isPublic = isPublicNotifier.value;
-        debugPrint("Collection Name: $collectionName"); // Ajout de debugPrint
-        debugPrint("Is Public: $isPublic"); // Ajout de debugPrint
+
+        logInfo(widgetName, 'Validate button pressed',
+            {'collectionName': collectionName, 'isPublic': isPublic});
 
         if (collectionName.isNotEmpty) {
           final authState = context.read<AuthBloc>().state;
           final userId = authState.user?.uid;
+
           if (userId != null) {
+            logInfo(widgetName, 'User ID is not null', {'userId': userId});
             context
                 .read<CreateCollectionCubit>()
                 .createCollection(userId, collectionName, isPublic);
           } else {
-            debugPrint('User ID is null');
+            logError(widgetName, 'User ID is null');
           }
+        } else {
+          logError(widgetName, 'Collection name is empty');
         }
       },
       style: TextButton.styleFrom(
@@ -308,8 +342,13 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   TextButton buildCreatenewcollection(BuildContext context) {
+    const String widgetName = 'buildCreatenewcollection';
+
     return TextButton(
-      onPressed: () => _openCreateCollectionSheet(context),
+      onPressed: () {
+        logInfo(widgetName, 'Create new collection button pressed', {});
+        _openCreateCollectionSheet(context);
+      },
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         backgroundColor: white,

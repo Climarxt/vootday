@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_debugPrint
 
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/post/base_post_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,9 +10,10 @@ import '/repositories/repositories.dart';
 
 class PostRepository extends BasePostRepository {
   final FirebaseFirestore _firebaseFirestore;
+  final ContextualLogger logger;
 
   PostRepository({FirebaseFirestore? firebaseFirestore})
-      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance, logger = ContextualLogger('PostRepository');
 
   Future<void> deletePost({required String postId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
@@ -384,9 +386,12 @@ class PostRepository extends BasePostRepository {
   Future<List<Collection?>> getMyCollection({
     required String userId,
   }) async {
+    const String functionName = 'getMyCollection';
     try {
-      debugPrint(
-          'getMyCollection : Attempting to fetch collection references from Firestore...');
+      logger.logInfo(
+          functionName,
+          'Attempting to fetch collection references from Firestore...',
+          {'userId': userId});
 
       // Récupérer les références de la collection de l'utilisateur
       QuerySnapshot userCollectionSnap = await _firebaseFirestore
@@ -408,8 +413,10 @@ class PostRepository extends BasePostRepository {
           .cast<DocumentReference>()
           .toList();
 
-      debugPrint(
-          'getMyCollection : Collection references fetched. Fetching each collection document...');
+      logger.logInfo(
+          functionName,
+          'Collection references fetched. Fetching each collection document...',
+          {'collectionRefsCount': collectionRefs.length});
 
       List<Future<Collection?>> futureCollections = collectionRefs.map(
         (ref) async {
@@ -421,18 +428,18 @@ class PostRepository extends BasePostRepository {
       // Utiliser Future.wait pour résoudre toutes les collections
       List<Collection?> collections = await Future.wait(futureCollections);
 
-      debugPrint(
-          'getMyCollection : Collection objects created. Total collections: ${collections.length}');
+      logger.logInfo(functionName, 'Collection objects created.',
+          {'totalCollections': collections.length});
 
       if (collections.isNotEmpty) {
-        debugPrint(
-            'getMyCollection : First collection details: ${collections.first}');
+        logger.logInfo(functionName, 'First collection details',
+            {'firstCollection': collections.first});
       }
 
       return collections;
     } catch (e) {
-      debugPrint(
-          'getMyCollection : An error occurred while fetching collections: ${e.toString()}');
+      logger.logError(functionName, 'An error occurred while fetching collections',
+          {'error': e.toString()});
       return [];
     }
   }

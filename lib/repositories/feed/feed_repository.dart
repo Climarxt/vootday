@@ -1,4 +1,5 @@
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -496,54 +497,67 @@ class FeedRepository {
     required String userId,
     String? lastPostId,
   }) async {
+    final logger = ContextualLogger('FeedRepository');
+    logger.logInfo('getFeedMyLikes', 'Fetching liked posts',
+        {'userId': userId, 'lastPostId': lastPostId});
+
     QuerySnapshot postsSnap;
-    if (lastPostId == null) {
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.users)
-          .doc(userId)
-          .collection(Paths.likes)
-          .orderBy('date', descending: true)
-          .limit(100)
-          .get();
-    } else {
-      final lastPostDoc = await _firebaseFirestore
-          .collection(Paths.users)
-          .doc(userId)
-          .collection(Paths.likes)
-          .doc(lastPostId)
-          .get();
+    try {
+      if (lastPostId == null) {
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.users)
+            .doc(userId)
+            .collection(Paths.likes)
+            .orderBy('date', descending: true)
+            .limit(100)
+            .get();
+      } else {
+        final lastPostDoc = await _firebaseFirestore
+            .collection(Paths.users)
+            .doc(userId)
+            .collection(Paths.likes)
+            .doc(lastPostId)
+            .get();
 
-      if (!lastPostDoc.exists) {
-        return [];
+        if (!lastPostDoc.exists) {
+          logger.logInfo('getFeedMyLikes', 'Last post document does not exist',
+              {'lastPostId': lastPostId});
+          return [];
+        }
+
+        postsSnap = await _firebaseFirestore
+            .collection(Paths.users)
+            .doc(userId)
+            .collection(Paths.likes)
+            .orderBy('date', descending: true)
+            .startAfterDocument(lastPostDoc)
+            .limit(100)
+            .get();
       }
 
-      postsSnap = await _firebaseFirestore
-          .collection(Paths.users)
-          .doc(userId)
-          .collection(Paths.likes)
-          .orderBy('date', descending: true)
-          .startAfterDocument(lastPostDoc)
-          .limit(100)
-          .get();
-    }
-
-    // Ajout du debugPrint pour afficher les IDs des posts récupérés
-    for (var doc in postsSnap.docs) {
-      debugPrint(
-          'getFeedMyLikes : Post ID - ${doc.id}, Post Ref - ${doc['post_ref']}');
-    }
-
-    List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
-      DocumentReference postRef = doc['post_ref'];
-      DocumentSnapshot postSnap = await postRef.get();
-      if (postSnap.exists) {
-        return Post.fromDocument(postSnap);
+      for (var doc in postsSnap.docs) {
+        logger.logInfo('getFeedMyLikes', 'Fetched post',
+            {'postId': doc.id, 'postRef': doc['post_ref']});
       }
-      return null;
-    }).toList();
 
-    final posts = await Future.wait(postFutures);
-    return posts;
+      List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
+        DocumentReference postRef = doc['post_ref'];
+        DocumentSnapshot postSnap = await postRef.get();
+        if (postSnap.exists) {
+          return Post.fromDocument(postSnap);
+        }
+        return null;
+      }).toList();
+
+      final posts = await Future.wait(postFutures);
+      logger.logInfo('getFeedMyLikes', 'Successfully fetched liked posts',
+          {'postCount': posts.length});
+      return posts;
+    } catch (e) {
+      logger.logError('getFeedMyLikes', 'Error fetching liked posts',
+          {'error': e.toString()});
+      return [];
+    }
   }
 
   Future<List<Post?>> getFeedSwipe({

@@ -67,7 +67,7 @@ TextButton buildValidateButton(
           if (newCollectionId.isNotEmpty) {
             await context
                 .read<AddPostToCollectionCubit>()
-                .addPostToCollection(postId, newCollectionId);
+                .addPostToCollection(postId, newCollectionId, userId);
 
             Navigator.pop(context);
           } else {
@@ -207,10 +207,12 @@ Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
         context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
             postId: postId, collectionId: collectionId));
       } else {
+        final authState = context.read<AuthBloc>().state;
+        final userId = authState.user?.uid;
         // Ajouter le post à la collection
         context
             .read<AddPostToCollectionCubit>()
-            .addPostToCollection(postId, collectionId);
+            .addPostToCollection(postId, collectionId, userId!);
       }
       Navigator.pop(context);
     },

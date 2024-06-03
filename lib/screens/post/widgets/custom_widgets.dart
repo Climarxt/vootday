@@ -2,6 +2,7 @@
 
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/models/models.dart';
@@ -50,32 +51,54 @@ TextButton buildValidateButton(
   ValueNotifier<bool> isPublicNotifier,
   String postId,
 ) {
+  const String widgetName = 'buildValidateButton';
+  final logger = ContextualLogger(widgetName);
+
   return TextButton(
     onPressed: () async {
       final String collectionName = collectionNameController.text.trim();
       final bool isPublic = isPublicNotifier.value;
 
       if (collectionName.isNotEmpty) {
+        logger.logInfo(
+            "collectionName.isNotEmpty",
+            'Collection name is not empty',
+            {'collectionName': collectionName, 'isPublic': isPublic});
+
         final authState = context.read<AuthBloc>().state;
         final userId = authState.user?.uid;
+
         if (userId != null) {
+          logger.logInfo(
+              "userId != nul", 'User ID is not null', {'userId': userId});
+
           String newCollectionId = await context
               .read<CreateCollectionCubit>()
               .createCollectionReturnCollectionId(
                   userId, collectionName, isPublic);
 
           if (newCollectionId.isNotEmpty) {
+            logger.logInfo(
+                "newCollectionId.isNotEmpty",
+                'New collection ID is not empty',
+                {'newCollectionId': newCollectionId});
+
             await context
                 .read<AddPostToCollectionCubit>()
-                .addPostToCollection(postId, newCollectionId);
+                .addPostToCollection(postId, "1234", userId);
+            // .addPostToCollection(postId, newCollectionId, userId);
 
             Navigator.pop(context);
           } else {
-            debugPrint('Error: Collection creation failed');
+            logger.logError(
+                "newCollectionId.isNotEmpty", 'Collection creation failed');
           }
         } else {
-          debugPrint('User ID is null');
+          logger.logError("userId != nul", 'User ID is null');
         }
+      } else {
+        logger.logError(
+            "collectionName.isNotEmpty", 'Collection name is empty');
       }
     },
     style: TextButton.styleFrom(
@@ -339,10 +362,12 @@ Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
         context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
             postId: postId, collectionId: collectionId));
       } else {
+        final authState = context.read<AuthBloc>().state;
+        final userId = authState.user?.uid;
         // Ajouter le post à la collection
         context
             .read<AddPostToCollectionCubit>()
-            .addPostToCollection(postId, collectionId);
+            .addPostToCollection(postId, collectionId, userId!);
       }
       Navigator.pop(context);
     },

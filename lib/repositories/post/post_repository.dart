@@ -592,15 +592,22 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-  Future<void> deletePostRefFromLikes(
-      {required String postId, required String userId}) async {
+  Future<void> deletePostRefFromLikes({
+    required String postId,
+    required String userId,
+  }) async {
     try {
       debugPrint(
           'deletePostRefFromLikes : Suppression du post_ref des likes...');
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection(Paths.posts).doc(postId);
+      // Construire la référence correcte du post
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .doc(postId);
 
+      // Récupérer les documents likes qui contiennent cette référence de post
       QuerySnapshot snapshot = await _firebaseFirestore
           .collection(Paths.users)
           .doc(userId)
@@ -608,8 +615,9 @@ class PostRepository extends BasePostRepository {
           .where('post_ref', isEqualTo: postRef)
           .get();
 
+      // Si des documents sont trouvés, les supprimer
       if (snapshot.docs.isNotEmpty) {
-        await snapshot.docs.first.reference.delete();
+        await Future.wait(snapshot.docs.map((doc) => doc.reference.delete()));
         debugPrint(
             'deletePostRefFromLikes : Post_ref supprimé des likes avec succès.');
       } else {

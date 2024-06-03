@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -11,14 +12,19 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
       : _firebaseFirestore = firebaseFirestore,
         super(AddPostToCollectionInitialState());
 
-  Future<void> addPostToCollection(String postId, String collectionId) async {
+  Future<void> addPostToCollection(
+      String postId, String collectionId, String userId) async {
     emit(AddPostToCollectionLoadingState());
 
     try {
       debugPrint('AddPostToCollectionCubit : Adding post to collection...');
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection('posts').doc(postId);
+      // Construire la référence correcte du post
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .doc(postId);
       DateTime now = DateTime.now();
 
       await _firebaseFirestore

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +23,15 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
     try {
       debugPrint('AddPostToLikesCubit : Adding post to likes...');
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection('posts').doc(postId);
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .doc(postId);
       DateTime now = DateTime.now();
 
       await _firebaseFirestore
-          .collection('users')
+          .collection(Paths.users)
           .doc(userId)
           .collection('likes')
           .add({
@@ -48,11 +52,15 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
 
   Future<bool> isPostLiked(String postId, String userId) async {
     final likedPostsSnapshot = await _firebaseFirestore
-        .collection('users')
+        .collection(Paths.users)
         .doc(userId)
         .collection('likes')
         .where('post_ref',
-            isEqualTo: _firebaseFirestore.collection('posts').doc(postId))
+            isEqualTo: _firebaseFirestore
+                .collection(Paths.users)
+                .doc(userId)
+                .collection(Paths.posts)
+                .doc(postId))
         .get();
 
     return likedPostsSnapshot.docs.isNotEmpty;
@@ -63,18 +71,17 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
     emit(AddPostToLikesLoadingState());
 
     try {
-      debugPrint('AddPostToLikesCubit : Deleting post from likes...');
+      debugPrint('deletePostRefFromLikes : Deleting post from likes...');
 
-      // Utilisez la méthode existante de votre PostRepository
       await _postRepository.deletePostRefFromLikes(
           postId: postId, userId: userId);
 
-      debugPrint('AddPostToLikesCubit : Post deleted from likes successfully.');
+      debugPrint('deletePostRefFromLikes : Post deleted from likes successfully.');
 
       emit(AddPostToLikesSuccessState());
     } catch (e) {
       debugPrint(
-          'AddPostToLikesCubit : Error deleting post from likes: ${e.toString()}');
+          'deletePostRefFromLikes : Error deleting post from likes: ${e.toString()}');
       emit(AddPostToLikesErrorState(e.toString()));
     }
   }

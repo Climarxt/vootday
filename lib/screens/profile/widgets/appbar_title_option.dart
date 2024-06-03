@@ -77,47 +77,49 @@ class AppBarTitleOption extends StatelessWidget implements PreferredSizeWidget {
                 snapshot.data!.data() as Map<String, dynamic>;
             bool currentStatus = data['public'] as bool;
 
-            return Wrap(
-              children: <Widget>[
-                if (isUserTheAuthor)
-                  ListTile(
-                    leading: const Icon(Icons.public),
-                    title: const Text('Public'),
-                    trailing: Switch(
-                      activeColor: couleurBleuClair2,
-                      value: currentStatus,
-                      onChanged: (value) {
-                        Navigator.pop(context);
-                        context
-                            .read<UpdatePublicStatusCubit>()
-                            .updatePublicStatus(collectionId, value);
-                      },
+            return SafeArea(
+              child: Wrap(
+                children: <Widget>[
+                  if (isUserTheAuthor)
+                    ListTile(
+                      leading: const Icon(Icons.public),
+                      title: const Text('Public'),
+                      trailing: Switch(
+                        activeColor: couleurBleuClair2,
+                        value: currentStatus,
+                        onChanged: (value) {
+                          Navigator.pop(context);
+                          context
+                              .read<UpdatePublicStatusCubit>()
+                              .updatePublicStatus(collectionId, value);
+                        },
+                      ),
                     ),
-                  ),
-                ListTile(
-                  leading: const Icon(Icons.report),
-                  title: const Text('Report'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                if (isUserTheAuthor)
                   ListTile(
-                    leading: const Icon(Icons.delete),
-                    title: const Text('Delete'),
+                    leading: const Icon(Icons.report),
+                    title: const Text('Report'),
                     onTap: () {
                       Navigator.pop(context);
-                      Future.delayed(Duration.zero, () {
-                        final postCubit =
-                            context.read<DeleteCollectionsCubit>();
-                        postCubit.deleteCollections(collectionId);
-                        GoRouter.of(context).replace('/profile');
-                        SnackbarUtil.showSuccessSnackbar(
-                            context, 'Collection Deleted !');
-                      });
                     },
                   ),
-              ],
+                  if (isUserTheAuthor)
+                    ListTile(
+                      leading: const Icon(Icons.delete),
+                      title: const Text('Delete'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Future.delayed(Duration.zero, () {
+                          final postCubit =
+                              context.read<DeleteCollectionsCubit>();
+                          postCubit.deleteCollections(collectionId);
+                          GoRouter.of(context).replace('/profile');
+                          SnackbarUtil.showSuccessSnackbar(
+                              context, 'Collection Deleted !');
+                        });
+                      },
+                    ),
+                ],
+              ),
             );
           },
         );

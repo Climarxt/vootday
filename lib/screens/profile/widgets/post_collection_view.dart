@@ -80,12 +80,7 @@ class _PostCollectionViewState extends State<PostCollectionView>
   }
 
   void _navigateToPostScreen(BuildContext context) {
-    final String encodedUsername =
-        Uri.encodeComponent(widget.post.author.username);
-    final String encodedTitle = Uri.encodeComponent(widget.title);
-
-    GoRouter.of(context).push('/post/${widget.post.id}'
-        '?username=$encodedUsername'
-        '&title=$encodedTitle');
+    final id = widget.post.author.id;
+    GoRouter.of(context).push('/post/${widget.post.id}?userId=$id');
   }
 }

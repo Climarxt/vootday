@@ -85,7 +85,7 @@ TextButton buildValidateButton(
 
             await context
                 .read<AddPostToCollectionCubit>()
-                .addPostToCollection(postId, "1234", userId);
+                .addPostToCollection(postId, newCollectionId, userId);
             // .addPostToCollection(postId, newCollectionId, userId);
 
             Navigator.pop(context);

@@ -62,7 +62,7 @@ class PlainPrinter extends LogPrinter {
 class SingleLineOutput extends LogOutput {
   @override
   void output(OutputEvent event) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd - HH:mm:ss.SS');
+    final DateFormat formatter = DateFormat('HH:mm:ss.SS');
     final String timestamp = formatter.format(DateTime.now());
 
     for (var line in event.lines) {

@@ -231,8 +231,6 @@ class _MyProfileTab3State extends State<MyProfileTab3>
   }
 
   Widget _buildCaptionInput(BuildContext context) {
-    const String widgetName = '_buildCaptionInput';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

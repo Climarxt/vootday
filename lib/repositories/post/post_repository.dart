@@ -13,7 +13,8 @@ class PostRepository extends BasePostRepository {
   final ContextualLogger logger;
 
   PostRepository({FirebaseFirestore? firebaseFirestore})
-      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance, logger = ContextualLogger('PostRepository');
+      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
+        logger = ContextualLogger('PostRepository');
 
   Future<void> deletePost({required String postId}) async {
     WriteBatch batch = _firebaseFirestore.batch();
@@ -438,7 +439,9 @@ class PostRepository extends BasePostRepository {
 
       return collections;
     } catch (e) {
-      logger.logError(functionName, 'An error occurred while fetching collections',
+      logger.logError(
+          functionName,
+          'An error occurred while fetching collections',
           {'error': e.toString()});
       return [];
     }
@@ -574,12 +577,16 @@ class PostRepository extends BasePostRepository {
 
   Future<bool> isPostInLikes(
       {required String postId, required String userId}) async {
+    const String functionName = 'isPostInLikes';
     try {
-      debugPrint(
-          'isPostInLikes : Checking if post $postId is in likes for user $userId...');
+      logger.logInfo(functionName, 'Checking if post is in likes for user',
+          {'postId': postId, 'userId': userId});
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection(Paths.posts).doc(postId);
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .doc(postId);
 
       QuerySnapshot querySnapshot = await _firebaseFirestore
           .collection(Paths.users)
@@ -589,13 +596,14 @@ class PostRepository extends BasePostRepository {
           .get();
 
       bool result = querySnapshot.docs.isNotEmpty;
-      debugPrint('isPostInLikes : Post $postId is in likes - $result');
+      logger.logInfo(functionName, 'Post is in likes check completed',
+          {'postId': postId, 'result': result});
 
       return result;
     } catch (e) {
-      debugPrint(
-          'isPostInLikes : Error checking post $postId in likes for user $userId: ${e.toString()}');
-      return false; // Retourne false en cas d'erreur
+      logger.logError(functionName, 'Error checking post in likes for user',
+          {'postId': postId, 'userId': userId, 'error': e.toString()});
+      return false;
     }
   }
 

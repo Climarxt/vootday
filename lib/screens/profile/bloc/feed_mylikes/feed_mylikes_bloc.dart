@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
 import '/repositories/repositories.dart';
 

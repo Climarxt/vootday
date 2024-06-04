@@ -514,14 +514,24 @@ class PostRepository extends BasePostRepository {
     await collectionRef.update({'public': newStatus});
   }
 
-  Future<bool> isPostInCollection(
-      {required String postId, required String collectionId}) async {
-    try {
-      debugPrint(
-          'isPostInCollection : Attempting to check post in collection from Firestore...');
+  Future<bool> isPostInCollection({
+    required String postId,
+    required String collectionId,
+    required String userIdfromPost,
+  }) async {
+    const String functionName = 'isPostInCollection';
+    logger.logInfo(
+        functionName, 'Attempting to check post in collection from Firestore', {
+      'postId': postId,
+      'collectionId': collectionId,
+    });
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection(Paths.posts).doc(postId);
+    try {
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userIdfromPost)
+          .collection(Paths.posts)
+          .doc(postId);
 
       // Requête pour trouver le post dans la sous-collection spécifique de la collection
       QuerySnapshot querySnapshot = await _firebaseFirestore
@@ -533,10 +543,19 @@ class PostRepository extends BasePostRepository {
           .get();
 
       // Vérifier si le post existe dans la sous-collection
-      return querySnapshot.docs.isNotEmpty;
+      bool exists = querySnapshot.docs.isNotEmpty;
+      logger.logInfo(functionName, 'Post exists in collection', {
+        'exists': exists,
+        'postId': postId,
+        'collectionId': collectionId,
+      });
+      return exists;
     } catch (e) {
-      debugPrint(
-          'isPostInCollection : Erreur lors de la vérification du post dans la collection: ${e.toString()}');
+      logger.logError(functionName, 'Error checking post in collection', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'error': e.toString(),
+      });
       return false; // Retourne false en cas d'erreur
     }
   }
@@ -621,8 +640,8 @@ class PostRepository extends BasePostRepository {
       required String userIdfromPost,
       required String userIdfromAuth}) async {
     try {
-      logger.logInfo('deletePostRefFromLikes',
-          'Suppression du post des likes...', {
+      logger.logInfo(
+          'deletePostRefFromLikes', 'Suppression du post des likes...', {
         'postId': postId,
         'userIdfromPost': userIdfromPost,
         'userIdfromAuth': userIdfromAuth,
@@ -646,15 +665,15 @@ class PostRepository extends BasePostRepository {
       // Si des documents sont trouvés, les supprimer
       if (snapshot.docs.isNotEmpty) {
         await Future.wait(snapshot.docs.map((doc) => doc.reference.delete()));
-        logger.logInfo('deletePostRefFromLikes',
-            'Post supprimé des likes avec succès.', {
+        logger.logInfo(
+            'deletePostRefFromLikes', 'Post supprimé des likes avec succès.', {
           'postId': postId,
           'userIdfromPost': userIdfromPost,
           'userIdfromAuth': userIdfromAuth,
         });
       } else {
-        logger.logInfo('deletePostRefFromLikes',
-            'Aucun post trouvé dans les likes.', {
+        logger.logInfo(
+            'deletePostRefFromLikes', 'Aucun post trouvé dans les likes.', {
           'postId': postId,
           'userIdfromPost': userIdfromPost,
           'userIdfromAuth': userIdfromAuth,

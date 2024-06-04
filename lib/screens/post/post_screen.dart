@@ -179,6 +179,7 @@ class _PostScreenState extends State<PostScreen>
                 state,
                 imageUrls,
                 post.id!,
+                post.author.id,
                 postInCollectionMap,
               ),
             ],

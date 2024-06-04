@@ -90,6 +90,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       final isPostInCollection = await _postRepository.isPostInCollection(
         postId: event.postId,
         collectionId: event.collectionId,
+        userIdfromPost: event.userIdfromPost,
       );
 
       logger.logInfo(

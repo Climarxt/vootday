@@ -14,14 +14,16 @@ class MyCollectionClean extends MyCollectionEvent {}
 class MyCollectionCheckPostInCollection extends MyCollectionEvent {
   final String postId;
   final String collectionId;
+  final String userIdfromPost;
 
   const MyCollectionCheckPostInCollection({
     required this.postId,
     required this.collectionId,
+    required this.userIdfromPost,
   });
 
   @override
-  List<Object> get props => [postId, collectionId];
+  List<Object> get props => [postId, collectionId, userIdfromPost];
 }
 
 class MyCollectionDeletePostRef extends MyCollectionEvent {

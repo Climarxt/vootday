@@ -195,11 +195,17 @@ Widget buildIconButton(IconData icon, VoidCallback onPressed) {
   );
 }
 
-Future<Widget> buildTrailingIcon(String collectionId, BuildContext context,
-    String postId, Map<String, bool> postInCollectionMap) async {
+Future<Widget> buildTrailingIcon(
+    BuildContext context,
+    String collectionId,
+    String userIdfromPost,
+    String postId,
+    Map<String, bool> postInCollectionMap) async {
   final postRepository = context.read<PostRepository>();
   bool isPostInCollection = await postRepository.isPostInCollection(
-      postId: postId, collectionId: collectionId);
+      postId: postId,
+      collectionId: collectionId,
+      userIdfromPost: userIdfromPost);
 
   // Mise à jour de l'état
   postInCollectionMap[collectionId] = isPostInCollection;
@@ -229,6 +235,7 @@ Widget buildListView(
   MyCollectionState state,
   List<String> imageUrls,
   String postId,
+  String userIdfromPost,
   Map<String, bool> postInCollectionMap,
 ) {
   return Expanded(
@@ -255,8 +262,9 @@ Widget buildListView(
           ),
           trailing: FutureBuilder<Widget>(
             future: buildTrailingIcon(
-              collection.id,
               context,
+              collection.id,
+              userIdfromPost,
               postId,
               postInCollectionMap,
             ),

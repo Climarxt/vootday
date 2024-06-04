@@ -13,24 +13,26 @@ class FeedMyLikesClean extends FeedMyLikesEvent {}
 
 class FeedMyLikesCheckPostInLikes extends FeedMyLikesEvent {
   final String postId;
+  final String userIdfromPost;
 
   const FeedMyLikesCheckPostInLikes({
     required this.postId,
+    required this.userIdfromPost,
   });
 
   @override
-  List<Object> get props => [postId];
+  List<Object> get props => [postId, userIdfromPost];
 }
 
 class FeedMyLikesDeletePostRef extends FeedMyLikesEvent {
   final String postId;
-  final String userId;
+  final String userIdfromPost;
 
   const FeedMyLikesDeletePostRef({
     required this.postId,
-    required this.userId,
+    required this.userIdfromPost,
   });
 
   @override
-  List<Object> get props => [postId, userId];
+  List<Object> get props => [postId, userIdfromPost];
 }

@@ -36,8 +36,8 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
     Emitter<FeedMyLikesState> emit,
   ) async {
     _onFeedMyLikesClean(FeedMyLikesClean(), emit);
-    logger.logInfo('_mapFeedMyLikesFetchPosts',
-        'Fetching posts for MyLikes', {'event': event});
+    logger.logInfo('_mapFeedMyLikesFetchPosts', 'Fetching posts for MyLikes',
+        {'event': event});
 
     try {
       final userId = _authBloc.state.user?.uid;
@@ -45,12 +45,12 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
-      logger.logInfo('_mapFeedMyLikesFetchPosts',
-          'Fetching posts for user', {'userId': userId});
+      logger.logInfo('_mapFeedMyLikesFetchPosts', 'Fetching posts for user',
+          {'userId': userId});
 
       final posts = await _feedRepository.getFeedMyLikes(userId: userId);
-      logger.logInfo('_mapFeedMyLikesFetchPosts',
-          'Fetched posts', {'postCount': posts.length});
+      logger.logInfo('_mapFeedMyLikesFetchPosts', 'Fetched posts',
+          {'postCount': posts.length});
 
       emit(state.copyWith(
         posts: posts,
@@ -58,11 +58,10 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         hasFetchedInitialPosts: true,
         isPostInLikes: true,
       ));
-      logger.logInfo('_mapFeedMyLikesFetchPosts',
-          'Posts loaded successfully');
+      logger.logInfo('_mapFeedMyLikesFetchPosts', 'Posts loaded successfully');
     } catch (err) {
-      logger.logError('_mapFeedMyLikesFetchPosts',
-          'Error fetching posts', {'error': err.toString()});
+      logger.logError('_mapFeedMyLikesFetchPosts', 'Error fetching posts',
+          {'error': err.toString()});
       emit(state.copyWith(
         status: FeedMyLikesStatus.error,
         failure:
@@ -84,20 +83,18 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
     Emitter<FeedMyLikesState> emit,
   ) async {
     try {
-      final userId = _authBloc.state.user?.uid;
-      logger.logInfo(
-          '_onCheckPostInLikes',
-          'Checking if post is in likes',
-          {'userId': userId, 'postId': event.postId});
-      if (userId == null) {
+      final userIdfromAuth = _authBloc.state.user?.uid;
+      logger.logInfo('_onCheckPostInLikes', 'Checking if post is in likes',
+          {'userIdfromAuth': userIdfromAuth, 'postId': event.postId});
+      if (userIdfromAuth == null) {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
       final isPostInLikes = await _postRepository.isPostInLikes(
-          postId: event.postId, userId: userId);
-      logger.logInfo(
-          '_onCheckPostInLikes',
-          'Checked post in likes',
+          postId: event.postId,
+          userIdfromPost: event.userIdfromPost,
+          userIdfromAuth: userIdfromAuth);
+      logger.logInfo('_onCheckPostInLikes', 'Checked post in likes',
           {'postId': event.postId, 'isPostInLikes': isPostInLikes});
 
       emit(state.copyWith(
@@ -114,17 +111,19 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
     Emitter<FeedMyLikesState> emit,
   ) async {
     try {
-      final userId = _authBloc.state.user?.uid;
-      if (userId == null) {
+      final userIdfromAuth = _authBloc.state.user?.uid;
+      if (userIdfromAuth == null) {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
       await _postRepository.deletePostRefFromLikes(
-          postId: event.postId, userId: userId);
+          postId: event.postId,
+          userIdfromPost: event.userIdfromPost,
+          userIdfromAuth: userIdfromAuth);
       logger.logInfo(
           '_onDeletePostRefFromLikes',
           'Post reference deleted from likes',
-          {'postId': event.postId, 'userId': userId});
+          {'postId': event.postId, 'userIdfromAuth': userIdfromAuth});
     } catch (e) {
       logger.logError('_onDeletePostRefFromLikes',
           'Error deleting post reference from likes', {'error': e.toString()});

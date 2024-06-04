@@ -157,10 +157,11 @@ class _PostViewState extends State<PostView>
       builder: (context, state) {
         final cubit = context.read<AddPostToLikesCubit>();
         final authState = context.read<AuthBloc>().state;
-        final userId = authState.user?.uid;
+        final userIdfromAuth = authState.user?.uid;
 
         return FutureBuilder<bool>(
-          future: cubit.isPostLiked(postId, userId!),
+          future:
+              cubit.isPostLiked(postId, widget.post.author.id, userIdfromAuth!),
           builder: (context, snapshot) {
             bool isLiked = snapshot.data ?? false;
 
@@ -171,9 +172,12 @@ class _PostViewState extends State<PostView>
                   controller.forward(from: 0.0);
                   if (isLiked) {
                     await cubit.deletePostRefFromLikes(
-                        postId: postId, userId: userId);
+                        postId: postId,
+                        userIdfromPost: widget.post.author.id,
+                        userIdfromAuth: userIdfromAuth);
                   } else {
-                    await cubit.addPostToLikes(postId, userId);
+                    await cubit.addPostToLikes(
+                        postId, widget.post.author.id, userIdfromAuth);
                   }
                 },
                 child: Container(

@@ -37,7 +37,7 @@ class ContextualLogger {
     var detailMessage = details != null
         ? details.entries.map((e) => '${e.key}: ${e.value}').join(', ')
         : '';
-    _logger.i('[$widgetName] [$functionName] : $message $detailMessage');
+    _logger.i('[$widgetName] [$functionName] : $message | $detailMessage');
   }
 
   void logError(String functionName, String message,
@@ -45,7 +45,7 @@ class ContextualLogger {
     var detailMessage = details != null
         ? details.entries.map((e) => '${e.key}: ${e.value}').join(', ')
         : '';
-    _logger.e('[$widgetName] [$functionName] : $message $detailMessage');
+    _logger.e('[$widgetName] [$functionName] : $message | $detailMessage');
   }
 }
 

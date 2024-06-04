@@ -17,7 +17,8 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
         _postRepository = postRepository,
         super(AddPostToLikesInitialState());
 
-  Future<void> addPostToLikes(String postId, String userId) async {
+  Future<void> addPostToLikes(
+      String postId, String userIdfromPost, String userIdfromAuth) async {
     emit(AddPostToLikesLoadingState());
 
     try {
@@ -25,14 +26,14 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
 
       DocumentReference postRef = _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromPost)
           .collection(Paths.posts)
           .doc(postId);
       DateTime now = DateTime.now();
 
       await _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromAuth)
           .collection('likes')
           .add({
         'post_ref': postRef,
@@ -50,15 +51,16 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
     }
   }
 
-  Future<bool> isPostLiked(String postId, String userId) async {
+  Future<bool> isPostLiked(
+      String postId, String userIdfromPost, String userIdfromAuth) async {
     final likedPostsSnapshot = await _firebaseFirestore
         .collection(Paths.users)
-        .doc(userId)
+        .doc(userIdfromAuth)
         .collection('likes')
         .where('post_ref',
             isEqualTo: _firebaseFirestore
                 .collection(Paths.users)
-                .doc(userId)
+                .doc(userIdfromPost)
                 .collection(Paths.posts)
                 .doc(postId))
         .get();
@@ -67,16 +69,21 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
   }
 
   Future<void> deletePostRefFromLikes(
-      {required String postId, required String userId}) async {
+      {required String postId,
+      required String userIdfromPost,
+      required String userIdfromAuth}) async {
     emit(AddPostToLikesLoadingState());
 
     try {
       debugPrint('deletePostRefFromLikes : Deleting post from likes...');
 
       await _postRepository.deletePostRefFromLikes(
-          postId: postId, userId: userId);
+          postId: postId,
+          userIdfromPost: userIdfromPost,
+          userIdfromAuth: userIdfromAuth);
 
-      debugPrint('deletePostRefFromLikes : Post deleted from likes successfully.');
+      debugPrint(
+          'deletePostRefFromLikes : Post deleted from likes successfully.');
 
       emit(AddPostToLikesSuccessState());
     } catch (e) {

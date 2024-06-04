@@ -356,13 +356,14 @@ class _PostScreenState extends State<PostScreen>
 
   void _addToLikesThenShowCollections(MyCollectionState state) async {
     final authState = context.read<AuthBloc>().state;
-    final _userId = authState.user?.uid;
+    final userIdfromAuth = authState.user?.uid;
 
-    if (_userId != null) {
+    if (userIdfromAuth != null) {
       // Vérifier si le post est déjà dans les likes
-      final isPostLiked = await context
-          .read<PostRepository>()
-          .isPostInLikes(postId: widget.postId, userId: _userId);
+      final isPostLiked = await context.read<PostRepository>().isPostInLikes(
+          postId: widget.postId,
+          userIdfromPost: widget.userId,
+          userIdfromAuth: userIdfromAuth);
 
       if (isPostLiked) {
         showBottomSheetCollection(
@@ -377,7 +378,7 @@ class _PostScreenState extends State<PostScreen>
         // Ajouter le post aux likes
         context
             .read<AddPostToLikesCubit>()
-            .addPostToLikes(widget.postId, _userId);
+            .addPostToLikes(widget.postId, widget.userId, userIdfromAuth);
         // Puis afficher le bottom sheet
         showBottomSheetCollection(
           context,

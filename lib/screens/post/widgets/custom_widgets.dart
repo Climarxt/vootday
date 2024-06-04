@@ -193,18 +193,23 @@ Widget buildCaptionInput(
 Widget buildBookmarkIcon(
   BuildContext context,
   String postId,
+  String userIdfromPost,
 ) {
   final authState = context.read<AuthBloc>().state;
-  final userId = authState.user?.uid;
+  final userIdfromAuth = authState.user?.uid;
   final cubit = context.read<AddPostToLikesCubit>();
 
   return IconButton(
     icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
     onPressed: () async {
-      bool isLiked = await cubit.isPostLiked(postId, userId!);
+      bool isLiked =
+          await cubit.isPostLiked(postId, userIdfromPost, userIdfromAuth!);
 
       if (isLiked) {
-        await cubit.deletePostRefFromLikes(postId: postId, userId: userId);
+        await cubit.deletePostRefFromLikes(
+            postId: postId,
+            userIdfromPost: userIdfromPost,
+            userIdfromAuth: userIdfromAuth);
       }
 
       Navigator.pop(context);
@@ -220,10 +225,11 @@ Widget buildActionIcons(
     void Function(BuildContext) navigateToCommentScreen,
     void Function(MyCollectionState) addToLikesThenShowCollections,
     String postId,
+    String userIdfromPost,
     Animation<double> animation,
     AnimationController controller) {
   final authState = context.read<AuthBloc>().state;
-  final userId = authState.user?.uid;
+  final userIdfromAuth = authState.user?.uid;
   return Column(
     children: [
       buildIconButton(Icons.more_vert, () => showBottomSheet(context)),
@@ -231,7 +237,8 @@ Widget buildActionIcons(
       buildIconButton(Icons.share, () => showBottomSheetShare(context)),
       buildIconButton(
           Icons.add_to_photos, () => addToLikesThenShowCollections(state)),
-      buildFavoriteButton(context, postId, userId!, animation, controller),
+      buildFavoriteButton(context, postId, userIdfromPost, userIdfromAuth!,
+          animation, controller),
     ],
   );
 }
@@ -243,14 +250,19 @@ Widget buildIconButton(IconData icon, VoidCallback onPressed) {
   );
 }
 
-Widget buildFavoriteButton(BuildContext context, String postId, String userId,
-    Animation<double> animation, AnimationController controller) {
+Widget buildFavoriteButton(
+    BuildContext context,
+    String postId,
+    String userIdfromPost,
+    String userIdfromAuth,
+    Animation<double> animation,
+    AnimationController controller) {
   return BlocBuilder<AddPostToLikesCubit, AddPostToLikesState>(
     builder: (context, state) {
       final cubit = context.read<AddPostToLikesCubit>();
 
       return FutureBuilder<bool>(
-        future: cubit.isPostLiked(postId, userId),
+        future: cubit.isPostLiked(postId, userIdfromPost, userIdfromAuth),
         builder: (context, snapshot) {
           bool isLiked = snapshot.data ?? false;
 
@@ -263,9 +275,12 @@ Widget buildFavoriteButton(BuildContext context, String postId, String userId,
                 controller.forward(from: 0.0);
                 if (isLiked) {
                   await cubit.deletePostRefFromLikes(
-                      postId: postId, userId: userId);
+                      postId: postId,
+                      userIdfromPost: userIdfromPost,
+                      userIdfromAuth: userIdfromAuth);
                 } else {
-                  await cubit.addPostToLikes(postId, userId);
+                  await cubit.addPostToLikes(
+                      postId, userIdfromPost, userIdfromAuth);
                 }
               },
             ),
@@ -310,6 +325,7 @@ Widget buildPostDetails(
           onNavigateToCommentScreen,
           onAddToLikesThenShowCollections,
           postId,
+          user.id,
           animation,
           controller,
         ),
@@ -483,7 +499,7 @@ Widget buildTopRow(BuildContext context, Size size, Post post,
             const SizedBox(width: 14),
             buildTextColumn(context),
             const Spacer(),
-            buildBookmarkIcon(context, post.id!),
+            buildBookmarkIcon(context, post.id!, post.author.id),
           ],
         ),
         const SizedBox(height: 16),

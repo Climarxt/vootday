@@ -576,21 +576,26 @@ class PostRepository extends BasePostRepository {
   }
 
   Future<bool> isPostInLikes(
-      {required String postId, required String userId}) async {
+      {required String postId,
+      required String userIdfromPost,
+      required String userIdfromAuth}) async {
     const String functionName = 'isPostInLikes';
     try {
-      logger.logInfo(functionName, 'Checking if post is in likes for user',
-          {'postId': postId, 'userId': userId});
+      logger.logInfo(functionName, 'Checking if post is in likes for user', {
+        'postId': postId,
+        'userIdfromPost': userIdfromPost,
+        'userIdfromAuth': userIdfromAuth
+      });
 
       DocumentReference postRef = _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromPost)
           .collection(Paths.posts)
           .doc(postId);
 
       QuerySnapshot querySnapshot = await _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromAuth)
           .collection('likes')
           .where('post_ref', isEqualTo: postRef)
           .get();
@@ -601,16 +606,20 @@ class PostRepository extends BasePostRepository {
 
       return result;
     } catch (e) {
-      logger.logError(functionName, 'Error checking post in likes for user',
-          {'postId': postId, 'userId': userId, 'error': e.toString()});
+      logger.logError(functionName, 'Error checking post in likes for user', {
+        'postId': postId,
+        'userIdfromPost': userIdfromPost,
+        'userIdfromAuth': userIdfromAuth,
+        'error': e.toString()
+      });
       return false;
     }
   }
 
-  Future<void> deletePostRefFromLikes({
-    required String postId,
-    required String userId,
-  }) async {
+  Future<void> deletePostRefFromLikes(
+      {required String postId,
+      required String userIdfromPost,
+      required String userIdfromAuth}) async {
     try {
       debugPrint(
           'deletePostRefFromLikes : Suppression du post_ref des likes...');
@@ -618,14 +627,14 @@ class PostRepository extends BasePostRepository {
       // Construire la référence correcte du post
       DocumentReference postRef = _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromPost)
           .collection(Paths.posts)
           .doc(postId);
 
       // Récupérer les documents likes qui contiennent cette référence de post
       QuerySnapshot snapshot = await _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromAuth)
           .collection('likes')
           .where('post_ref', isEqualTo: postRef)
           .get();

@@ -164,18 +164,23 @@ Widget buildCaptionInput(
 Widget buildBookmarkIcon(
   BuildContext context,
   String postId,
+  String userIdfromPost,
 ) {
   final authState = context.read<AuthBloc>().state;
-  final userId = authState.user?.uid;
+  final userIdfromAuth = authState.user?.uid;
   final cubit = context.read<AddPostToLikesCubit>();
 
   return IconButton(
     icon: const Icon(Icons.bookmark, color: Colors.black, size: 32),
     onPressed: () async {
-      bool isLiked = await cubit.isPostLiked(postId, userId!);
+      bool isLiked =
+          await cubit.isPostLiked(postId, userIdfromPost, userIdfromAuth!);
 
       if (isLiked) {
-        await cubit.deletePostRefFromLikes(postId: postId, userId: userId);
+        await cubit.deletePostRefFromLikes(
+            postId: postId,
+            userIdfromPost: userIdfromPost,
+            userIdfromAuth: userIdfromAuth);
       }
 
       Navigator.pop(context);
@@ -328,7 +333,7 @@ Widget buildTopRow(BuildContext context, Size size, Post post,
             const SizedBox(width: 14),
             buildTextColumn(context),
             const Spacer(),
-            buildBookmarkIcon(context, post.id!),
+            buildBookmarkIcon(context, post.id!, post.author.id),
           ],
         ),
         const SizedBox(height: 16),

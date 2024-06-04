@@ -15,7 +15,7 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
         super(AddPostToCollectionInitialState());
 
   Future<void> addPostToCollection(
-      String postId, String collectionId, String userId) async {
+      String postId, String collectionId, String userIdfromPost) async {
     const String functionName = 'addPostToCollection';
     emit(AddPostToCollectionLoadingState());
 
@@ -23,13 +23,13 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
       logger.logInfo(functionName, 'Adding post to collection', {
         'postId': postId,
         'collectionId': collectionId,
-        'userId': userId,
+        'userIdfromPost': userIdfromPost,
       });
 
       // Construire la référence correcte du post
       DocumentReference postRef = _firebaseFirestore
           .collection(Paths.users)
-          .doc(userId)
+          .doc(userIdfromPost)
           .collection(Paths.posts)
           .doc(postId);
       DateTime now = DateTime.now();
@@ -46,7 +46,7 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
       logger.logInfo(functionName, 'Post added to collection successfully', {
         'postId': postId,
         'collectionId': collectionId,
-        'userId': userId,
+        'userIdfromPost': userIdfromPost,
       });
 
       emit(AddPostToCollectionSuccessState());
@@ -54,7 +54,7 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
       logger.logError(functionName, 'Error adding post to collection', {
         'postId': postId,
         'collectionId': collectionId,
-        'userId': userId,
+        'userIdfromPost': userIdfromPost,
         'error': e.toString(),
       });
       emit(AddPostToCollectionErrorState(e.toString()));

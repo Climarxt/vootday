@@ -545,9 +545,9 @@ class PostRepository extends BasePostRepository {
       // Vérifier si le post existe dans la sous-collection
       bool exists = querySnapshot.docs.isNotEmpty;
       logger.logInfo(functionName, 'Post exists in collection', {
-        'exists': exists,
         'postId': postId,
         'collectionId': collectionId,
+        'exists': exists,
       });
       return exists;
     } catch (e) {
@@ -560,14 +560,20 @@ class PostRepository extends BasePostRepository {
     }
   }
 
-  Future<void> deletePostRefFromCollection(
-      {required String postId, required String collectionId}) async {
+  Future<void> deletePostRefFromCollection({
+    required String postId,
+    required String collectionId,
+    required String userIdfromPost,
+  }) async {
     try {
       debugPrint(
           'deletePostRefFromCollection : Suppression du post_ref de la collection...');
 
-      DocumentReference postRef =
-          _firebaseFirestore.collection(Paths.posts).doc(postId);
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userIdfromPost)
+          .collection(Paths.posts)
+          .doc(postId);
 
       // Recherchez la référence spécifique du post dans la sous-collection 'feed_collection' de la collection spécifiée
       QuerySnapshot snapshot = await _firebaseFirestore

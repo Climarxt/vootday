@@ -115,7 +115,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
   ) async {
     try {
       await _postRepository.deletePostRefFromCollection(
-          postId: event.postId, collectionId: event.collectionId);
+          postId: event.postId, collectionId: event.collectionId, userIdfromPost: event.userIdfromPost);
 
       logger.logInfo(
           'onDeletePostRefFromCollection',

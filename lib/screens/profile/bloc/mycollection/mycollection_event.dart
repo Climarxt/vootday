@@ -29,10 +29,12 @@ class MyCollectionCheckPostInCollection extends MyCollectionEvent {
 class MyCollectionDeletePostRef extends MyCollectionEvent {
   final String postId;
   final String collectionId;
+  final String userIdfromPost;
 
   const MyCollectionDeletePostRef({
     required this.postId,
     required this.collectionId,
+    required this.userIdfromPost,
   });
 
   @override

@@ -216,7 +216,10 @@ Future<Widget> buildTrailingIcon(
       if (isPostInCollection) {
         // Supprimer le post de la collection
         context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
-            postId: postId, collectionId: collectionId));
+              postId: postId,
+              collectionId: collectionId,
+              userIdfromPost: userIdfromPost,
+            ));
       } else {
         final authState = context.read<AuthBloc>().state;
         final userId = authState.user?.uid;

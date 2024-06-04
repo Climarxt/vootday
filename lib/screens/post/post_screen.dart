@@ -348,6 +348,7 @@ class _PostScreenState extends State<PostScreen>
                               _collectionNameController,
                               isPublicNotifier,
                               widget.postId,
+                              widget.userId,
                             ),
                           ],
                         ),

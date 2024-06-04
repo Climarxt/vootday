@@ -50,6 +50,7 @@ TextButton buildValidateButton(
   TextEditingController collectionNameController,
   ValueNotifier<bool> isPublicNotifier,
   String postId,
+  String userIdfromPost,
 ) {
   const String widgetName = 'buildValidateButton';
   final logger = ContextualLogger(widgetName);
@@ -66,16 +67,16 @@ TextButton buildValidateButton(
             {'collectionName': collectionName, 'isPublic': isPublic});
 
         final authState = context.read<AuthBloc>().state;
-        final userId = authState.user?.uid;
+        final userIdfromAuth = authState.user?.uid;
 
-        if (userId != null) {
-          logger.logInfo(
-              "userId != nul", 'User ID is not null', {'userId': userId});
+        if (userIdfromAuth != null) {
+          logger.logInfo("userId != nul", 'User ID is not null',
+              {'userId': userIdfromAuth});
 
           String newCollectionId = await context
               .read<CreateCollectionCubit>()
               .createCollectionReturnCollectionId(
-                  userId, collectionName, isPublic);
+                  userIdfromPost, collectionName, isPublic);
 
           if (newCollectionId.isNotEmpty) {
             logger.logInfo(
@@ -85,7 +86,7 @@ TextButton buildValidateButton(
 
             await context
                 .read<AddPostToCollectionCubit>()
-                .addPostToCollection(postId, newCollectionId, userId);
+                .addPostToCollection(postId, newCollectionId, userIdfromPost);
             // .addPostToCollection(postId, newCollectionId, userId);
 
             Navigator.pop(context);
@@ -94,7 +95,7 @@ TextButton buildValidateButton(
                 "newCollectionId.isNotEmpty", 'Collection creation failed');
           }
         } else {
-          logger.logError("userId != nul", 'User ID is null');
+          logger.logError("userIdfromAuth != nul", 'User ID is null');
         }
       } else {
         logger.logError(
@@ -382,14 +383,14 @@ Future<Widget> buildTrailingIcon(
       if (isPostInCollection) {
         // Supprimer le post de la collection
         context.read<MyCollectionBloc>().add(MyCollectionDeletePostRef(
-            postId: postId, collectionId: collectionId));
+              postId: postId,
+              collectionId: collectionId,
+              userIdfromPost: userIdfromPost,
+            ));
       } else {
-        final authState = context.read<AuthBloc>().state;
-        final userId = authState.user?.uid;
-        // Ajouter le post à la collection
         context
             .read<AddPostToCollectionCubit>()
-            .addPostToCollection(postId, collectionId, userId!);
+            .addPostToCollection(postId, collectionId, userIdfromPost);
       }
       Navigator.pop(context);
     },

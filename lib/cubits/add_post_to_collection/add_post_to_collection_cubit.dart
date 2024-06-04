@@ -1,23 +1,30 @@
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 part 'add_post_to_collection_state.dart';
 
 class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
   final FirebaseFirestore _firebaseFirestore;
+  final ContextualLogger logger;
 
   AddPostToCollectionCubit({required FirebaseFirestore firebaseFirestore})
       : _firebaseFirestore = firebaseFirestore,
+        logger = ContextualLogger('AddPostToCollectionCubit'),
         super(AddPostToCollectionInitialState());
 
   Future<void> addPostToCollection(
       String postId, String collectionId, String userId) async {
+    const String functionName = 'addPostToCollection';
     emit(AddPostToCollectionLoadingState());
 
     try {
-      debugPrint('AddPostToCollectionCubit : Adding post to collection...');
+      logger.logInfo(functionName, 'Adding post to collection', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'userId': userId,
+      });
 
       // Construire la référence correcte du post
       DocumentReference postRef = _firebaseFirestore
@@ -36,13 +43,20 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
         'date': now,
       });
 
-      debugPrint(
-          'AddPostToCollectionCubit : Post added to collection successfully.');
+      logger.logInfo(functionName, 'Post added to collection successfully', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'userId': userId,
+      });
 
       emit(AddPostToCollectionSuccessState());
     } catch (e) {
-      debugPrint(
-          'AddPostToCollectionCubit : Error adding post to collection: ${e.toString()}');
+      logger.logError(functionName, 'Error adding post to collection', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'userId': userId,
+        'error': e.toString(),
+      });
       emit(AddPostToCollectionErrorState(e.toString()));
     }
   }

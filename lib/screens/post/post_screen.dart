@@ -2,6 +2,7 @@
 
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
@@ -46,9 +47,11 @@ class _PostScreenState extends State<PostScreen>
 
   late AnimationController _controller;
   late Animation<double> _animation;
+  late ContextualLogger logger;
 
   @override
   void initState() {
+    logger = ContextualLogger('PostScreen');
     super.initState();
     _loadPost();
 
@@ -209,7 +212,12 @@ class _PostScreenState extends State<PostScreen>
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {
+    const String functionName = 'getMostRecentPostImageUrl';
     try {
+      logger.logInfo(functionName, 'Fetching most recent post image URL', {
+        'collectionId': collectionId,
+      });
+
       final feedEventRef = FirebaseFirestore.instance
           .collection('collections')
           .doc(collectionId)
@@ -228,21 +236,21 @@ class _PostScreenState extends State<PostScreen>
 
           if (postDoc.exists) {
             final postData = postDoc.data() as Map<String, dynamic>?;
-            debugPrint(
-                "PostScreen - getMostRecentPostImageUrl : Referenced post document exist.");
+            logger.logInfo(functionName, 'Referenced post document exists');
             return postData?['imageUrl'] as String? ?? '';
           } else {
-            debugPrint(
-                "PostScreen - getMostRecentPostImageUrl : Referenced post document does not exist.");
+            logger.logInfo(
+                functionName, 'Referenced post document does not exist');
           }
         } else {
-          debugPrint(
-              "PostScreen - getMostRecentPostImageUrl : Post reference is null.");
+          logger.logInfo(functionName, 'Post reference is null');
         }
       }
     } catch (e) {
-      debugPrint(
-          "PostScreen - getMostRecentPostImageUrl : An error occurred while fetching the most liked post image URL: $e");
+      logger.logError(
+          functionName, 'Error fetching the most liked post image URL', {
+        'error': e.toString(),
+      });
     }
     return 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
   }

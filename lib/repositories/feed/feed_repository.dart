@@ -555,7 +555,7 @@ class FeedRepository {
 
       for (var doc in postsSnap.docs) {
         logger.logInfo('getFeedMyLikes', 'Fetched post',
-            {'postId': doc.id, 'postRef': doc['post_ref']});
+            {'post_ref': doc['post_ref']});
       }
 
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {

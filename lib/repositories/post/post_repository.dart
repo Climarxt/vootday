@@ -621,8 +621,12 @@ class PostRepository extends BasePostRepository {
       required String userIdfromPost,
       required String userIdfromAuth}) async {
     try {
-      debugPrint(
-          'deletePostRefFromLikes : Suppression du post_ref des likes...');
+      logger.logInfo('deletePostRefFromLikes',
+          'Suppression du post des likes...', {
+        'postId': postId,
+        'userIdfromPost': userIdfromPost,
+        'userIdfromAuth': userIdfromAuth,
+      });
 
       // Construire la référence correcte du post
       DocumentReference postRef = _firebaseFirestore
@@ -642,16 +646,29 @@ class PostRepository extends BasePostRepository {
       // Si des documents sont trouvés, les supprimer
       if (snapshot.docs.isNotEmpty) {
         await Future.wait(snapshot.docs.map((doc) => doc.reference.delete()));
-        debugPrint(
-            'deletePostRefFromLikes : Post_ref supprimé des likes avec succès.');
+        logger.logInfo('deletePostRefFromLikes',
+            'Post supprimé des likes avec succès.', {
+          'postId': postId,
+          'userIdfromPost': userIdfromPost,
+          'userIdfromAuth': userIdfromAuth,
+        });
       } else {
-        debugPrint(
-            'deletePostRefFromLikes : Aucun post_ref trouvé dans la collection.');
+        logger.logInfo('deletePostRefFromLikes',
+            'Aucun post trouvé dans les likes.', {
+          'postId': postId,
+          'userIdfromPost': userIdfromPost,
+          'userIdfromAuth': userIdfromAuth,
+        });
       }
     } catch (e) {
-      debugPrint(
-          'deletePostRefFromLikes : Erreur lors de la suppression du post_ref des likes: ${e.toString()}');
-      throw Exception('Erreur lors de la suppression du post_ref des likes');
+      logger.logError('deletePostRefFromLikes',
+          'Erreur lors de la suppression du post des likes', {
+        'error': e.toString(),
+        'postId': postId,
+        'userIdfromPost': userIdfromPost,
+        'userIdfromAuth': userIdfromAuth,
+      });
+      throw Exception('Erreur lors de la suppression du post des likes');
     }
   }
 }

@@ -76,7 +76,7 @@ TextButton buildValidateButton(
           String newCollectionId = await context
               .read<CreateCollectionCubit>()
               .createCollectionReturnCollectionId(
-                  userIdfromPost, collectionName, isPublic);
+                  userIdfromAuth, collectionName, isPublic);
 
           if (newCollectionId.isNotEmpty) {
             logger.logInfo(

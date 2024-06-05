@@ -32,9 +32,11 @@ class PostRepository extends BasePostRepository {
 
     // Suppression des références du post dans les sous-collections
     await _deletePostReferencesInSubCollections(batch, postRef, 'participants');
-    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_event');
-    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_month');
-    await _deletePostReferencesInSubCollections(batch, postRef, 'feed_ootd');
+    await _deletePostReferencesInSubCollections(
+        batch, postRef, 'postReference');
+
+    // Suppression du post référencé par postReference
+    await _deleteReferencedPost(postRef);
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
@@ -55,6 +57,34 @@ class PostRepository extends BasePostRepository {
     await userFeedBatch.commit();
     debugPrint(
         'deletePost : Suppression terminée pour le post avec ID: $postId');
+  }
+
+  Future<void> _deleteReferencedPost(DocumentReference postRef) async {
+    DocumentSnapshot postSnapshot = await postRef.get();
+    if (postSnapshot.exists) {
+      var postData = postSnapshot.data() as Map<String, dynamic>?;
+      if (postData != null) {
+        var postReference = postData['postReference'];
+        if (postReference != null) {
+          if (postReference is DocumentReference) {
+            debugPrint(
+                '_deleteReferencedPost : Suppression du post référencé par postReference: $postReference');
+            await postReference.delete();
+          } else {
+            debugPrint(
+                '_deleteReferencedPost : Le champ postReference n\'est pas de type DocumentReference.');
+          }
+        } else {
+          debugPrint(
+              '_deleteReferencedPost : Aucun post référencé trouvé dans le champ postReference.');
+        }
+      } else {
+        debugPrint(
+            '_deleteReferencedPost : Les données du post principal sont nulles.');
+      }
+    } else {
+      debugPrint('_deleteReferencedPost : Le post principal n\'existe pas.');
+    }
   }
 
   Future<void> _deletePostReferencesInSubCollections(
@@ -177,26 +207,72 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Future<void> createPost({required Post post, required String userId}) async {
-    // Créer le post dans la collection personnelle de l'utilisateur
-    final userPostRef = await _firebaseFirestore
-        .collection(Paths.users)
-        .doc(userId)
-        .collection(Paths.posts)
-        .add(post.toDocument());
+  Future<void> createPost(
+      {required Post post,
+      required String userId,
+      required DateTime dateTime}) async {
+    const String functionName = 'createPost';
+    try {
+      // Log début création de post
+      logger.logInfo(functionName, 'Creating post for user', {
+        'userId': userId,
+        'postId': post.id,
+        'dateTime': dateTime.toIso8601String(),
+      });
 
-    // Construire le chemin pour la référence du post
-    String genderPath =
-        post.selectedGender == 'Masculin' ? 'posts_man' : 'posts_woman';
-    String locationPath = _getLocationPath(post);
+      // Créer le post dans la collection personnelle de l'utilisateur
+      final userPostRef = await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userId)
+          .collection(Paths.posts)
+          .add({
+        ...post.toDocument(),
+        'date': dateTime,
+      });
 
-    // Créer un document avec une référence du post
-    final locationPostRef = await _firebaseFirestore
-        .collection('$genderPath/$locationPath/posts')
-        .add({'post_ref': userPostRef});
+      // Log post créé dans la collection personnelle de l'utilisateur
+      logger.logInfo(functionName, 'Post created in user collection', {
+        'userPostRef': userPostRef.id,
+        'userId': userId,
+      });
 
-    // Mettre à jour le post avec la référence de l'emplacement
-    await userPostRef.update({'postReference': locationPostRef});
+      // Construire le chemin pour la référence du post
+      String genderPath =
+          post.selectedGender == 'Masculin' ? 'posts_man' : 'posts_woman';
+      String locationPath = _getLocationPath(post);
+
+      // Créer un document avec une référence du post
+      final locationPostRef = await _firebaseFirestore
+          .collection('$genderPath/$locationPath/posts')
+          .add({
+        'post_ref': userPostRef,
+        'date': dateTime,
+      });
+
+      // Log référence de l'emplacement créé
+      logger.logInfo(functionName, 'Location post reference created', {
+        'locationPostRef': locationPostRef.id,
+        'genderPath': genderPath,
+        'locationPath': locationPath,
+      });
+
+      // Mettre à jour le post avec la référence de l'emplacement
+      await userPostRef.update({'postReference': locationPostRef});
+
+      // Log mise à jour de la référence de l'emplacement dans le post
+      logger.logInfo(functionName, 'Post reference updated in user post', {
+        'userPostRef': userPostRef.id,
+        'locationPostRef': locationPostRef.id,
+      });
+    } catch (e) {
+      // Log erreur durant la création du post
+      logger.logError(functionName, 'Error creating post for user', {
+        'userId': userId,
+        'postId': post.id,
+        'dateTime': dateTime.toIso8601String(),
+        'error': e.toString(),
+      });
+    }
   }
 
   String _getLocationPath(Post post) {

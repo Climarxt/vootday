@@ -107,13 +107,15 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       final thumbnailImageUrl = await _storageRepository.uploadThumbnailImage(
           thumbnailImageBytes: thumbnailImageBytes);
 
+      final dateTime = DateTime.now();
+
       final post = Post(
         author: author,
         imageUrl: postImageUrl,
         thumbnailUrl: thumbnailImageUrl,
         caption: state.caption,
         likes: 0,
-        date: DateTime.now(),
+        date: dateTime,
         tags: state.tags,
         selectedGender: selectedGender,
         locationCity: user.locationCity,
@@ -137,7 +139,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       debugPrint('Location Country: ${post.locationCountry}');
       debugPrint('Location Selected: ${post.locationSelected}');
 
-      await _postRepository.createPost(post: post, userId: userId);
+      await _postRepository.createPost(post: post, userId: userId, dateTime: dateTime);
 
       emit(state.copyWith(status: CreatePostStatus.success));
     } catch (err) {

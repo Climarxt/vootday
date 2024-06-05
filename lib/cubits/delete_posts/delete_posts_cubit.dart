@@ -8,10 +8,13 @@ class DeletePostsCubit extends Cubit<DeletePostsState> {
 
   DeletePostsCubit(this.postRepository) : super(DeletePostsInitial());
 
-  Future<void> deletePosts(String postId) async {
+  Future<void> deletePosts(String postId, String userIdfromAuth) async {
     try {
       emit(DeletePostsLoading());
-      postRepository.deletePost(postId: postId);
+      postRepository.deletePost(
+        postId: postId,
+        userIdfromAuth: userIdfromAuth,
+      );
       emit(DeletePostsSuccess());
     } catch (e) {
       emit(DeletePostsError(e.toString()));

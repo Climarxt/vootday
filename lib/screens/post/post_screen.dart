@@ -58,9 +58,9 @@ class _PostScreenState extends State<PostScreen>
     context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
 
     final authState = context.read<AuthBloc>().state;
-    final _userId = authState.user?.uid;
-    if (_userId != null) {
-      _checkIfUserIsAuthor(_userId);
+    final userIdfromAuth = authState.user?.uid;
+    if (userIdfromAuth != null) {
+      _checkIfUserIsAuthor(userIdfromAuth, widget.postId);
     } else {
       debugPrint('User ID is null');
     }
@@ -404,17 +404,19 @@ class _PostScreenState extends State<PostScreen>
     }
   }
 
-  void _checkIfUserIsAuthor(String userId) async {
+  void _checkIfUserIsAuthor(String userIdfromAuth, String postId) async {
     try {
       DocumentSnapshot postDoc = await FirebaseFirestore.instance
+          .collection(Paths.users)
+          .doc(userIdfromAuth)
           .collection(Paths.posts)
-          .doc(widget.postId)
+          .doc(postId)
           .get();
 
       if (postDoc.exists) {
         var data = postDoc.data() as Map<String, dynamic>;
         DocumentReference authorRef = data['author'];
-        if (authorRef.id == userId) {
+        if (authorRef.id == userIdfromAuth) {
           setState(() {
             _isUserTheAuthor = true;
           });
@@ -447,7 +449,7 @@ class _PostScreenState extends State<PostScreen>
                   title: const Text('Delete'),
                   onTap: () {
                     final postCubit = context.read<DeletePostsCubit>();
-                    postCubit.deletePosts(widget.postId);
+                    postCubit.deletePosts(widget.postId, widget.userId);
                     if (widget.fromPath.contains("/calendar")) {
                       GoRouter.of(context).go('/calendar');
                     } else {

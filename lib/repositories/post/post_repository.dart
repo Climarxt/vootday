@@ -16,13 +16,17 @@ class PostRepository extends BasePostRepository {
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
         logger = ContextualLogger('PostRepository');
 
-  Future<void> deletePost({required String postId}) async {
+  Future<void> deletePost(
+      {required String postId, required String userIdfromAuth}) async {
     WriteBatch batch = _firebaseFirestore.batch();
     debugPrint('deletePost : Début de la suppression du post avec ID: $postId');
 
     // Suppression du post dans la collection 'posts'
-    DocumentReference postRef =
-        _firebaseFirestore.collection(Paths.posts).doc(postId);
+    DocumentReference postRef = _firebaseFirestore
+        .collection(Paths.users)
+        .doc(userIdfromAuth)
+        .collection(Paths.posts)
+        .doc(postId);
     debugPrint('deletePost : Suppression du post dans la collection posts');
     batch.delete(postRef);
 

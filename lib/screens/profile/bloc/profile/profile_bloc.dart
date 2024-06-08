@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
@@ -22,6 +23,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required AuthBloc authBloc,
     required UserRepository userRepository,
     required PostRepository postRepository,
+    required PostDeleteRepository postDeleteRepository,
   })  : _authBloc = authBloc,
         _userRepository = userRepository,
         _postRepository = postRepository,

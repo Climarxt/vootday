@@ -1,4 +1,6 @@
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
+import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
@@ -17,6 +19,9 @@ import 'package:bootdv2/repositories/repositories.dart';
 class BlocProviderConfig {
   static MultiBlocProvider getHomeMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getHomeMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<FeedOOTDBloc>(
@@ -26,6 +31,11 @@ class BlocProviderConfig {
               authBloc: context.read<AuthBloc>(),
             );
             feedOOTDBloc.add(FeedOOTDManFetchPostsOOTD());
+            logger.logInfo('FeedOOTDBloc.create',
+                'Initialized and added FeedOOTDManFetchPostsOOTD event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedOOTDBloc;
           },
         ),
@@ -36,6 +46,11 @@ class BlocProviderConfig {
               authBloc: context.read<AuthBloc>(),
             );
             feedOOTDBloc.add(FeedOOTDFemaleFetchPostsOOTD());
+            logger.logInfo('FeedOOTDBloc.create',
+                'Initialized and added FeedOOTDFemaleFetchPostsOOTD event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedOOTDBloc;
           },
         ),
@@ -46,6 +61,11 @@ class BlocProviderConfig {
               authBloc: context.read<AuthBloc>(),
             );
             feedMonthBloc.add(FeedMonthManFetchPostsMonth());
+            logger.logInfo('FeedMonthBloc.create',
+                'Initialized and added FeedMonthManFetchPostsMonth event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedMonthBloc;
           },
         ),
@@ -56,6 +76,11 @@ class BlocProviderConfig {
               authBloc: context.read<AuthBloc>(),
             );
             feedMonthBloc.add(FeedMonthFemaleFetchPostsMonth());
+            logger.logInfo('FeedMonthBloc.create',
+                'Initialized and added FeedMonthFemaleFetchPostsMonth event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedMonthBloc;
           },
         ),
@@ -65,6 +90,11 @@ class BlocProviderConfig {
               eventRepository: context.read<EventRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger
+                .logInfo('HomeEventBloc.create', 'Initialized HomeEventBloc', {
+              'eventRepository': context.read<EventRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return homeEventBloc;
           },
         ),
@@ -75,6 +105,9 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getCalendarMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getCalendarMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<CalendarLatestBloc>(
@@ -83,6 +116,11 @@ class BlocProviderConfig {
               eventRepository: context.read<EventRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo(
+                'CalendarLatestBloc.create', 'Initialized CalendarLatestBloc', {
+              'eventRepository': context.read<EventRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return latestEventBloc;
           },
         ),
@@ -92,6 +130,11 @@ class BlocProviderConfig {
               eventRepository: context.read<EventRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo('CalendarThisWeekBloc.create',
+                'Initialized CalendarThisWeekBloc', {
+              'eventRepository': context.read<EventRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return thisWeekEventsBloc;
           },
         ),
@@ -101,6 +144,11 @@ class BlocProviderConfig {
               eventRepository: context.read<EventRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo('CalendarComingSoonBloc.create',
+                'Initialized CalendarComingSoonBloc', {
+              'eventRepository': context.read<EventRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return thisComignSoonEventsBloc;
           },
         ),
@@ -111,6 +159,9 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getSwipeMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getSwipeMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<SwipeBloc>(
@@ -119,6 +170,10 @@ class BlocProviderConfig {
               swipeRepository: context.read<SwipeRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo('SwipeBloc.create', 'Initialized SwipeBloc', {
+              'swipeRepository': context.read<SwipeRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return swipeBloc;
           },
         ),
@@ -128,6 +183,11 @@ class BlocProviderConfig {
               swipeRepository: context.read<SwipeRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo(
+                'SwipeEventBloc.create', 'Initialized SwipeEventBloc', {
+              'swipeRepository': context.read<SwipeRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return swipeEventBloc;
           },
         ),
@@ -138,6 +198,9 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getFollowingExplorerMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger = ContextualLogger(
+        'BlocProviderConfig.getFollowingExplorerMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<FollowingBloc>(
@@ -146,6 +209,11 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger
+                .logInfo('FollowingBloc.create', 'Initialized FollowingBloc', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return followingBloc;
           },
         ),
@@ -155,6 +223,10 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo('ExplorerBloc.create', 'Initialized ExplorerBloc', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return explorerBloc;
           },
         ),
@@ -165,23 +237,50 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getMyProfileMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getMyProfileMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileBloc>(
-          create: (context) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final profileBloc = ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+              postDeleteRepository: context.read<PostDeleteRepository>(),
+            );
+            logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
+              'authBloc': context.read<AuthBloc>().toString(),
+              'userRepository': context.read<UserRepository>().toString(),
+              'postRepository': context.read<PostRepository>().toString(),
+              'postDeleteRepository':
+                  context.read<PostDeleteRepository>().toString(),
+            });
+            return profileBloc;
+          },
         ),
         BlocProvider<MyCollectionBloc>(
-          create: (context) => MyCollectionBloc(
-            authBloc: context.read<AuthBloc>(),
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final myCollectionBloc = MyCollectionBloc(
+              authBloc: context.read<AuthBloc>(),
+              postRepository: context.read<PostRepository>(),
+            );
+            logger.logInfo(
+                'MyCollectionBloc.create', 'Initialized MyCollectionBloc', {
+              'authBloc': context.read<AuthBloc>().toString(),
+              'postRepository': context.read<PostRepository>().toString(),
+            });
+            return myCollectionBloc;
+          },
         ),
         BlocProvider<RecentPostImageUrlCubit>(
-          create: (context) => RecentPostImageUrlCubit(),
+          create: (context) {
+            final recentPostImageUrlCubit = RecentPostImageUrlCubit();
+            logger.logInfo('RecentPostImageUrlCubit.create',
+                'Initialized RecentPostImageUrlCubit');
+            return recentPostImageUrlCubit;
+          },
         ),
       ],
       child: child,
@@ -190,19 +289,40 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getProfileMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getProfileMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileBloc>(
-          create: (context) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final profileBloc = ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+              postDeleteRepository: context.read<PostDeleteRepository>(),
+            );
+            logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
+              'authBloc': context.read<AuthBloc>().toString(),
+              'userRepository': context.read<UserRepository>().toString(),
+              'postRepository': context.read<PostRepository>().toString(),
+              'postDeleteRepository':
+                  context.read<PostDeleteRepository>().toString(),
+            });
+            return profileBloc;
+          },
         ),
         BlocProvider<YourCollectionBloc>(
-          create: (context) => YourCollectionBloc(
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final yourCollectionBloc = YourCollectionBloc(
+              postRepository: context.read<PostRepository>(),
+            );
+            logger.logInfo(
+                'YourCollectionBloc.create', 'Initialized YourCollectionBloc', {
+              'postRepository': context.read<PostRepository>().toString(),
+            });
+            return yourCollectionBloc;
+          },
         ),
       ],
       child: child,
@@ -211,6 +331,9 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getFeedCollectionBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getFeedCollectionBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<FeedCollectionBloc>(
@@ -219,6 +342,11 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo(
+                'FeedCollectionBloc.create', 'Initialized FeedCollectionBloc', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedCollectionBloc;
           },
         ),
@@ -229,6 +357,9 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getFeedEventBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getFeedEventBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<FeedEventBloc>(
@@ -238,6 +369,12 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger
+                .logInfo('FeedEventBloc.create', 'Initialized FeedEventBloc', {
+              'eventRepository': context.read<EventRepository>().toString(),
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return feedEventBloc;
           },
         ),
@@ -248,14 +385,28 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getCreatePostMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getCreatePostMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileBloc>(
-          create: (context) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final profileBloc = ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+              postDeleteRepository: context.read<PostDeleteRepository>(),
+            );
+            logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
+              'authBloc': context.read<AuthBloc>().toString(),
+              'userRepository': context.read<UserRepository>().toString(),
+              'postRepository': context.read<PostRepository>().toString(),
+              'postDeleteRepository':
+                  context.read<PostDeleteRepository>().toString(),
+            });
+            return profileBloc;
+          },
         ),
         BlocProvider<CreatePostCubit>(
           create: (context) {
@@ -266,6 +417,14 @@ class BlocProviderConfig {
               userRepository: context.read<UserRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
+            logger.logInfo(
+                'CreatePostCubit.create', 'Initialized CreatePostCubit', {
+              'postRepository': context.read<PostRepository>().toString(),
+              'eventRepository': context.read<EventRepository>().toString(),
+              'storageRepository': context.read<StorageRepository>().toString(),
+              'userRepository': context.read<UserRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
             return createPostBloc;
           },
         ),
@@ -276,14 +435,23 @@ class BlocProviderConfig {
 
   static BlocProvider getEditProfileBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getEditProfileBlocProvider');
+
     return BlocProvider<EditProfileCubit>(
       create: (context) {
-        final createPostBloc = EditProfileCubit(
+        final editProfileCubit = EditProfileCubit(
           userRepository: context.read<UserRepository>(),
           storageRepository: context.read<StorageRepository>(),
           profileBloc: context.read<ProfileBloc>(),
         );
-        return createPostBloc;
+        logger.logInfo(
+            'EditProfileCubit.create', 'Initialized EditProfileCubit', {
+          'userRepository': context.read<UserRepository>().toString(),
+          'storageRepository': context.read<StorageRepository>().toString(),
+          'profileBloc': context.read<ProfileBloc>().toString(),
+        });
+        return editProfileCubit;
       },
       child: child,
     );
@@ -291,25 +459,44 @@ class BlocProviderConfig {
 
   static MultiBlocProvider getEditProfileMultiBlocProvider(
       BuildContext context, Widget child) {
+    final ContextualLogger logger =
+        ContextualLogger('BlocProviderConfig.getEditProfileMultiBlocProvider');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileBloc>(
-          create: (context) => ProfileBloc(
-            authBloc: context.read<AuthBloc>(),
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-          ),
+          create: (context) {
+            final profileBloc = ProfileBloc(
+              authBloc: context.read<AuthBloc>(),
+              userRepository: context.read<UserRepository>(),
+              postRepository: context.read<PostRepository>(),
+              postDeleteRepository: context.read<PostDeleteRepository>(),
+            );
+            logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
+              'authBloc': context.read<AuthBloc>().toString(),
+              'userRepository': context.read<UserRepository>().toString(),
+              'postRepository': context.read<PostRepository>().toString(),
+              'postDeleteRepository':
+                  context.read<PostDeleteRepository>().toString(),
+            });
+            return profileBloc;
+          },
         ),
         BlocProvider<EditProfileCubit>(
           create: (context) {
-            final editProfileBloc = EditProfileCubit(
+            final editProfileCubit = EditProfileCubit(
               userRepository: context.read<UserRepository>(),
               storageRepository: context.read<StorageRepository>(),
               profileBloc: context.read<ProfileBloc>(),
             );
-            return editProfileBloc;
+            logger.logInfo(
+                'EditProfileCubit.create', 'Initialized EditProfileCubit', {
+              'userRepository': context.read<UserRepository>().toString(),
+              'storageRepository': context.read<StorageRepository>().toString(),
+              'profileBloc': context.read<ProfileBloc>().toString(),
+            });
+            return editProfileCubit;
           },
-          child: child,
         ),
       ],
       child: child,

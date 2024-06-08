@@ -1,4 +1,5 @@
 import 'package:bootdv2/blocs/blocs.dart';
+import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/home/feed_ootd.dart';
 import 'package:bootdv2/screens/home/home_event.dart';
@@ -41,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen>
           authBloc: context.read<AuthBloc>(),
           userRepository: context.read<UserRepository>(),
           postRepository: context.read<PostRepository>(),
+          postDeleteRepository: context.read<PostDeleteRepository>(),
         );
       },
       child: Scaffold(
@@ -48,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen>
           preferredSize: const Size.fromHeight(62),
           child: Padding(
             padding: const EdgeInsets.all(0),
-            child: Tabbar3items(tabController: _tabController, context: context),
+            child:
+                Tabbar3items(tabController: _tabController, context: context),
           ),
         ),
         body: _buildBody(),

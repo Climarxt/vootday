@@ -4,6 +4,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
+import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
@@ -393,6 +394,7 @@ GoRouter createRouter(BuildContext context) {
                 authBloc: context.read<AuthBloc>(),
                 userRepository: context.read<UserRepository>(),
                 postRepository: context.read<PostRepository>(),
+                postDeleteRepository: context.read<PostDeleteRepository>(),
               ),
               child: FollowUsersScreen(
                   userId: userId, initialTabIndex: initialTabIndex),
@@ -714,6 +716,8 @@ GoRouter createRouter(BuildContext context) {
                                       context.read<UserRepository>(),
                                   postRepository:
                                       context.read<PostRepository>(),
+                                  postDeleteRepository:
+                                      context.read<PostDeleteRepository>(),
                                 ),
                               ),
                             ],

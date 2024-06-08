@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import '/blocs/blocs.dart';
@@ -14,7 +15,8 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthBloc _authBloc;
   final UserRepository _userRepository;
-  final PostRepository _postRepository;
+  // final PostRepository _postRepository;
+  final PostFetchRepository _postFetchRepository;
   StreamSubscription? _authSubscription;
 
   StreamSubscription<List<Future<Post?>>>? _postsSubscription;
@@ -23,10 +25,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required AuthBloc authBloc,
     required UserRepository userRepository,
     required PostRepository postRepository,
+    required PostFetchRepository postFetchRepository,
     required PostDeleteRepository postDeleteRepository,
   })  : _authBloc = authBloc,
         _userRepository = userRepository,
-        _postRepository = postRepository,
+        // _postRepository = postRepository,
+        _postFetchRepository = postFetchRepository,
         super(ProfileState.initial()) {
     on<ProfileLoadUser>(_onProfileLoadUser);
     on<UpdateProfile>(_onUpdateProfile);
@@ -57,7 +61,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) {
     _postsSubscription?.cancel();
-    _postsSubscription = _postRepository
+    _postsSubscription = _postFetchRepository
         .getUserPosts(userId: event.userId)
         .listen((posts) async {
       final allPosts = await Future.wait(posts);
@@ -88,7 +92,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       );
 
       _postsSubscription?.cancel();
-      _postsSubscription = _postRepository
+      _postsSubscription = _postFetchRepository
           .getUserPosts(userId: event.userId)
           .listen((posts) async {
         final allPosts = await Future.wait(posts);

@@ -10,6 +10,7 @@ import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/restart_app.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
@@ -60,6 +61,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<PostRepository>(
           create: (context) => PostRepository(),
+        ),
+        RepositoryProvider<PostFetchRepository>(
+          create: (context) => PostFetchRepository(),
         ),
         RepositoryProvider<PostCreateRepository>(
           create: (context) => PostCreateRepository(),
@@ -124,6 +128,7 @@ class MyApp extends StatelessWidget {
             create: (context) => CommentsBloc(
               authBloc: context.read<AuthBloc>(),
               postRepository: context.read<PostRepository>(),
+              postFetchRepository: context.read<PostFetchRepository>(),
             ),
           ),
           BlocProvider<CommentsEventBloc>(

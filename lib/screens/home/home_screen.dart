@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/blocs.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/home/feed_ootd.dart';
 import 'package:bootdv2/screens/home/home_event.dart';
@@ -43,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
           userRepository: context.read<UserRepository>(),
           postRepository: context.read<PostRepository>(),
           postDeleteRepository: context.read<PostDeleteRepository>(),
+          postFetchRepository: context.read<PostFetchRepository>(),
         );
       },
       child: Scaffold(

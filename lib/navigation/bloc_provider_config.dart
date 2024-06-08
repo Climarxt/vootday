@@ -2,6 +2,7 @@ import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
 import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
@@ -250,6 +251,7 @@ class BlocProviderConfig {
               userRepository: context.read<UserRepository>(),
               postRepository: context.read<PostRepository>(),
               postDeleteRepository: context.read<PostDeleteRepository>(),
+              postFetchRepository: context.read<PostFetchRepository>(),
             );
             logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
               'authBloc': context.read<AuthBloc>().toString(),
@@ -302,6 +304,7 @@ class BlocProviderConfig {
               userRepository: context.read<UserRepository>(),
               postRepository: context.read<PostRepository>(),
               postDeleteRepository: context.read<PostDeleteRepository>(),
+              postFetchRepository: context.read<PostFetchRepository>(),
             );
             logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
               'authBloc': context.read<AuthBloc>().toString(),
@@ -398,6 +401,7 @@ class BlocProviderConfig {
               userRepository: context.read<UserRepository>(),
               postRepository: context.read<PostRepository>(),
               postDeleteRepository: context.read<PostDeleteRepository>(),
+              postFetchRepository: context.read<PostFetchRepository>(),
             );
             logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
               'authBloc': context.read<AuthBloc>().toString(),
@@ -472,6 +476,7 @@ class BlocProviderConfig {
               userRepository: context.read<UserRepository>(),
               postRepository: context.read<PostRepository>(),
               postDeleteRepository: context.read<PostDeleteRepository>(),
+              postFetchRepository: context.read<PostFetchRepository>(),
             );
             logger.logInfo('ProfileBloc.create', 'Initialized ProfileBloc', {
               'authBloc': context.read<AuthBloc>().toString(),

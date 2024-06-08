@@ -5,6 +5,7 @@ import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_event/comments_event_bloc.dart';
 import 'package:bootdv2/screens/comment/bloc/comments_post/comments_bloc.dart';
@@ -368,6 +369,7 @@ GoRouter createRouter(BuildContext context) {
                 child: BlocProvider<CommentsBloc>(
                   create: (_) => CommentsBloc(
                     postRepository: context.read<PostRepository>(),
+                    postFetchRepository: context.read<PostFetchRepository>(),
                     authBloc: context.read<AuthBloc>(),
                   )..add(CommentsFetchComments(postId: postId, userId: userId)),
                   child: CommentScreen(postId: postId, userId: userId),
@@ -395,6 +397,7 @@ GoRouter createRouter(BuildContext context) {
                 userRepository: context.read<UserRepository>(),
                 postRepository: context.read<PostRepository>(),
                 postDeleteRepository: context.read<PostDeleteRepository>(),
+                postFetchRepository: context.read<PostFetchRepository>(),
               ),
               child: FollowUsersScreen(
                   userId: userId, initialTabIndex: initialTabIndex),
@@ -718,6 +721,8 @@ GoRouter createRouter(BuildContext context) {
                                       context.read<PostRepository>(),
                                   postDeleteRepository:
                                       context.read<PostDeleteRepository>(),
+                                  postFetchRepository:
+                                      context.read<PostFetchRepository>(),
                                 ),
                               ),
                             ],

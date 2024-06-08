@@ -158,17 +158,6 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Stream<List<Future<Post?>>> getUserPosts({required String userId}) {
-    return _firebaseFirestore
-        .collection(Paths.users)
-        .doc(userId)
-        .collection(Paths.posts)
-        .orderBy('date', descending: true)
-        .snapshots()
-        .map((snap) => snap.docs.map((doc) => Post.fromDocument(doc)).toList());
-  }
-
-  @override
   Stream<List<Future<Comment?>>> getPostComments({required String postId}) {
     return _firebaseFirestore
         .collection(Paths.comments)
@@ -213,29 +202,6 @@ class PostRepository extends BasePostRepository {
         .collection(Paths.postLikes)
         .doc(userId)
         .delete();
-  }
-
-  Future<Post?> getPostById(String postId, String userId) async {
-    try {
-      DocumentSnapshot postSnap = await _firebaseFirestore
-          .collection(Paths.users)
-          .doc(userId)
-          .collection(Paths.posts)
-          .doc(postId)
-          .get();
-
-      if (postSnap.exists) {
-        return Post.fromDocument(postSnap);
-      } else {
-        // Handle the case where the post does not exist.
-        debugPrint("Le post n'existe pas.");
-        return null;
-      }
-    } catch (e) {
-      // Handle any errors that occur during the fetch.
-      debugPrint(e.toString());
-      return null;
-    }
   }
 
   Future<List<Collection?>> getMyCollection({

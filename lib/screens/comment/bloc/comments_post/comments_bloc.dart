@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +14,17 @@ part 'comments_state.dart';
 
 class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   final PostRepository _postRepository;
+  final PostFetchRepository _postFetchRepository;
   final AuthBloc _authBloc;
 
   StreamSubscription<List<Future<Comment?>>>? _commentsSubscription;
 
   CommentsBloc({
     required PostRepository postRepository,
+    required PostFetchRepository postFetchRepository,
     required AuthBloc authBloc,
   })  : _postRepository = postRepository,
+        _postFetchRepository = postFetchRepository,
         _authBloc = authBloc,
         super(CommentsState.initial()) {
     on<CommentsFetchComments>(_mapCommentsFetchCommentsToState);
@@ -48,7 +52,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
           'Fetching post with postId: ${event.postId} and userId: ${event.userId}');
 
       final post =
-          await _postRepository.getPostById(event.postId, event.userId);
+          await _postFetchRepository.getPostById(event.postId, event.userId);
 
       if (post == null) {
         // Gérer le cas où le post n'existe pas
@@ -107,7 +111,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
     try {
       final post =
-          await _postRepository.getPostById(event.postId, event.userId);
+          await _postFetchRepository.getPostById(event.postId, event.userId);
       if (post == null) {
         throw Exception('Post récupéré est null');
       }

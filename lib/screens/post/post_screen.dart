@@ -6,6 +6,7 @@ import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
@@ -260,7 +261,7 @@ class _PostScreenState extends State<PostScreen>
       final postId = widget.postId;
       final userId = widget.userId; // Récupérer userId à partir du widget
       final post =
-          await context.read<PostRepository>().getPostById(postId, userId);
+          await context.read<PostFetchRepository>().getPostById(postId, userId);
       if (post != null) {
         final userDoc = await FirebaseFirestore.instance
             .collection(Paths.users)

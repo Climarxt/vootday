@@ -8,6 +8,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
+import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/restart_app.dart';
@@ -59,6 +60,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<PostRepository>(
           create: (context) => PostRepository(),
+        ),
+        RepositoryProvider<PostCreateRepository>(
+          create: (context) => PostCreateRepository(),
         ),
         RepositoryProvider<PostDeleteRepository>(
           create: (context) => PostDeleteRepository(),

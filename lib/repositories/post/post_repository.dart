@@ -89,87 +89,6 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Future<void> createPost(
-      {required Post post,
-      required String userId,
-      required DateTime dateTime}) async {
-    const String functionName = 'createPost';
-    try {
-      // Log début création de post
-      logger.logInfo(functionName, 'Creating post for user', {
-        'userId': userId,
-        'postId': post.id,
-        'dateTime': dateTime.toIso8601String(),
-      });
-
-      // Créer le post dans la collection personnelle de l'utilisateur
-      final userPostRef = await _firebaseFirestore
-          .collection(Paths.users)
-          .doc(userId)
-          .collection(Paths.posts)
-          .add({
-        ...post.toDocument(),
-        'date': dateTime,
-      });
-
-      // Log post créé dans la collection personnelle de l'utilisateur
-      logger.logInfo(functionName, 'Post created in user collection', {
-        'userPostRef': userPostRef.id,
-        'userId': userId,
-      });
-
-      // Construire le chemin pour la référence du post
-      String genderPath =
-          post.selectedGender == 'Masculin' ? 'posts_man' : 'posts_woman';
-      String locationPath = _getLocationPath(post);
-
-      // Créer un document avec une référence du post
-      final locationPostRef = await _firebaseFirestore
-          .collection('$genderPath/$locationPath/posts')
-          .add({
-        'post_ref': userPostRef,
-        'date': dateTime,
-      });
-
-      // Log référence de l'emplacement créé
-      logger.logInfo(functionName, 'Location post reference created', {
-        'locationPostRef': locationPostRef.id,
-        'genderPath': genderPath,
-        'locationPath': locationPath,
-      });
-
-      // Mettre à jour le post avec la référence de l'emplacement
-      await userPostRef.update({'postReference': locationPostRef});
-
-      // Log mise à jour de la référence de l'emplacement dans le post
-      logger.logInfo(functionName, 'Post reference updated in user post', {
-        'userPostRef': userPostRef.id,
-        'locationPostRef': locationPostRef.id,
-      });
-    } catch (e) {
-      // Log erreur durant la création du post
-      logger.logError(functionName, 'Error creating post for user', {
-        'userId': userId,
-        'postId': post.id,
-        'dateTime': dateTime.toIso8601String(),
-        'error': e.toString(),
-      });
-    }
-  }
-
-  String _getLocationPath(Post post) {
-    if (post.locationSelected == post.locationCountry) {
-      return post.locationCountry;
-    } else if (post.locationSelected == post.locationState) {
-      return '${post.locationCountry}/regions/${post.locationState}';
-    } else if (post.locationSelected == post.locationCity) {
-      return '${post.locationCountry}/regions/${post.locationState}/cities/${post.locationCity}';
-    } else {
-      throw Exception('Invalid location selected');
-    }
-  }
-
-  @override
   Future<void> createComment({
     required Post post,
     required Comment comment,
@@ -317,33 +236,6 @@ class PostRepository extends BasePostRepository {
       debugPrint(e.toString());
       return null;
     }
-  }
-
-  Future<void> createPostEvent(
-      {required Post post, required String eventId}) async {
-    // Créer une référence de document pour le nouveau post.
-    DocumentReference postRef =
-        _firebaseFirestore.collection(Paths.posts).doc();
-
-    // Préparer le document pour le post avec une référence aléatoire.
-    final postDocument = post.copyWith(id: postRef.id).toDocument();
-
-    // Créer un document pour le participant dans la sous-collection de l'eventId avec une référence au post.
-    final participantDocument = {'post_ref': postRef, 'userId': post.author.id};
-
-    // Écrire les deux documents en utilisant une transaction pour garantir que les deux opérations réussissent ou échouent ensemble.
-    await _firebaseFirestore.runTransaction((transaction) async {
-      // Ajouter le nouveau post à la collection des posts.
-      transaction.set(postRef, postDocument);
-
-      // Ajouter la référence du post au document du participant dans la sous-collection des participants.
-      DocumentReference participantRef = _firebaseFirestore
-          .collection(Paths.events)
-          .doc(eventId)
-          .collection('participants')
-          .doc();
-      transaction.set(participantRef, participantDocument);
-    });
   }
 
   Future<List<Collection?>> getMyCollection({

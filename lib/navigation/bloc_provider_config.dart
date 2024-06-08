@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
+import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/screens/calendar/bloc/blocs.dart';
 import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
@@ -411,7 +412,7 @@ class BlocProviderConfig {
         BlocProvider<CreatePostCubit>(
           create: (context) {
             final createPostBloc = CreatePostCubit(
-              postRepository: context.read<PostRepository>(),
+              postCreateRepository: context.read<PostCreateRepository>(),
               eventRepository: context.read<EventRepository>(),
               storageRepository: context.read<StorageRepository>(),
               userRepository: context.read<UserRepository>(),

@@ -1,21 +1,26 @@
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import '../../config/configs.dart';
 import '/models/models.dart';
 import '/repositories/repositories.dart';
 
 class UserRepository extends BaseUserRepository {
   final FirebaseFirestore _firebaseFirestore;
+  final ContextualLogger logger;
 
   UserRepository({FirebaseFirestore? firebaseFirestore})
-      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
+        logger = ContextualLogger('UserRepository');
 
   Future<List<User>> getUserFollowers({
     required String userId,
   }) async {
+    const String functionName = 'getUserFollowers';
     try {
-      debugPrint(
-          'getUserFollowers : Attempting to fetch user followers from Firestore...');
+      logger.logInfo(
+          functionName,
+          'Attempting to fetch user followers from Firestore...',
+          {'userId': userId});
 
       // Récupérer les documents de la sous-collection 'userFollowers'
       QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
@@ -24,7 +29,8 @@ class UserRepository extends BaseUserRepository {
           .collection('userFollowers')
           .get();
 
-      debugPrint('getUserFollowers : Followers documents fetched.');
+      logger.logInfo(
+          functionName, 'Followers documents fetched.', {'userId': userId});
 
       // Créer une liste pour les futures informations des utilisateurs
       List<Future<User?>> futureUsers = followersSnapshot.docs.map((doc) async {
@@ -39,13 +45,15 @@ class UserRepository extends BaseUserRepository {
       List<User> followers =
           (await Future.wait(futureUsers)).whereType<User>().toList();
 
-      debugPrint(
-          'getUserFollowers : User objects created. Total followers: ${followers.length}');
+      logger.logInfo(functionName, 'User objects created.',
+          {'totalFollowers': followers.length});
 
       return followers;
     } catch (e) {
-      debugPrint(
-          'getUserFollowers : An error occurred while fetching followers: ${e.toString()}');
+      logger.logError(
+          functionName,
+          'An error occurred while fetching followers.',
+          {'userId': userId, 'error': e.toString()});
       return [];
     }
   }
@@ -53,21 +61,25 @@ class UserRepository extends BaseUserRepository {
   Future<List<User>> getUserFollowing({
     required String userId,
   }) async {
+    const String functionName = 'getUserFollowing';
     try {
-      debugPrint(
-          'getUserFollowing : Attempting to fetch user followers from Firestore...');
+      logger.logInfo(
+          functionName,
+          'Attempting to fetch user following from Firestore...',
+          {'userId': userId});
 
       // Récupérer les documents de la sous-collection 'userFollowing'
-      QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
+      QuerySnapshot followingSnapshot = await FirebaseFirestore.instance
           .collection('following')
           .doc(userId)
           .collection('userFollowing')
           .get();
 
-      debugPrint('getUserFollowing : Followers documents fetched.');
+      logger.logInfo(
+          functionName, 'Following documents fetched.', {'userId': userId});
 
       // Créer une liste pour les futures informations des utilisateurs
-      List<Future<User?>> futureUsers = followersSnapshot.docs.map((doc) async {
+      List<Future<User?>> futureUsers = followingSnapshot.docs.map((doc) async {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(doc.id)
@@ -76,16 +88,18 @@ class UserRepository extends BaseUserRepository {
       }).toList();
 
       // Résoudre tous les futures pour obtenir les informations détaillées des utilisateurs
-      List<User> followers =
+      List<User> following =
           (await Future.wait(futureUsers)).whereType<User>().toList();
 
-      debugPrint(
-          'getUserFollowing : User objects created. Total followers: ${followers.length}');
+      logger.logInfo(functionName, 'User objects created.',
+          {'totalFollowing': following.length});
 
-      return followers;
+      return following;
     } catch (e) {
-      debugPrint(
-          'getUserFollowing : An error occurred while fetching followers: ${e.toString()}');
+      logger.logError(
+          functionName,
+          'An error occurred while fetching following.',
+          {'userId': userId, 'error': e.toString()});
       return [];
     }
   }
@@ -101,24 +115,43 @@ class UserRepository extends BaseUserRepository {
 
   @override
   Future<void> updateUser({required User user}) async {
-    await _firebaseFirestore
-        .collection(Paths.users)
-        .doc(user.id)
-        .update(user.toDocument());
+    const String functionName = 'updateUser';
+    try {
+      await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(user.id)
+          .update(user.toDocument());
+      logger.logInfo(
+          functionName, 'User updated successfully.', {'userId': user.id});
+    } catch (e) {
+      logger.logError(functionName, 'An error occurred while updating user.',
+          {'userId': user.id, 'error': e.toString()});
+    }
   }
 
   @override
   Future<List<User>> searchUsers({required String query}) async {
-    // Convertir la requête en minuscules
-    String lowerCaseQuery = query.toLowerCase();
+    const String functionName = 'searchUsers';
+    try {
+      // Convertir la requête en minuscules
+      String lowerCaseQuery = query.toLowerCase();
 
-    final userSnap = await _firebaseFirestore
-        .collection(Paths.users)
-        .where('username_lowercase', isGreaterThanOrEqualTo: lowerCaseQuery)
-        .where('username_lowercase', isLessThan: '$lowerCaseQuery\uf8ff')
-        .get();
+      final userSnap = await _firebaseFirestore
+          .collection(Paths.users)
+          .where('username_lowercase', isGreaterThanOrEqualTo: lowerCaseQuery)
+          .where('username_lowercase', isLessThan: '$lowerCaseQuery\uf8ff')
+          .get();
 
-    return userSnap.docs.map((doc) => User.fromDocument(doc)).toList();
+      List<User> users =
+          userSnap.docs.map((doc) => User.fromDocument(doc)).toList();
+      logger.logInfo(functionName, 'Users search completed.',
+          {'query': query, 'results': users.length});
+      return users;
+    } catch (e) {
+      logger.logError(functionName, 'An error occurred while searching users.',
+          {'query': query, 'error': e.toString()});
+      return [];
+    }
   }
 
   @override
@@ -126,32 +159,43 @@ class UserRepository extends BaseUserRepository {
     required String userId,
     required String followUserId,
   }) {
-    // Add followUser to user's userFollowing.
-    _firebaseFirestore
-        .collection(Paths.following)
-        .doc(userId)
-        .collection(Paths.userFollowing)
-        .doc(followUserId)
-        .set({});
-    // Add user to followUser's userFollowers.
-    _firebaseFirestore
-        .collection(Paths.followers)
-        .doc(followUserId)
-        .collection(Paths.userFollowers)
-        .doc(userId)
-        .set({});
+    const String functionName = 'followUser';
+    try {
+      // Add followUser to user's userFollowing.
+      _firebaseFirestore
+          .collection(Paths.following)
+          .doc(userId)
+          .collection(Paths.userFollowing)
+          .doc(followUserId)
+          .set({});
+      // Add user to followUser's userFollowers.
+      _firebaseFirestore
+          .collection(Paths.followers)
+          .doc(followUserId)
+          .collection(Paths.userFollowers)
+          .doc(userId)
+          .set({});
 
-    final notification = Notif(
-      type: NotifType.follow,
-      fromUser: User.empty.copyWith(id: userId),
-      date: DateTime.now(),
-    );
+      final notification = Notif(
+        type: NotifType.follow,
+        fromUser: User.empty.copyWith(id: userId),
+        date: DateTime.now(),
+      );
 
-    _firebaseFirestore
-        .collection(Paths.notifications)
-        .doc(followUserId)
-        .collection(Paths.userNotifications)
-        .add(notification.toDocument());
+      _firebaseFirestore
+          .collection(Paths.notifications)
+          .doc(followUserId)
+          .collection(Paths.userNotifications)
+          .add(notification.toDocument());
+      logger.logInfo(functionName, 'User followed successfully.',
+          {'userId': userId, 'followUserId': followUserId});
+    } catch (e) {
+      logger.logError(functionName, 'An error occurred while following user.', {
+        'userId': userId,
+        'followUserId': followUserId,
+        'error': e.toString()
+      });
+    }
   }
 
   @override
@@ -159,20 +203,32 @@ class UserRepository extends BaseUserRepository {
     required String userId,
     required String unfollowUserId,
   }) {
-    // Remove unfollowUser from user's userFollowing.
-    _firebaseFirestore
-        .collection(Paths.following)
-        .doc(userId)
-        .collection(Paths.userFollowing)
-        .doc(unfollowUserId)
-        .delete();
-    // Remove user from unfollowUser's userFollowers.
-    _firebaseFirestore
-        .collection(Paths.followers)
-        .doc(unfollowUserId)
-        .collection(Paths.userFollowers)
-        .doc(userId)
-        .delete();
+    const String functionName = 'unfollowUser';
+    try {
+      // Remove unfollowUser from user's userFollowing.
+      _firebaseFirestore
+          .collection(Paths.following)
+          .doc(userId)
+          .collection(Paths.userFollowing)
+          .doc(unfollowUserId)
+          .delete();
+      // Remove user from unfollowUser's userFollowers.
+      _firebaseFirestore
+          .collection(Paths.followers)
+          .doc(unfollowUserId)
+          .collection(Paths.userFollowers)
+          .doc(userId)
+          .delete();
+      logger.logInfo(functionName, 'User unfollowed successfully.',
+          {'userId': userId, 'unfollowUserId': unfollowUserId});
+    } catch (e) {
+      logger.logError(
+          functionName, 'An error occurred while unfollowing user.', {
+        'userId': userId,
+        'unfollowUserId': unfollowUserId,
+        'error': e.toString()
+      });
+    }
   }
 
   @override
@@ -180,29 +236,51 @@ class UserRepository extends BaseUserRepository {
     required String userId,
     required String otherUserId,
   }) async {
-    // is otherUser in user's userFollowing
-    final otherUserDoc = await _firebaseFirestore
-        .collection(Paths.following)
-        .doc(userId)
-        .collection(Paths.userFollowing)
-        .doc(otherUserId)
-        .get();
-    return otherUserDoc.exists;
+    const String functionName = 'isFollowing';
+    try {
+      // is otherUser in user's userFollowing
+      final otherUserDoc = await _firebaseFirestore
+          .collection(Paths.following)
+          .doc(userId)
+          .collection(Paths.userFollowing)
+          .doc(otherUserId)
+          .get();
+      bool isFollowing = otherUserDoc.exists;
+      logger.logInfo(functionName, 'Follow status checked.', {
+        'userId': userId,
+        'otherUserId': otherUserId,
+        'isFollowing': isFollowing
+      });
+      return isFollowing;
+    } catch (e) {
+      logger.logError(
+          functionName, 'An error occurred while checking follow status.', {
+        'userId': userId,
+        'otherUserId': otherUserId,
+        'error': e.toString()
+      });
+      return false;
+    }
   }
 
-// Ajout d'une méthode pour récupérer les détails d'un utilisateur
+  // Ajout d'une méthode pour récupérer les détails d'un utilisateur
   Future<User> fetchUserDetails(String userId) async {
+    const String functionName = 'fetchUserDetails';
     try {
       DocumentSnapshot userDoc =
           await _firebaseFirestore.collection('users').doc(userId).get();
       if (userDoc.exists) {
-        debugPrint("User details fetched for ID $userId");
+        logger
+            .logInfo(functionName, 'User details fetched.', {'userId': userId});
         return User.fromDocument(userDoc);
       } else {
         throw Exception("User not found!");
       }
     } catch (e) {
-      debugPrint("Error fetching user details: $e");
+      logger.logError(
+          functionName,
+          'An error occurred while fetching user details.',
+          {'userId': userId, 'error': e.toString()});
       rethrow;
     }
   }

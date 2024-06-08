@@ -2,59 +2,84 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/blocs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 part 'create_post_state.dart';
 
 class CreatePostCubit extends Cubit<CreatePostState> {
-  final PostRepository _postRepository;
+  final PostCreateRepository _postCreateRepository;
   final EventRepository _eventRepository;
   final StorageRepository _storageRepository;
   final UserRepository _userRepository;
   final AuthBloc _authBloc;
+  final ContextualLogger logger;
 
   CreatePostCubit({
-    required PostRepository postRepository,
+    required PostCreateRepository postCreateRepository,
     required EventRepository eventRepository,
     required StorageRepository storageRepository,
     required UserRepository userRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _postCreateRepository = postCreateRepository,
         _eventRepository = eventRepository,
         _storageRepository = storageRepository,
         _authBloc = authBloc,
         _userRepository = userRepository,
+        logger = ContextualLogger('CreatePostCubit'),
         super(CreatePostState.initial());
 
   Future<File> compressImage(File imageFile, {int quality = 90}) async {
-    final filePath = imageFile.absolute.path;
-    final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
-    final newPath = filePath.substring(0, lastIndex);
-    final compressedXImage = await FlutterImageCompress.compressAndGetFile(
-      imageFile.absolute.path,
-      '$newPath/compressed.jpg',
-      quality: quality,
-    );
-    final compressedImage = File(compressedXImage!.path);
-    return compressedImage;
+    const String functionName = 'compressImage';
+    try {
+      final filePath = imageFile.absolute.path;
+      final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
+      final newPath = filePath.substring(0, lastIndex);
+      final compressedXImage = await FlutterImageCompress.compressAndGetFile(
+        imageFile.absolute.path,
+        '$newPath/compressed.jpg',
+        quality: quality,
+      );
+      final compressedImage = File(compressedXImage!.path);
+
+      logger.logInfo(functionName, 'Image compressed successfully',
+          {'filePath': filePath, 'newPath': newPath, 'quality': quality});
+
+      return compressedImage;
+    } catch (e) {
+      logger.logError(
+          functionName, 'Error compressing image', {'error': e.toString()});
+      rethrow;
+    }
   }
 
   Future<File> createThumbnail(File thumbnailFile, {int quality = 50}) async {
-    final filePath = thumbnailFile.absolute.path;
-    final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
-    final newPath = filePath.substring(0, lastIndex);
-    final thumbnailXImageBytes = await FlutterImageCompress.compressAndGetFile(
-      thumbnailFile.absolute.path,
-      '$newPath/thumbnailcompressed.jpg',
-      quality: quality,
-    );
-    final thumbnailImageBytes = File(thumbnailXImageBytes!.path);
+    const String functionName = 'createThumbnail';
+    try {
+      final filePath = thumbnailFile.absolute.path;
+      final lastIndex = filePath.lastIndexOf(Platform.pathSeparator);
+      final newPath = filePath.substring(0, lastIndex);
+      final thumbnailXImageBytes =
+          await FlutterImageCompress.compressAndGetFile(
+        thumbnailFile.absolute.path,
+        '$newPath/thumbnailcompressed.jpg',
+        quality: quality,
+      );
+      final thumbnailImageBytes = File(thumbnailXImageBytes!.path);
 
-    return thumbnailImageBytes;
+      logger.logInfo(functionName, 'Thumbnail created successfully',
+          {'filePath': filePath, 'newPath': newPath, 'quality': quality});
+
+      return thumbnailImageBytes;
+    } catch (e) {
+      logger.logError(
+          functionName, 'Error creating thumbnail', {'error': e.toString()});
+      rethrow;
+    }
   }
 
   void postImageChanged(File file) {
@@ -84,6 +109,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   }
 
   void submit() async {
+    const String functionName = 'submit';
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
       final userId = _authBloc.state.user!.uid;
@@ -124,25 +150,28 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         locationSelected: state.locationSelected,
       );
 
-      // Debug print toutes les valeurs du post
-      debugPrint('Creating post with values:');
-      debugPrint('Author: ${post.author}');
-      debugPrint('Image URL: ${post.imageUrl}');
-      debugPrint('Thumbnail URL: ${post.thumbnailUrl}');
-      debugPrint('Caption: ${post.caption}');
-      debugPrint('Likes: ${post.likes}');
-      debugPrint('Date: ${post.date}');
-      debugPrint('Tags: ${post.tags}');
-      debugPrint('Selected Gender: ${post.selectedGender}');
-      debugPrint('Location City: ${post.locationCity}');
-      debugPrint('Location State: ${post.locationState}');
-      debugPrint('Location Country: ${post.locationCountry}');
-      debugPrint('Location Selected: ${post.locationSelected}');
+      logger.logInfo(functionName, 'Creating post with values', {
+        'author': post.author,
+        'imageUrl': post.imageUrl,
+        'thumbnailUrl': post.thumbnailUrl,
+        'caption': post.caption,
+        'likes': post.likes,
+        'date': post.date,
+        'tags': post.tags,
+        'selectedGender': post.selectedGender,
+        'locationCity': post.locationCity,
+        'locationState': post.locationState,
+        'locationCountry': post.locationCountry,
+        'locationSelected': post.locationSelected
+      });
 
-      await _postRepository.createPost(post: post, userId: userId, dateTime: dateTime);
+      await _postCreateRepository.createPost(
+          post: post, userId: userId, dateTime: dateTime);
 
       emit(state.copyWith(status: CreatePostStatus.success));
     } catch (err) {
+      logger.logError(
+          functionName, 'Error creating post', {'error': err.toString()});
       emit(
         state.copyWith(
           status: CreatePostStatus.error,
@@ -154,11 +183,13 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   }
 
   void submitPostEvent(String eventId) async {
+    const String functionName = 'submitPostEvent';
     emit(state.copyWith(status: CreatePostStatus.submitting));
     try {
       // Récupérer l'instance de l'événement à partir de son ID
       final Event? eventDetails = await _eventRepository.getEventById(eventId);
       if (eventDetails == null) {
+        logger.logError(functionName, 'Event not found', {'eventId': eventId});
         emit(
           state.copyWith(
             status: CreatePostStatus.error,
@@ -200,11 +231,25 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         locationSelected: '',
       );
 
+      logger.logInfo(functionName, 'Creating event post with values', {
+        'eventId': eventId,
+        'author': post.author,
+        'imageUrl': post.imageUrl,
+        'thumbnailUrl': post.thumbnailUrl,
+        'caption': post.caption,
+        'likes': post.likes,
+        'date': post.date,
+        'tags': post.tags,
+        'selectedGender': post.selectedGender
+      });
+
       // Créer le post dans Firestore
-      await _postRepository.createPostEvent(post: post, eventId: eventId);
+      await _postCreateRepository.createPostEvent(post: post, eventId: eventId);
 
       emit(state.copyWith(status: CreatePostStatus.success));
     } catch (err) {
+      logger.logError(
+          functionName, 'Error creating event post', {'error': err.toString()});
       emit(
         state.copyWith(
           status: CreatePostStatus.error,

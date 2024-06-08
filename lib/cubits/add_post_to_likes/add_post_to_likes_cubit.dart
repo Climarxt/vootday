@@ -8,14 +8,14 @@ part 'add_post_to_likes_state.dart';
 
 class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
   final FirebaseFirestore _firebaseFirestore;
-  final PostRepository _postRepository;
+  // final PostRepository _postRepository;
   final ContextualLogger logger;
 
   AddPostToLikesCubit({
     required FirebaseFirestore firebaseFirestore,
     required PostRepository postRepository,
   })  : _firebaseFirestore = firebaseFirestore,
-        _postRepository = postRepository,
+        // _postRepository = postRepository,
         logger = ContextualLogger('AddPostToLikesCubit'),
         super(AddPostToLikesInitialState());
 
@@ -24,8 +24,7 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
     emit(AddPostToLikesLoadingState());
 
     try {
-      logger.logInfo(
-          'addPostToLikes', 'Adding post to likes...', {
+      logger.logInfo('addPostToLikes', 'Adding post to likes...', {
         'postId': postId,
         'userIdfromPost': userIdfromPost,
         'userIdfromAuth': userIdfromAuth,
@@ -38,17 +37,25 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
           .doc(postId);
       DateTime now = DateTime.now();
 
-      await _firebaseFirestore
+      // Get a new document reference for the like
+      DocumentReference likeRef = _firebaseFirestore
           .collection(Paths.users)
           .doc(userIdfromAuth)
           .collection('likes')
-          .add({
+          .doc();
+
+      // Add post reference to user's likes collection with the generated ID
+      await likeRef.set({
         'post_ref': postRef,
         'date': now,
       });
 
-      logger.logInfo('addPostToLikes',
-          'Post added to likes successfully', {
+      // Update whoLiked map in the post document
+      await postRef.update({
+        'whoLiked.${likeRef.id}': likeRef,
+      });
+
+      logger.logInfo('addPostToLikes', 'Post added to likes successfully', {
         'postId': postId,
         'userIdfromPost': userIdfromPost,
         'userIdfromAuth': userIdfromAuth,
@@ -56,8 +63,7 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
 
       emit(AddPostToLikesSuccessState());
     } catch (e) {
-      logger.logError('addPostToLikes',
-          'Error adding post to likes', {
+      logger.logError('addPostToLikes', 'Error adding post to likes', {
         'error': e.toString(),
         'postId': postId,
         'userIdfromPost': userIdfromPost,
@@ -84,8 +90,7 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
 
       return likedPostsSnapshot.docs.isNotEmpty;
     } catch (e) {
-      logger.logError('isPostLiked',
-          'Error checking if post is liked', {
+      logger.logError('isPostLiked', 'Error checking if post is liked', {
         'error': e.toString(),
         'postId': postId,
         'userIdfromPost': userIdfromPost,
@@ -102,29 +107,55 @@ class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
     emit(AddPostToLikesLoadingState());
 
     try {
-      logger.logInfo('deletePostRefFromLikes',
-          'Deleting post from likes...', {
+      logger.logInfo('deletePostRefFromLikes', 'Deleting post from likes...', {
         'postId': postId,
         'userIdfromPost': userIdfromPost,
         'userIdfromAuth': userIdfromAuth,
       });
 
-      await _postRepository.deletePostRefFromLikes(
-          postId: postId,
-          userIdfromPost: userIdfromPost,
-          userIdfromAuth: userIdfromAuth);
+      // Construire la référence correcte du post
+      DocumentReference postRef = _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userIdfromPost)
+          .collection(Paths.posts)
+          .doc(postId);
 
-      logger.logInfo('deletePostRefFromLikes',
-          'Post deleted from likes successfully', {
-        'postId': postId,
-        'userIdfromPost': userIdfromPost,
-        'userIdfromAuth': userIdfromAuth,
-      });
+      // Récupérer les documents likes qui contiennent cette référence de post
+      QuerySnapshot snapshot = await _firebaseFirestore
+          .collection(Paths.users)
+          .doc(userIdfromAuth)
+          .collection('likes')
+          .where('post_ref', isEqualTo: postRef)
+          .get();
+
+      // Si des documents sont trouvés, les supprimer
+      if (snapshot.docs.isNotEmpty) {
+        await Future.wait(snapshot.docs.map((doc) async {
+          // Supprimer la référence dans whoLiked avant de supprimer le document
+          await postRef.update({
+            'whoLiked.${doc.id}': FieldValue.delete(),
+          });
+          await doc.reference.delete();
+        }));
+
+        logger.logInfo(
+            'deletePostRefFromLikes', 'Post deleted from likes successfully.', {
+          'postId': postId,
+          'userIdfromPost': userIdfromPost,
+          'userIdfromAuth': userIdfromAuth,
+        });
+      } else {
+        logger.logInfo('deletePostRefFromLikes', 'No post found in likes.', {
+          'postId': postId,
+          'userIdfromPost': userIdfromPost,
+          'userIdfromAuth': userIdfromAuth,
+        });
+      }
 
       emit(AddPostToLikesSuccessState());
     } catch (e) {
-      logger.logError('deletePostRefFromLikes',
-          'Error deleting post from likes', {
+      logger.logError(
+          'deletePostRefFromLikes', 'Error deleting post from likes', {
         'error': e.toString(),
         'postId': postId,
         'userIdfromPost': userIdfromPost,

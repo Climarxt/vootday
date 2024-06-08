@@ -21,7 +21,7 @@ class PostRepository extends BasePostRepository {
     WriteBatch batch = _firebaseFirestore.batch();
     debugPrint('deletePost : Début de la suppression du post avec ID: $postId');
 
-    // Suppression du post dans la collection 'posts'
+    // Suppression du post dans la collection 'posts' de userIdfromAuth
     DocumentReference postRef = _firebaseFirestore
         .collection(Paths.users)
         .doc(userIdfromAuth)
@@ -37,6 +37,9 @@ class PostRepository extends BasePostRepository {
 
     // Suppression du post référencé par postReference
     await _deleteReferencedPost(postRef);
+
+    // Suppression des documents référencés dans whoLiked
+    await _deleteWhoLikedReferences(postRef);
 
     // Exécution du batch pour effectuer toutes les suppressions
     debugPrint(
@@ -107,6 +110,28 @@ class PostRepository extends BasePostRepository {
             '_deletePostReferencesInSubCollections : Suppression de la référence: ${doc.id} dans $subCollection dans le batch');
         batch.delete(doc.reference);
       }
+    }
+  }
+
+  Future<void> _deleteWhoLikedReferences(DocumentReference postRef) async {
+    DocumentSnapshot postSnapshot = await postRef.get();
+    if (postSnapshot.exists) {
+      var postData = postSnapshot.data() as Map<String, dynamic>?;
+      if (postData != null && postData.containsKey('whoLiked')) {
+        var whoLiked = postData['whoLiked'] as Map<String, dynamic>;
+        for (var likeId in whoLiked.keys) {
+          DocumentReference likeRef = whoLiked[likeId];
+          debugPrint(
+              '_deleteWhoLikedReferences : Suppression du like référencé avec ID: $likeId');
+          await likeRef.delete();
+        }
+      } else {
+        debugPrint(
+            '_deleteWhoLikedReferences : Aucun champ whoLiked trouvé ou champ vide.');
+      }
+    } else {
+      debugPrint(
+          '_deleteWhoLikedReferences : Le post principal n\'existe pas.');
     }
   }
 
@@ -640,14 +665,20 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+  // Supprime le post dans collections et dans le champ whoCollected
   Future<void> deletePostRefFromCollection({
     required String postId,
     required String collectionId,
     required String userIdfromPost,
   }) async {
+    const String functionName = 'deletePostRefFromCollection';
     try {
-      debugPrint(
-          'deletePostRefFromCollection : Suppression du post_ref de la collection...');
+      logger.logInfo(
+          functionName, 'Suppression du post_ref de la collection en cours', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'userIdfromPost': userIdfromPost,
+      });
 
       DocumentReference postRef = _firebaseFirestore
           .collection(Paths.users)
@@ -665,16 +696,39 @@ class PostRepository extends BasePostRepository {
 
       if (snapshot.docs.isNotEmpty) {
         // Supprimez uniquement la première référence trouvée, car elle doit être unique
-        await snapshot.docs.first.reference.delete();
-        debugPrint(
-            'deletePostRefFromCollection : Post_ref supprimé de la collection avec succès.');
+        DocumentReference feedCollectionRef = snapshot.docs.first.reference;
+        await feedCollectionRef.delete();
+        logger.logInfo(
+            functionName, 'Post_ref supprimé de la collection avec succès', {
+          'postId': postId,
+          'collectionId': collectionId,
+          'feedCollectionRefId': feedCollectionRef.id,
+        });
+
+        // Supprimer la référence dans whoCollected du post
+        await postRef.update({
+          'whoCollected.${feedCollectionRef.id}': FieldValue.delete(),
+        });
+        logger.logInfo(
+            functionName, 'Référence supprimée de whoCollected avec succès', {
+          'postId': postId,
+          'feedCollectionRefId': feedCollectionRef.id,
+        });
       } else {
-        debugPrint(
-            'deletePostRefFromCollection : Aucun post_ref trouvé dans la collection.');
+        logger
+            .logInfo(functionName, 'Aucun post_ref trouvé dans la collection', {
+          'postId': postId,
+          'collectionId': collectionId,
+        });
       }
     } catch (e) {
-      debugPrint(
-          'deletePostRefFromCollection : Erreur lors de la suppression du post_ref de la collection: ${e.toString()}');
+      logger.logError(functionName,
+          'Erreur lors de la suppression du post_ref de la collection', {
+        'postId': postId,
+        'collectionId': collectionId,
+        'userIdfromPost': userIdfromPost,
+        'error': e.toString(),
+      });
       throw Exception(
           'Erreur lors de la suppression du post_ref de la collection');
     }
@@ -725,7 +779,7 @@ class PostRepository extends BasePostRepository {
       {required String postId,
       required String userIdfromPost,
       required String userIdfromAuth}) async {
-    try {
+    {
       logger.logInfo(
           'deletePostRefFromLikes', 'Suppression du post des likes...', {
         'postId': postId,
@@ -750,7 +804,14 @@ class PostRepository extends BasePostRepository {
 
       // Si des documents sont trouvés, les supprimer
       if (snapshot.docs.isNotEmpty) {
-        await Future.wait(snapshot.docs.map((doc) => doc.reference.delete()));
+        await Future.wait(snapshot.docs.map((doc) async {
+          // Supprimer la référence dans whoLiked avant de supprimer le document
+          await postRef.update({
+            'whoLiked.${doc.id}': FieldValue.delete(),
+          });
+          await doc.reference.delete();
+        }));
+
         logger.logInfo(
             'deletePostRefFromLikes', 'Post supprimé des likes avec succès.', {
           'postId': postId,
@@ -765,15 +826,6 @@ class PostRepository extends BasePostRepository {
           'userIdfromAuth': userIdfromAuth,
         });
       }
-    } catch (e) {
-      logger.logError('deletePostRefFromLikes',
-          'Erreur lors de la suppression du post des likes', {
-        'error': e.toString(),
-        'postId': postId,
-        'userIdfromPost': userIdfromPost,
-        'userIdfromAuth': userIdfromAuth,
-      });
-      throw Exception('Erreur lors de la suppression du post des likes');
     }
   }
 }

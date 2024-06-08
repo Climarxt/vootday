@@ -34,13 +34,22 @@ class AddPostToCollectionCubit extends Cubit<AddPostToCollectionState> {
           .doc(postId);
       DateTime now = DateTime.now();
 
-      await _firebaseFirestore
+      // Obtenir une nouvelle référence de document pour l'ajout à la collection
+      DocumentReference feedCollectionRef = _firebaseFirestore
           .collection('collections')
           .doc(collectionId)
           .collection('feed_collection')
-          .add({
+          .doc();
+
+      // Ajouter le post à la collection
+      await feedCollectionRef.set({
         'post_ref': postRef,
         'date': now,
+      });
+
+      // Mettre à jour le champ whoCollected du post
+      await postRef.update({
+        'whoCollected.${feedCollectionRef.id}': feedCollectionRef,
       });
 
       logger.logInfo(functionName, 'Post added to collection successfully', {

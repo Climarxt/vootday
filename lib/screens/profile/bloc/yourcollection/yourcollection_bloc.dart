@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:flutter/material.dart';
@@ -10,12 +10,13 @@ import 'package:flutter/material.dart';
 part 'package:bootdv2/screens/profile/bloc/yourcollection/yourcollection_state.dart';
 part 'package:bootdv2/screens/profile/bloc/yourcollection/yourcollection_event.dart';
 
-class YourCollectionBloc extends Bloc<YourCollectionEvent, YourCollectionState> {
-  final PostRepository _postRepository;
+class YourCollectionBloc
+    extends Bloc<YourCollectionEvent, YourCollectionState> {
+  final CollectionRepository _collectionRepository;
 
   YourCollectionBloc({
-    required PostRepository postRepository,
-  })  : _postRepository = postRepository,
+    required CollectionRepository collectionRepository,
+  })  : _collectionRepository = collectionRepository,
         super(YourCollectionState.initial()) {
     on<YourCollectionFetchCollections>(_mapYourCollectionFetchCollections);
     on<YourCollectionClean>(_onYourCollectionClean);
@@ -29,7 +30,7 @@ class YourCollectionBloc extends Bloc<YourCollectionEvent, YourCollectionState> 
     try {
       debugPrint(
           'Method _mapYourCollectionFetchCollections : Fetching collections...');
-      final collections = await _postRepository.getYourCollection(
+      final collections = await _collectionRepository.getYourCollection(
         userId: event.userId,
       );
 

@@ -4,21 +4,21 @@ import 'package:bloc/bloc.dart';
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:equatable/equatable.dart';
 
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_state.dart';
 part 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_event.dart';
 
 class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
-  final PostRepository _postRepository;
+  final CollectionRepository _collectionRepository;
   final AuthBloc _authBloc;
   final ContextualLogger logger;
 
   MyCollectionBloc({
-    required PostRepository postRepository,
+    required CollectionRepository collectionRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _collectionRepository = collectionRepository,
         _authBloc = authBloc,
         logger = ContextualLogger('MyCollectionBloc'),
         super(MyCollectionState.initial()) {
@@ -44,7 +44,8 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
       logger.logInfo('mapMyCollectionFetchCollections',
           'Fetching collections for user', {'userId': userId});
 
-      final collections = await _postRepository.getMyCollection(userId: userId);
+      final collections =
+          await _collectionRepository.getMyCollection(userId: userId);
 
       if (collections.isEmpty) {
         logger.logInfo('mapMyCollectionFetchCollections',
@@ -87,7 +88,7 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     Emitter<MyCollectionState> emit,
   ) async {
     try {
-      final isPostInCollection = await _postRepository.isPostInCollection(
+      final isPostInCollection = await _collectionRepository.isPostInCollection(
         postId: event.postId,
         collectionId: event.collectionId,
         userIdfromPost: event.userIdfromPost,
@@ -114,8 +115,10 @@ class MyCollectionBloc extends Bloc<MyCollectionEvent, MyCollectionState> {
     Emitter<MyCollectionState> emit,
   ) async {
     try {
-      await _postRepository.deletePostRefFromCollection(
-          postId: event.postId, collectionId: event.collectionId, userIdfromPost: event.userIdfromPost);
+      await _collectionRepository.deletePostRefFromCollection(
+          postId: event.postId,
+          collectionId: event.collectionId,
+          userIdfromPost: event.userIdfromPost);
 
       logger.logInfo(
           'onDeletePostRefFromCollection',

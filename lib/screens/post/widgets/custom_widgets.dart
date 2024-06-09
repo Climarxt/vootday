@@ -6,7 +6,7 @@ import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/add_post_to_collection/add_post_to_collection_cubit.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:bootdv2/repositories/repositories.dart';
+import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/mycollection/mycollection_bloc.dart';
 import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
@@ -368,8 +368,8 @@ Future<Widget> buildTrailingIcon(
     String userIdfromPost,
     String postId,
     Map<String, bool> postInCollectionMap) async {
-  final postRepository = context.read<PostRepository>();
-  bool isPostInCollection = await postRepository.isPostInCollection(
+  final collectionRepository = context.read<CollectionRepository>();
+  bool isPostInCollection = await collectionRepository.isPostInCollection(
       postId: postId,
       collectionId: collectionId,
       userIdfromPost: userIdfromPost);

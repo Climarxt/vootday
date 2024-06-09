@@ -1,5 +1,6 @@
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/recent_post_image_url/recent_post_image_url_cubit.dart';
+import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
@@ -267,7 +268,7 @@ class BlocProviderConfig {
           create: (context) {
             final myCollectionBloc = MyCollectionBloc(
               authBloc: context.read<AuthBloc>(),
-              postRepository: context.read<PostRepository>(),
+              collectionRepository: context.read<CollectionRepository>(),
             );
             logger.logInfo(
                 'MyCollectionBloc.create', 'Initialized MyCollectionBloc', {
@@ -319,11 +320,11 @@ class BlocProviderConfig {
         BlocProvider<YourCollectionBloc>(
           create: (context) {
             final yourCollectionBloc = YourCollectionBloc(
-              postRepository: context.read<PostRepository>(),
+              collectionRepository: context.read<CollectionRepository>(),
             );
             logger.logInfo(
                 'YourCollectionBloc.create', 'Initialized YourCollectionBloc', {
-              'postRepository': context.read<PostRepository>().toString(),
+              'postRepository': context.read<CollectionRepository>().toString(),
             });
             return yourCollectionBloc;
           },

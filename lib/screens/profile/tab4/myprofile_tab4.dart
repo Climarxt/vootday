@@ -42,15 +42,11 @@ class _MyProfileTab4State extends State<MyProfileTab4>
 }
 
 Widget _buildBody(FeedMyLikesState state, BuildContext context) {
-  return Stack(
-    children: [
-      RefreshIndicator(
-        onRefresh: () async {
-          context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
-        },
-        child: _buildGridView(state),
-      ),
-    ],
+  return RefreshIndicator(
+    onRefresh: () async {
+      context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
+    },
+    child: _buildGridView(state),
   );
 }
 
@@ -65,7 +61,7 @@ Widget _buildGridView(FeedMyLikesState state) {
         childAspectRatio: 0.8,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      physics: const ClampingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(), // Enable always scrollable physics
       cacheExtent: 10000,
       itemCount: state.posts.length,
       itemBuilder: (context, index) {

@@ -4,6 +4,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/navigation/bloc_provider_config.dart';
 import 'package:bootdv2/navigation/route_config.dart';
 import 'package:bootdv2/navigation/scaffold_with_navbar.dart';
+import 'package:bootdv2/repositories/comment/comment_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:bootdv2/repositories/repositories.dart';
@@ -368,7 +369,7 @@ GoRouter createRouter(BuildContext context) {
                 key: state.pageKey,
                 child: BlocProvider<CommentsBloc>(
                   create: (_) => CommentsBloc(
-                    postRepository: context.read<PostRepository>(),
+                    commentRepository: context.read<CommentRepository>(),
                     postFetchRepository: context.read<PostFetchRepository>(),
                     authBloc: context.read<AuthBloc>(),
                   )..add(CommentsFetchComments(postId: postId, userId: userId)),

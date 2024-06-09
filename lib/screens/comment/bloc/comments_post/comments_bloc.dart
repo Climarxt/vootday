@@ -1,29 +1,29 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/repositories/comment/comment_repository.dart';
 import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import '/blocs/blocs.dart';
 import '/models/models.dart';
-import '/repositories/repositories.dart';
 
 part 'comments_event.dart';
 part 'comments_state.dart';
 
 class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
-  final PostRepository _postRepository;
+  final CommentRepository _commentRepository;
   final PostFetchRepository _postFetchRepository;
   final AuthBloc _authBloc;
 
   StreamSubscription<List<Future<Comment?>>>? _commentsSubscription;
 
   CommentsBloc({
-    required PostRepository postRepository,
+    required CommentRepository commentRepository,
     required PostFetchRepository postFetchRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _commentRepository = commentRepository,
         _postFetchRepository = postFetchRepository,
         _authBloc = authBloc,
         super(CommentsState.initial()) {
@@ -63,7 +63,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
         return;
       }
 
-      _commentsSubscription = _postRepository
+      _commentsSubscription = _commentRepository
           .getPostComments(postId: event.postId)
           .listen((comments) async {
         final allComments = await Future.wait(comments);
@@ -124,7 +124,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
         date: DateTime.now(),
       );
 
-      await _postRepository.createComment(post: post, comment: comment);
+      await _commentRepository.createComment(post: post, comment: comment);
 
       emit(state.copyWith(status: CommentsStatus.loaded));
       debugPrint('État de chargement émis');

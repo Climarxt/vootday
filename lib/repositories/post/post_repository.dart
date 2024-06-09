@@ -89,44 +89,6 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Future<void> createComment({
-    required Post post,
-    required Comment comment,
-  }) async {
-    debugPrint('Début de la méthode createComment');
-
-    debugPrint('Ajout du commentaire dans Firestore');
-    await _firebaseFirestore
-        .collection(Paths.comments)
-        .doc(comment.postId)
-        .collection(Paths.postComments)
-        .add(comment.toDocument())
-        .then((_) => debugPrint('Commentaire ajouté avec succès'))
-        .catchError(
-            (e) => debugPrint('Erreur lors de l\'ajout du commentaire: $e'));
-
-    debugPrint('Création de la notification');
-    final notification = Notif(
-      type: NotifType.comment,
-      fromUser: comment.author,
-      post: post,
-      date: DateTime.now(),
-    );
-
-    debugPrint('Ajout de la notification dans Firestore');
-    _firebaseFirestore
-        .collection(Paths.notifications)
-        .doc(post.author.id)
-        .collection(Paths.userNotifications)
-        .add(notification.toDocument())
-        .then((_) => debugPrint('Notification ajoutée avec succès'))
-        .catchError((e) =>
-            debugPrint('Erreur lors de l\'ajout de la notification: $e'));
-
-    debugPrint('Fin de la méthode createComment');
-  }
-
-  @override
   void createLike({
     required Post post,
     required String userId,
@@ -155,18 +117,6 @@ class PostRepository extends BasePostRepository {
         .doc(post.author.id)
         .collection(Paths.userNotifications)
         .add(notification.toDocument());
-  }
-
-  @override
-  Stream<List<Future<Comment?>>> getPostComments({required String postId}) {
-    return _firebaseFirestore
-        .collection(Paths.comments)
-        .doc(postId)
-        .collection(Paths.postComments)
-        .orderBy('date', descending: false)
-        .snapshots()
-        .map((snap) =>
-            snap.docs.map((doc) => Comment.fromDocument(doc)).toList());
   }
 
   @override

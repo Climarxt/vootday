@@ -67,6 +67,14 @@ class CollectionDeleteRepository {
         'count': snapshot.docs.length
       });
       for (var doc in snapshot.docs) {
+        // Récupérer la référence post_ref
+        var postRef = doc.get('post_ref') as DocumentReference;
+
+        // Supprimer la référence dans whoCollected avant de supprimer le document
+        await postRef.update({
+          'whoCollected.${doc.id}': FieldValue.delete(),
+        });
+
         logger.logInfo(functionName, 'Suppression du document dans le batch',
             {'docId': doc.id, 'subCollectionName': subCollectionName});
         batch.delete(doc.reference);

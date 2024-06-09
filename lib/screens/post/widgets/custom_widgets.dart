@@ -89,7 +89,6 @@ TextButton buildValidateButton(
             await context
                 .read<AddPostToCollectionCubit>()
                 .addPostToCollection(postId, newCollectionId, userIdfromPost);
-            // .addPostToCollection(postId, newCollectionId, userId);
 
             Navigator.pop(context);
           } else {
@@ -112,9 +111,15 @@ TextButton buildValidateButton(
         borderRadius: BorderRadius.circular(10),
       ),
     ),
-    child: Text(
-      AppLocalizations.of(context)!.translate('validate'),
-      style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
+    child: Builder(
+      builder: (context) {
+        final localizations = AppLocalizations.of(context);
+        return Text(
+          localizations?.translate('validate') ?? 'Validate',
+          style:
+              Theme.of(context).textTheme.headlineSmall!.copyWith(color: white),
+        );
+      },
     ),
   );
 }

@@ -1,8 +1,8 @@
 import 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_bloc.dart';
 import 'package:bootdv2/screens/profile/widgets/widgets.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/cupertino.dart';
 
 class MyProfileTab4 extends StatefulWidget {
   const MyProfileTab4({
@@ -42,36 +42,40 @@ class _MyProfileTab4State extends State<MyProfileTab4>
 }
 
 Widget _buildBody(FeedMyLikesState state, BuildContext context) {
-  return RefreshIndicator(
-    onRefresh: () async {
-      context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
-    },
-    child: _buildGridView(state),
+  return CustomScrollView(
+    physics: const AlwaysScrollableScrollPhysics(),
+    slivers: <Widget>[
+      CupertinoSliverRefreshControl(
+        onRefresh: () async {
+          context.read<FeedMyLikesBloc>().add(FeedMyLikesFetchPosts());
+        },
+      ),
+      _buildSliverGrid(state),
+    ],
   );
 }
 
-Widget _buildGridView(FeedMyLikesState state) {
-  return Container(
-    color: Colors.white,
-    child: GridView.builder(
+Widget _buildSliverGrid(FeedMyLikesState state) {
+  return SliverPadding(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    sliver: SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
         childAspectRatio: 0.8,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      physics: const AlwaysScrollableScrollPhysics(), // Enable always scrollable physics
-      cacheExtent: 10000,
-      itemCount: state.posts.length,
-      itemBuilder: (context, index) {
-        final post = state.posts[index];
-        if (post != null) {
-          return MosaiqueMyProfileCard(post: post);
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          final post = state.posts[index];
+          if (post != null) {
+            return MosaiqueMyProfileCard(post: post);
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+        childCount: state.posts.length,
+      ),
     ),
   );
 }

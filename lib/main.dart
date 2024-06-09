@@ -8,6 +8,7 @@ import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/cubits/delete_collections/delete_collections_cubit.dart';
 import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
+import 'package:bootdv2/repositories/collection/collection_delete_repository.dart';
 import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:bootdv2/repositories/comment/comment_repository.dart';
 import 'package:bootdv2/repositories/like/like_repository.dart';
@@ -77,6 +78,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<CollectionRepository>(
           create: (context) => CollectionRepository(),
         ),
+        RepositoryProvider<CollectionDeleteRepository>(
+          create: (context) => CollectionDeleteRepository(),
+        ),
         RepositoryProvider<CommentRepository>(
           create: (context) => CommentRepository(),
         ),
@@ -119,8 +123,8 @@ class MyApp extends StatelessWidget {
                 DeletePostsCubit(context.read<PostDeleteRepository>()),
           ),
           BlocProvider<DeleteCollectionsCubit>(
-            create: (context) =>
-                DeleteCollectionsCubit(context.read<PostRepository>()),
+            create: (context) => DeleteCollectionsCubit(
+                context.read<CollectionDeleteRepository>()),
           ),
           BlocProvider<CreateCollectionCubit>(
             create: (context) => CreateCollectionCubit(

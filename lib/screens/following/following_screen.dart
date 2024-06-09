@@ -3,6 +3,7 @@ import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/following/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/cupertino.dart';
 
 class FollowingScreen extends StatefulWidget {
   FollowingScreen({Key? key}) : super(key: key ?? GlobalKey());
@@ -73,41 +74,17 @@ class _FollowingScreenState extends State<FollowingScreen>
       case FollowingStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
-        return Stack(
-          children: [
-            RefreshIndicator(
+        return CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            CupertinoSliverRefreshControl(
               onRefresh: () async {
                 context.read<FollowingBloc>().add(FollowingFetchPosts());
               },
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.5,
-                ),
-                physics: const BouncingScrollPhysics(),
-                cacheExtent: 10000,
-                itemCount: state.posts.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == state.posts.length) {
-                    return state.status == FollowingStatus.paginating
-                        ? const Center(child: CircularProgressIndicator())
-                        : const SizedBox.shrink();
-                  } else {
-                    final Post post = state.posts[index] ?? Post.empty;
-                    return PostView(
-                      post: post,
-                    );
-                  }
-                },
-              ),
             ),
+            _buildSliverGrid(state),
             if (state.status == FollowingStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
+              const SliverToBoxAdapter(
                 child: Center(child: CircularProgressIndicator()),
               ),
           ],
@@ -115,7 +92,30 @@ class _FollowingScreenState extends State<FollowingScreen>
     }
   }
 
-  // Overridden to retain the state
+  Widget _buildSliverGrid(FollowingState state) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.5,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          if (index >= state.posts.length) {
+            return state.status == FollowingStatus.paginating
+                ? const Center(child: CircularProgressIndicator())
+                : const SizedBox.shrink();
+          } else {
+            final Post post = state.posts[index] ?? Post.empty;
+            return PostView(post: post);
+          }
+        },
+        childCount: state.posts.length + 1,
+      ),
+    );
+  }
+
   @override
   bool get wantKeepAlive => true;
 }

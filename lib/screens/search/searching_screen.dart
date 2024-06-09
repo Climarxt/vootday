@@ -79,8 +79,12 @@ class _SearchingScreenState extends State<SearchingScreen> {
             ),
           ),
           onChanged: (value) {
-            debugPrint('Recherche déclenchée avec la valeur : $value');
-            context.read<SearchCubit>().searchUsers(value);
+            if (value.isEmpty) {
+              context.read<SearchCubit>().resetSearch();
+            } else {
+              debugPrint('Recherche déclenchée avec la valeur : $value');
+              context.read<SearchCubit>().searchUsers(value);
+            }
           },
         ),
         actions: <Widget>[

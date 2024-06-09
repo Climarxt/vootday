@@ -394,6 +394,7 @@ class _PostScreenState extends State<PostScreen>
     final userIdfromAuth = authState.user?.uid;
 
     if (userIdfromAuth != null) {
+      context.read<MyCollectionBloc>().add(MyCollectionFetchCollections());
       // Vérifier si le post est déjà dans les likes
       final isPostLiked = await context.read<LikeRepository>().isPostInLikes(
           postId: widget.postId,

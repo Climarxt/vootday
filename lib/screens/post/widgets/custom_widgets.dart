@@ -111,9 +111,11 @@ TextButton buildValidateButton(
           logger.logError(
               "collectionName.isNotEmpty", 'Collection name is empty');
         }
-      } catch (e, stackTrace) {
-        logger.logError("Exception caught", e.toString(),
-            stackTrace as Map<String, dynamic>?);
+      } catch (e) {
+        logger.logError(
+          "Exception caught",
+          e.toString(),
+        );
       }
     },
     style: TextButton.styleFrom(

@@ -40,6 +40,7 @@ class _PostScreenState extends State<PostScreen>
   User? _user;
   bool _isLoading = true;
   bool _isUserTheAuthor = false;
+  bool _imageUrlsFetched = false;
   List<String> _imageUrls = [];
   final Map<String, bool> _postInCollectionMap = {};
   ValueNotifier<bool> isPublicNotifier = ValueNotifier(true);
@@ -203,6 +204,10 @@ class _PostScreenState extends State<PostScreen>
   }
 
   Future<void> _fetchImageUrls(List<Collection> collections) async {
+    if (_imageUrlsFetched) {
+      return; // Si les URLs ont déjà été chargées, ne rien faire
+    }
+
     // Fetch all image URLs
     List<String> urls = [];
     for (var collection in collections) {
@@ -210,6 +215,8 @@ class _PostScreenState extends State<PostScreen>
       urls.add(imageUrl);
     }
     _imageUrls = urls;
+    _imageUrlsFetched =
+        true; // Mettre à jour l'état après le premier chargement
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {

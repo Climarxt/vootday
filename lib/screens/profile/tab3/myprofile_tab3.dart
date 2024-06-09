@@ -74,56 +74,63 @@ class _MyProfileTab3State extends State<MyProfileTab3>
             child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.8,
-                ),
-                padding: const EdgeInsets.only(top: 5),
-                physics: const ClampingScrollPhysics(),
-                cacheExtent: 10000,
-                itemCount: state.collections.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == state.collections.length) {
-                    return state.status == MyCollectionStatus.paginating
-                        ? const Center(child: CircularProgressIndicator())
-                        : const SizedBox.shrink();
-                  } else {
-                    final collection =
-                        state.collections[index] ?? Collection.empty;
-                    return FutureBuilder<String>(
-                      future: getMostRecentPostImageUrl(collection.id),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.transparent),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          logError(widgetName, 'Error fetching image URL',
-                              {'error': snapshot.error});
-                          return Text('Error: ${snapshot.error}');
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          logInfo(
-                              widgetName,
-                              'No image available for collection',
-                              {'collectionId': collection.id});
-                          return const Text('No image available');
-                        }
-                        return MosaiqueCollectionCard(
-                          imageUrl: snapshot.data!,
-                          name: collection.title,
-                          collectionId: collection.id,
-                        );
-                      },
-                    );
-                  }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context
+                      .read<MyCollectionBloc>()
+                      .add(MyCollectionFetchCollections());
                 },
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.8,
+                  ),
+                  padding: const EdgeInsets.only(top: 5),
+                  physics: const ClampingScrollPhysics(),
+                  cacheExtent: 10000,
+                  itemCount: state.collections.length + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index == state.collections.length) {
+                      return state.status == MyCollectionStatus.paginating
+                          ? const Center(child: CircularProgressIndicator())
+                          : const SizedBox.shrink();
+                    } else {
+                      final collection =
+                          state.collections[index] ?? Collection.empty;
+                      return FutureBuilder<String>(
+                        future: getMostRecentPostImageUrl(collection.id),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.transparent),
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            logError(widgetName, 'Error fetching image URL',
+                                {'error': snapshot.error});
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            logInfo(
+                                widgetName,
+                                'No image available for collection',
+                                {'collectionId': collection.id});
+                            return const Text('No image available');
+                          }
+                          return MosaiqueCollectionCard(
+                            imageUrl: snapshot.data!,
+                            name: collection.title,
+                            collectionId: collection.id,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ),

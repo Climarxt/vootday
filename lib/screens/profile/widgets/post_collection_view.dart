@@ -25,53 +25,37 @@ class PostCollectionView extends StatefulWidget {
 
 class _PostCollectionViewState extends State<PostCollectionView>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    );
-    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: Bounceable(
-        onTap: () => _navigateToPostScreen(context),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 1.5,
-              child: Stack(
-                children: [
-                  ImageLoaderPostEvent(
-                    imageProvider: widget.post.imageProvider,
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height / 1.5,
-                  ),
-                ],
-              ),
+    return Bounceable(
+      onTap: () => _navigateToPostScreen(context),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 1.5,
+            child: Stack(
+              children: [
+                ImageLoaderPostEvent(
+                  imageProvider: widget.post.imageProvider,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height / 1.5,
+                ),
+              ],
             ),
           ),
         ),

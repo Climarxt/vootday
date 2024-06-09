@@ -41,7 +41,7 @@ class FeedCollectionBloc
       });
       return;
     }
-    _onFeedCollectionClean(FeedCollectionClean(), emit);
+    // _onFeedCollectionClean(FeedCollectionClean(), emit);
     logger.logInfo(functionName, 'Fetching posts for collection.', {
       'collectionId': event.collectionId,
     });

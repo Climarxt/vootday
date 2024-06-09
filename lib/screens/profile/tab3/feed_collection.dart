@@ -26,10 +26,13 @@ class FeedCollection extends StatefulWidget {
 class _FeedCollectionState extends State<FeedCollection>
     with AutomaticKeepAliveClientMixin<FeedCollection> {
   bool _isUserTheAuthor = false;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+
+    _scrollController = ScrollController();
 
     final feedCollectionBloc = context.read<FeedCollectionBloc>();
     if (!feedCollectionBloc.state.hasFetchedInitialPosts ||
@@ -71,6 +74,7 @@ class _FeedCollectionState extends State<FeedCollection>
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -97,6 +101,8 @@ class _FeedCollectionState extends State<FeedCollection>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6.0),
           child: GridView.builder(
+            key: PageStorageKey<String>(widget.collectionId),
+            controller: _scrollController,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 4,
@@ -134,7 +140,6 @@ class _FeedCollectionState extends State<FeedCollection>
     );
   }
 
-// Overridden to retain the state
   @override
   bool get wantKeepAlive => true;
 }

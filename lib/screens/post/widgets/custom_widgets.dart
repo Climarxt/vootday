@@ -13,34 +13,36 @@ import 'package:bootdv2/screens/profile/cubit/createcollection_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-TextButton buildCreatenewcollection(BuildContext context,
+SafeArea buildCreatenewcollection(BuildContext context,
     void Function(BuildContext) openCreateCollectionSheet) {
-  return TextButton(
-    onPressed: () => openCreateCollectionSheet(context),
-    style: TextButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      backgroundColor: white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: Colors.grey),
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Icon(Icons.add, color: black),
-        Expanded(
-          child: Text(
-            AppLocalizations.of(context)!.translate('createnewcollection'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: black),
-          ),
+  return SafeArea(
+    child: TextButton(
+      onPressed: () => openCreateCollectionSheet(context),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        backgroundColor: white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: Colors.grey),
         ),
-        const Icon(Icons.arrow_forward, color: black),
-      ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Icon(Icons.add, color: black),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.translate('createnewcollection'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: black),
+            ),
+          ),
+          const Icon(Icons.arrow_forward, color: black),
+        ],
+      ),
     ),
   );
 }
@@ -406,41 +408,43 @@ Widget buildListView(
   Map<String, bool> postInCollectionMap,
 ) {
   return Expanded(
-    child: ListView.separated(
-      padding: EdgeInsets.zero,
-      controller: scrollController,
-      itemCount: state.collections.length,
-      separatorBuilder: (context, index) => const Divider(color: greyDark),
-      itemBuilder: (BuildContext context, int index) {
-        final collection = state.collections[index] ?? Collection.empty;
-        final imageUrl = index < imageUrls.length
-            ? imageUrls[index]
-            : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
+    child: SafeArea(
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        controller: scrollController,
+        itemCount: state.collections.length,
+        separatorBuilder: (context, index) => const Divider(color: greyDark),
+        itemBuilder: (BuildContext context, int index) {
+          final collection = state.collections[index] ?? Collection.empty;
+          final imageUrl = index < imageUrls.length
+              ? imageUrls[index]
+              : 'https://firebasestorage.googleapis.com/v0/b/bootdv2.appspot.com/o/images%2Fbrands%2Fwhite_placeholder.png?alt=media&token=2d4e4176-e9a6-41e4-93dc-92cd7f257ea7';
 
-        return ListTile(
-          leading: buildLeadingImage(imageUrl),
-          title: Text(
-            collection.title,
-            style: AppTextStyles.titleHeadlineMidBlackBold(context),
-          ),
-          subtitle: Text(
-            collection.public ? 'Public' : 'Privé',
-            style: AppTextStyles.subtitleLargeGrey(context),
-          ),
-          trailing: FutureBuilder<Widget>(
-            future: buildTrailingIcon(
-              context,
-              collection.id,
-              userIdfromPost,
-              postId,
-              postInCollectionMap,
+          return ListTile(
+            leading: buildLeadingImage(imageUrl),
+            title: Text(
+              collection.title,
+              style: AppTextStyles.titleHeadlineMidBlackBold(context),
             ),
-            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-              return snapshot.data ?? const SizedBox.shrink();
-            },
-          ),
-        );
-      },
+            subtitle: Text(
+              collection.public ? 'Public' : 'Privé',
+              style: AppTextStyles.subtitleLargeGrey(context),
+            ),
+            trailing: FutureBuilder<Widget>(
+              future: buildTrailingIcon(
+                context,
+                collection.id,
+                userIdfromPost,
+                postId,
+                postInCollectionMap,
+              ),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                return snapshot.data ?? const SizedBox.shrink();
+              },
+            ),
+          );
+        },
+      ),
     ),
   );
 }
@@ -498,24 +502,26 @@ Column buildTextColumn(BuildContext context) {
 
 Widget buildTopRow(BuildContext context, Size size, Post post,
     void Function(BuildContext) openCreateCollectionSheet) {
-  return Padding(
-    padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 7),
-    child: Column(
-      children: [
-        Row(
-          children: [
-            buildImageContainer(size, post),
-            const SizedBox(width: 14),
-            buildTextColumn(context),
-            const Spacer(),
-            buildBookmarkIcon(context, post.id!, post.author.id),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Container(
-          child: buildCreatenewcollection(context, openCreateCollectionSheet),
-        ),
-      ],
+  return SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 7),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              buildImageContainer(size, post),
+              const SizedBox(width: 14),
+              buildTextColumn(context),
+              const Spacer(),
+              buildBookmarkIcon(context, post.id!, post.author.id),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            child: buildCreatenewcollection(context, openCreateCollectionSheet),
+          ),
+        ],
+      ),
     ),
   );
 }

@@ -80,6 +80,15 @@ class _PostScreenState extends State<PostScreen>
         _controller.reverse();
       }
     });
+
+    // Appeler _fetchImageUrls ici pour garantir que les images sont chargées au début
+    context.read<MyCollectionBloc>().stream.listen((state) {
+      final nonNullCollections = state.collections
+          .where((collection) => collection != null)
+          .cast<Collection>()
+          .toList();
+      _fetchImageUrls(nonNullCollections);
+    });
   }
 
   @override
@@ -169,25 +178,27 @@ class _PostScreenState extends State<PostScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        minChildSize: 0.2,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              buildTopRow(context, size, post, openCreateCollectionSheet),
-              buildListView(
-                scrollController,
-                state,
-                imageUrls,
-                post.id!,
-                post.author.id,
-                postInCollectionMap,
-              ),
-            ],
+      builder: (context) => SafeArea(
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.2,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildTopRow(context, size, post, openCreateCollectionSheet),
+                buildListView(
+                  scrollController,
+                  state,
+                  imageUrls,
+                  post.id!,
+                  post.author.id,
+                  postInCollectionMap,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -203,10 +214,9 @@ class _PostScreenState extends State<PostScreen>
     }
   }
 
-  Future<void> _fetchImageUrls(List<Collection> collections) async {
-    if (_imageUrlsFetched) {
-      return; // Si les URLs ont déjà été chargées, ne rien faire
-    }
+  Future<void> _fetchImageUrls(List<Collection> collections,
+      {bool forceReload = false}) async {
+    if (_imageUrlsFetched && !forceReload) return;
 
     // Fetch all image URLs
     List<String> urls = [];
@@ -214,9 +224,16 @@ class _PostScreenState extends State<PostScreen>
       String imageUrl = await getMostRecentPostImageUrl(collection.id);
       urls.add(imageUrl);
     }
-    _imageUrls = urls;
-    _imageUrlsFetched =
-        true; // Mettre à jour l'état après le premier chargement
+
+    Future.microtask(() {
+      if (mounted) {
+        setState(() {
+          _imageUrls = urls;
+          _imageUrlsFetched =
+              true; // Mettre à jour l'état après le premier chargement
+        });
+      }
+    });
   }
 
   Future<String> getMostRecentPostImageUrl(String collectionId) async {
@@ -383,30 +400,39 @@ class _PostScreenState extends State<PostScreen>
           userIdfromPost: widget.userId,
           userIdfromAuth: userIdfromAuth);
 
-      if (isPostLiked) {
-        showBottomSheetCollection(
-          context,
-          state,
-          _post!,
-          openCreateCollectionSheet,
-          _imageUrls,
-          _postInCollectionMap,
-        );
-      } else {
-        // Ajouter le post aux likes
-        context
-            .read<AddPostToLikesCubit>()
-            .addPostToLikes(widget.postId, widget.userId, userIdfromAuth);
-        // Puis afficher le bottom sheet
-        showBottomSheetCollection(
-          context,
-          state,
-          _post!,
-          openCreateCollectionSheet,
-          _imageUrls,
-          _postInCollectionMap,
-        );
-      }
+      // Forcer le rechargement des URLs d'images avant d'afficher le bottom sheet
+      final nonNullCollections = state.collections
+          .where((collection) => collection != null)
+          .cast<Collection>()
+          .toList();
+      await _fetchImageUrls(nonNullCollections, forceReload: true);
+
+      Future.microtask(() {
+        if (isPostLiked) {
+          showBottomSheetCollection(
+            context,
+            state,
+            _post!,
+            openCreateCollectionSheet,
+            _imageUrls,
+            _postInCollectionMap,
+          );
+        } else {
+          // Ajouter le post aux likes
+          context
+              .read<AddPostToLikesCubit>()
+              .addPostToLikes(widget.postId, widget.userId, userIdfromAuth);
+          // Puis afficher le bottom sheet
+          showBottomSheetCollection(
+            context,
+            state,
+            _post!,
+            openCreateCollectionSheet,
+            _imageUrls,
+            _postInCollectionMap,
+          );
+        }
+      });
     } else {
       debugPrint('User ID is null');
     }

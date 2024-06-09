@@ -59,48 +59,61 @@ TextButton buildValidateButton(
 
   return TextButton(
     onPressed: () async {
-      final String collectionName = collectionNameController.text.trim();
-      final bool isPublic = isPublicNotifier.value;
+      try {
+        final String collectionName = collectionNameController.text.trim();
+        final bool isPublic = isPublicNotifier.value;
 
-      if (collectionName.isNotEmpty) {
-        logger.logInfo(
-            "collectionName.isNotEmpty",
-            'Collection name is not empty',
-            {'collectionName': collectionName, 'isPublic': isPublic});
+        if (collectionName.isNotEmpty) {
+          logger.logInfo(
+              "collectionName.isNotEmpty",
+              'Collection name is not empty',
+              {'collectionName': collectionName, 'isPublic': isPublic});
 
-        final authState = context.read<AuthBloc>().state;
-        final userIdfromAuth = authState.user?.uid;
+          final authState = context.read<AuthBloc>().state;
+          final userIdfromAuth = authState.user?.uid;
 
-        if (userIdfromAuth != null) {
-          logger.logInfo("userId != nul", 'User ID is not null',
-              {'userId': userIdfromAuth});
+          if (userIdfromAuth != null) {
+            logger.logInfo("userId != nul", 'User ID is not null',
+                {'userId': userIdfromAuth});
 
-          String newCollectionId = await context
-              .read<CreateCollectionCubit>()
-              .createCollectionReturnCollectionId(
-                  userIdfromAuth, collectionName, isPublic);
+            String newCollectionId = await context
+                .read<CreateCollectionCubit>()
+                .createCollectionReturnCollectionId(
+                    userIdfromAuth, collectionName, isPublic);
 
-          if (newCollectionId.isNotEmpty) {
-            logger.logInfo(
-                "newCollectionId.isNotEmpty",
-                'New collection ID is not empty',
-                {'newCollectionId': newCollectionId});
+            if (newCollectionId.isNotEmpty) {
+              logger.logInfo(
+                  "newCollectionId.isNotEmpty",
+                  'New collection ID is not empty',
+                  {'newCollectionId': newCollectionId});
 
-            await context
-                .read<AddPostToCollectionCubit>()
-                .addPostToCollection(postId, newCollectionId, userIdfromPost);
+              final addPostToCollectionCubit =
+                  context.read<AddPostToCollectionCubit>();
+              await addPostToCollectionCubit.addPostToCollection(
+                  postId, newCollectionId, userIdfromPost);
+              logger.logInfo("Post added to collection",
+                  'Post was successfully added to the collection');
 
-            Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                logger.logError("Navigator.canPop(context)",
+                    'Cannot pop context, Navigator stack is empty');
+              }
+            } else {
+              logger.logError(
+                  "newCollectionId.isNotEmpty", 'Collection creation failed');
+            }
           } else {
-            logger.logError(
-                "newCollectionId.isNotEmpty", 'Collection creation failed');
+            logger.logError("userIdfromAuth != nul", 'User ID is null');
           }
         } else {
-          logger.logError("userIdfromAuth != nul", 'User ID is null');
+          logger.logError(
+              "collectionName.isNotEmpty", 'Collection name is empty');
         }
-      } else {
-        logger.logError(
-            "collectionName.isNotEmpty", 'Collection name is empty');
+      } catch (e, stackTrace) {
+        logger.logError("Exception caught", e.toString(),
+            stackTrace as Map<String, dynamic>?);
       }
     },
     style: TextButton.styleFrom(

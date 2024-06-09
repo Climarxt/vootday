@@ -440,7 +440,13 @@ class _PostScreenState extends State<PostScreen>
   }
 
   void _checkIfUserIsAuthor(String userIdfromAuth, String postId) async {
+    const String functionName = '_checkIfUserIsAuthor';
     try {
+      logger.logInfo(functionName, 'Checking if user is the author', {
+        'userIdfromAuth': userIdfromAuth,
+        'postId': postId,
+      });
+
       DocumentSnapshot postDoc = await FirebaseFirestore.instance
           .collection(Paths.users)
           .doc(userIdfromAuth)
@@ -455,10 +461,28 @@ class _PostScreenState extends State<PostScreen>
           setState(() {
             _isUserTheAuthor = true;
           });
+          logger.logInfo(functionName, 'User is the author', {
+            'userIdfromAuth': userIdfromAuth,
+            'postId': postId,
+          });
+        } else {
+          logger.logInfo(functionName, 'User is not the author', {
+            'userIdfromAuth': userIdfromAuth,
+            'postId': postId,
+          });
         }
+      } else {
+        logger.logInfo(functionName, 'Post does not exist', {
+          'userIdfromAuth': userIdfromAuth,
+          'postId': postId,
+        });
       }
     } catch (e) {
-      debugPrint('Erreur lors de la récupération du post: $e');
+      logger.logError(functionName, 'Error checking if user is the author', {
+        'userIdfromAuth': userIdfromAuth,
+        'postId': postId,
+        'error': e.toString(),
+      });
     }
   }
 

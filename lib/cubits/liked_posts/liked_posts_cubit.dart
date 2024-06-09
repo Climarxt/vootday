@@ -1,19 +1,19 @@
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/repositories/like/like_repository.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';
-import '/repositories/repositories.dart';
 
 part 'liked_posts_state.dart';
 
 class LikedPostsCubit extends Cubit<LikedPostsState> {
-  final PostRepository _postRepository;
+  final LikeRepository _likeRepository;
   final AuthBloc _authBloc;
 
   LikedPostsCubit({
-    required PostRepository postRepository,
+    required LikeRepository likeRepository,
     required AuthBloc authBloc,
-  })  : _postRepository = postRepository,
+  })  : _likeRepository = likeRepository,
         _authBloc = authBloc,
         super(LikedPostsState.initial());
 
@@ -26,7 +26,7 @@ class LikedPostsCubit extends Cubit<LikedPostsState> {
   }
 
   void likePost({required Post post}) {
-    _postRepository.createLike(
+    _likeRepository.createLike(
       post: post,
       userId: _authBloc.state.user!.uid,
     );
@@ -41,7 +41,7 @@ class LikedPostsCubit extends Cubit<LikedPostsState> {
   }
 
   void unlikePost({required Post post}) {
-    _postRepository.deleteLike(
+    _likeRepository.deleteLike(
       postId: post.id!,
       userId: _authBloc.state.user!.uid,
     );

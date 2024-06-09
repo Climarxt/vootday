@@ -10,6 +10,7 @@ import 'package:bootdv2/firebase_options.dart';
 import 'package:bootdv2/navigation/router.dart';
 import 'package:bootdv2/repositories/collection/collection_repository.dart';
 import 'package:bootdv2/repositories/comment/comment_repository.dart';
+import 'package:bootdv2/repositories/like/like_repository.dart';
 import 'package:bootdv2/repositories/post/post_create_repository.dart';
 import 'package:bootdv2/repositories/post/post_delete_repository.dart';
 import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
@@ -79,6 +80,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<CommentRepository>(
           create: (context) => CommentRepository(),
         ),
+        RepositoryProvider<LikeRepository>(
+          create: (context) => LikeRepository(),
+        ),
         RepositoryProvider<StorageRepository>(
           create: (context) => StorageRepository(),
         ),
@@ -106,7 +110,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<LikedPostsCubit>(
             create: (context) => LikedPostsCubit(
-              postRepository: context.read<PostRepository>(),
+              likeRepository: context.read<LikeRepository>(),
               authBloc: context.read<AuthBloc>(),
             ),
           ),
@@ -167,7 +171,6 @@ class MyApp extends StatelessWidget {
           BlocProvider<AddPostToLikesCubit>(
             create: (context) => AddPostToLikesCubit(
               firebaseFirestore: FirebaseFirestore.instance,
-              postRepository: context.read<PostRepository>(),
             ),
           ),
           BlocProvider<FeedMyLikesBloc>(
@@ -175,7 +178,7 @@ class MyApp extends StatelessWidget {
               final feedMyLikesBloc = FeedMyLikesBloc(
                 feedRepository: context.read<FeedRepository>(),
                 authBloc: context.read<AuthBloc>(),
-                postRepository: context.read<PostRepository>(),
+                likeRepository: context.read<LikeRepository>(),
               );
               feedMyLikesBloc.add(FeedMyLikesFetchPosts());
               return feedMyLikesBloc;

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/like/like_repository.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
 import '/repositories/repositories.dart';
@@ -12,17 +13,17 @@ part 'package:bootdv2/screens/profile/bloc/feed_mylikes/feed_mylikes_event.dart'
 
 class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
   final FeedRepository _feedRepository;
-  final PostRepository _postRepository;
+  final LikeRepository _likeRepository;
   final AuthBloc _authBloc;
   final ContextualLogger logger;
 
   FeedMyLikesBloc({
     required FeedRepository feedRepository,
-    required PostRepository postRepository,
+    required LikeRepository likeRepository,
     required AuthBloc authBloc,
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
-        _postRepository = postRepository,
+        _likeRepository = likeRepository,
         logger = ContextualLogger('FeedMyLikesBloc'),
         super(FeedMyLikesState.initial()) {
     on<FeedMyLikesFetchPosts>(_mapFeedMyLikesFetchPosts);
@@ -90,7 +91,7 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
-      final isPostInLikes = await _postRepository.isPostInLikes(
+      final isPostInLikes = await _likeRepository.isPostInLikes(
           postId: event.postId,
           userIdfromPost: event.userIdfromPost,
           userIdfromAuth: userIdfromAuth);
@@ -116,7 +117,7 @@ class FeedMyLikesBloc extends Bloc<FeedMyLikesEvent, FeedMyLikesState> {
         throw Exception(
             'User ID is null. User must be logged in to fetch posts.');
       }
-      await _postRepository.deletePostRefFromLikes(
+      await _likeRepository.deletePostRefFromLikes(
           postId: event.postId,
           userIdfromPost: event.userIdfromPost,
           userIdfromAuth: userIdfromAuth);

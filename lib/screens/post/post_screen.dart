@@ -6,8 +6,8 @@ import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/cubits/add_post_to_likes/add_post_to_likes_cubit.dart';
 import 'package:bootdv2/cubits/cubits.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/like/like_repository.dart';
 import 'package:bootdv2/repositories/post/post_fetch_repository.dart';
-import 'package:bootdv2/repositories/repositories.dart';
 import 'package:bootdv2/screens/post/widgets/custom_widgets.dart';
 import 'package:bootdv2/screens/post/widgets/widgets.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
@@ -371,7 +371,7 @@ class _PostScreenState extends State<PostScreen>
 
     if (userIdfromAuth != null) {
       // Vérifier si le post est déjà dans les likes
-      final isPostLiked = await context.read<PostRepository>().isPostInLikes(
+      final isPostLiked = await context.read<LikeRepository>().isPostInLikes(
           postId: widget.postId,
           userIdfromPost: widget.userId,
           userIdfromAuth: userIdfromAuth);

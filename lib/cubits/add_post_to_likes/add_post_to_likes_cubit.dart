@@ -1,21 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/logger/logger.dart';
-import 'package:bootdv2/repositories/repositories.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'add_post_to_likes_state.dart';
 
 class AddPostToLikesCubit extends Cubit<AddPostToLikesState> {
   final FirebaseFirestore _firebaseFirestore;
-  // final PostRepository _postRepository;
   final ContextualLogger logger;
 
   AddPostToLikesCubit({
     required FirebaseFirestore firebaseFirestore,
-    required PostRepository postRepository,
   })  : _firebaseFirestore = firebaseFirestore,
-        // _postRepository = postRepository,
         logger = ContextualLogger('AddPostToLikesCubit'),
         super(AddPostToLikesInitialState());
 

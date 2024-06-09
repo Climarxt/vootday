@@ -2,7 +2,6 @@ import 'package:bootdv2/config/paths.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
-import 'package:flutter/material.dart';
 
 class CollectionRepository {
   final FirebaseFirestore _firebaseFirestore;
@@ -78,9 +77,12 @@ class CollectionRepository {
   Future<List<Collection?>> getYourCollection({
     required String userId,
   }) async {
+    const String functionName = 'getYourCollection';
     try {
-      debugPrint(
-          'getYourCollection : Attempting to fetch public collection references from Firestore...');
+      logger.logInfo(
+          functionName,
+          'Attempting to fetch public collection references from Firestore...',
+          {'userId': userId});
 
       // Récupérer les références de la collection de l'utilisateur
       QuerySnapshot userCollectionSnap = await _firebaseFirestore
@@ -101,8 +103,10 @@ class CollectionRepository {
           .cast<DocumentReference>()
           .toList();
 
-      debugPrint(
-          'getYourCollection : Collection references fetched. Fetching each collection document...');
+      logger.logInfo(
+          functionName,
+          'Collection references fetched. Fetching each collection document...',
+          {'collectionRefsCount': collectionRefs.length});
 
       List<Future<Collection?>> futureCollections = collectionRefs.map(
         (ref) async {
@@ -119,27 +123,45 @@ class CollectionRepository {
       List<Collection?> collections = await Future.wait(futureCollections);
       collections.removeWhere((collection) => collection == null);
 
-      debugPrint(
-          'getYourCollection : Public collection objects created. Total collections: ${collections.length}');
+      logger.logInfo(functionName, 'Public collection objects created.',
+          {'totalCollections': collections.length});
 
       if (collections.isNotEmpty) {
-        debugPrint(
-            'getYourCollection : First public collection details: ${collections.first}');
+        logger.logInfo(functionName, 'First public collection details',
+            {'firstCollection': collections.first});
       }
 
       return collections;
     } catch (e) {
-      debugPrint(
-          'getYourCollection : An error occurred while fetching public collections: ${e.toString()}');
+      logger.logError(
+          functionName,
+          'An error occurred while fetching public collections',
+          {'error': e.toString()});
       return [];
     }
   }
 
-  Future<void> updateCollectionPublicStatus(
-      {required String collectionId, required bool newStatus}) async {
-    DocumentReference collectionRef =
-        _firebaseFirestore.collection(Paths.collections).doc(collectionId);
-    await collectionRef.update({'public': newStatus});
+  Future<void> updateCollectionPublicStatus({
+    required String collectionId,
+    required bool newStatus,
+  }) async {
+    const String functionName = 'updateCollectionPublicStatus';
+    try {
+      logger.logInfo(functionName, 'Updating public status of collection',
+          {'collectionId': collectionId, 'newStatus': newStatus});
+      DocumentReference collectionRef =
+          _firebaseFirestore.collection(Paths.collections).doc(collectionId);
+      await collectionRef.update({'public': newStatus});
+      logger.logInfo(functionName, 'Public status updated successfully',
+          {'collectionId': collectionId, 'newStatus': newStatus});
+    } catch (e) {
+      logger.logError(functionName, 'Error updating public status', {
+        'collectionId': collectionId,
+        'newStatus': newStatus,
+        'error': e.toString()
+      });
+      throw e;
+    }
   }
 
   Future<bool> isPostInCollection({

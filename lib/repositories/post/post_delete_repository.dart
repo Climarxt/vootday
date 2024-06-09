@@ -29,9 +29,12 @@ class PostDeleteRepository {
     try {
       await _deletePostReferencesInSubCollections(
           batch, postRef, 'participants');
+      // Delete post qui se trouve dans la collection d'un user
       await _deletePostReferencesInSubCollections(
-          batch, postRef, 'postReference');
+          batch, postRef, 'feed_collection');
+      // Delete post qui se trouve dans  posts_***/%country%/posts/***, posts_***/%country%/regions/%regions%/posts ...
       await _deleteReferencedPost(postRef);
+      // Delete post qui se trouve dans les likes d'un user
       await _deleteWhoLikedReferences(postRef);
 
       await batch.commit();
@@ -52,6 +55,7 @@ class PostDeleteRepository {
     }
   }
 
+  // Delete in posts_***/France/posts/***
   Future<void> _deleteReferencedPost(DocumentReference postRef) async {
     const String functionName = '_deleteReferencedPost';
     try {

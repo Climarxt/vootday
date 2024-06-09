@@ -32,8 +32,10 @@ exports.onFollowUser = functions.firestore
     // Ajouter les posts de l'utilisateur suivi au flux de l'utilisateur suiveur
     const followedUserPostsRef = admin
       .firestore()
-      .collection("posts")
-      .where("author", "==", followedUserRef);
+      .collection("users")
+      .doc(userId)
+      .collection("posts");
+
     const userFeedRef = admin
       .firestore()
       .collection("feeds")
@@ -43,7 +45,9 @@ exports.onFollowUser = functions.firestore
 
     followedUserPostsSnapshot.forEach((doc) => {
       if (doc.exists) {
-        const postRef = admin.firestore().doc(`posts/${doc.id}`); // Crée une référence au post
+        const postRef = admin
+          .firestore()
+          .doc(`users/${userId}/posts/${doc.id}`); // Crée une référence au post
 
         const postData = {
           post_ref: postRef, // Référence au post dans la collection 'posts'
@@ -88,7 +92,7 @@ exports.onUnfollowUser = functions.firestore
       .collection("feeds")
       .doc(followerId)
       .collection("userFeed")
-      .where("author_ref", "==", followedUserRef);
+      .where("author_ref", "==", admin.firestore().doc(`users/${userId}`));
     const userPostsSnapshot = await userFeedRef.get();
     userPostsSnapshot.forEach((doc) => {
       if (doc.exists) {
@@ -98,25 +102,23 @@ exports.onUnfollowUser = functions.firestore
   });
 
 exports.onCreatePost = functions.firestore
-  .document("/posts/{postId}")
+  .document("/users/{userId}/posts/{postId}")
   .onCreate(async (snapshot, context) => {
     const postId = context.params.postId;
+    const userId = context.params.userId;
 
     // Créer une référence au post
-    const postRef = admin.firestore().doc(`posts/${postId}`);
+    const postRef = admin.firestore().doc(`users/${userId}/posts/${postId}`);
 
     // Obtenir la date et la référence de l'auteur du post
     const postDate = snapshot.get("date");
-    const authorRef = snapshot.get("author");
-
-    // Obtenir l'auteur du post
-    const authorId = authorRef.path.split("/")[1];
+    const authorRef = admin.firestore().doc(`users/${userId}`);
 
     // Ajouter le post aux feeds de tous les abonnés
     const userFollowersRef = admin
       .firestore()
       .collection("followers")
-      .doc(authorId)
+      .doc(userId)
       .collection("userFollowers");
     const userFollowersSnapshot = await userFollowersRef.get();
 
@@ -124,7 +126,7 @@ exports.onCreatePost = functions.firestore
       const feedEntry = {
         post_ref: postRef,
         date: postDate,
-        author: authorRef, // Ajouter la référence de l'auteur
+        author_ref: authorRef, // Ajouter la référence de l'auteur
       };
 
       admin
@@ -138,20 +140,17 @@ exports.onCreatePost = functions.firestore
   });
 
 exports.onUpdatePost = functions.firestore
-  .document("/posts/{postId}")
-  .onUpdate(async (snapshot, context) => {
+  .document("/users/{userId}/posts/{postId}")
+  .onUpdate(async (change, context) => {
     const postId = context.params.postId;
-
-    // Get author id.
-    const authorRef = snapshot.after.get("author");
-    const authorId = authorRef.path.split("/")[1];
+    const userId = context.params.userId;
 
     // Update post data in each follower's feed.
-    const updatedPostData = snapshot.after.data();
+    const updatedPostData = change.after.data();
     const userFollowersRef = admin
       .firestore()
       .collection("followers")
-      .doc(authorId)
+      .doc(userId)
       .collection("userFollowers");
     const userFollowersSnapshot = await userFollowersRef.get();
     userFollowersSnapshot.forEach(async (doc) => {

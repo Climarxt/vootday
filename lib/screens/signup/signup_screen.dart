@@ -132,18 +132,18 @@ class SignupScreen extends StatelessWidget {
       children: [
         DropdownButtonFormField(
           decoration: const InputDecoration(
-            hintText: 'Genre',
-            labelText: 'Choisir un genre',
+            hintText: 'Sélectionnez votre préférence de mode',
+            labelText: 'Intéressé par la mode',
           ),
           value: selectedGender,
           items: const [
             DropdownMenuItem(
-              value: 'Masculin',
-              child: Text("Masculin"),
+              value: 'Man',
+              child: Text("Masculine"),
             ),
             DropdownMenuItem(
-              value: 'Féminin',
-              child: Text("Féminin"),
+              value: 'Woman',
+              child: Text("Féminine"),
             ),
           ],
           onChanged: (value) {

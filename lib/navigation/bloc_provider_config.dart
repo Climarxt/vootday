@@ -9,6 +9,9 @@ import 'package:bootdv2/screens/createpost/cubit/create_post_cubit.dart';
 import 'package:bootdv2/screens/explorer/bloc/explorer_bloc.dart';
 import 'package:bootdv2/screens/following/bloc/following_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_city/feed_ootd_city_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_country/feed_ootd_country_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_state/feed_ootd_state_bloc.dart';
 import 'package:bootdv2/screens/profile/bloc/blocs.dart';
 import 'package:bootdv2/screens/profile/bloc/feed_collection/feed_collection_bloc.dart';
 import 'package:bootdv2/screens/profile_edit/cubit/edit_profile_cubit.dart';
@@ -42,6 +45,48 @@ class BlocProviderConfig {
               'authBloc': context.read<AuthBloc>().toString(),
             });
             return feedOOTDBloc;
+          },
+        ),
+        BlocProvider<FeedOOTDCityBloc>(
+          create: (context) {
+            final feedOOTDCityBloc = FeedOOTDCityBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            logger.logInfo('FeedOOTDCityBloc.create',
+                'Initialized FeedOOTDCityBloc event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
+            return feedOOTDCityBloc;
+          },
+        ),
+        BlocProvider<FeedOOTDStateBloc>(
+          create: (context) {
+            final feedOOTDStateBloc = FeedOOTDStateBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            logger.logInfo('FeedOOTDStateBloc.create',
+                'Initialized FeedOOTDStateBloc event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
+            return feedOOTDStateBloc;
+          },
+        ),
+        BlocProvider<FeedOOTDCountryBloc>(
+          create: (context) {
+            final feedOOTDCountryBloc = FeedOOTDCountryBloc(
+              feedRepository: context.read<FeedRepository>(),
+              authBloc: context.read<AuthBloc>(),
+            );
+            logger.logInfo('FeedOOTDCountryBloc.create',
+                'Initialized FeedOOTDCountryBloc event', {
+              'feedRepository': context.read<FeedRepository>().toString(),
+              'authBloc': context.read<AuthBloc>().toString(),
+            });
+            return feedOOTDCountryBloc;
           },
         ),
         BlocProvider<FeedOOTDBloc>(

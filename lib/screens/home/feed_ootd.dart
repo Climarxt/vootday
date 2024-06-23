@@ -5,6 +5,9 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_city/feed_ootd_city_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_country/feed_ootd_country_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd_state/feed_ootd_state_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
@@ -149,18 +152,18 @@ class _FeedOOTDState extends State<FeedOOTD>
     logger.logInfo(functionName, 'Building gender-specific bloc for city',
         {'selectedGender': selectedGender});
 
-    context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCity(
+    context.read<FeedOOTDCityBloc>().add(FeedOOTDCityManFetchPostsByCity(
           locationCountry: tabCountry,
           locationState: tabState,
           locationCity: tabCity,
         ));
 
     if (selectedGender == "Masculin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+      return BlocConsumer<FeedOOTDCityBloc, FeedOOTDCityState>(
         listener: (context, state) {
-          if (state.status == FeedOOTDStatus.loaded) {
+          if (state.status == FeedOOTDCityStatus.loaded) {
             logger.logInfo(functionName, 'Posts loaded for city (Masculin)');
-          } else if (state.status == FeedOOTDStatus.error) {
+          } else if (state.status == FeedOOTDCityStatus.error) {
             logger.logError(
                 functionName, 'Error loading posts for city (Masculin)');
           }
@@ -169,7 +172,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculin(state),
+              body: _buildBodyMasculinCity(state),
             ),
           );
         },
@@ -207,12 +210,17 @@ class _FeedOOTDState extends State<FeedOOTD>
     logger.logInfo(functionName, 'Building gender-specific bloc for state',
         {'selectedGender': selectedGender});
 
+    context.read<FeedOOTDStateBloc>().add(FeedOOTDStateManFetchPostsByState(
+          locationCountry: tabCountry,
+          locationState: tabState,
+        ));
+
     if (selectedGender == "Masculin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+      return BlocConsumer<FeedOOTDStateBloc, FeedOOTDStateState>(
         listener: (context, state) {
-          if (state.status == FeedOOTDStatus.loaded) {
+          if (state.status == FeedOOTDStateStatus.loaded) {
             logger.logInfo(functionName, 'Posts loaded for state (Masculin)');
-          } else if (state.status == FeedOOTDStatus.error) {
+          } else if (state.status == FeedOOTDStateStatus.error) {
             logger.logError(
                 functionName, 'Error loading posts for state (Masculin)');
           }
@@ -221,7 +229,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculin(state),
+              body: _buildBodyMasculinState(state),
             ),
           );
         },
@@ -259,12 +267,18 @@ class _FeedOOTDState extends State<FeedOOTD>
     logger.logInfo(functionName, 'Building gender-specific bloc for country',
         {'selectedGender': selectedGender});
 
+    context
+        .read<FeedOOTDCountryBloc>()
+        .add(FeedOOTDCountryManFetchPostsByCountry(
+          locationCountry: tabCountry,
+        ));
+
     if (selectedGender == "Masculin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+      return BlocConsumer<FeedOOTDCountryBloc, FeedOOTDCountryState>(
         listener: (context, state) {
-          if (state.status == FeedOOTDStatus.loaded) {
+          if (state.status == FeedOOTDCountryStatus.loaded) {
             logger.logInfo(functionName, 'Posts loaded for country (Masculin)');
-          } else if (state.status == FeedOOTDStatus.error) {
+          } else if (state.status == FeedOOTDCountryStatus.error) {
             logger.logError(
                 functionName, 'Error loading posts for country (Masculin)');
           }
@@ -273,7 +287,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculin(state),
+              body: _buildBodyMasculinCountry(state),
             ),
           );
         },
@@ -381,9 +395,85 @@ class _FeedOOTDState extends State<FeedOOTD>
     );
   }
 
-  Widget _buildBodyMasculin(FeedOOTDState state) {
+  Widget _buildBodyMasculinCity(FeedOOTDCityState state) {
     switch (state.status) {
-      case FeedOOTDStatus.loading:
+      case FeedOOTDCityStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      default:
+        return Stack(
+          children: [
+            ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              cacheExtent: 10000,
+              itemCount: state.posts.length + 1,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(height: 10),
+              itemBuilder: (BuildContext context, int index) {
+                if (index == state.posts.length) {
+                  return state.status == FeedOOTDStatus.paginating
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                } else {
+                  final Post post = state.posts[index] ?? Post.empty;
+                  return PostView(
+                    post: post,
+                  );
+                }
+              },
+            ),
+            if (state.status == FeedOOTDStatus.paginating)
+              const Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+    }
+  }
+
+  Widget _buildBodyMasculinState(FeedOOTDStateState state) {
+    switch (state.status) {
+      case FeedOOTDStateStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      default:
+        return Stack(
+          children: [
+            ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              cacheExtent: 10000,
+              itemCount: state.posts.length + 1,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(height: 10),
+              itemBuilder: (BuildContext context, int index) {
+                if (index == state.posts.length) {
+                  return state.status == FeedOOTDStatus.paginating
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                } else {
+                  final Post post = state.posts[index] ?? Post.empty;
+                  return PostView(
+                    post: post,
+                  );
+                }
+              },
+            ),
+            if (state.status == FeedOOTDStatus.paginating)
+              const Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+    }
+  }
+
+  Widget _buildBodyMasculinCountry(FeedOOTDCountryState state) {
+    switch (state.status) {
+      case FeedOOTDCountryStatus.loading:
         return const Center(child: CircularProgressIndicator());
       default:
         return Stack(

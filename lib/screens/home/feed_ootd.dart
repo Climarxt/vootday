@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks, library_private_types_in_public_api
+
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/logger/logger.dart';
@@ -109,13 +111,13 @@ class _FeedOOTDState extends State<FeedOOTD>
                           tabs: [
                             Tab(
                                 child: Text(tabCity,
-                                    style: TextStyle(fontSize: 14.0))),
+                                    style: const TextStyle(fontSize: 14.0))),
                             Tab(
                                 child: Text(tabState,
-                                    style: TextStyle(fontSize: 14.0))),
+                                    style: const TextStyle(fontSize: 14.0))),
                             Tab(
                                 child: Text(tabCountry,
-                                    style: TextStyle(fontSize: 14.0))),
+                                    style: const TextStyle(fontSize: 14.0))),
                           ],
                         ),
                       ),

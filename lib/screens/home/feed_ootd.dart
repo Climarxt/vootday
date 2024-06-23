@@ -32,6 +32,7 @@ class _FeedOOTDState extends State<FeedOOTD>
   String tabCity = '';
   String tabState = '';
   String tabCountry = '';
+  String? userGender;
 
   String? tempSelectedCountry;
   String? tempSelectedState;
@@ -45,8 +46,6 @@ class _FeedOOTDState extends State<FeedOOTD>
     _userRepository = UserRepository();
     _tabController = TabController(length: 3, vsync: this);
 
-    _tabController.addListener(_handleTabSelection);
-
     final authState = context.read<AuthBloc>().state;
     final user = authState.user;
 
@@ -57,71 +56,12 @@ class _FeedOOTDState extends State<FeedOOTD>
           tabCity = user.locationCity;
           tabState = user.locationState;
           tabCountry = user.locationCountry;
+          userGender = user.selectedGender;
         });
-        _fetchPostsByCurrentTab();
       });
     } else {
       _userDetailsFuture = null;
     }
-  }
-
-  void _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      _fetchPostsByCurrentTab();
-    }
-  }
-
-  void _fetchPostsByCurrentTab() {
-    switch (_tabController.index) {
-      case 0:
-        _fetchPostsByCity();
-        break;
-      case 1:
-        _fetchPostsByState();
-        break;
-      case 2:
-        _fetchPostsByCountry();
-        break;
-    }
-  }
-
-  void _fetchPostsByCity() {
-    final selectedGender =
-        "Masculin"; // Replace with actual gender fetching logic
-    context.read<FeedOOTDBloc>().add(
-          selectedGender == "Masculin"
-              ? FeedOOTDManFetchPostsByCity(
-                  locationCountry: tabCountry,
-                  locationState: tabState,
-                  locationCity: tabCity,
-                )
-              : FeedOOTDFemaleFetchPostsOOTD(),
-        );
-  }
-
-  void _fetchPostsByState() {
-    final selectedGender =
-        "Masculin"; // Replace with actual gender fetching logic
-    context.read<FeedOOTDBloc>().add(
-          selectedGender == "Masculin"
-              ? FeedOOTDManFetchPostsByState(
-                  locationCountry: tabCountry,
-                  locationState: tabState,
-                )
-              : FeedOOTDFemaleFetchPostsOOTD(),
-        );
-  }
-
-  void _fetchPostsByCountry() {
-    final selectedGender =
-        "Masculin"; // Replace with actual gender fetching logic
-    context.read<FeedOOTDBloc>().add(
-          selectedGender == "Masculin"
-              ? FeedOOTDManFetchPostsByCountry(
-                  locationCountry: tabCountry,
-                )
-              : FeedOOTDFemaleFetchPostsOOTD(),
-        );
   }
 
   @override
@@ -208,6 +148,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     const String functionName = '_buildGenderSpecificBlocCity';
     logger.logInfo(functionName, 'Building gender-specific bloc for city',
         {'selectedGender': selectedGender});
+
+    context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCity(
+          locationCountry: tabCountry,
+          locationState: tabState,
+          locationCity: tabCity,
+        ));
 
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(

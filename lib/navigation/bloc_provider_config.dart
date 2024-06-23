@@ -33,9 +33,9 @@ class BlocProviderConfig {
               feedRepository: context.read<FeedRepository>(),
               authBloc: context.read<AuthBloc>(),
             );
-            feedOOTDBloc.add(FeedOOTDManFetchPostsByCity());
-            feedOOTDBloc.add(FeedOOTDManFetchPostsByState());
-            feedOOTDBloc.add(FeedOOTDManFetchPostsByCountry());
+            // feedOOTDBloc.add(FeedOOTDManFetchPostsByCity());
+            // feedOOTDBloc.add(FeedOOTDManFetchPostsByState());
+            // feedOOTDBloc.add(FeedOOTDManFetchPostsByCountry());
             logger.logInfo('FeedOOTDBloc.create',
                 'Initialized and added FeedOOTDManFetchPostsOOTD event', {
               'feedRepository': context.read<FeedRepository>().toString(),

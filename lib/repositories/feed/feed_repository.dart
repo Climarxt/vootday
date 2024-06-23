@@ -44,7 +44,6 @@ class FeedRepository {
       if (lastPostId == null) {
         postsSnap = await _firebaseFirestore
             .collection(collectionPath)
-            .orderBy('likes', descending: true)
             .limit(100)
             .get();
       } else {
@@ -64,12 +63,6 @@ class FeedRepository {
             .limit(2)
             .get();
       }
-
-      logger.logInfo(functionName, 'Number of posts fetched',
-          {'count': postsSnap.docs.length});
-      postsSnap.docs.forEach((doc) {
-        logger.logInfo(functionName, 'Post document', {'data': doc.data()});
-      });
 
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
         DocumentReference postRef = doc['post_ref'];
@@ -143,6 +136,8 @@ class FeedRepository {
 
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
         DocumentReference postRef = doc['post_ref'];
+        logger.logInfo(
+            functionName, 'Fetching postRef', {'postRef': postRef.path});
         DocumentSnapshot postSnap = await postRef.get();
         if (postSnap.exists) {
           return Post.fromDocument(postSnap);
@@ -206,6 +201,8 @@ class FeedRepository {
 
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
         DocumentReference postRef = doc['post_ref'];
+        logger.logInfo(
+            functionName, 'Fetching postRef', {'postRef': postRef.path});
         DocumentSnapshot postSnap = await postRef.get();
         if (postSnap.exists) {
           return Post.fromDocument(postSnap);

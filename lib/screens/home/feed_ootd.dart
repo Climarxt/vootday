@@ -164,7 +164,6 @@ class _FeedOOTDState extends State<FeedOOTD>
       return BlocConsumer<FeedOOTDCityBloc, FeedOOTDCityState>(
         listener: (context, state) {
           if (state.status == FeedOOTDCityStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for city (Masculin)');
           } else if (state.status == FeedOOTDCityStatus.error) {
             logger.logError(
                 functionName, 'Error loading posts for city (Masculin)');
@@ -183,7 +182,6 @@ class _FeedOOTDState extends State<FeedOOTD>
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
           if (state.status == FeedOOTDStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for city (Féminin)');
           } else if (state.status == FeedOOTDStatus.error) {
             logger.logError(
                 functionName, 'Error loading posts for city (Féminin)');
@@ -320,81 +318,6 @@ class _FeedOOTDState extends State<FeedOOTD>
         body: Center(child: CircularProgressIndicator()),
       );
     }
-  }
-
-  void _openSheet(BuildContext context) {
-    showModalBottomSheet(
-      isDismissible: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      context: context,
-      builder: (BuildContext bottomSheetContext) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                AppLocalizations.of(context)!.translate('location'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.black),
-              ),
-              const SizedBox(height: 10),
-              CSCPicker(
-                flagState: CountryFlag.DISABLE,
-                onCountryChanged: (country) {
-                  setState(() {
-                    tempSelectedCountry = country;
-                  });
-                },
-                onStateChanged: (state) {
-                  setState(() {
-                    tempSelectedState = state;
-                  });
-                },
-                onCityChanged: (city) {
-                  setState(() {
-                    tempSelectedCity = city;
-                  });
-                },
-              ),
-              const SizedBox(height: 18),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    tabCountry = tempSelectedCountry ?? tabCountry;
-                    tabState = tempSelectedState ?? tabState;
-                    tabCity = tempSelectedCity ?? tabCity;
-                  });
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
-                  backgroundColor: Colors.lightBlueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    AppLocalizations.of(context)!.translate('validate'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Widget _buildBodyMasculinCity(FeedOOTDCityState state) {
@@ -547,6 +470,81 @@ class _FeedOOTDState extends State<FeedOOTD>
           ],
         );
     }
+  }
+
+  void _openSheet(BuildContext context) {
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.translate('location'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              CSCPicker(
+                flagState: CountryFlag.DISABLE,
+                onCountryChanged: (country) {
+                  setState(() {
+                    tempSelectedCountry = country;
+                  });
+                },
+                onStateChanged: (state) {
+                  setState(() {
+                    tempSelectedState = state;
+                  });
+                },
+                onCityChanged: (city) {
+                  setState(() {
+                    tempSelectedCity = city;
+                  });
+                },
+              ),
+              const SizedBox(height: 18),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    tabCountry = tempSelectedCountry ?? tabCountry;
+                    tabState = tempSelectedState ?? tabState;
+                    tabCity = tempSelectedCity ?? tabCity;
+                  });
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  backgroundColor: Colors.lightBlueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('validate'),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override

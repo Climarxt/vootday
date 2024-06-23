@@ -29,9 +29,9 @@ class _FeedOOTDState extends State<FeedOOTD>
   String? selectedCountry;
   String? selectedState;
   String? selectedCity;
-  String tabCity = 'Marseille';
-  String tabState = 'PACA';
-  String tabCountry = 'France';
+  String tabCity = '';
+  String tabState = '';
+  String tabCountry = '';
 
   String? tempSelectedCountry;
   String? tempSelectedState;
@@ -48,6 +48,13 @@ class _FeedOOTDState extends State<FeedOOTD>
 
     if (user != null) {
       _userDetailsFuture = _userRepository.fetchUserDetails(user.uid);
+      _userDetailsFuture!.then((user) {
+        setState(() {
+          tabCity = user.locationCity;
+          tabState = user.locationState;
+          tabCountry = user.locationCountry;
+        });
+      });
     } else {
       _userDetailsFuture = null;
     }

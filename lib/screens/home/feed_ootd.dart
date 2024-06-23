@@ -7,7 +7,6 @@ import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 import 'package:csc_picker/csc_picker.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -46,6 +45,8 @@ class _FeedOOTDState extends State<FeedOOTD>
     _userRepository = UserRepository();
     _tabController = TabController(length: 3, vsync: this);
 
+    _tabController.addListener(_handleTabSelection);
+
     final authState = context.read<AuthBloc>().state;
     final user = authState.user;
 
@@ -57,10 +58,70 @@ class _FeedOOTDState extends State<FeedOOTD>
           tabState = user.locationState;
           tabCountry = user.locationCountry;
         });
+        _fetchPostsByCurrentTab();
       });
     } else {
       _userDetailsFuture = null;
     }
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      _fetchPostsByCurrentTab();
+    }
+  }
+
+  void _fetchPostsByCurrentTab() {
+    switch (_tabController.index) {
+      case 0:
+        _fetchPostsByCity();
+        break;
+      case 1:
+        _fetchPostsByState();
+        break;
+      case 2:
+        _fetchPostsByCountry();
+        break;
+    }
+  }
+
+  void _fetchPostsByCity() {
+    final selectedGender =
+        "Masculin"; // Replace with actual gender fetching logic
+    context.read<FeedOOTDBloc>().add(
+          selectedGender == "Masculin"
+              ? FeedOOTDManFetchPostsByCity(
+                  locationCountry: tabCountry,
+                  locationState: tabState,
+                  locationCity: tabCity,
+                )
+              : FeedOOTDFemaleFetchPostsOOTD(),
+        );
+  }
+
+  void _fetchPostsByState() {
+    final selectedGender =
+        "Masculin"; // Replace with actual gender fetching logic
+    context.read<FeedOOTDBloc>().add(
+          selectedGender == "Masculin"
+              ? FeedOOTDManFetchPostsByState(
+                  locationCountry: tabCountry,
+                  locationState: tabState,
+                )
+              : FeedOOTDFemaleFetchPostsOOTD(),
+        );
+  }
+
+  void _fetchPostsByCountry() {
+    final selectedGender =
+        "Masculin"; // Replace with actual gender fetching logic
+    context.read<FeedOOTDBloc>().add(
+          selectedGender == "Masculin"
+              ? FeedOOTDManFetchPostsByCountry(
+                  locationCountry: tabCountry,
+                )
+              : FeedOOTDFemaleFetchPostsOOTD(),
+        );
   }
 
   @override
@@ -151,16 +212,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by city for Masculin', {
-            'locationCountry': tabCountry,
-            'locationState': tabState,
-            'locationCity': tabCity
-          });
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCity(
-                locationCountry: tabCountry,
-                locationState: tabState,
-                locationCity: tabCity,
-              ));
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for city (Masculin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for city (Masculin)');
+          }
         },
         builder: (context, state) {
           return Padding(
@@ -174,8 +231,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by city for Féminin');
-          context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for city (Féminin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for city (Féminin)');
+          }
         },
         builder: (context, state) {
           return Padding(
@@ -203,12 +264,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by state for Masculin',
-              {'locationCountry': tabCountry, 'locationState': tabState});
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByState(
-                locationCountry: tabCountry,
-                locationState: tabState,
-              ));
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for state (Masculin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for state (Masculin)');
+          }
         },
         builder: (context, state) {
           return Padding(
@@ -222,8 +283,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by state for Féminin');
-          context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for state (Féminin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for state (Féminin)');
+          }
         },
         builder: (context, state) {
           return Padding(
@@ -251,11 +316,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by country for Masculin',
-              {'locationCountry': tabCountry});
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCountry(
-                locationCountry: tabCountry,
-              ));
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for country (Masculin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for country (Masculin)');
+          }
         },
         builder: (context, state) {
           return Padding(
@@ -269,8 +335,12 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          logger.logInfo(functionName, 'Fetching posts by country for Féminin');
-          context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
+          if (state.status == FeedOOTDStatus.loaded) {
+            logger.logInfo(functionName, 'Posts loaded for country (Féminin)');
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for country (Féminin)');
+          }
         },
         builder: (context, state) {
           return Padding(

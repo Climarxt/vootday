@@ -1,5 +1,6 @@
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
+import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
@@ -36,6 +37,8 @@ class _FeedOOTDState extends State<FeedOOTD>
   String? tempSelectedCountry;
   String? tempSelectedState;
   String? tempSelectedCity;
+
+  final ContextualLogger logger = ContextualLogger('FeedOOTD');
 
   @override
   void initState() {
@@ -141,10 +144,23 @@ class _FeedOOTDState extends State<FeedOOTD>
   }
 
   Widget _buildGenderSpecificBlocCity(String? selectedGender) {
+    const String functionName = '_buildGenderSpecificBlocCity';
+    logger.logInfo(functionName, 'Building gender-specific bloc for city',
+        {'selectedGender': selectedGender});
+
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsOOTD());
+          logger.logInfo(functionName, 'Fetching posts by city for Masculin', {
+            'locationCountry': tabCountry,
+            'locationState': tabState,
+            'locationCity': tabCity
+          });
+          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCity(
+                locationCountry: tabCountry,
+                locationState: tabState,
+                locationCity: tabCity,
+              ));
         },
         builder: (context, state) {
           return Padding(
@@ -158,6 +174,7 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
+          logger.logInfo(functionName, 'Fetching posts by city for Féminin');
           context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
         },
         builder: (context, state) {
@@ -170,7 +187,8 @@ class _FeedOOTDState extends State<FeedOOTD>
         },
       );
     } else {
-      debugPrint("Executing fallback code");
+      logger.logError(functionName, 'Invalid gender selected',
+          {'selectedGender': selectedGender});
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -178,10 +196,19 @@ class _FeedOOTDState extends State<FeedOOTD>
   }
 
   Widget _buildGenderSpecificBlocState(String? selectedGender) {
+    const String functionName = '_buildGenderSpecificBlocState';
+    logger.logInfo(functionName, 'Building gender-specific bloc for state',
+        {'selectedGender': selectedGender});
+
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsOOTD());
+          logger.logInfo(functionName, 'Fetching posts by state for Masculin',
+              {'locationCountry': tabCountry, 'locationState': tabState});
+          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByState(
+                locationCountry: tabCountry,
+                locationState: tabState,
+              ));
         },
         builder: (context, state) {
           return Padding(
@@ -195,6 +222,7 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
+          logger.logInfo(functionName, 'Fetching posts by state for Féminin');
           context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
         },
         builder: (context, state) {
@@ -207,7 +235,8 @@ class _FeedOOTDState extends State<FeedOOTD>
         },
       );
     } else {
-      debugPrint("Executing fallback code");
+      logger.logError(functionName, 'Invalid gender selected',
+          {'selectedGender': selectedGender});
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -215,10 +244,18 @@ class _FeedOOTDState extends State<FeedOOTD>
   }
 
   Widget _buildGenderSpecificBlocCountry(String? selectedGender) {
+    const String functionName = '_buildGenderSpecificBlocCountry';
+    logger.logInfo(functionName, 'Building gender-specific bloc for country',
+        {'selectedGender': selectedGender});
+
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
-          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsOOTD());
+          logger.logInfo(functionName, 'Fetching posts by country for Masculin',
+              {'locationCountry': tabCountry});
+          context.read<FeedOOTDBloc>().add(FeedOOTDManFetchPostsByCountry(
+                locationCountry: tabCountry,
+              ));
         },
         builder: (context, state) {
           return Padding(
@@ -232,6 +269,7 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else if (selectedGender == "Féminin") {
       return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
         listener: (context, state) {
+          logger.logInfo(functionName, 'Fetching posts by country for Féminin');
           context.read<FeedOOTDBloc>().add(FeedOOTDFemaleFetchPostsOOTD());
         },
         builder: (context, state) {
@@ -244,7 +282,8 @@ class _FeedOOTDState extends State<FeedOOTD>
         },
       );
     } else {
-      debugPrint("Executing fallback code");
+      logger.logError(functionName, 'Invalid gender selected',
+          {'selectedGender': selectedGender});
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );

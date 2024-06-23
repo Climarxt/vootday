@@ -21,17 +21,70 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   })  : _feedRepository = feedRepository,
         _authBloc = authBloc,
         super(FeedOOTDState.initial()) {
-    on<FeedOOTDManFetchPostsOOTD>(_mapFeedOOTDManFetchPostsOOTD);
+    on<FeedOOTDManFetchPostsByCity>(_mapFeedOOTDManFetchPostsByCity);
+    on<FeedOOTDManFetchPostsByState>(_mapFeedOOTDManFetchPostsByState);
+    on<FeedOOTDManFetchPostsByCountry>(_mapFeedOOTDManFetchPostsByCountry);
     on<FeedOOTDFemaleFetchPostsOOTD>(_mapFeedOOTDFemaleFetchPostsOOTD);
   }
 
-  Future<void> _mapFeedOOTDManFetchPostsOOTD(
-    FeedOOTDManFetchPostsOOTD event,
+  Future<void> _mapFeedOOTDManFetchPostsByCity(
+    FeedOOTDManFetchPostsByCity event,
     Emitter<FeedOOTDState> emit,
   ) async {
     try {
-      final posts = await _feedRepository.getFeedOOTDMan(
-          userId: _authBloc.state.user!.uid);
+      final posts = await _feedRepository.getFeedOOTDManCity(
+        userId: _authBloc.state.user!.uid,
+        locationCountry: event.locationCountry,
+        locationState: event.locationState,
+        locationCity: event.locationCity,
+      );
+
+      emit(
+        state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
+      );
+    } catch (err) {
+      print(err);
+      emit(state.copyWith(
+        status: FeedOOTDStatus.error,
+        failure:
+            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+      ));
+    }
+  }
+
+  Future<void> _mapFeedOOTDManFetchPostsByState(
+    FeedOOTDManFetchPostsByState event,
+    Emitter<FeedOOTDState> emit,
+  ) async {
+    try {
+      final posts = await _feedRepository.getFeedOOTDManState(
+        userId: _authBloc.state.user!.uid,
+        locationCountry: event.locationCountry,
+        locationState: event.locationState,
+      );
+
+      emit(
+        state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
+      );
+    } catch (err) {
+      print(err);
+      emit(state.copyWith(
+        status: FeedOOTDStatus.error,
+        failure:
+            const Failure(message: 'Nous n\'avons pas pu charger votre flux'),
+      ));
+    }
+  }
+
+  Future<void> _mapFeedOOTDManFetchPostsByCountry(
+    FeedOOTDManFetchPostsByCountry event,
+    Emitter<FeedOOTDState> emit,
+  ) async {
+    try {
+      final posts = await _feedRepository.getFeedOOTDManCountry(
+        userId: _authBloc.state.user!.uid,
+        locationCountry: event.locationCountry,
+      );
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),
@@ -52,7 +105,8 @@ class FeedOOTDBloc extends Bloc<FeedOOTDEvent, FeedOOTDState> {
   ) async {
     try {
       final posts = await _feedRepository.getFeedOOTDFemale(
-          userId: _authBloc.state.user!.uid);
+        userId: _authBloc.state.user!.uid,
+      );
 
       emit(
         state.copyWith(posts: posts, status: FeedOOTDStatus.loaded),

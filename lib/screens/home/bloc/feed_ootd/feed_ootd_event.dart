@@ -7,6 +7,43 @@ abstract class FeedOOTDEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FeedOOTDManFetchPostsOOTD extends FeedOOTDEvent {}
+class FeedOOTDManFetchPostsByCity extends FeedOOTDEvent {
+  final String locationCountry;
+  final String locationState;
+  final String locationCity;
+
+  FeedOOTDManFetchPostsByCity({
+    this.locationCountry = '',
+    this.locationState = '',
+    this.locationCity = '',
+  });
+
+  @override
+  List<Object?> get props => [locationCountry, locationState, locationCity];
+}
+
+class FeedOOTDManFetchPostsByState extends FeedOOTDEvent {
+  final String locationCountry;
+  final String locationState;
+
+  FeedOOTDManFetchPostsByState({
+    this.locationCountry = '',
+    this.locationState = '',
+  });
+
+  @override
+  List<Object?> get props => [locationCountry, locationState];
+}
+
+class FeedOOTDManFetchPostsByCountry extends FeedOOTDEvent {
+  final String locationCountry;
+
+  FeedOOTDManFetchPostsByCountry({
+    this.locationCountry = '',
+  });
+
+  @override
+  List<Object?> get props => [locationCountry];
+}
 
 class FeedOOTDFemaleFetchPostsOOTD extends FeedOOTDEvent {}

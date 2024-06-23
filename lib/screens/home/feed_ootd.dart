@@ -4,7 +4,6 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
-import 'package:bootdv2/screens/home/widgets/tabbar3items_second.dart';
 import 'package:bootdv2/screens/home/widgets/widgets.dart';
 import 'package:csc_picker/csc_picker.dart';
 
@@ -15,7 +14,6 @@ class FeedOOTD extends StatefulWidget {
   FeedOOTD({Key? key}) : super(key: key ?? GlobalKey());
 
   @override
-  // ignore: library_private_types_in_public_api
   _FeedOOTDState createState() => _FeedOOTDState();
 }
 
@@ -31,6 +29,13 @@ class _FeedOOTDState extends State<FeedOOTD>
   String? selectedCountry;
   String? selectedState;
   String? selectedCity;
+  String tabCity = 'Marseille';
+  String tabState = 'PACA';
+  String tabCountry = 'France';
+
+  String? tempSelectedCountry;
+  String? tempSelectedState;
+  String? tempSelectedCity;
 
   @override
   void initState() {
@@ -72,10 +77,44 @@ class _FeedOOTDState extends State<FeedOOTD>
             return Scaffold(
               appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(62),
-                child: Tabbar3itemsSecond(
-                  tabController: _tabController,
-                  context: context,
-                  onMapIconPressed: () => _openSheet(context),
+                child: SafeArea(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: TabBar(
+                          padding: EdgeInsets.zero,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: const BoxDecoration(),
+                          controller: _tabController,
+                          labelStyle: AppTextStyles.labelSelectedStyle(context),
+                          labelColor: Colors.black,
+                          unselectedLabelColor: Colors.grey,
+                          unselectedLabelStyle:
+                              AppTextStyles.labelUnselectedStyle(context),
+                          tabs: [
+                            Tab(
+                                child: Text(tabCity,
+                                    style: TextStyle(fontSize: 14.0))),
+                            Tab(
+                                child: Text(tabState,
+                                    style: TextStyle(fontSize: 14.0))),
+                            Tab(
+                                child: Text(tabCountry,
+                                    style: TextStyle(fontSize: 14.0))),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => _openSheet(context),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Icon(Icons.map),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
                 ),
               ),
               body: TabBarView(
@@ -205,6 +244,81 @@ class _FeedOOTDState extends State<FeedOOTD>
     }
   }
 
+  void _openSheet(BuildContext context) {
+    showModalBottomSheet(
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.translate('location'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              CSCPicker(
+                flagState: CountryFlag.DISABLE,
+                onCountryChanged: (country) {
+                  setState(() {
+                    tempSelectedCountry = country;
+                  });
+                },
+                onStateChanged: (state) {
+                  setState(() {
+                    tempSelectedState = state;
+                  });
+                },
+                onCityChanged: (city) {
+                  setState(() {
+                    tempSelectedCity = city;
+                  });
+                },
+              ),
+              const SizedBox(height: 18),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    tabCountry = tempSelectedCountry ?? tabCountry;
+                    tabState = tempSelectedState ?? tabState;
+                    tabCity = tempSelectedCity ?? tabCity;
+                  });
+                  Navigator.pop(context);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: Size.zero,
+                  backgroundColor: Colors.lightBlueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('validate'),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildBodyMasculin(FeedOOTDState state) {
     switch (state.status) {
       case FeedOOTDStatus.loading:
@@ -279,79 +393,6 @@ class _FeedOOTDState extends State<FeedOOTD>
           ],
         );
     }
-  }
-
-  void _openSheet(BuildContext context) {
-    showModalBottomSheet(
-      isDismissible: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-      ),
-      context: context,
-      builder: (BuildContext bottomSheetContext) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                AppLocalizations.of(context)!.translate('location'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.black),
-              ),
-              const SizedBox(height: 10),
-              CSCPicker(
-                flagState: CountryFlag.DISABLE,
-                onCountryChanged: (country) {
-                  setState(() {
-                    selectedCountry = country;
-                    selectedState = null;
-                    selectedCity = null;
-                  });
-                },
-                onStateChanged: (state) {
-                  setState(() {
-                    selectedState = state;
-                    selectedCity = null;
-                  });
-                },
-                onCityChanged: (city) {
-                  setState(() {
-                    selectedCity = city;
-                  });
-                },
-              ),
-              const SizedBox(height: 18),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
-                  backgroundColor: couleurBleuClair2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    AppLocalizations.of(context)!.translate('validate'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   @override

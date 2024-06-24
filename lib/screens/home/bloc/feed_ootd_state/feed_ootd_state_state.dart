@@ -2,7 +2,7 @@ part of 'feed_ootd_state_bloc.dart';
 
 enum FeedOOTDStateStatus { initial, loading, loaded, paginating, error }
 
-class FeedOOTDStateState extends Equatable {
+class FeedOOTDStateState extends Equatable implements FeedStateInterface {
   final List<Post?> posts;
   final FeedOOTDStateStatus status;
   final Failure failure;

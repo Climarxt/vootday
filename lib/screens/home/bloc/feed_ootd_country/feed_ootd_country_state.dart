@@ -2,7 +2,7 @@ part of 'feed_ootd_country_bloc.dart';
 
 enum FeedOOTDCountryStatus { initial, loading, loaded, paginating, error }
 
-class FeedOOTDCountryState extends Equatable {
+class FeedOOTDCountryState extends Equatable implements FeedStateInterface {
   final List<Post?> posts;
   final FeedOOTDCountryStatus status;
   final Failure failure;

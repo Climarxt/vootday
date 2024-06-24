@@ -1,4 +1,4 @@
-// ignore_for_file: unrelated_type_equality_checks, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
@@ -7,6 +7,7 @@ import 'package:bootdv2/models/models.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_state_base.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd_city/feed_ootd_city_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd_country/feed_ootd_country_bloc.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd_state/feed_ootd_state_bloc.dart';
@@ -173,7 +174,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculinCity(state),
+              body: _buildBodyMasculin(state),
             ),
           );
         },
@@ -229,7 +230,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculinState(state),
+              body: _buildBodyMasculin(state),
             ),
           );
         },
@@ -287,7 +288,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculinCountry(state),
+              body: _buildBodyMasculin(state),
             ),
           );
         },
@@ -320,117 +321,42 @@ class _FeedOOTDState extends State<FeedOOTD>
     }
   }
 
-  Widget _buildBodyMasculinCity(FeedOOTDCityState state) {
-    switch (state.status) {
-      case FeedOOTDCityStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              cacheExtent: 10000,
-              itemCount: state.posts.length + 1,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const SizedBox(height: 10),
-              itemBuilder: (BuildContext context, int index) {
-                if (index == state.posts.length) {
-                  return state.status == FeedOOTDStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final Post post = state.posts[index] ?? Post.empty;
-                  return PostView(
-                    post: post,
-                  );
-                }
-              },
+  Widget _buildBodyMasculin<T extends FeedStateInterface>(T state) {
+    if (state.status == FeedOOTDCountryStatus.loading ||
+        state.status == FeedOOTDStateStatus.loading ||
+        state.status == FeedOOTDCityStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return Stack(
+        children: [
+          ListView.separated(
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 10000,
+            itemCount: state.posts.length + 1,
+            separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(height: 10),
+            itemBuilder: (BuildContext context, int index) {
+              if (index == state.posts.length) {
+                return state.status == FeedOOTDStatus.paginating
+                    ? const Center(child: CircularProgressIndicator())
+                    : const SizedBox.shrink();
+              } else {
+                final Post post = state.posts[index] ?? Post.empty;
+                return PostView(
+                  post: post,
+                );
+              }
+            },
+          ),
+          if (state.status == FeedOOTDStatus.paginating)
+            const Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Center(child: CircularProgressIndicator()),
             ),
-            if (state.status == FeedOOTDStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
-    }
-  }
-
-  Widget _buildBodyMasculinState(FeedOOTDStateState state) {
-    switch (state.status) {
-      case FeedOOTDStateStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              cacheExtent: 10000,
-              itemCount: state.posts.length + 1,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const SizedBox(height: 10),
-              itemBuilder: (BuildContext context, int index) {
-                if (index == state.posts.length) {
-                  return state.status == FeedOOTDStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final Post post = state.posts[index] ?? Post.empty;
-                  return PostView(
-                    post: post,
-                  );
-                }
-              },
-            ),
-            if (state.status == FeedOOTDStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
-    }
-  }
-
-  Widget _buildBodyMasculinCountry(FeedOOTDCountryState state) {
-    switch (state.status) {
-      case FeedOOTDCountryStatus.loading:
-        return const Center(child: CircularProgressIndicator());
-      default:
-        return Stack(
-          children: [
-            ListView.separated(
-              physics: const BouncingScrollPhysics(),
-              cacheExtent: 10000,
-              itemCount: state.posts.length + 1,
-              separatorBuilder: (BuildContext context, int index) =>
-                  const SizedBox(height: 10),
-              itemBuilder: (BuildContext context, int index) {
-                if (index == state.posts.length) {
-                  return state.status == FeedOOTDStatus.paginating
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                } else {
-                  final Post post = state.posts[index] ?? Post.empty;
-                  return PostView(
-                    post: post,
-                  );
-                }
-              },
-            ),
-            if (state.status == FeedOOTDStatus.paginating)
-              const Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-          ],
-        );
+        ],
+      );
     }
   }
 

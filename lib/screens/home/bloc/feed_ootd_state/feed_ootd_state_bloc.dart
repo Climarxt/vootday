@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_state_base.dart';
 import 'package:equatable/equatable.dart';
 import '/blocs/blocs.dart';
 import '/models/models.dart';

@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/logger/logger.dart';
@@ -32,6 +30,8 @@ class _FeedOOTDState extends State<FeedOOTD>
   late final UserRepository _userRepository;
   late Future<User>? _userDetailsFuture;
   late TabController _tabController;
+  final Map<int, ScrollController> _scrollControllers = {};
+
   String? selectedCountry;
   String? selectedState;
   String? selectedCity;
@@ -74,7 +74,30 @@ class _FeedOOTDState extends State<FeedOOTD>
   void dispose() {
     _textController.dispose();
     _tabController.dispose();
+    _scrollControllers.values.forEach((controller) => controller.dispose());
     super.dispose();
+  }
+
+  ScrollController _getScrollController(int tabIndex) {
+    return _scrollControllers.putIfAbsent(tabIndex,
+        () => ScrollController()..addListener(() => _onScroll(tabIndex)));
+  }
+
+  void _onScroll(int tabIndex) {
+    final ScrollController controller = _scrollControllers[tabIndex]!;
+    if (controller.position.atEdge) {
+      if (controller.position.pixels != 0) {
+        // At bottom of list
+        final state = context.read<FeedOOTDCityBloc>().state;
+        if (state.status != FeedOOTDCityStatus.paginating) {
+          context.read<FeedOOTDCityBloc>().add(FeedOOTDCityManFetchMorePosts(
+                locationCountry: tabCountry,
+                locationState: tabState,
+                locationCity: tabCity,
+              ));
+        }
+      }
+    }
   }
 
   @override
@@ -137,9 +160,9 @@ class _FeedOOTDState extends State<FeedOOTD>
               body: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildGenderSpecificBlocCity(selectedGender),
-                  _buildGenderSpecificBlocState(selectedGender),
-                  _buildGenderSpecificBlocCountry(selectedGender),
+                  _buildGenderSpecificBlocCity(selectedGender, 0),
+                  _buildGenderSpecificBlocState(selectedGender, 1),
+                  _buildGenderSpecificBlocCountry(selectedGender, 2),
                 ],
               ),
             );
@@ -150,7 +173,7 @@ class _FeedOOTDState extends State<FeedOOTD>
     );
   }
 
-  Widget _buildGenderSpecificBlocCity(String? selectedGender) {
+  Widget _buildGenderSpecificBlocCity(String? selectedGender, int tabIndex) {
     const String functionName = '_buildGenderSpecificBlocCity';
     logger.logInfo(functionName, 'Building gender-specific bloc for city',
         {'selectedGender': selectedGender});
@@ -174,7 +197,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyMasculin(state),
+              body: _buildBodyMasculin(state, tabIndex),
             ),
           );
         },
@@ -192,7 +215,7 @@ class _FeedOOTDState extends State<FeedOOTD>
           return Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: Scaffold(
-              body: _buildBodyFeminin(state),
+              body: _buildBodyFeminin(state, tabIndex),
             ),
           );
         },
@@ -206,122 +229,8 @@ class _FeedOOTDState extends State<FeedOOTD>
     }
   }
 
-  Widget _buildGenderSpecificBlocState(String? selectedGender) {
-    const String functionName = '_buildGenderSpecificBlocState';
-    logger.logInfo(functionName, 'Building gender-specific bloc for state',
-        {'selectedGender': selectedGender});
-
-    context.read<FeedOOTDStateBloc>().add(FeedOOTDStateManFetchPostsByState(
-          locationCountry: tabCountry,
-          locationState: tabState,
-        ));
-
-    if (selectedGender == "Masculin") {
-      return BlocConsumer<FeedOOTDStateBloc, FeedOOTDStateState>(
-        listener: (context, state) {
-          if (state.status == FeedOOTDStateStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for state (Masculin)');
-          } else if (state.status == FeedOOTDStateStatus.error) {
-            logger.logError(
-                functionName, 'Error loading posts for state (Masculin)');
-          }
-        },
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Scaffold(
-              body: _buildBodyMasculin(state),
-            ),
-          );
-        },
-      );
-    } else if (selectedGender == "Féminin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
-        listener: (context, state) {
-          if (state.status == FeedOOTDStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for state (Féminin)');
-          } else if (state.status == FeedOOTDStatus.error) {
-            logger.logError(
-                functionName, 'Error loading posts for state (Féminin)');
-          }
-        },
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Scaffold(
-              body: _buildBodyFeminin(state),
-            ),
-          );
-        },
-      );
-    } else {
-      logger.logError(functionName, 'Invalid gender selected',
-          {'selectedGender': selectedGender});
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-  }
-
-  Widget _buildGenderSpecificBlocCountry(String? selectedGender) {
-    const String functionName = '_buildGenderSpecificBlocCountry';
-    logger.logInfo(functionName, 'Building gender-specific bloc for country',
-        {'selectedGender': selectedGender});
-
-    context
-        .read<FeedOOTDCountryBloc>()
-        .add(FeedOOTDCountryManFetchPostsByCountry(
-          locationCountry: tabCountry,
-        ));
-
-    if (selectedGender == "Masculin") {
-      return BlocConsumer<FeedOOTDCountryBloc, FeedOOTDCountryState>(
-        listener: (context, state) {
-          if (state.status == FeedOOTDCountryStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for country (Masculin)');
-          } else if (state.status == FeedOOTDCountryStatus.error) {
-            logger.logError(
-                functionName, 'Error loading posts for country (Masculin)');
-          }
-        },
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Scaffold(
-              body: _buildBodyMasculin(state),
-            ),
-          );
-        },
-      );
-    } else if (selectedGender == "Féminin") {
-      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
-        listener: (context, state) {
-          if (state.status == FeedOOTDStatus.loaded) {
-            logger.logInfo(functionName, 'Posts loaded for country (Féminin)');
-          } else if (state.status == FeedOOTDStatus.error) {
-            logger.logError(
-                functionName, 'Error loading posts for country (Féminin)');
-          }
-        },
-        builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Scaffold(
-              body: _buildBodyFeminin(state),
-            ),
-          );
-        },
-      );
-    } else {
-      logger.logError(functionName, 'Invalid gender selected',
-          {'selectedGender': selectedGender});
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-  }
-
-  Widget _buildBodyMasculin<T extends FeedStateInterface>(T state) {
+  Widget _buildBodyMasculin<T extends FeedStateInterface>(
+      T state, int tabIndex) {
     if (state.status == FeedOOTDCountryStatus.loading ||
         state.status == FeedOOTDStateStatus.loading ||
         state.status == FeedOOTDCityStatus.loading) {
@@ -330,6 +239,7 @@ class _FeedOOTDState extends State<FeedOOTD>
       return Stack(
         children: [
           ListView.separated(
+            controller: _getScrollController(tabIndex),
             physics: const BouncingScrollPhysics(),
             cacheExtent: 10000,
             itemCount: state.posts.length + 1,
@@ -360,7 +270,112 @@ class _FeedOOTDState extends State<FeedOOTD>
     }
   }
 
-  Widget _buildBodyFeminin(FeedOOTDState state) {
+  Widget _buildGenderSpecificBlocState(String? selectedGender, int tabIndex) {
+    const String functionName = '_buildGenderSpecificBlocState';
+    context.read<FeedOOTDStateBloc>().add(FeedOOTDStateManFetchPostsByState(
+          locationCountry: tabCountry,
+          locationState: tabState,
+        ));
+
+    if (selectedGender == "Masculin") {
+      return BlocConsumer<FeedOOTDStateBloc, FeedOOTDStateState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDStateStatus.loaded) {
+          } else if (state.status == FeedOOTDStateStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for state (Masculin)');
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: _buildBodyMasculin(state, tabIndex),
+            ),
+          );
+        },
+      );
+    } else if (selectedGender == "Féminin") {
+      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDStatus.loaded) {
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for state (Féminin)');
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: _buildBodyFeminin(state, tabIndex),
+            ),
+          );
+        },
+      );
+    } else {
+      logger.logError(functionName, 'Invalid gender selected',
+          {'selectedGender': selectedGender});
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+  }
+
+  Widget _buildGenderSpecificBlocCountry(String? selectedGender, int tabIndex) {
+    const String functionName = '_buildGenderSpecificBlocCountry';
+    context
+        .read<FeedOOTDCountryBloc>()
+        .add(FeedOOTDCountryManFetchPostsByCountry(
+          locationCountry: tabCountry,
+        ));
+
+    if (selectedGender == "Masculin") {
+      return BlocConsumer<FeedOOTDCountryBloc, FeedOOTDCountryState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDCountryStatus.loaded) {
+          } else if (state.status == FeedOOTDCountryStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for country (Masculin)');
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: _buildBodyMasculin(state, tabIndex),
+            ),
+          );
+        },
+      );
+    } else if (selectedGender == "Féminin") {
+      return BlocConsumer<FeedOOTDBloc, FeedOOTDState>(
+        listener: (context, state) {
+          if (state.status == FeedOOTDStatus.loaded) {
+          } else if (state.status == FeedOOTDStatus.error) {
+            logger.logError(
+                functionName, 'Error loading posts for country (Féminin)');
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Scaffold(
+              body: _buildBodyFeminin(state, tabIndex),
+            ),
+          );
+        },
+      );
+    } else {
+      logger.logError(functionName, 'Invalid gender selected',
+          {'selectedGender': selectedGender});
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+  }
+
+  Widget _buildBodyFeminin(FeedOOTDState state, int tabIndex) {
     switch (state.status) {
       case FeedOOTDStatus.loading:
         return const Center(child: CircularProgressIndicator());
@@ -368,6 +383,7 @@ class _FeedOOTDState extends State<FeedOOTD>
         return Stack(
           children: [
             ListView.separated(
+              controller: _getScrollController(tabIndex),
               physics: const BouncingScrollPhysics(),
               cacheExtent: 10000,
               itemCount: state.posts.length + 1,

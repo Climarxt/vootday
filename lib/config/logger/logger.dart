@@ -31,13 +31,22 @@ class ContextualLogger {
           printer: PlainPrinter(),
           output: SingleLineOutput(),
         );
-
   void logInfo(String functionName, String message,
       [Map<String, dynamic>? details]) {
+    const String reset = '\x1B[0m';
+    const String green = '\x1B[32m';
+    const String red = '\x1B[31m';
+    const String blue = '\x1B[34m';
+    const String cyan = '\x1B[36m';
+    const String white = '\x1B[37m';
+
     var detailMessage = details != null
-        ? details.entries.map((e) => '${e.key}: ${e.value}').join(', ')
+        ? details.entries
+            .map((e) => '${red}${e.key}${white}: ${e.value}${reset}')
+            .join('${white}, ')
         : '';
-    _logger.i('[$widgetName] [$functionName] : $message | $detailMessage');
+    _logger.i(
+        '${blue}[${widgetName}]${reset} ${cyan}[${functionName}]${reset} ${white}:${reset} ${green}${message}${reset} ${white}|${reset} $detailMessage');
   }
 
   void logError(String functionName, String message,

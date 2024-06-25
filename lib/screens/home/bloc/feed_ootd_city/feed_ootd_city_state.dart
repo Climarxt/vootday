@@ -2,7 +2,6 @@ part of 'feed_ootd_city_bloc.dart';
 
 enum FeedOOTDCityStatus { initial, loading, loaded, paginating, error }
 
-
 class FeedOOTDCityState extends Equatable implements FeedStateInterface {
   final List<Post?> posts;
   final FeedOOTDCityStatus status;

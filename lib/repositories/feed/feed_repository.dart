@@ -12,7 +12,7 @@ class FeedRepository {
       : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
         logger = ContextualLogger('FeedRepository');
 
-  Future<List<Post?>> getFeedOOTDManCity({
+  Future<List<Post>> getFeedOOTDManCity({
     required String userId,
     String? lastPostId,
     required String locationCountry,
@@ -22,7 +22,6 @@ class FeedRepository {
     const String functionName = 'getFeedOOTDManCity';
 
     try {
-      // Vérifiez que les valeurs ne sont pas vides
       if (locationCountry.isEmpty ||
           locationState.isEmpty ||
           locationCity.isEmpty) {
@@ -44,7 +43,8 @@ class FeedRepository {
       if (lastPostId == null) {
         postsSnap = await _firebaseFirestore
             .collection(collectionPath)
-            .limit(100)
+            .orderBy('likes', descending: true)
+            .limit(3)
             .get();
       } else {
         final lastPostDoc = await _firebaseFirestore
@@ -52,7 +52,13 @@ class FeedRepository {
             .doc(lastPostId)
             .get();
 
+        logger.logInfo(functionName, 'Last post document', {
+          'lastPostId': lastPostId,
+          'exists': lastPostDoc.exists,
+        });
+
         if (!lastPostDoc.exists) {
+          logger.logInfo(functionName, 'Last post does not exist');
           return [];
         }
 
@@ -64,19 +70,34 @@ class FeedRepository {
             .get();
       }
 
+      final postIds = postsSnap.docs.map((doc) => doc.id).toList();
+
+      logger.logInfo(functionName, 'Posts fetched', {
+        'docs': postIds,
+      });
+
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
         DocumentReference postRef = doc['post_ref'];
         logger.logInfo(
             functionName, 'Fetching postRef', {'postRef': postRef.path});
         DocumentSnapshot postSnap = await postRef.get();
         if (postSnap.exists) {
-          return Post.fromDocument(postSnap);
+          final post = await Post.fromDocument(postSnap);
+          if (post != null) {
+            return post.copyWith(
+                id: doc.id); // Associer l'ID du document source
+          }
+        } else {
+          logger.logInfo(functionName, 'Post reference does not exist',
+              {'postRef': postRef.path});
         }
         return null;
       }).toList();
 
-      final posts = await Future.wait(postFutures);
-      return posts;
+      List<Post?> posts = await Future.wait(postFutures);
+
+      // Filtrer les éléments null et retourner la liste des posts
+      return posts.whereType<Post>().toList();
     } catch (e, stackTrace) {
       logger.logError(functionName, 'Error fetching posts', {
         'userId': userId,
@@ -101,14 +122,14 @@ class FeedRepository {
     try {
       String collectionPath =
           'feed_ootd_man/$locationCountry/regions/$locationState/posts';
-
+      /*
       logger.logInfo(functionName, 'Fetching posts from Firestore', {
         'collectionPath': collectionPath,
         'userId': userId,
         'locationCountry': locationCountry,
         'locationState': locationState,
       });
-
+*/
       QuerySnapshot postsSnap;
       if (lastPostId == null) {
         postsSnap = await _firebaseFirestore
@@ -136,15 +157,16 @@ class FeedRepository {
 
       List<Future<Post?>> postFutures = postsSnap.docs.map((doc) async {
         DocumentReference postRef = doc['post_ref'];
+/*
         logger.logInfo(
             functionName, 'Fetching postRef', {'postRef': postRef.path});
+*/
         DocumentSnapshot postSnap = await postRef.get();
         if (postSnap.exists) {
           return Post.fromDocument(postSnap);
         }
         return null;
       }).toList();
-
       final posts = await Future.wait(postFutures);
       return posts;
     } catch (e) {
@@ -167,13 +189,13 @@ class FeedRepository {
 
     try {
       String collectionPath = 'feed_ootd_man/$locationCountry/posts';
-
+/*
       logger.logInfo(functionName, 'Fetching posts from Firestore', {
         'collectionPath': collectionPath,
         'userId': userId,
         'locationCountry': locationCountry,
       });
-
+*/
       QuerySnapshot postsSnap;
       if (lastPostId == null) {
         postsSnap = await _firebaseFirestore

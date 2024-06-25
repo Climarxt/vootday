@@ -235,7 +235,7 @@ exports.onCreateUser = functions.firestore
 
         const locationPostRef = admin
           .firestore()
-          .collection(`feed_ootd_man/France/regions/Île-de-France/cities/Paris/posts`)
+          .collection(`feed_ootd_man/France/regions/Île-de-France/posts`)
           .doc(newPostId);
 
         await locationPostRef.set({

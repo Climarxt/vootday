@@ -10,8 +10,19 @@ abstract class FeedOOTDCountryEvent extends Equatable {
 class FeedOOTDCountryManFetchPostsByCountry extends FeedOOTDCountryEvent {
   final String locationCountry;
 
-  FeedOOTDCountryManFetchPostsByCountry({
-    this.locationCountry = '',
+  const FeedOOTDCountryManFetchPostsByCountry({
+    required this.locationCountry,
+  });
+
+  @override
+  List<Object?> get props => [locationCountry];
+}
+
+class FeedOOTDCountryManFetchMorePosts extends FeedOOTDCountryEvent {
+  final String locationCountry;
+
+  const FeedOOTDCountryManFetchMorePosts({
+    required this.locationCountry,
   });
 
   @override

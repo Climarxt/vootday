@@ -2,6 +2,7 @@ import 'package:bootdv2/blocs/auth/auth_bloc.dart';
 import 'package:bootdv2/config/configs.dart';
 import 'package:bootdv2/config/logger/logger.dart';
 import 'package:bootdv2/models/models.dart';
+import 'package:bootdv2/repositories/feed/feed_repository.dart';
 import 'package:bootdv2/repositories/user/user_repository.dart';
 import 'package:bootdv2/screens/home/bloc/blocs.dart';
 import 'package:bootdv2/screens/home/bloc/feed_ootd/feed_ootd_bloc.dart';
@@ -31,6 +32,10 @@ class _FeedOOTDState extends State<FeedOOTD>
   late Future<User>? _userDetailsFuture;
   late TabController _tabController;
   final Map<int, ScrollController> _scrollControllers = {};
+
+  late FeedOOTDCityBloc _cityBloc;
+  late FeedOOTDStateBloc _stateBloc;
+  late FeedOOTDCountryBloc _countryBloc;
 
   String? selectedCountry;
   String? selectedState;
@@ -68,6 +73,19 @@ class _FeedOOTDState extends State<FeedOOTD>
     } else {
       _userDetailsFuture = null;
     }
+
+    _cityBloc = FeedOOTDCityBloc(
+      feedRepository: context.read<FeedRepository>(),
+      authBloc: context.read<AuthBloc>(),
+    );
+    _stateBloc = FeedOOTDStateBloc(
+      feedRepository: context.read<FeedRepository>(),
+      authBloc: context.read<AuthBloc>(),
+    );
+    _countryBloc = FeedOOTDCountryBloc(
+      feedRepository: context.read<FeedRepository>(),
+      authBloc: context.read<AuthBloc>(),
+    );
   }
 
   @override
@@ -75,6 +93,9 @@ class _FeedOOTDState extends State<FeedOOTD>
     _textController.dispose();
     _tabController.dispose();
     _scrollControllers.values.forEach((controller) => controller.dispose());
+    _cityBloc.close();
+    _stateBloc.close();
+    _countryBloc.close();
     super.dispose();
   }
 
@@ -88,13 +109,30 @@ class _FeedOOTDState extends State<FeedOOTD>
     if (controller.position.atEdge) {
       if (controller.position.pixels != 0) {
         // At bottom of list
-        final state = context.read<FeedOOTDCityBloc>().state;
-        if (state.status != FeedOOTDCityStatus.paginating) {
-          context.read<FeedOOTDCityBloc>().add(FeedOOTDCityManFetchMorePosts(
-                locationCountry: tabCountry,
-                locationState: tabState,
-                locationCity: tabCity,
-              ));
+        if (tabIndex == 0) {
+          final state = _cityBloc.state;
+          if (state.status != FeedOOTDCityStatus.paginating) {
+            _cityBloc.add(FeedOOTDCityManFetchMorePosts(
+              locationCountry: tabCountry,
+              locationState: tabState,
+              locationCity: tabCity,
+            ));
+          }
+        } else if (tabIndex == 1) {
+          final state = _stateBloc.state;
+          if (state.status != FeedOOTDStateStatus.paginating) {
+            _stateBloc.add(FeedOOTDStateManFetchMorePosts(
+              locationCountry: tabCountry,
+              locationState: tabState,
+            ));
+          }
+        } else if (tabIndex == 2) {
+          final state = _countryBloc.state;
+          if (state.status != FeedOOTDCountryStatus.paginating) {
+            _countryBloc.add(FeedOOTDCountryManFetchMorePosts(
+              locationCountry: tabCountry,
+            ));
+          }
         }
       }
     }
@@ -160,9 +198,18 @@ class _FeedOOTDState extends State<FeedOOTD>
               body: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildGenderSpecificBlocCity(selectedGender, 0),
-                  _buildGenderSpecificBlocState(selectedGender, 1),
-                  _buildGenderSpecificBlocCountry(selectedGender, 2),
+                  BlocProvider.value(
+                    value: _cityBloc,
+                    child: _buildGenderSpecificBlocCity(selectedGender, 0),
+                  ),
+                  BlocProvider.value(
+                    value: _stateBloc,
+                    child: _buildGenderSpecificBlocState(selectedGender, 1),
+                  ),
+                  BlocProvider.value(
+                    value: _countryBloc,
+                    child: _buildGenderSpecificBlocCountry(selectedGender, 2),
+                  ),
                 ],
               ),
             );
@@ -178,11 +225,11 @@ class _FeedOOTDState extends State<FeedOOTD>
     logger.logInfo(functionName, 'Building gender-specific bloc for city',
         {'selectedGender': selectedGender});
 
-    context.read<FeedOOTDCityBloc>().add(FeedOOTDCityManFetchPostsByCity(
-          locationCountry: tabCountry,
-          locationState: tabState,
-          locationCity: tabCity,
-        ));
+    _cityBloc.add(FeedOOTDCityManFetchPostsByCity(
+      locationCountry: tabCountry,
+      locationState: tabState,
+      locationCity: tabCity,
+    ));
 
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDCityBloc, FeedOOTDCityState>(
@@ -272,10 +319,10 @@ class _FeedOOTDState extends State<FeedOOTD>
 
   Widget _buildGenderSpecificBlocState(String? selectedGender, int tabIndex) {
     const String functionName = '_buildGenderSpecificBlocState';
-    context.read<FeedOOTDStateBloc>().add(FeedOOTDStateManFetchPostsByState(
-          locationCountry: tabCountry,
-          locationState: tabState,
-        ));
+    _stateBloc.add(FeedOOTDStateManFetchPostsByState(
+      locationCountry: tabCountry,
+      locationState: tabState,
+    ));
 
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDStateBloc, FeedOOTDStateState>(
@@ -324,11 +371,9 @@ class _FeedOOTDState extends State<FeedOOTD>
 
   Widget _buildGenderSpecificBlocCountry(String? selectedGender, int tabIndex) {
     const String functionName = '_buildGenderSpecificBlocCountry';
-    context
-        .read<FeedOOTDCountryBloc>()
-        .add(FeedOOTDCountryManFetchPostsByCountry(
-          locationCountry: tabCountry,
-        ));
+    _countryBloc.add(FeedOOTDCountryManFetchPostsByCountry(
+      locationCountry: tabCountry,
+    ));
 
     if (selectedGender == "Masculin") {
       return BlocConsumer<FeedOOTDCountryBloc, FeedOOTDCountryState>(

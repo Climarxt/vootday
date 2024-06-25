@@ -7,26 +7,26 @@ abstract class FeedOOTDStateEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FeedOOTDStateManFetchPostsByCity extends FeedOOTDStateEvent {
+class FeedOOTDStateManFetchPostsByState extends FeedOOTDStateEvent {
   final String locationCountry;
   final String locationState;
 
-  FeedOOTDStateManFetchPostsByCity({
-    this.locationCountry = '',
-    this.locationState = '',
+  const FeedOOTDStateManFetchPostsByState({
+    required this.locationCountry,
+    required this.locationState,
   });
 
   @override
   List<Object?> get props => [locationCountry, locationState];
 }
 
-class FeedOOTDStateManFetchPostsByState extends FeedOOTDStateEvent {
+class FeedOOTDStateManFetchMorePosts extends FeedOOTDStateEvent {
   final String locationCountry;
   final String locationState;
 
-  FeedOOTDStateManFetchPostsByState({
-    this.locationCountry = '',
-    this.locationState = '',
+  const FeedOOTDStateManFetchMorePosts({
+    required this.locationCountry,
+    required this.locationState,
   });
 
   @override
